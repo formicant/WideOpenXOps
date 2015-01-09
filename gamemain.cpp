@@ -1,0 +1,2341 @@
+//! @file gamemain.cpp
+//! @brief ゲームメイン処理のサンプルコード
+
+//--------------------------------------------------------------------------------
+// 
+// OpenXOPS
+// Copyright (c) 2014-2015, OpenXOPS Project / [-_-;](mikan) All rights reserved.
+// 
+// Redistribution and use in source and binary forms, with or without
+// modification, are permitted provided that the following conditions are met:
+// * Redistributions of source code must retain the above copyright notice, 
+//   this list of conditions and the following disclaimer.
+// * Redistributions in binary form must reproduce the above copyright notice, 
+//   this list of conditions and the following disclaimer in the documentation 
+//   and/or other materials provided with the distribution.
+// * Neither the name of the OpenXOPS Project nor the　names of its contributors 
+//   may be used to endorse or promote products derived from this software 
+//   without specific prior written permission.
+// 
+// THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS" AND
+// ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED
+// WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE
+// DISCLAIMED. IN NO EVENT SHALL OpenXOPS Project BE LIABLE FOR ANY
+// DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES
+// (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES;
+// LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND
+// ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
+// (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS
+// SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+//--------------------------------------------------------------------------------
+
+#include "gamemain.h"
+
+D3DGraphics d3dg;			//!< 描画クラス
+InputControl inputCtrl;		//!< 入力取得クラス
+SoundControl SoundCtrl;		//!< サウンド再生クラス
+
+//! ゲームの設定値
+ParameterInfo GameParamInfo;
+
+//! リソース管理
+ResourceManager Resource;
+
+SoundManager GameSound;		//!< ゲーム効果音再生クラス
+
+BlockDataInterface BlockData;		//!< ブロックデータ管理クラス
+PointDataInterface PointData;		//!< ポイントデータ管理クラス
+MIFInterface MIFdata;				//!< MIFコントロール
+AddonList GameAddon;				//!< addonのリスト
+Collision CollD;					//!< 当たり判定管理クラス
+ObjectManager ObjMgr;				//!< オブジェクト管理クラス
+AIcontrol HumanAI[MAX_HUMAN];		//!< AI管理クラス
+
+GameInfo GameInfoData;				//!< ゲームの状態
+
+EventControl Event[TOTAL_EVENTLINE];	//!< イベント制御クラス
+
+
+//! 基本的な初期化処理
+int InitGame(HWND hWnd)
+{
+	//DirectX初期化
+	if( d3dg.InitD3D(hWnd, "data\\char.dds", GameConfig.GetFullscreenFlag()) ){
+		MessageBox(hWnd, "Direct3Dの作成に失敗しました", "error", MB_OK);
+		return 1;
+	}
+
+	//Directinputの初期化
+	if( inputCtrl.InitD3Dinput(hWnd) ){
+		MessageBox(hWnd, "Input initialization error", "error", MB_OK);
+		return 1;
+	}
+
+	//EASY DIRECT SOUND 初期化
+	if( SoundCtrl.InitSound(hWnd) ){
+		MessageBox(hWnd, "DLL open failed", "error", MB_OK);
+		return 1;
+	}
+
+	//設定値を初期化
+	GameParamInfo.InitInfo();
+
+	//リソースの初期設定
+	Resource.SetParameterInfo(&GameParamInfo);
+	Resource.SetD3DGraphics(&d3dg);
+	Resource.SetSoundControl(&SoundCtrl);
+
+	//リソースを初期化
+	Resource.LoadHumanModel();
+	Resource.LoadWeaponModelTexture();
+	Resource.LoadWeaponSound();
+	Resource.LoadSmallObjectModelTexture();
+	Resource.LoadSmallObjectSound();
+	Resource.LoadScopeTexture();
+	Resource.LoadBulletModelTexture();
+	Resource.LoadBulletSound();
+	Resource.LoadEffectTexture();
+
+	int bulletmodel, bullettexture;
+	Resource.GetBulletModelTexture(&bulletmodel, &bullettexture);
+
+	//効果音初期化
+	float volume;
+	if( GameConfig.GetSoundFlag() == false ){
+		volume = 0.0f;
+	}
+	else{
+		volume = 1.0f;
+	}
+	GameSound.SetClass(&SoundCtrl, &Resource, &GameParamInfo);
+	SoundCtrl.SetVolume(volume);
+
+	//オブジェクトマネージャー初期化
+	ObjMgr.SetClass(&GameParamInfo, &d3dg, &Resource, &BlockData, &PointData, &CollD, &GameSound, &MIFdata);
+
+	//addonリスト作成
+	GameAddon.LoadFiledata("addon\\");
+
+	GameInfoData.selectaddon = false;
+
+	return 0;
+}
+
+//! コンストラクタ
+opening::opening()
+{}
+
+//! ディストラクタ
+opening::~opening()
+{}
+
+int opening::Create()
+{
+	//ブロックデータ読み込み
+	if( BlockData.LoadFiledata("data\\map10\\temp.bd1") ){
+		//block data open failed
+		return 1;
+	}
+	BlockData.CalculationBlockdata(false);
+	d3dg->LoadMapdata(&BlockData, "data\\map10\\");
+	CollD.InitCollision(&BlockData);
+
+	//ポイントデータ読み込み
+	if( PointData.LoadFiledata("data\\map10\\op.pd1") ){
+		//point data open failed
+		return 1;
+	}
+	ObjMgr.LoadPointData();
+	ObjMgr.SetPlayerID(MAX_HUMAN-1);	//実在しない人をプレイヤーに（銃声のサウンド再生対策）
+
+	//AI設定
+	for(int i=0; i<MAX_HUMAN; i++){
+		HumanAI[i].SetClass(&ObjMgr, ObjMgr.GeHumanObject(i), &BlockData, &PointData, &GameParamInfo, &CollD, GameSound);
+		HumanAI[i].Init();
+	}
+
+	//背景空読み込み
+	Resource.LoadSkyModelTexture(1);
+
+	//opening_banner = d3dg->LoadTexture("banner.png", true, false);
+
+	//サウンド初期化
+	GameSound->InitWorldSound();
+
+	//マウスカーソルを中央へ移動
+	inputCtrl->MoveMouseCenter();
+	framecnt = 0;
+
+	GameState->NextState();
+	return 0;
+}
+
+void opening::Process()
+{
+	//オブジェクトマネージャーを実行
+	ObjMgr.Process(-1, camera_x, camera_y, camera_z, camera_rx, camera_ry);
+
+	//AIを実行
+	for(int i=0; i<MAX_HUMAN; i++){
+		HumanAI[i].Process();
+	}
+
+	//カメラワークを求める
+	if( framecnt < 3*((int)GAMEFPS) ){
+		camera_x = -4.0f;
+		camera_y = 58.0f;
+		camera_z = 28.0f;
+		camera_rx = (float)M_PI/180*205;
+		camera_ry = (float)M_PI/180*13;
+	}
+	else if( framecnt < 5*((int)GAMEFPS) ){
+		camera_rx += (float)M_PI/180*1.1f;
+		camera_ry -= (float)M_PI/180*0.7f;
+	}
+	else if( framecnt < 17*((int)GAMEFPS) ){
+		camera_z += 0.1f;
+		camera_y -= 0.05f;
+	}
+	else {
+		GameState->NextState();
+	}
+
+	framecnt += 1;
+}
+
+void opening::Render3D()
+{
+	int skymodel, skytexture;
+
+	//フォグとカメラを設定
+	d3dg->SetFog(1);
+	d3dg->SetCamera(camera_x, camera_y, camera_z, camera_rx, camera_ry, VIEWANGLE_NORMAL);
+
+	//カメラ座標に背景空を描画
+	d3dg->SetWorldTransform(camera_x, camera_y, camera_z, 0.0f, 0.0f, 1.0f);
+	Resource.GetSkyModelTexture(&skymodel, &skytexture);
+	d3dg->RenderModel(skymodel, skytexture);
+
+	//Zバッファを初期化
+	d3dg->ResetZbuffer();
+
+	//マップを描画
+	d3dg->ResetWorldTransform();
+	d3dg->DrawMapdata();
+
+	//オブジェクトを描画
+	ObjMgr.Render(camera_x, camera_y, camera_z, 0);
+}
+
+void opening::Render2D()
+{
+	float effect;
+
+	//ブラックアウト設定
+	if( framecnt < 1*((int)GAMEFPS) ){
+		effect = 1.0f/(1*((int)GAMEFPS)) * ((1*((int)GAMEFPS)) - framecnt);
+	}
+	if( (1*((int)GAMEFPS) <= framecnt)&&(framecnt < 13*((int)GAMEFPS)) ){
+		effect = 0.0f;
+	}
+	if( (11*((int)GAMEFPS) <= framecnt)&&(framecnt < 15*((int)GAMEFPS)) ){
+		effect = 1.0f/(4*((int)GAMEFPS)) * (framecnt - (11*((int)GAMEFPS)));
+	}
+	if( 15*((int)GAMEFPS) <= framecnt ){
+		effect = 1.0f;
+	}
+	d3dg->Draw2DBox(0, 0, SCREEN_WIDTH, SCREEN_HEIGTH, D3DCOLOR_COLORVALUE(0.0f,0.0f,0.0f,effect));
+
+	//上下の黒縁描画
+	d3dg->Draw2DBox(0, 0, SCREEN_WIDTH, 40, D3DCOLOR_COLORVALUE(0.0f,0.0f,0.0f,1.0f));
+	d3dg->Draw2DBox(0, SCREEN_HEIGTH - 40, SCREEN_WIDTH, SCREEN_HEIGTH, D3DCOLOR_COLORVALUE(0.0f,0.0f,0.0f,1.0f));
+
+	//プロジェクト名
+	if( ((int)(0.5f*GAMEFPS) < framecnt)&&(framecnt < (int)(4.0f*GAMEFPS)) ){
+		char str[32];
+		float effectA = 1.0f;
+		sprintf(str, GAMENAME" project", 0, 0);
+		if( framecnt < (int)(1.5f*GAMEFPS) ){ effectA = 1.0f/GAMEFPS * (framecnt - (int)(0.5f*GAMEFPS)); }
+		if( framecnt > (int)(3.0f*GAMEFPS) ){ effectA = 1.0f - 1.0f/GAMEFPS * (framecnt - (int)(3.0f*GAMEFPS)); }
+		d3dg->Draw2DTextureFontText(SCREEN_WIDTH/2 - strlen(str)*22/2, SCREEN_HEIGTH - 140, str, D3DCOLOR_COLORVALUE(1.0f,1.0f,1.0f,effectA), 22, 22);
+	}
+
+	//スタッフ名・その１
+	if( ((int)(4.0f*GAMEFPS) < framecnt)&&(framecnt < (int)(8.0f*GAMEFPS)) ){
+		float effectA = 1.0f;
+		if( framecnt < (int)(5.0f*GAMEFPS) ){ effectA = 1.0f/GAMEFPS * (framecnt - (int)(4.0f*GAMEFPS)); }
+		if( framecnt > (int)(7.0f*GAMEFPS) ){ effectA = 1.0f - 1.0f/GAMEFPS * (framecnt - (int)(7.0f*GAMEFPS)); }
+		d3dg->Draw2DTextureFontText(60, 150, "ORIGINAL", D3DCOLOR_COLORVALUE(1.0f,1.0f,1.0f,effectA), 20, 20);
+	}
+	if( ((int)(4.5f*GAMEFPS) < framecnt)&&(framecnt < (int)(8.5f*GAMEFPS)) ){
+		float effectA = 1.0f;
+		if( framecnt < (int)(5.5f*GAMEFPS) ){ effectA = 1.0f/GAMEFPS * (framecnt - (int)(4.5f*GAMEFPS)); }
+		if( framecnt > (int)(7.5f*GAMEFPS) ){ effectA = 1.0f - 1.0f/GAMEFPS * (framecnt - (int)(7.5f*GAMEFPS)); }
+		d3dg->Draw2DTextureFontText(100, 180, "nine-two", D3DCOLOR_COLORVALUE(1.0f,1.0f,1.0f,effectA), 20, 20);
+		d3dg->Draw2DTextureFontText(100, 210, "TENNKUU", D3DCOLOR_COLORVALUE(1.0f,1.0f,1.0f,effectA), 20, 20);
+	}
+
+	//スタッフ名・その２
+	if( ((int)(7.0f*GAMEFPS) < framecnt)&&(framecnt < (int)(11.0f*GAMEFPS)) ){
+		float effectA = 1.0f;
+		if( framecnt < (int)(8.0f*GAMEFPS) ){ effectA = 1.0f/GAMEFPS * (framecnt - (int)(7.0f*GAMEFPS)); }
+		if( framecnt > (int)(10.0f*GAMEFPS) ){ effectA = 1.0f - 1.0f/GAMEFPS * (framecnt - (int)(10.0f*GAMEFPS)); }
+		d3dg->Draw2DTextureFontText(330, 300, "REMAKE", D3DCOLOR_COLORVALUE(1.0f,1.0f,1.0f,effectA), 20, 20);
+	}
+	if( ((int)(7.5f*GAMEFPS) < framecnt)&&(framecnt < (int)(11.5f*GAMEFPS)) ){
+		float effectA = 1.0f;
+		if( framecnt < (int)(8.5f*GAMEFPS) ){ effectA = 1.0f/GAMEFPS * (framecnt - (int)(7.5f*GAMEFPS)); }
+		if( framecnt > (int)(10.5f*GAMEFPS) ){ effectA = 1.0f - 1.0f/GAMEFPS * (framecnt - (int)(10.5f*GAMEFPS)); }
+		d3dg->Draw2DTextureFontText(370, 330, "[-_-;](mikan)", D3DCOLOR_COLORVALUE(1.0f,1.0f,1.0f,effectA), 20, 20);
+		//d3dg->Draw2DTexture(410, 360, opening_banner, 200, 40, effectA);
+	}
+
+	//ゲーム名
+	if( 12*((int)GAMEFPS) <= framecnt ){	//framecnt < 17*((int)GAMEFPS)
+		char str[32];
+		float effectA = 1.0f;
+		sprintf(str, GAMENAME, 0, 0);
+		if( framecnt < (13*((int)GAMEFPS)) ){ effectA = 1.0f/GAMEFPS * (framecnt - 12*((int)GAMEFPS)); }
+		if( (16*((int)GAMEFPS) < framecnt)&&(framecnt < (17*((int)GAMEFPS))) ){ effectA = 1.0f - 1.0f/GAMEFPS * (framecnt - 16*((int)GAMEFPS)); }
+		if( framecnt >= (17*((int)GAMEFPS)) ){ effectA = 0.0f; }
+		d3dg->Draw2DTextureFontText(SCREEN_WIDTH/2 - strlen(str)*22/2, (SCREEN_HEIGTH-11)/2, str, D3DCOLOR_COLORVALUE(1.0f,0.0f,0.0f,effectA), 22, 22);
+	}
+}
+
+void opening::Destroy()
+{
+	//ブロックデータ解放
+	d3dg->CleanupMapdata();
+
+	//オブジェクトマネージャー解放
+	ObjMgr.Cleanup();
+
+	//背景空解放
+	Resource.CleanupSkyModelTexture();
+
+	//d3dg->CleanupTexture(opening_banner);
+
+	GameState->NextState();
+}
+
+//! コンストラクタ
+mainmenu::mainmenu()
+{
+	mainmenu_scrollitems_official = 0;
+	mainmenu_scrollitems_addon = 0;
+}
+
+//! ディストラクタ
+mainmenu::~mainmenu()
+{}
+
+int mainmenu::Create()
+{
+	char path[MAX_PATH];
+	char bdata[MAX_PATH];
+	char pdata[MAX_PATH];
+
+	//デモを決定し読み込む
+	switch( GetRand(6) ){
+		case 0:
+			strcpy(path, "data\\map2\\");
+			break;
+		case 1:
+			strcpy(path, "data\\map4\\");
+			break;
+		case 2:
+			strcpy(path, "data\\map5\\");
+			break;
+		case 3:
+			strcpy(path, "data\\map7\\");
+			break;
+		case 4:
+			strcpy(path, "data\\map8\\");
+			break;
+		case 5:
+			strcpy(path, "data\\map16\\");
+			break;
+	}
+	strcpy(bdata, path);
+	strcat(bdata, "temp.bd1");
+	strcpy(pdata, path);
+	strcat(pdata, "demo.pd1");
+
+	//ブロックデータ読み込み
+	if( BlockData.LoadFiledata(bdata) ){
+		//block data open failed
+		return 1;
+	}
+	BlockData.CalculationBlockdata(false);
+	d3dg->LoadMapdata(&BlockData, path);
+	CollD.InitCollision(&BlockData);
+
+	//ポイントデータ読み込み
+	if( PointData.LoadFiledata(pdata) ){
+		//point data open failed
+		return 1;
+	}
+	ObjMgr.LoadPointData();
+
+	//AI設定
+	for(int i=0; i<MAX_HUMAN; i++){
+		HumanAI[i].SetClass(&ObjMgr, ObjMgr.GeHumanObject(i), &BlockData, &PointData, &GameParamInfo, &CollD, GameSound);
+		HumanAI[i].Init();
+	}
+
+	gametitle = d3dg->LoadTexture("data\\title.dds", false, false);
+
+	//サウンド初期化
+	GameSound->InitWorldSound();
+
+	mainmenu_mouseX = SCREEN_WIDTH/2;
+	mainmenu_mouseY = SCREEN_HEIGTH/2;
+
+	//標準ミッションのスクロールバーの設定
+	if( TOTAL_OFFICIALMISSION > TOTAL_MENUITEMS ){
+		mainmenu_scrollbar_official_height = (float)(MAINMENU_H-25) / TOTAL_OFFICIALMISSION * TOTAL_MENUITEMS;
+		mainmenu_scrollbar_official_scale = ((float)(MAINMENU_H-25) - mainmenu_scrollbar_official_height) / (TOTAL_OFFICIALMISSION - TOTAL_MENUITEMS);
+	}
+	else{
+		mainmenu_scrollbar_official_height = 0.0f;
+		mainmenu_scrollbar_official_scale = 0.0f;
+	}
+
+	//addonのスクロールバーの設定
+	if( TOTAL_OFFICIALMISSION > TOTAL_MENUITEMS ){
+		mainmenu_scrollbar_addon_height = (float)(MAINMENU_H-25) / GameAddon.GetTotaldatas() * TOTAL_MENUITEMS;
+		mainmenu_scrollbar_addon_scale = ((float)(MAINMENU_H-25) - mainmenu_scrollbar_addon_height) / (GameAddon.GetTotaldatas() - TOTAL_MENUITEMS);
+	}
+	else{
+		mainmenu_scrollbar_addon_height = 0.0f;
+		mainmenu_scrollbar_addon_scale = 0.0f;
+	}
+
+	mainmenu_scrollbar_official_y = 141;
+	mainmenu_scrollbar_addon_y = 141;
+	mainmenu_scrollbar_flag = false;
+	inputCtrl->MoveMouseCenter();
+	framecnt = 0;
+
+	GameState->NextState();
+	return 0;
+}
+
+void mainmenu::Input()
+{
+	inputCtrl->GetInputState(false);
+
+	//スクロールバーの情報などを取得
+	int scrollitems;
+	float scrollbar_height;
+	float scrollbar_scale;
+	int scrollbar_y;
+	int totalmission;
+	if( GameInfoData.selectaddon == false ){
+		scrollitems = mainmenu_scrollitems_official;
+		scrollbar_height = mainmenu_scrollbar_official_height;
+		scrollbar_scale = mainmenu_scrollbar_official_scale;
+		scrollbar_y = mainmenu_scrollbar_official_y;
+		totalmission = TOTAL_OFFICIALMISSION;
+	}
+	else{
+		scrollitems = mainmenu_scrollitems_addon;
+		scrollbar_height = mainmenu_scrollbar_addon_height;
+		scrollbar_scale = mainmenu_scrollbar_addon_scale;
+		scrollbar_y = mainmenu_scrollbar_addon_y;
+		totalmission = GameAddon.GetTotaldatas();
+	}
+
+	//マウス座標を取得
+	int y = mainmenu_mouseY;
+	inputCtrl->GetMouseMovement(&mainmenu_mouseX, &mainmenu_mouseY);
+	if( mainmenu_mouseX < 0 ){ mainmenu_mouseX = 0; }
+	if( mainmenu_mouseX > SCREEN_WIDTH-1 ){ mainmenu_mouseX = SCREEN_WIDTH-1; }
+	if( mainmenu_mouseY < 0 ){ mainmenu_mouseY = 0; }
+	if( mainmenu_mouseY > SCREEN_HEIGTH-1 ){ mainmenu_mouseY = SCREEN_HEIGTH-1; }
+
+	//ESCキーを処理
+	if( inputCtrl->CheckKeyDown(GetEscKeycode()) ){
+		GameState->PushBackSpaceKey();
+	}
+
+	//スクロールバーを押したか判定
+	if( inputCtrl->CheckMouseButtonDownL() ){
+		if( ((MAINMENU_X+341) < mainmenu_mouseX)&&(mainmenu_mouseX < (MAINMENU_X+360))&&(MAINMENU_Y+1 + (int)(scrollbar_scale*scrollitems) < mainmenu_mouseY)
+			&&(mainmenu_mouseY < MAINMENU_Y+1 + (int)(scrollbar_scale*scrollitems + scrollbar_height))
+		){
+			mainmenu_scrollbar_flag = true;
+		}
+	}
+
+	if( inputCtrl->CheckMouseButtonUpL() ){
+		mainmenu_scrollbar_flag = false;
+
+		// UP
+		if( (MAINMENU_X < mainmenu_mouseX)&&(mainmenu_mouseX < (MAINMENU_X+340))&&(MAINMENU_Y < mainmenu_mouseY)&&(mainmenu_mouseY < MAINMENU_Y+30) ){
+			if( scrollitems > 0 ){ scrollitems -= 1; }
+		}
+
+		// DOWN
+		if( (MAINMENU_X < mainmenu_mouseX)&&(mainmenu_mouseX < (MAINMENU_X+340))&&((MAINMENU_Y+MAINMENU_H-55) < mainmenu_mouseY)&&(mainmenu_mouseY < (MAINMENU_Y+MAINMENU_H-55+30)) ){
+			if( scrollitems < (totalmission - TOTAL_MENUITEMS) ){ scrollitems += 1; }
+		}
+
+		//ミッション選択
+		for(int i=0; i<TOTAL_MENUITEMS; i++){
+			char name[32];
+			if( GameInfoData.selectaddon == false ){
+				GameParamInfo.GetOfficialMission(scrollitems + i, name, NULL, NULL, NULL);
+			}
+			else{
+				strcpy(name, GameAddon.GetMissionName(scrollitems + i));
+			}
+
+			if( (MAINMENU_X < mainmenu_mouseX)&&(mainmenu_mouseX < (MAINMENU_X+(signed)strlen(name)*20))&&(MAINMENU_Y+30 + i*30 < mainmenu_mouseY)&&(mainmenu_mouseY < MAINMENU_Y+30 + i*30 + 26) ){
+				GameInfoData.selectmission_id = scrollitems + i;
+				GameState->PushMouseButton();
+			}
+		}
+	}
+
+	//スクロールバーの移動
+	if( mainmenu_scrollbar_flag == true ){
+		scrollbar_y += mainmenu_mouseY - y;
+		if( scrollbar_y < MAINMENU_Y+1 ){ scrollbar_y = MAINMENU_Y+1; }
+		if( scrollbar_y > MAINMENU_Y+MAINMENU_H-24 - (int)(scrollbar_height) ){ scrollbar_y = MAINMENU_Y+MAINMENU_H-24 - (int)(scrollbar_height); }
+
+		scrollitems = (scrollbar_y - (MAINMENU_Y+1)) / (int)(scrollbar_scale);
+		if( scrollitems < 0 ){
+			scrollitems = 0;
+		}
+		if( scrollitems > (totalmission - TOTAL_MENUITEMS) ){
+			scrollitems = (totalmission - TOTAL_MENUITEMS);
+		}
+	}
+	else{
+		scrollbar_y = MAINMENU_Y+1 + (int)(scrollbar_scale*scrollitems);
+	}
+
+	//スクロールバーの情報などを反映
+	if( GameInfoData.selectaddon == false ){
+		mainmenu_scrollitems_official = scrollitems;
+		mainmenu_scrollbar_official_y = scrollbar_y;
+	}
+	else{
+		mainmenu_scrollitems_addon = scrollitems;
+		mainmenu_scrollbar_addon_y = scrollbar_y;
+	}
+
+	//標準ミッションとアドオンリストの切り替え
+	if( inputCtrl->CheckMouseButtonUpL() ){
+		if( (MAINMENU_X < mainmenu_mouseX)&&(mainmenu_mouseX < (MAINMENU_X+340))&&((MAINMENU_Y+MAINMENU_H-25) < mainmenu_mouseY)&&(mainmenu_mouseY < (MAINMENU_Y+MAINMENU_H-2)) ){
+			if( GameInfoData.selectaddon == false ){
+				if( GameAddon.GetTotaldatas() > 0 ){
+					GameInfoData.selectaddon = true;
+				}
+			}
+			else{
+				GameInfoData.selectaddon = false;
+			}
+		}
+	}
+}
+
+void mainmenu::Process()
+{
+	//オブジェクトマネージャーを実行
+	ObjMgr.Process(-1, camera_x, camera_y, camera_z, camera_rx, camera_ry);
+
+	//AIを実行
+	for(int i=0; i<MAX_HUMAN; i++){
+		HumanAI[i].Process();
+	}
+
+	//カメラ位置を計算
+	human *myHuman = ObjMgr.GetPlayerHumanObject();
+	myHuman->GetPosData(&camera_x, &camera_y, &camera_z, NULL);
+	camera_x -= 4.0f;
+	camera_y += 22.0f;
+	camera_z -= 12.0f;
+	camera_rx = (float)M_PI/180 * (45);
+	camera_ry = (float)M_PI/180 * (-25);
+
+	framecnt += 1;
+}
+
+void mainmenu::Render3D()
+{
+	//フォグとカメラを設定
+	d3dg->SetFog(0);
+	d3dg->SetCamera(camera_x, camera_y, camera_z, camera_rx, camera_ry, VIEWANGLE_NORMAL);
+
+	//Zバッファを初期化
+	d3dg->ResetZbuffer();
+
+	//マップを描画
+	d3dg->ResetWorldTransform();
+	d3dg->DrawMapdata();
+
+	//オブジェクトを描画
+	ObjMgr.Render(camera_x, camera_y, camera_z, 0);
+}
+
+void mainmenu::Render2D()
+{
+	int color, color2;
+	float effect;
+
+	//スクロールバーの情報などを取得
+	int scrollitems;
+	float scrollbar_height;
+	int scrollbar_y;
+	int totalmission;
+	if( GameInfoData.selectaddon == false ){
+		scrollitems = mainmenu_scrollitems_official;
+		scrollbar_height = mainmenu_scrollbar_official_height;
+		scrollbar_y = mainmenu_scrollbar_official_y;
+		totalmission = TOTAL_OFFICIALMISSION;
+	}
+	else{
+		scrollitems = mainmenu_scrollitems_addon;
+		scrollbar_height = mainmenu_scrollbar_addon_height;
+		scrollbar_y = mainmenu_scrollbar_addon_y;
+		totalmission = GameAddon.GetTotaldatas();
+	}
+
+	//ゲームのバージョン情報描画
+	d3dg->Draw2DTextureFontText(522+1, 75+1, GAMEVERSION, D3DCOLOR_COLORVALUE(0.0f,0.0f,0.0f,1.0f), 18, 22);
+	d3dg->Draw2DTextureFontText(522, 75, GAMEVERSION, D3DCOLOR_COLORVALUE(1.0f,1.0f,1.0f,1.0f), 18, 22);
+
+	//メニューエリア描画
+	d3dg->Draw2DBox(MAINMENU_X-1, MAINMENU_Y, MAINMENU_X+360, MAINMENU_Y+MAINMENU_H, D3DCOLOR_COLORVALUE(0.0f,0.0f,0.0f,0.5f));
+	d3dg->Draw2DBox(MAINMENU_X+341, MAINMENU_Y+1, MAINMENU_X+360, MAINMENU_Y+MAINMENU_H-24, D3DCOLOR_COLORVALUE(0.5f,0.5f,0.5f,0.5f));
+
+	//スクロールバー描画
+	if( totalmission > TOTAL_MENUITEMS ){
+		//色を設定
+		if( mainmenu_scrollbar_flag == true ){
+			color = D3DCOLOR_COLORVALUE(0.6f,0.3f,0.25f,1.0f);
+			color2 = D3DCOLOR_COLORVALUE(0.8f,0.3f,0.25f,1.0f);
+		}
+		else if( ((MAINMENU_X+341) < mainmenu_mouseX)&&(mainmenu_mouseX < (MAINMENU_X+360))&&(scrollbar_y < mainmenu_mouseY)&&(mainmenu_mouseY < scrollbar_y + (int)scrollbar_height) ){
+			color = D3DCOLOR_COLORVALUE(0.4f,0.67f,0.57f,1.0f);
+			color2 = D3DCOLOR_COLORVALUE(0.38f,0.77f,0.64f,1.0f);
+		}
+		else{
+			color = D3DCOLOR_COLORVALUE(0.6f,0.6f,0.25f,1.0f);
+			color2 = D3DCOLOR_COLORVALUE(0.8f,0.8f,0.25f,1.0f);
+		}
+
+		//描画
+		d3dg->Draw2DBox(MAINMENU_X+341, scrollbar_y, MAINMENU_X+360, scrollbar_y + (int)scrollbar_height, color);
+		d3dg->Draw2DBox(MAINMENU_X+341+3, scrollbar_y +3, MAINMENU_X+360-3, scrollbar_y + (int)scrollbar_height -3, color2);
+	}
+
+	//'< UP >'描画
+	d3dg->Draw2DTextureFontText(MAINMENU_X+1, MAINMENU_Y+1, "<   UP   >", D3DCOLOR_COLORVALUE(0.0f,0.0f,0.0f,1.0f), 20, 26);
+	if( scrollitems > 0 ){
+		//文字の色を設定
+		if( (MAINMENU_X < mainmenu_mouseX)&&(mainmenu_mouseX < (MAINMENU_X+340))&&(MAINMENU_Y < mainmenu_mouseY)&&(mainmenu_mouseY < MAINMENU_Y+30) ){
+			color = D3DCOLOR_COLORVALUE(0.0f,1.0f,1.0f,1.0f);
+		}
+		else{
+			color = D3DCOLOR_COLORVALUE(1.0f,1.0f,1.0f,1.0f);
+		}
+
+		//文字を描画
+		d3dg->Draw2DTextureFontText(MAINMENU_X, MAINMENU_Y, "<   UP   >", color, 20, 26);
+	}
+
+	//'< DOWN >'描画
+	d3dg->Draw2DTextureFontText(MAINMENU_X+1, MAINMENU_Y+MAINMENU_H-55+1, "<  DOWN  >", D3DCOLOR_COLORVALUE(0.0f,0.0f,0.0f,1.0f), 20, 26);
+	if( scrollitems < (totalmission - TOTAL_MENUITEMS) ){
+		//文字の色を設定
+		if( (MAINMENU_X < mainmenu_mouseX)&&(mainmenu_mouseX < (MAINMENU_X+340))&&((MAINMENU_Y+MAINMENU_H-55) < mainmenu_mouseY)&&(mainmenu_mouseY < (MAINMENU_Y+MAINMENU_H-55+30)) ){
+			color = D3DCOLOR_COLORVALUE(0.0f,1.0f,1.0f,1.0f);
+		}
+		else{
+			color = D3DCOLOR_COLORVALUE(1.0f,1.0f,1.0f,1.0f);
+		}
+
+		//文字を描画
+		d3dg->Draw2DTextureFontText(MAINMENU_X, MAINMENU_Y+MAINMENU_H-55, "<  DOWN  >", color, 20, 26);
+	}
+
+	//標準ミッションとaddon切り替え
+	if( GameInfoData.selectaddon == false ){
+		//下地の文字を描画
+		d3dg->Draw2DTextureFontText(MAINMENU_X+1, MAINMENU_Y+MAINMENU_H-25+1, "ADD-ON MISSIONS >>", D3DCOLOR_COLORVALUE(0.0f,0.0f,0.0f,1.0f), 16, 23);
+
+		//addonがあれば
+		if( GameAddon.GetTotaldatas() > 0 ){
+			//文字の色を設定
+			if( (MAINMENU_X < mainmenu_mouseX)&&(mainmenu_mouseX < (MAINMENU_X+340))&&((MAINMENU_Y+MAINMENU_H-25) < mainmenu_mouseY)&&(mainmenu_mouseY < (MAINMENU_Y+MAINMENU_H-2)) ){
+				color = D3DCOLOR_COLORVALUE(0.0f,1.0f,1.0f,1.0f);
+			}
+			else{
+				color = D3DCOLOR_COLORVALUE(1.0f,1.0f,1.0f,1.0f);
+			}
+
+			//文字を描画
+			d3dg->Draw2DTextureFontText(MAINMENU_X, MAINMENU_Y+MAINMENU_H-25, "ADD-ON MISSIONS >>", color, 16, 23);
+		}
+	}
+	else{
+		//文字の色を設定
+		if( (MAINMENU_X < mainmenu_mouseX)&&(mainmenu_mouseX < (MAINMENU_X+340))&&((MAINMENU_Y+MAINMENU_H-25) < mainmenu_mouseY)&&(mainmenu_mouseY < (MAINMENU_Y+MAINMENU_H-2)) ){
+			color = D3DCOLOR_COLORVALUE(0.0f,1.0f,1.0f,1.0f);
+		}
+		else{
+			color = D3DCOLOR_COLORVALUE(1.0f,1.0f,1.0f,1.0f);
+		}
+
+		//文字を描画
+		d3dg->Draw2DTextureFontText(MAINMENU_X+1, MAINMENU_Y+MAINMENU_H-25+1, "<< STANDARD MISSIONS", D3DCOLOR_COLORVALUE(0.0f,0.0f,0.0f,1.0f), 16, 23);
+		d3dg->Draw2DTextureFontText(MAINMENU_X, MAINMENU_Y+MAINMENU_H-25, "<< STANDARD MISSIONS", color, 16, 23);
+	}
+
+	//ミッション名を描画
+	for(int i=0; i<TOTAL_MENUITEMS; i++){
+		char name[32];
+		strcpy(name, "");
+
+		//ミッション名を取得
+		if( GameInfoData.selectaddon == false ){
+			GameParamInfo.GetOfficialMission(scrollitems + i, name, NULL, NULL, NULL);
+		}
+		else{
+			strcpy(name, GameAddon.GetMissionName(scrollitems + i));
+		}
+
+		//文字の色を設定
+		if( (MAINMENU_X < mainmenu_mouseX)&&(mainmenu_mouseX < (MAINMENU_X+(signed)strlen(name)*20))&&(MAINMENU_Y+30 + i*30 < mainmenu_mouseY)&&(mainmenu_mouseY < MAINMENU_Y+30 + i*30 + 26) ){
+			color = D3DCOLOR_COLORVALUE(1.0f,0.6f,0.6f,1.0f);
+		}
+		else{
+			color = D3DCOLOR_COLORVALUE(0.6f,0.6f,1.0f,1.0f);
+		}
+
+		//文字を描画
+		d3dg->Draw2DTextureFontText(MAINMENU_X+1, MAINMENU_Y+30+1 + i*30, name, D3DCOLOR_COLORVALUE(0.0f,0.0f,0.0f,1.0f), 20, 26);
+		d3dg->Draw2DTextureFontText(MAINMENU_X, MAINMENU_Y+30 + i*30, name, color, 20, 26);
+	}
+
+	//マウスカーソル描画（赤線）
+	d3dg->Draw2DBox(0, mainmenu_mouseY-1, SCREEN_WIDTH, mainmenu_mouseY+1, D3DCOLOR_COLORVALUE(1.0f,0.0f,0.0f,0.5f));
+	d3dg->Draw2DBox(mainmenu_mouseX-1, 0, mainmenu_mouseX+1, SCREEN_HEIGTH, D3DCOLOR_COLORVALUE(1.0f,0.0f,0.0f,0.5f));
+	d3dg->Draw2DLine(0, mainmenu_mouseY, SCREEN_WIDTH, mainmenu_mouseY, D3DCOLOR_COLORVALUE(1.0f,0.0f,0.0f,1.0f));
+	d3dg->Draw2DLine(mainmenu_mouseX, 0, mainmenu_mouseX, SCREEN_HEIGTH, D3DCOLOR_COLORVALUE(1.0f,0.0f,0.0f,1.0f));
+
+	//ゲームのロゴマーク描画
+	d3dg->Draw2DTexture(20, 25, gametitle, 480, 80, 1.0f);
+
+	//ブラックアウト設定
+	if( framecnt < 2*((int)GAMEFPS) ){
+		effect = 1.0f/(2*((int)GAMEFPS)) * (2*((int)GAMEFPS) - framecnt);
+	}
+	else{
+		effect = 0.0f;
+	}
+	d3dg->Draw2DBox(0, 0, SCREEN_WIDTH, SCREEN_HEIGTH, D3DCOLOR_COLORVALUE(0.0f,0.0f,0.0f,effect));
+}
+
+void mainmenu::Destroy()
+{
+	//ブロックデータ解放
+	d3dg->CleanupMapdata();
+
+	//オブジェクトマネージャー解放
+	ObjMgr.Cleanup();
+
+	//背景空解放
+	Resource.CleanupSkyModelTexture();
+
+	d3dg->CleanupTexture(gametitle);
+
+	GameState->NextState();
+}
+
+//! コンストラクタ
+briefing::briefing()
+{}
+
+//! ディストラクタ
+briefing::~briefing()
+{}
+
+int briefing::Create()
+{
+	char path[MAX_PATH];
+	char pdata[MAX_PATH];
+	char PictureA[MAX_PATH];
+	char PictureB[MAX_PATH];
+
+	//背景画像を取得
+	gametitle = d3dg->LoadTexture("data\\title.dds", false, false);
+
+	//mifファイルのファイルパス取得
+	if( GameInfoData.selectaddon == false ){
+		GameParamInfo.GetOfficialMission(GameInfoData.selectmission_id, NULL, NULL, path, pdata);
+		strcat(path, pdata);
+		strcat(path, ".txt");
+	}
+	else{
+		strcpy(path, "addon\\");
+		strcat(path, GameAddon.GetFileName(GameInfoData.selectmission_id));
+	}
+
+	//mifファイルを読み込み
+	if( MIFdata.LoadFiledata(path) != 0 ){
+		//briefing data open failed
+		return 1;
+	}
+
+	//ブリーフィング画像のファイルパス取得
+	MIFdata.GetPicturefilePath(PictureA, PictureB);
+
+	//ブリーフィング画像読み込み
+	if( strcmp(PictureB, "!") == 0 ){
+		TwoTexture = false;
+		TextureA = d3dg->LoadTexture(PictureA, true, false);
+		TextureB = -1;
+	}
+	else{
+		TwoTexture = true;
+		TextureA = d3dg->LoadTexture(PictureA, true, false);
+		TextureB = d3dg->LoadTexture(PictureB, true, false);
+	}
+
+	//マウスカーソルを中央へ移動
+	inputCtrl->MoveMouseCenter();
+	framecnt = 0;
+
+	GameState->NextState();
+	return 0;
+}
+
+void briefing::Render2D()
+{
+	float effectA = 1.0f - 0.8f/((int)(GAMEFPS*0.7f))*(framecnt%((int)(GAMEFPS*0.7f)));
+	float effectB = 1.0f - 0.8f/((int)(GAMEFPS*0.8f))*(framecnt%((int)(GAMEFPS*1.0f)));
+	int effectB_sizeW = (int)( (float)(framecnt%((int)(GAMEFPS*1.0f))) * 0.2f + 18 );
+	int effectB_sizeH = (int)( (float)(framecnt%((int)(GAMEFPS*1.0f))) * 1.0f + 25 );
+
+	//メモ：背景画像の描画は、自動的に行われる。
+
+	//固定文字描画
+	d3dg->Draw2DTextureFontText(SCREEN_WIDTH/2 - 60*4, 30, "BRIEFING", D3DCOLOR_COLORVALUE(1.0f,1.0f,0.0f,effectA), 60, 42);
+	d3dg->Draw2DTextureFontText(SCREEN_WIDTH - 220 - effectB_sizeW*9 - effectB_sizeW/2, SCREEN_HEIGTH - 37 - effectB_sizeH/2,
+								"LEFT CLICK TO BEGIN", D3DCOLOR_COLORVALUE(1.0f,1.0f,1.0f,effectB), effectB_sizeW, effectB_sizeH);
+	d3dg->Draw2DTextureFontText(SCREEN_WIDTH - 390, SCREEN_HEIGTH - 50, "LEFT CLICK TO BEGIN", D3DCOLOR_COLORVALUE(1.0f,1.0f,1.0f,1.0f), 18, 25);
+
+	//ブリーフィング画像描画
+	if( TwoTexture == false ){
+		d3dg->Draw2DBox(40, 180, 40+160, 180+150, D3DCOLOR_COLORVALUE(1.0f,1.0f,1.0f,1.0f));
+		d3dg->Draw2DTexture(40, 180, TextureA, 160, 150, 1.0f);
+	}
+	else{
+		d3dg->Draw2DBox(40, 130, 40+160, 130+150, D3DCOLOR_COLORVALUE(1.0f,1.0f,1.0f,1.0f));
+		d3dg->Draw2DTexture(40, 130, TextureA, 160, 150, 1.0f);
+
+		d3dg->Draw2DBox(40, 300, 40+160, 300+150, D3DCOLOR_COLORVALUE(1.0f,1.0f,1.0f,1.0f));
+		d3dg->Draw2DTexture(40, 300, TextureB, 160, 150, 1.0f);
+	}
+
+	//ミッション名を取得・描画
+	char mname[64];
+	if( MIFdata.GetFiletype() == false ){
+		GameParamInfo.GetOfficialMission(GameInfoData.selectmission_id, NULL, mname, NULL, NULL);
+	}
+	else{
+		strcpy(mname, MIFdata.GetMissionFullname());
+	}
+	d3dg->Draw2DTextureFontText(SCREEN_WIDTH/2 - strlen(mname)*18/2, 90, mname, D3DCOLOR_COLORVALUE(1.0f,0.5f,0.0f,1.0f), 18, 25);
+
+	//ミッション説明を描画
+	d3dg->Draw2DMSFontText(230, 180, MIFdata.GetBriefingText(), D3DCOLOR_COLORVALUE(1.0f,1.0f,1.0f,1.0f));
+}
+
+void briefing::Destroy(){
+	//ブリーフィング画像を開放
+	d3dg->CleanupTexture(TextureA);
+	d3dg->CleanupTexture(TextureB);
+
+	//背景画像を開放
+	d3dg->CleanupTexture(gametitle);
+
+	GameState->NextState();
+}
+
+//! コンストラクタ
+maingame::maingame()
+{
+	ShowInfo_Debugmode = false;
+	Camera_F2mode = 0;
+	Camera_HOMEmode = false;
+	time_input = 0;
+	time_process_object = 0;
+	time_process_ai = 0;
+	time_process_event = 0;
+	time_sound = 0;
+	time_render = 0;
+}
+
+//! ディストラクタ
+maingame::~maingame()
+{}
+
+int maingame::Create()
+{
+	MainGameInfo = GameInfoData;
+	char path[MAX_PATH];
+	char bdata[MAX_PATH];
+	char pdata[MAX_PATH];
+	char pdata2[MAX_PATH];
+
+	//.bd1と.pd1のファイルパスを求める
+	if( MIFdata.GetFiletype() == false ){
+		GameParamInfo.GetOfficialMission(MainGameInfo.selectmission_id, NULL, NULL, path, pdata2);
+
+		strcpy(bdata, path);
+		strcat(bdata, "temp.bd1");
+		strcpy(pdata, path);
+		strcat(pdata, pdata2);
+		strcat(pdata, ".pd1");
+	}
+	else{
+		MIFdata.GetDatafilePath(bdata, pdata);
+
+		strcpy(path, bdata);
+		for(int i=strlen(path)-1; i>0; i--){
+			if( path[i] == '\\' ){
+				path[i+1] = 0x00;
+				break;
+			}
+		}
+	}
+
+	//追加小物を読み込む
+	Resource.LoadAddSmallObject(MIFdata.GetAddSmallobjectModelPath(), MIFdata.GetAddSmallobjectTexturePath(), MIFdata.GetAddSmallobjectSoundPath());
+
+	//ブロックデータ読み込み
+	if( BlockData.LoadFiledata(bdata) ){
+		//block data open failed
+		return 1;
+	}
+	BlockData.CalculationBlockdata(MIFdata.GetScreenFlag());
+	d3dg->LoadMapdata(&BlockData, path);
+	CollD.InitCollision(&BlockData);
+
+	//ポイントデータ読み込み
+	if( PointData.LoadFiledata(pdata) ){
+		//point data open failed
+		return 1;
+	}
+	ObjMgr.LoadPointData();
+
+	//AI設定
+	for(int i=0; i<MAX_HUMAN; i++){
+		HumanAI[i].SetClass(&ObjMgr, ObjMgr.GeHumanObject(i), &BlockData, &PointData, &GameParamInfo, &CollD, GameSound);
+		HumanAI[i].Init();
+	}
+
+
+	//背景空読み込み
+	Resource.LoadSkyModelTexture(MIFdata.GetSkynumber());
+
+	//サウンド初期化
+	GameSound->InitWorldSound();
+
+	//イベント初期化
+	for(int i=0; i<TOTAL_EVENTLINE; i++){
+		Event[i].SetClass(&PointData, &ObjMgr);
+	}
+	Event[0].Reset(TOTAL_EVENTENTRYPOINT_0);
+	Event[1].Reset(TOTAL_EVENTENTRYPOINT_1);
+	Event[2].Reset(TOTAL_EVENTENTRYPOINT_2);
+
+	//プレイヤーの向きを取得
+	ObjMgr.GetPlayerHumanObject()->GetRxRy(&mouse_rx, &mouse_ry);
+
+	view_rx = 0.0f;
+	view_ry = 0.0f;
+	Camera_Debugmode = false;
+	Camera_F1mode = false;
+	framecnt = 0;
+	start_framecnt = 0;
+	end_framecnt = 0;
+	message_id = -1;
+	message_cnt = 0;
+	redflash_flag = false;
+	MainGameInfo.missioncomplete = false;
+	MainGameInfo.fire = 0;
+	MainGameInfo.ontarget = 0;
+	MainGameInfo.kill = 0;
+	MainGameInfo.headshot = 0;
+
+	GameState->NextState();
+	return 0;
+}
+
+//! 特定操作の入力をチェック
+bool maingame::CheckInputControl(int CheckKey, int mode)
+{
+	int KeyCode = OriginalkeycodeToDinputdef(GameConfig.GetKeycode(CheckKey));
+	if( KeyCode == -1 ){
+		if( mode == 0 ){
+			return inputCtrl->CheckMouseButtonNowL();
+		}
+		if( mode == 1 ){
+			return inputCtrl->CheckMouseButtonDownL();
+		}
+		//if( mode == 2 ){
+			return inputCtrl->CheckMouseButtonUpL();
+		//}
+	}
+	if( KeyCode == -2 ){
+		if( mode == 0 ){
+			return inputCtrl->CheckMouseButtonNowR();
+		}
+		if( mode == 1 ){
+			return inputCtrl->CheckMouseButtonDownR();
+		}
+		//if( mode == 2 ){
+			return inputCtrl->CheckMouseButtonUpR();
+		//}
+	}
+	if( KeyCode == -3 ){
+		int CodeL, CodeR;
+		GetDoubleKeyCode(0, &CodeL, &CodeR);
+		if( mode == 0 ){
+			if( inputCtrl->CheckKeyNow(CodeL) ){
+				return true;
+			}
+			return inputCtrl->CheckKeyNow(CodeR);
+		}
+		if( mode == 1 ){
+			if( inputCtrl->CheckKeyDown(CodeL) ){
+				return true;
+			}
+			return inputCtrl->CheckKeyDown(CodeR);
+		}
+		//if( mode == 2 ){
+			if( inputCtrl->CheckKeyUp(CodeL) ){
+				return true;
+			}
+			return inputCtrl->CheckKeyUp(CodeR);
+		//}
+	}
+	if( KeyCode == -4 ){
+		int CodeL, CodeR;
+		GetDoubleKeyCode(1, &CodeL, &CodeR);
+		if( mode == 0 ){
+			if( inputCtrl->CheckKeyNow(CodeL) ){
+				return true;
+			}
+			return inputCtrl->CheckKeyNow(CodeR);
+		}
+		if( mode == 1 ){
+			if( inputCtrl->CheckKeyDown(CodeL) ){
+				return true;
+			}
+			return inputCtrl->CheckKeyDown(CodeR);
+		}
+		//if( mode == 2 ){
+			if( inputCtrl->CheckKeyUp(CodeL) ){
+				return true;
+			}
+			return inputCtrl->CheckKeyUp(CodeR);
+		//}
+	}
+
+	if( mode == 0 ){
+		return inputCtrl->CheckKeyNow( OriginalkeycodeToDinputdef(GameConfig.GetKeycode(CheckKey)) );
+	}
+	if( mode == 1 ){
+		return inputCtrl->CheckKeyDown( OriginalkeycodeToDinputdef(GameConfig.GetKeycode(CheckKey)) );
+	}
+	//if( mode == 2 ){
+		return inputCtrl->CheckKeyUp( OriginalkeycodeToDinputdef(GameConfig.GetKeycode(CheckKey)) );
+	//}
+}
+
+void maingame::Input()
+{
+	time = GetTimeMS();
+	static unsigned int bullettime = 0;
+
+	//プレイヤーのクラスを取得
+	human *myHuman = ObjMgr.GetPlayerHumanObject();
+
+	//キー入力を取得
+	inputCtrl->GetInputState(true);
+	inputCtrl->MoveMouseCenter();
+
+	//前後左右の移動（走り）操作かチェック
+	if( CheckInputControl(KEY_MOVEFORWARD, 0) ){
+		myHuman->SetMoveForward();
+	}
+	if( CheckInputControl(KEY_MOVEBACKWARD, 0) ){
+		myHuman->SetMoveBack();
+	}
+	if( CheckInputControl(KEY_MOVELEFT, 0) ){
+		myHuman->SetMoveLeft();
+	}
+	if( CheckInputControl(KEY_MOVERIGHT, 0) ){
+		myHuman->SetMoveRight();
+	}
+
+	//歩き操作かチェック
+	if( CheckInputControl(KEY_WALK, 0) ){
+		myHuman->SetMoveWalk();
+	}
+
+	//ジャンプ操作かチェック
+	if( CheckInputControl(KEY_JUMP, 1) ){
+		myHuman->Jump();
+	}
+
+	if( Camera_Debugmode == true ){		//デバックモードならば
+		//発砲操作かチェック
+		if( CheckInputControl(KEY_Shot, 0) ){
+			//前回の発射より、4フレーム分よりも時間が経っていれば
+			if( bullettime + 4*((int)GAMEFPS) < GetTimeMS() ){
+				float x, y, z, rx, ry;
+				x = camera_x;
+				y = camera_y;
+				z = camera_z;
+				rx = camera_rx;
+				ry = camera_ry;
+
+				//未使用の弾オブジェクトを取得
+				bullet* newbullet = ObjMgr.GetNewBulletObject();
+				if( newbullet != NULL ){
+					//弾オブジェクトを設定
+					newbullet->SetPosData(x, y, z, rx, ry);
+					newbullet->SetParamData(40, 5, 10, 1024, ObjMgr.GetPlayerID(), true);
+					newbullet->SetDrawFlag(true);
+					GameSound->ShotWeapon(x, y, z, 0, 1024, true);
+
+					//スコアに加算
+					MainGameInfo.fire += 1;
+
+					//発射時間を記憶（連射間隔判定用）
+					bullettime = GetTimeMS();
+				}
+			}
+		}
+	}
+	else{		//デバックモードでなければ
+		HumanParameter humandata;
+		int id_param;
+		bool zombie;
+		int keymode;
+
+		//ゾンビかどうか判定
+		myHuman->GetParamData(&id_param, NULL, NULL, NULL);
+		GameParamInfo.GetHuman(id_param, &humandata);
+		if( humandata.type == 2 ){
+			zombie = true;
+		}
+		else{
+			zombie = false;
+		}
+
+		//連射モードを取得
+		if( zombie == true ){
+			keymode = 1;
+		}
+		else if( myHuman->GetWeaponBlazingmode() == false ){
+			keymode = 1;
+		}
+		else{
+			keymode = 0;
+		}
+
+		//発砲操作かチェック
+		if( CheckInputControl(KEY_Shot, keymode) ){
+
+			if( zombie == false ){
+				//弾の発射に成功すれば
+				if( ObjMgr.ShotWeapon(myHuman) == 1 ){
+					//スコアに加算
+					MainGameInfo.fire += 1;
+
+					//プレイヤーの向きを取得
+					ObjMgr.GetPlayerHumanObject()->GetRxRy(&mouse_rx, &mouse_ry);
+				}
+			}
+			else{
+				for(int i=0; i<MAX_HUMAN; i++){
+					human *EnemyHuman = ObjMgr.GeHumanObject(i);
+					if( ObjMgr.CheckZombieAttack(myHuman, EnemyHuman) == true ){
+						ObjMgr.HitZombieAttack(EnemyHuman);
+					}
+				}
+			}
+
+		}
+	}
+
+	//リロード操作かチェック
+	if( CheckInputControl(KEY_RELOAD, 1) ){
+		ObjMgr.ReloadWeapon(myHuman);
+	}
+
+	//武器の切り替え操作かチェック
+	if( CheckInputControl(KEY_SWITCHWEAPON, 1) ){
+		myHuman->ChangeWeapon(-1);
+	}
+	if( CheckInputControl(KEY_WEAPON1, 1) ){
+		myHuman->ChangeWeapon(0);
+	}
+	if( CheckInputControl(KEY_WEAPON2, 1) ){
+		myHuman->ChangeWeapon(1);
+	}
+
+	//武器の廃棄操作かチェック
+	if( CheckInputControl(KEY_DROPWEAPON, 1) ){
+		myHuman->DumpWeapon();
+	}
+
+	//スコープ操作かチェック
+	if( CheckInputControl(KEY_ZOOM, 1) ){
+		if( myHuman->GetScopeMode() == 0 ){	//スコープを使用していなければ、スコープを設定
+			myHuman->SetEnableScope();
+		}
+		else{								//使用中なら、解除
+			myHuman->SetDisableScope();
+		}
+	}
+
+	//連射モード変更操作かチェック
+	if( CheckInputControl(KEY_ShotMODE, 1) ){
+		myHuman->ChangeShotMode();
+	}
+
+	//ゲーム終了操作かチェック
+	if( inputCtrl->CheckKeyDown(GetEscKeycode()) ){
+		GameState->PushBackSpaceKey();
+	}
+
+	//カメラ表示モード変更操作かチェック
+	if( inputCtrl->CheckKeyDown( GetFunctionKeycode(1) ) ){
+		if( Camera_F1mode == false ){
+			Camera_F1mode = true;
+			view_rx = 0.0f;
+			view_ry = (float)M_PI/8 * -1;
+		}
+		else{
+			Camera_F1mode = false;
+			view_rx = 0.0f;
+			view_ry = 0.0f;
+		}
+	}
+
+	//カメラ操作
+	if( Camera_F1mode == true ){
+		if( inputCtrl->CheckKeyNow( OriginalkeycodeToDinputdef(0x0C) ) ){	//NUM8
+			view_ry -= (float)M_PI/180 * 2;
+		}
+		if( inputCtrl->CheckKeyNow( OriginalkeycodeToDinputdef(0x09) ) ){	//NUM5
+			view_ry += (float)M_PI/180 * 2;
+		}
+		if( inputCtrl->CheckKeyNow( OriginalkeycodeToDinputdef(0x08) ) ){	//NUM4
+			view_rx -= (float)M_PI/180 * 2;
+		}
+		if( inputCtrl->CheckKeyNow( OriginalkeycodeToDinputdef(0x0A) ) ){	//NUM6
+			view_rx += (float)M_PI/180 * 2;
+		}
+	}
+
+	//画面のUI変更操作かチェック
+	if( inputCtrl->CheckKeyDown( GetFunctionKeycode(2) ) ){
+		if( Camera_F2mode == 2 ){
+			Camera_F2mode = 0;
+		}
+		else{
+			Camera_F2mode += 1;
+		}
+	}
+
+	//リセット操作かチェック
+	if( inputCtrl->CheckKeyDown( GetFunctionKeycode(12) ) ){
+		GameState->PushF12Key();
+	}
+
+	//裏技・上昇の操作かチェック
+	if( inputCtrl->CheckKeyNow( GetFunctionKeycode(5) ) ){
+		if( inputCtrl->CheckKeyNow(OriginalkeycodeToDinputdef(0x0F)) ){		// [ENTER]
+			Cmd_F5 = true;
+		}
+		else{
+			Cmd_F5 = false;
+		}
+	}
+	else{
+		Cmd_F5 = false;
+	}
+
+	//裏技・弾追加の操作かチェック
+	if( inputCtrl->CheckKeyNow( GetFunctionKeycode(6) ) ){
+		if( inputCtrl->CheckKeyDown(OriginalkeycodeToDinputdef(0x0F)) ){		// [ENTER]
+			int selectweapon;
+			weapon *weapon[TOTAL_HAVEWEAPON];
+			int id_param, lnbs, nbs;
+			WeaponParameter ParamData;
+
+			//所持している武器を取得
+			for(int i=0; i<TOTAL_HAVEWEAPON; i++){
+				weapon[i] = NULL;
+			}
+			myHuman->GetWeapon(&selectweapon, weapon);
+
+			//何かしらの武器を持っていれば
+			if( weapon[selectweapon] != NULL ){
+				//武器の種類と弾数、武器の設定値を取得
+				weapon[selectweapon]->GetParamData(&id_param, &lnbs, &nbs);
+				if( GameParamInfo.GetWeapon(id_param, &ParamData) == 0 ){
+					//最大弾数分加算し、適用
+					nbs += ParamData.nbsmax;
+					weapon[selectweapon]->ResetWeaponParam(&Resource, id_param, lnbs, nbs);
+				}
+			}
+		}
+	}
+
+	//裏技・武器変更の操作かチェック
+	if( inputCtrl->CheckKeyNow( GetFunctionKeycode(7) ) ){
+		if( (inputCtrl->CheckKeyDown(OriginalkeycodeToDinputdef(0x02)))||(inputCtrl->CheckKeyDown(OriginalkeycodeToDinputdef(0x03))) ){		// [←]・[→]
+			HumanParameter humandata;
+			int selectweapon;
+			weapon *weapon[TOTAL_HAVEWEAPON];
+			int id_param, lnbs, nbs;
+
+			//ゾンビかどうか判定
+			myHuman->GetParamData(&id_param, NULL, NULL, NULL);
+			GameParamInfo.GetHuman(id_param, &humandata);
+			if( humandata.type != 2 ){
+
+				//所持している武器を取得
+				for(int i=0; i<TOTAL_HAVEWEAPON; i++){
+					weapon[i] = NULL;
+				}
+				myHuman->GetWeapon(&selectweapon, weapon);
+
+				if( weapon[selectweapon] == NULL ){		//武器を所有していなければ
+					int dataid = -1;
+
+					//新しい武器を配置
+					if( inputCtrl->CheckKeyDown(OriginalkeycodeToDinputdef(0x02)) ){		// [←]
+						dataid = ObjMgr.AddVisualWeaponIndex(1, false);
+					}
+					if( inputCtrl->CheckKeyDown(OriginalkeycodeToDinputdef(0x03)) ){		// [→]
+						dataid = ObjMgr.AddVisualWeaponIndex(TOTAL_PARAMETERINFO_WEAPON-1, false);
+					}
+
+					//武器が配置できれば、武器を拾わせる
+					if( dataid != -1 ){
+						myHuman->PickupWeapon( ObjMgr.GeWeaponObject(dataid) );
+					}
+				}
+				else{									//武器を所有していれば
+					//武器設定を取得
+					weapon[selectweapon]->GetParamData(&id_param, &lnbs, &nbs);
+
+					//次の武器番号を計算
+					if( inputCtrl->CheckKeyDown(OriginalkeycodeToDinputdef(0x02)) ){		// [←]
+						if( id_param >= TOTAL_PARAMETERINFO_WEAPON-1 ){ id_param = 0; }
+						else{ id_param += 1; }
+					}
+					if( inputCtrl->CheckKeyDown(OriginalkeycodeToDinputdef(0x03)) ){		// [→]
+						if( id_param <= 0 ){ id_param = TOTAL_PARAMETERINFO_WEAPON-1; }
+						else{ id_param -= 1; }
+					}
+
+					if( id_param == ID_WEAPON_NONE ){
+						if( myHuman->DumpWeapon() == true ){
+							weapon[selectweapon]->SetDrawFlag(false);
+						}
+					}
+					else{
+						//武器設定を適用
+						weapon[selectweapon]->ResetWeaponParam(&Resource, id_param, lnbs, nbs);
+					}
+				}
+			}
+		}
+	}
+
+	//裏技・人変更の操作かチェック
+	if( inputCtrl->CheckKeyNow( GetFunctionKeycode(8) ) ){
+		int Player_HumanID;
+
+		if( inputCtrl->CheckKeyDown(OriginalkeycodeToDinputdef(0x02)) ){		// [←]
+			//現在のプレイヤー番号を取得
+			Player_HumanID = ObjMgr.GetPlayerID();
+
+			//次の人を計算
+			Player_HumanID += 1;
+			if( Player_HumanID >= MAX_HUMAN ){ Player_HumanID = 0; }
+
+			//対象プレイヤー番号を適用
+			ObjMgr.SetPlayerID(Player_HumanID);
+
+			//プレイヤーの向きを取得
+			ObjMgr.GetPlayerHumanObject()->GetRxRy(&mouse_rx, &mouse_ry);
+		}
+		if( inputCtrl->CheckKeyDown(OriginalkeycodeToDinputdef(0x03)) ){		// [→]
+			//現在のプレイヤー番号を取得
+			Player_HumanID = ObjMgr.GetPlayerID();
+
+			//次の人を計算
+			Player_HumanID -= 1;
+			if( Player_HumanID < 0 ){ Player_HumanID = MAX_HUMAN-1; }
+
+			//対象プレイヤー番号を適用
+			ObjMgr.SetPlayerID(Player_HumanID);
+
+			//プレイヤーの向きを取得
+			ObjMgr.GetPlayerHumanObject()->GetRxRy(&mouse_rx, &mouse_ry);
+		}
+	}
+
+	//裏技・人追加の操作かチェック
+	if( inputCtrl->CheckKeyNow( GetFunctionKeycode(9) ) ){
+		if( (inputCtrl->CheckKeyDown(OriginalkeycodeToDinputdef(0x00)))||(inputCtrl->CheckKeyDown(OriginalkeycodeToDinputdef(0x01))) ){		// [↑]・[↓]
+			float x, y, z, r;
+			int param, dataid, team; 
+			int selectweapon;
+			weapon *weapon[TOTAL_HAVEWEAPON];
+			int weapon_paramid[TOTAL_HAVEWEAPON];
+			for(int i=0; i<TOTAL_HAVEWEAPON; i++){
+				weapon[i] = NULL;
+				weapon_paramid[i] = 0;
+			}
+			int id;
+
+			//プレイヤーの座標や武器を取得
+			myHuman->GetPosData(&x, &y, &z, &r);
+			myHuman->GetParamData(&param, &dataid, NULL, &team);
+			myHuman->GetWeapon(&selectweapon, weapon);
+			for(int i=0; i<TOTAL_HAVEWEAPON; i++){
+				if( weapon[i] != NULL ){
+					weapon[i]->GetParamData(&weapon_paramid[i], NULL, NULL);
+				}
+			}
+
+			//プレイヤーの目の前の座標を取得
+			x += cos(r*-1 + (float)M_PI/2)*10.0f;
+			y += 5.0f;
+			z += sin(r*-1 + (float)M_PI/2)*10.0f;
+
+			//人を追加
+			id = ObjMgr.AddHumanIndex(x, y, z, r, param, team, weapon_paramid);
+			if( id >= 0 ){
+				ObjMgr.GeHumanObject(id)->ChangeWeapon(selectweapon);
+
+				//AIを設定
+				HumanAI[id].Init();
+				if( inputCtrl->CheckKeyDown(OriginalkeycodeToDinputdef(0x00)) ){		// [↑]
+					HumanAI[id].SetHoldTracking(dataid);
+				}
+				if( inputCtrl->CheckKeyDown(OriginalkeycodeToDinputdef(0x01)) ){		// [↓]
+					HumanAI[id].SetHoldWait(x, z, r);
+				}
+			}
+		}
+	}
+
+	//裏技・腕表示の操作かチェック
+	if( inputCtrl->CheckKeyDown( GetHomeKeycode() ) ){
+		if( Camera_HOMEmode == false ){
+			Camera_HOMEmode = true;
+		}
+		else{
+			Camera_HOMEmode = false;
+		}
+	}
+
+	//デバックモード使用操作かチェック
+#ifdef _DEBUG
+	if( inputCtrl->CheckKeyDown( GetFunctionKeycode(4) ) ){
+#else
+	if( 0 ){
+#endif
+		if( Camera_Debugmode == false ){
+			Camera_Debugmode = true;
+		}
+		else{
+			Camera_Debugmode = false;
+		}
+
+		//デバックモード開始時のカメラ設定
+		if( Camera_Debugmode == true ){
+			camera_x = 100.0f;
+			camera_y = 100.0f;
+			camera_z = -100.0f;
+			camera_rx = (float)M_PI/180*135;
+			camera_ry = (float)M_PI/180*(-40);
+		}
+	}
+
+	//ゲーム実行情報の表示操作かチェック
+	if( inputCtrl->CheckKeyDown( GetFunctionKeycode(11) ) ){
+		if( ShowInfo_Debugmode == false ){
+			ShowInfo_Debugmode = true;
+		}
+		else{
+			ShowInfo_Debugmode = false;
+		}
+	}
+
+	//マウスの移動量取得
+	int x, y;
+	float MouseSensitivity;
+	inputCtrl->GetMouseMovement(&x, &y);
+
+	//視点の移動量計算
+	float mang;
+	if( myHuman->GetScopeMode() == 0 ){ mang = 0.01f; }
+	if( myHuman->GetScopeMode() == 1 ){ mang = 0.0032f; }
+	if( myHuman->GetScopeMode() == 2 ){ mang = 0.0060f; }
+	MouseSensitivity = (float)M_PI/180 * mang * GameConfig.GetMouseSensitivity();
+
+	//マウス反転（オプション設定）が有効ならば、反転する。
+	if( GameConfig.GetInvertMouseFlag() == true ){
+		y *= -1;
+	}
+
+	if( Camera_Debugmode == false ){	//通常モードならば
+		if( myHuman->GetHP() > 0 ){
+			//マウスによる向きを計算
+			mouse_rx += x * MouseSensitivity;
+			mouse_ry -= y * MouseSensitivity;
+
+			//キー操作による向きを計算
+			if( inputCtrl->CheckKeyNow(OriginalkeycodeToDinputdef(0x00)) ){ mouse_ry += (float)M_PI/180 * 3; }		// [↑]
+			if( inputCtrl->CheckKeyNow(OriginalkeycodeToDinputdef(0x01)) ){ mouse_ry -= (float)M_PI/180 * 3; }		// [↓]
+			if( inputCtrl->CheckKeyNow(OriginalkeycodeToDinputdef(0x02)) ){ mouse_rx -= (float)M_PI/180 * 3; }		// [←]
+			if( inputCtrl->CheckKeyNow(OriginalkeycodeToDinputdef(0x03)) ){ mouse_rx += (float)M_PI/180 * 3; }		// [→]
+
+			if( mouse_ry > (float)M_PI/3 ) mouse_ry = (float)M_PI/3;
+			if( mouse_ry < (float)M_PI/3 *-1 ) mouse_ry = (float)M_PI/3 *-1;
+		}
+	}
+	else{								//デバックモードならば
+		//キー操作によりカメラ座標を計算
+		if( inputCtrl->CheckKeyNow(OriginalkeycodeToDinputdef(0x00)) ){ camera_x += 2.0f; }		// [↑]
+		if( inputCtrl->CheckKeyNow(OriginalkeycodeToDinputdef(0x01)) ){ camera_x -= 2.0f; }		// [↓]
+		if( inputCtrl->CheckKeyNow(OriginalkeycodeToDinputdef(0x02)) ){ camera_z += 2.0f; }		// [←]
+		if( inputCtrl->CheckKeyNow(OriginalkeycodeToDinputdef(0x03)) ){ camera_z -= 2.0f; }		// [→]
+		if( inputCtrl->CheckKeyNow(OriginalkeycodeToDinputdef(0x48)) ){ camera_y += 2.0f; }		//［NUM +］
+		if( inputCtrl->CheckKeyNow(OriginalkeycodeToDinputdef(0x49)) ){ camera_y -= 2.0f; }		//［NUM -］
+
+		//マウス移動をカメラの向きとして適用
+		//camera_rx -= x*0.0025f;
+		//camera_ry -= y*0.0025f;
+		camera_rx -= x * MouseSensitivity;
+		camera_ry -= y * MouseSensitivity;
+		if( camera_ry > (float)M_PI/3 ) camera_ry = (float)M_PI/3;
+		if( camera_ry < (float)M_PI/3 *-1 ) camera_ry = (float)M_PI/3 *-1;
+	}
+
+	time_input = GetTimeMS() - time;
+}
+
+void maingame::Process()
+{
+	//プレイヤーのクラスを取得
+	human *myHuman = ObjMgr.GetPlayerHumanObject();
+
+	int ontarget, kill, headshot;
+
+	//-----------------------------------
+
+	time = GetTimeMS();
+
+	//武器の持ち方を取得
+	int weaponid;
+	WeaponParameter data;
+	weaponid = myHuman->GetMainWeaponTypeNO();
+	GameParamInfo.GetWeapon(weaponid, &data);
+
+	//プレイヤー（オブジェクト）の向きを設定
+	if( data.WeaponP == 2 ){
+		myHuman->SetRxRy(mouse_rx, ARMRAD_NOWEAPON);
+	}
+	else{
+		myHuman->SetRxRy(mouse_rx, mouse_ry);
+	}
+
+	//オブジェクトマネージャーを実行
+	if( Cmd_F5 == true ){
+		ObjMgr.Process( ObjMgr.GetPlayerID() , camera_x, camera_y, camera_z, camera_rx, camera_ry);
+	}
+	else{
+		ObjMgr.Process(-1, camera_x, camera_y, camera_z, camera_rx, camera_ry);
+	}
+
+	//プレイヤーの戦歴を加算
+	ObjMgr.GetHumanShotInfo( ObjMgr.GetPlayerID(), &ontarget, &kill, &headshot);
+	MainGameInfo.ontarget += ontarget;
+	MainGameInfo.kill += kill;
+	MainGameInfo.headshot += headshot;
+
+	time_process_object = GetTimeMS() - time;
+
+	//-----------------------------------
+
+	time = GetTimeMS();
+	int PlayerID = ObjMgr.GetPlayerID();
+	for(int i=0; i<MAX_HUMAN; i++){
+		if( i != PlayerID ){
+			//AIを実行
+			HumanAI[i].Process();
+		}
+	}
+	time_process_ai = GetTimeMS() - time;
+
+	//-----------------------------------
+
+	//ミッションが終了していなければ、
+	if( end_framecnt == 0 ){
+		int check = ObjMgr.CheckGameOverorComplete();
+
+		//ゲームクリアー判定
+		if( check == 1 ){
+			end_framecnt += 1;
+			MainGameInfo.missioncomplete = true;
+		}
+
+		//ゲームオーバー判定
+		if( check == 2 ){
+			end_framecnt += 1;
+			MainGameInfo.missioncomplete = false;
+		}
+	}
+
+	//-----------------------------------
+
+	time = GetTimeMS();
+	bool SetMessageID;
+	if( end_framecnt == 0 ){
+		//イベント実行
+		for(int i=0; i<TOTAL_EVENTLINE; i++){
+			SetMessageID = false;
+			Event[i].Execution(&end_framecnt, &MainGameInfo.missioncomplete, &message_id, &SetMessageID);
+
+			//イベントメッセージが再セットされていたら、カウントを戻す。
+			if( SetMessageID == true ){
+				message_cnt = 0;
+			}
+		}
+	}
+	if( (message_id != -1)&&(message_cnt < TOTAL_EVENTENT_SHOWMESCNT) ){
+		message_cnt += 1;
+	}
+	else{
+		message_id = -1;
+		message_cnt = 0;
+	}
+	time_process_event = GetTimeMS() - time;
+
+	//-----------------------------------
+
+	float x, y, z;
+	myHuman->GetPosData(&x, &y, &z, NULL);
+
+	//カメラワークを求める
+	if( Camera_Debugmode == true ){
+		//
+	}
+	else if( myHuman->GetHP() <= 0 ){
+		float rx = (float)M_PI/180*end_framecnt;
+		float ry = (float)M_PI/180*85*-1;
+		float r = 25.0f;
+
+		camera_x = x + cos(rx)*cos(ry)*r;
+		camera_y = y - sin(ry)*r;
+		camera_z = z + sin(rx)*cos(ry)*r;
+		camera_rx = rx;
+		camera_ry = ry;
+	}
+	else if( Camera_F1mode == true ){
+		float crx = view_rx + mouse_rx*-1 + (float)M_PI/2;
+		float cry = view_ry + mouse_ry;
+		float dist;
+		if( CollD.CheckALLBlockIntersectRay(x, y + HUMAN_HEIGTH, z, cos(crx)*cos(cry)*-1, sin(cry*-1), sin(crx)*cos(cry)*-1, NULL, NULL, &dist, 13.0f) == true ){
+			dist -= 1.0f;
+		}
+		else{
+			dist = 13.0f;
+		}
+		camera_x = x - cos(crx)*cos(cry)*dist;
+		camera_y = y + HUMAN_HEIGTH + sin(cry*-1)*dist;
+		camera_z = z - sin(crx)*cos(cry)*dist;
+		camera_rx = crx;
+		camera_ry = cry;
+	}
+	else{
+		camera_x = x;
+		camera_y = y + VIEW_HEIGHT;
+		camera_z = z;
+		camera_rx = view_rx + mouse_rx*-1 + (float)M_PI/2;
+		camera_ry = view_ry + mouse_ry;
+	}
+
+	//ダメージを受けていれば、レッドフラッシュを描画する
+	redflash_flag = myHuman->CheckHit();
+
+	framecnt += 1;
+	if( start_framecnt < 1*((int)GAMEFPS) ){	//ミッション開始中なら
+		start_framecnt += 1;
+	}
+	if( end_framecnt == 1 ){					//ミッション終了直後ならば
+		MainGameInfo.framecnt = framecnt;
+		GameInfoData = MainGameInfo;
+		end_framecnt += 1;
+	}
+	else if( end_framecnt > 0 ){				//ミッション終了中ならば
+		if( end_framecnt < 5*((int)GAMEFPS) ){
+			end_framecnt += 1;
+		}
+		else{
+			GameState->PushMouseButton();
+		}
+	}
+}
+
+void maingame::Sound()
+{
+	time = GetTimeMS();
+
+	//サウンドを再生
+	GameSound->PlayWorldSound(camera_x, camera_y, camera_z, camera_rx);
+
+	time_sound = GetTimeMS() - time;
+}
+
+void maingame::Render3D()
+{
+	time = GetTimeMS();
+
+
+	int skymodel, skytexture;
+	human *myHuman = ObjMgr.GetPlayerHumanObject();
+
+	//フォグとカメラを設定
+	d3dg->SetFog(MIFdata.GetSkynumber());
+	if( Camera_F1mode == false ){
+		int scopemode = myHuman->GetScopeMode();
+		float viewangle;
+
+		//スコープによる視野角を決定
+		if( scopemode == 0 ){ viewangle = VIEWANGLE_NORMAL; }
+		if( scopemode == 1 ){ viewangle = VIEWANGLE_SCOPE_1; }
+		if( scopemode == 2 ){ viewangle = VIEWANGLE_SCOPE_2; }
+
+		d3dg->SetCamera(camera_x, camera_y, camera_z, camera_rx, camera_ry, viewangle);
+	}
+	else{
+		d3dg->SetCamera(camera_x, camera_y, camera_z, camera_rx, camera_ry, VIEWANGLE_NORMAL);
+	}
+
+	//カメラ座標に背景空を描画
+	d3dg->SetWorldTransform(camera_x, camera_y, camera_z, 0.0f, 0.0f, 1.0f);
+	Resource.GetSkyModelTexture(&skymodel, &skytexture);
+	d3dg->RenderModel(skymodel, skytexture);
+
+	//Zバッファを初期化
+	d3dg->ResetZbuffer();
+
+	//中心線描画（デバック用）
+	//d3dg->Centerline();
+
+	//マップを描画
+	d3dg->ResetWorldTransform();
+	d3dg->DrawMapdata();
+
+	//プレイヤーの描画有無の決定
+	int DrawPlayer = 0;
+	if( (Camera_F1mode == false)&&(Camera_Debugmode == false)&&(myHuman->GetHP() > 0) ){
+		if( Camera_HOMEmode == false ){
+			DrawPlayer = 1;
+		}
+		else{
+			DrawPlayer = 2;
+		}
+	}
+	//オブジェクトを描画
+	ObjMgr.Render(camera_x, camera_y, camera_z, DrawPlayer);
+}
+
+void maingame::Render2D()
+{
+	char str[256];
+	float fps = GetFps(10);
+	float effect;
+
+	human *myHuman = ObjMgr.GetPlayerHumanObject();
+
+	int selectweapon;
+	weapon *weapon[TOTAL_HAVEWEAPON];
+	int weapon_paramid[TOTAL_HAVEWEAPON];
+	WeaponParameter weapon_paramdata;
+	for(int i=0; i<TOTAL_HAVEWEAPON; i++){
+		weapon[i] = NULL;
+		weapon_paramid[i] = 0;
+	}
+	int lnbs = 0;
+	int nbs = 0;
+	int reloadcnt = 0;
+	int selectweaponcnt = 0;
+	int weaponmodel, weapontexture;
+	char weaponname[16];
+	int hp;
+	int param_scopemode;
+	int ErrorRange;
+
+	//各種設定やゲーム情報を取得
+	myHuman->GetWeapon(&selectweapon, weapon);
+	for(int i=0; i<TOTAL_HAVEWEAPON; i++){
+		if( weapon[i] != NULL ){
+			if( selectweapon == i ){
+				weapon[i]->GetParamData(&weapon_paramid[i], &lnbs, &nbs);
+				reloadcnt = weapon[i]->GetReloadCnt();
+			}
+			else{
+				weapon[i]->GetParamData(&weapon_paramid[i], NULL, NULL);
+			}
+		}
+	}
+	selectweaponcnt = myHuman->GetChangeWeaponCnt();
+	WeaponParameter param;
+	GameParamInfo.GetWeapon(weapon_paramid[selectweapon], &param);
+	strcpy(weaponname, param.name);
+	hp = myHuman->GetHP();
+	param_scopemode = param.scopemode;
+	ErrorRange = myHuman->GetGunsightErrorRange();
+
+	float human_x, human_y, human_z, human_rx;
+	myHuman->GetPosData(&human_x, &human_y, &human_z, &human_rx);
+
+	//レッドフラッシュ描画
+	if( redflash_flag == true ){
+		d3dg->Draw2DBox(0, 0, SCREEN_WIDTH, SCREEN_HEIGTH, D3DCOLOR_COLORVALUE(1.0f,0.0f,0.0f,0.5f));
+		redflash_flag = false;
+	}
+
+	//スコープ表示
+	if( (Camera_F1mode == false)&&(myHuman->GetScopeMode() == 1) ){
+		d3dg->Draw2DTexture(0, 0, Resource.GetScopeTexture(), SCREEN_WIDTH, SCREEN_HEIGTH, 1.0f);
+		d3dg->Draw2DLine(SCREEN_WIDTH/2-49, SCREEN_HEIGTH/2, SCREEN_WIDTH/2-4, SCREEN_HEIGTH/2, D3DCOLOR_COLORVALUE(0.0f,0.0f,0.0f,1.0f));
+		d3dg->Draw2DLine(SCREEN_WIDTH/2+4, SCREEN_HEIGTH/2, SCREEN_WIDTH/2+49, SCREEN_HEIGTH/2, D3DCOLOR_COLORVALUE(0.0f,0.0f,0.0f,1.0f));
+		d3dg->Draw2DLine(SCREEN_WIDTH/2, SCREEN_HEIGTH/2-49, SCREEN_WIDTH/2, SCREEN_HEIGTH/2-4, D3DCOLOR_COLORVALUE(0.0f,0.0f,0.0f,1.0f));
+		d3dg->Draw2DLine(SCREEN_WIDTH/2, SCREEN_HEIGTH/2+4, SCREEN_WIDTH/2, SCREEN_HEIGTH/2+49, D3DCOLOR_COLORVALUE(0.0f,0.0f,0.0f,1.0f));
+		d3dg->Draw2DBox(SCREEN_WIDTH/2-50, SCREEN_HEIGTH/2-1, SCREEN_WIDTH/20+50, SCREEN_HEIGTH/2+1, D3DCOLOR_COLORVALUE(0.0f,0.0f,0.0f,0.5f));
+		d3dg->Draw2DBox(SCREEN_WIDTH/2-1, SCREEN_HEIGTH/2-50, SCREEN_WIDTH/2+1, SCREEN_HEIGTH/2+50, D3DCOLOR_COLORVALUE(0.0f,0.0f,0.0f,0.5f));
+	}
+	if( (Camera_F1mode == false)&&(myHuman->GetScopeMode() == 2) ){
+		d3dg->Draw2DTexture(0, 0, Resource.GetScopeTexture(), SCREEN_WIDTH, SCREEN_HEIGTH, 1.0f);
+		d3dg->Draw2DLine(0, SCREEN_HEIGTH/2, SCREEN_WIDTH, SCREEN_HEIGTH/2, D3DCOLOR_COLORVALUE(0.0f,0.0f,0.0f,1.0f));
+		d3dg->Draw2DLine(SCREEN_WIDTH/2, 0, SCREEN_WIDTH/2, SCREEN_HEIGTH, D3DCOLOR_COLORVALUE(0.0f,0.0f,0.0f,1.0f));
+		d3dg->Draw2DBox(0, SCREEN_HEIGTH/2-1, SCREEN_WIDTH, SCREEN_HEIGTH/2+1, D3DCOLOR_COLORVALUE(0.0f,0.0f,0.0f,0.5f));
+		d3dg->Draw2DBox(SCREEN_WIDTH/2-1, 0, SCREEN_WIDTH/2+1, SCREEN_HEIGTH, D3DCOLOR_COLORVALUE(0.0f,0.0f,0.0f,0.5f));
+	}
+
+	//目隠し表示
+	if( hp > 0 ){
+
+		int scopemode = myHuman->GetScopeMode();
+		float addang;
+		float adddist = 1.2f;
+
+		//スコープによる視野角を決定
+		if( scopemode == 0 ){ addang = VIEWANGLE_NORMAL / 4; }
+		if( scopemode == 1 ){ addang = VIEWANGLE_SCOPE_1 / 4; }
+		if( scopemode == 2 ){ addang = VIEWANGLE_SCOPE_2 / 4; }
+
+		//上
+		if( CollD.CheckALLBlockInside(camera_x + cos(camera_rx)*cos(camera_ry + addang) * adddist, camera_y + sin(camera_ry + addang) * adddist, camera_z + sin(camera_rx)*cos(camera_ry + addang) * adddist) == true ){
+			d3dg->Draw2DBox(0, 0, SCREEN_WIDTH, SCREEN_HEIGTH/2, D3DCOLOR_COLORVALUE(0.0f,0.0f,0.0f,1.0f));
+		}
+
+		//下
+		if( CollD.CheckALLBlockInside(camera_x + cos(camera_rx)*cos(camera_ry - addang) * adddist, camera_y + sin(camera_ry - addang) * adddist, camera_z + sin(camera_rx)*cos(camera_ry - addang) * adddist) == true ){
+			d3dg->Draw2DBox(0, SCREEN_HEIGTH/2, SCREEN_WIDTH, SCREEN_HEIGTH, D3DCOLOR_COLORVALUE(0.0f,0.0f,0.0f,1.0f));
+		}
+
+		//左
+		if( CollD.CheckALLBlockInside(camera_x + cos(camera_rx + addang)*cos(camera_ry) * adddist, camera_y + sin(camera_ry) * adddist, camera_z + sin(camera_rx + addang)*cos(camera_ry) * adddist) == true ){
+			d3dg->Draw2DBox(0, 0, SCREEN_WIDTH/2, SCREEN_HEIGTH, D3DCOLOR_COLORVALUE(0.0f,0.0f,0.0f,1.0f));
+		}
+
+		//右
+		if( CollD.CheckALLBlockInside(camera_x + cos(camera_rx - addang)*cos(camera_ry) * adddist, camera_y + sin(camera_ry) * adddist, camera_z + sin(camera_rx - addang)*cos(camera_ry) * adddist) == true ){
+			d3dg->Draw2DBox(SCREEN_WIDTH/2, 0, SCREEN_WIDTH, SCREEN_HEIGTH, D3DCOLOR_COLORVALUE(0.0f,0.0f,0.0f,1.0f));
+		}
+	}
+
+	//デバック用・ゲーム情報の表示
+	if( (ShowInfo_Debugmode == true)||(Camera_Debugmode == true) ){
+		//システムフォントによる表示　見やすい・重い
+		/*
+		sprintf(str, "OpenXOPS テスト\ncamera x:%.2f y:%.2f z:%.2f rx:%.2f ry:%.2f\n"
+			"human[%d]：x:%.2f y:%.2f z:%.2f rx:%.2f\n"
+			"I:%02dms PO:%02dms PA:%02dms PE:%02dms R:%02dms",
+			camera_x, camera_y, camera_z, camera_rx, camera_ry,
+			ObjMgr.GetPlayerID(), human_x, human_y, human_z, human_rx,
+			time_input, time_process_object, time_process_ai, time_process_event, time_render);
+		d3dg->Draw2DMSFontText(10+1, 10+1, str, D3DCOLOR_COLORVALUE(0.1f,0.1f,0.1f,1.0f));
+		d3dg->Draw2DMSFontText(10, 10, str, D3DCOLOR_COLORVALUE(1.0f,1.0f,1.0f,1.0f));
+		*/
+
+		//テクスチャフォントによる表示　軽い・見にくい
+		sprintf(str, "frame:%d   time %02d:%02d", framecnt, framecnt/(int)GAMEFPS/60, framecnt/(int)GAMEFPS%60);
+		d3dg->Draw2DTextureFontText(10+1, 10+1, str, D3DCOLOR_COLORVALUE(0.1f,0.1f,0.1f,1.0f), 10, 14);
+		d3dg->Draw2DTextureFontText(10, 10, str, D3DCOLOR_COLORVALUE(1.0f,1.0f,1.0f,1.0f), 10, 14);
+		sprintf(str, "camera x:%.2f y:%.2f z:%.2f rx:%.2f ry:%.2f", camera_x, camera_y, camera_z, camera_rx, camera_ry);
+		d3dg->Draw2DTextureFontText(10+1, 30+1, str, D3DCOLOR_COLORVALUE(0.1f,0.1f,0.1f,1.0f), 10, 14);
+		d3dg->Draw2DTextureFontText(10, 30, str, D3DCOLOR_COLORVALUE(1.0f,1.0f,1.0f,1.0f), 10, 14);
+		sprintf(str, "human[%d] x:%.2f y:%.2f z:%.2f rx:%.2f HP:%d", ObjMgr.GetPlayerID(), human_x, human_y, human_z, human_rx, hp);
+		d3dg->Draw2DTextureFontText(10+1, 50+1, str, D3DCOLOR_COLORVALUE(0.1f,0.1f,0.1f,1.0f), 10, 14);
+		d3dg->Draw2DTextureFontText(10, 50, str, D3DCOLOR_COLORVALUE(1.0f,1.0f,1.0f,1.0f), 10, 14);
+		sprintf(str, "Input:%02dms Object:%02dms AI:%02dms Event:%02dms Sound:%02dms", time_input, time_process_object, time_process_ai, time_process_event, time_sound);
+		d3dg->Draw2DTextureFontText(10+1, 70+1, str, D3DCOLOR_COLORVALUE(0.1f,0.1f,0.1f,1.0f), 10, 14);
+		d3dg->Draw2DTextureFontText(10, 70, str, D3DCOLOR_COLORVALUE(1.0f,1.0f,1.0f,1.0f), 10, 14);
+		sprintf(str, "Render:%02dms", time_render);
+		d3dg->Draw2DTextureFontText(10+1, 90+1, str, D3DCOLOR_COLORVALUE(0.1f,0.1f,0.1f,1.0f), 10, 14);
+		d3dg->Draw2DTextureFontText(10, 90, str, D3DCOLOR_COLORVALUE(1.0f,1.0f,1.0f,1.0f), 10, 14);
+	}
+	else{
+		d3dg->Draw2DTextureFontText(10+1, 10+1, "Debug information [F11]", D3DCOLOR_COLORVALUE(0.1f,0.1f,0.1f,1.0f), 12, 18);
+		d3dg->Draw2DTextureFontText(10, 10, "Debug information [F11]", D3DCOLOR_COLORVALUE(1.0f,1.0f,1.0f,1.0f), 12, 18);
+	}
+
+	//ゲーム実行速度の表示
+	if( 1 ){
+		sprintf(str, "fps:%.2f", fps);
+	}
+	else{
+		int speed = (int)(fps / (1000.0f/GAMEFRAMEMS) * 100);
+		sprintf(str, "PROCESSING SPEED %d%%", speed);
+	}
+	d3dg->Draw2DTextureFontText(SCREEN_WIDTH - strlen(str)*14 - 14 +1, 10+1, str, D3DCOLOR_COLORVALUE(0.0f,0.0f,0.0f,1.0f), 14, 18);
+	d3dg->Draw2DTextureFontText(SCREEN_WIDTH - strlen(str)*14 - 14, 10, str, D3DCOLOR_COLORVALUE(1.0f,0.5f,0.0f,1.0f), 14, 18);
+
+	//HUD表示・モードA
+	if( Camera_F2mode == 0 ){
+		//右下エリア用文字コード設定
+		str[0] = 'ｰ';
+		for(int i=1; i<HUDA_WEAPON_SIZEW-1; i++){
+			str[i] = 'ｱ';
+		}
+		str[HUDA_WEAPON_SIZEW-1] = 'ｲ';
+		str[HUDA_WEAPON_SIZEW] = 0x00;
+
+		//左下エリア描画
+		d3dg->Draw2DTextureFontText(15, SCREEN_HEIGTH - 105, "ｳｴｴｴｴｴｴｵ", D3DCOLOR_COLORVALUE(1.0f,1.0f,1.0f,0.5f), 32, 32);
+		d3dg->Draw2DTextureFontText(15, SCREEN_HEIGTH - 105 +32, "ﾃﾄﾄﾄﾄﾄﾄﾅ", D3DCOLOR_COLORVALUE(1.0f,1.0f,1.0f,0.5f), 32, 32);
+		d3dg->Draw2DTextureFontText(15, SCREEN_HEIGTH - 55, "ｳｴｴｶｷｷｷｸｹ", D3DCOLOR_COLORVALUE(1.0f,1.0f,1.0f,0.5f), 32, 32);
+		d3dg->Draw2DTextureFontText(15, SCREEN_HEIGTH - 55 +32, "ﾃﾄﾄﾆﾇﾇﾇﾈﾉ", D3DCOLOR_COLORVALUE(1.0f,1.0f,1.0f,0.5f), 32, 32);
+
+		//右下エリア描画
+		d3dg->Draw2DTextureFontText(HUDA_WEAPON_POSX, HUDA_WEAPON_POSY, str, D3DCOLOR_COLORVALUE(1.0f,1.0f,1.0f,0.5f), 32, 32);
+		for(int i=0; i<HUDA_WEAPON_SIZEW; i++){ str[i] += 0x10; }
+		for(int i=1; i<HUDA_WEAPON_SIZEH-1; i++){
+			d3dg->Draw2DTextureFontText(HUDA_WEAPON_POSX, HUDA_WEAPON_POSY + 32*i, str, D3DCOLOR_COLORVALUE(1.0f,1.0f,1.0f,0.5f), 32, 32);
+		}
+		for(int i=0; i<HUDA_WEAPON_SIZEW; i++){ str[i] += 0x10; }
+		d3dg->Draw2DTextureFontText(HUDA_WEAPON_POSX, HUDA_WEAPON_POSY + 32*(HUDA_WEAPON_SIZEH-1), str, D3DCOLOR_COLORVALUE(1.0f,1.0f,1.0f,0.5f), 32, 32);
+
+		//武器の弾数表示
+		sprintf(str, "ｻ%d ｺ%d", lnbs, (nbs - lnbs));
+		d3dg->Draw2DTextureFontText(25, SCREEN_HEIGTH - 96, str, D3DCOLOR_COLORVALUE(1.0f,1.0f,1.0f,1.0f), 23, 24);
+
+		//HPによる色の決定
+		int statecolor;
+		if( hp >= 100 ){
+			statecolor = D3DCOLOR_COLORVALUE(0.0f,1.0f,0.0f,1.0f);
+		}
+		else if( hp >= 50 ){
+			statecolor = D3DCOLOR_COLORVALUE(1.0f/50*(100-hp),1.0f,0.0f,1.0f);
+		}
+		else if( hp > 0 ){
+			statecolor = D3DCOLOR_COLORVALUE(1.0f,1.0f/50*hp,0.0f,1.0f);
+		}
+		else{
+			statecolor = D3DCOLOR_COLORVALUE(1.0f,0.0f,0.0f,1.0f);
+		}
+
+		//HP表示
+		if( hp >= 80 ){
+			d3dg->Draw2DTextureFontText(23, SCREEN_HEIGTH - 45, "STATE", statecolor, 18, 24);
+			d3dg->Draw2DTextureFontText(155, SCREEN_HEIGTH - 45, "FINE", statecolor, 18, 24);
+		}
+		else if( hp >= 40 ){
+			d3dg->Draw2DTextureFontText(23, SCREEN_HEIGTH - 45, "STATE", statecolor, 18, 24);
+			d3dg->Draw2DTextureFontText(135, SCREEN_HEIGTH - 45, "CAUTION", statecolor, 18, 24);
+		}
+		else if( hp > 0 ){
+			d3dg->Draw2DTextureFontText(23, SCREEN_HEIGTH - 45, "STATE", statecolor, 18, 24);
+			d3dg->Draw2DTextureFontText(140, SCREEN_HEIGTH - 45, "DANGER", statecolor, 18, 24);
+		}
+		else{
+			d3dg->Draw2DTextureFontText(23, SCREEN_HEIGTH - 45, "STATE", statecolor, 18, 24);
+			d3dg->Draw2DTextureFontText(155, SCREEN_HEIGTH - 45, "DEAD", statecolor, 18, 24);
+		}
+
+		//武器名表示
+		d3dg->Draw2DTextureFontText(HUDA_WEAPON_POSX + 9, HUDA_WEAPON_POSY + 4, weaponname, D3DCOLOR_COLORVALUE(1.0f,1.0f,1.0f,1.0f), 16, 20);
+	}
+
+	//HUD表示・モードB
+	if( Camera_F2mode == 1 ){
+		//画面周りの線
+		d3dg->Draw2DLine(0, 0, SCREEN_WIDTH-1, 0, D3DCOLOR_COLORVALUE(0.0f,1.0f,0.0f,1.0f));
+		d3dg->Draw2DLine(SCREEN_WIDTH-1, 0, SCREEN_WIDTH-1, SCREEN_HEIGTH-1, D3DCOLOR_COLORVALUE(0.0f,1.0f,0.0f,1.0f));
+		d3dg->Draw2DLine(0, 0, 0, SCREEN_HEIGTH-1, D3DCOLOR_COLORVALUE(0.0f,1.0f,0.0f,1.0f));
+		d3dg->Draw2DLine(0, SCREEN_HEIGTH-1, SCREEN_WIDTH-1, SCREEN_HEIGTH-1, D3DCOLOR_COLORVALUE(0.0f,1.0f,0.0f,1.0f));
+
+		//武器名表示
+		d3dg->Draw2DBox(8, SCREEN_HEIGTH - 32, 227, SCREEN_HEIGTH - 7, D3DCOLOR_COLORVALUE(0.0f,0.0f,0.0f,0.3f));
+		d3dg->Draw2DTextureFontText(10, SCREEN_HEIGTH - 30, weaponname, D3DCOLOR_COLORVALUE(1.0f,1.0f,1.0f,1.0f), 16, 20);
+	}
+
+	//イベントメッセージ表示
+	if( (message_id != -1)&&(message_cnt < TOTAL_EVENTENT_SHOWMESCNT) ){
+		char messtr[MAX_POINTMESSAGEBYTE];
+		PointData.GetMessageText(messtr, message_id);
+		float effectA = 1.0f;
+		if( message_cnt < (int)(0.2f*GAMEFPS) ){ effectA = 1.0f/(0.2f*GAMEFPS) * (message_cnt - (int)(0.0f*GAMEFPS)); }
+		if( TOTAL_EVENTENT_SHOWMESCNT-(int)(0.2f*GAMEFPS) < message_cnt ){ effectA = 1.0f - 1.0f/(0.2f*GAMEFPS) * (message_cnt - TOTAL_EVENTENT_SHOWMESCNT-(int)(0.2f*GAMEFPS)); }
+		d3dg->Draw2DMSFontTextCenter(0 +1, SCREEN_HEIGTH - 140 +1, SCREEN_WIDTH, 140, messtr, D3DCOLOR_COLORVALUE(0.1f,0.1f,0.1f,effectA));
+		d3dg->Draw2DMSFontTextCenter(0, SCREEN_HEIGTH - 140, SCREEN_WIDTH, 140, messtr, D3DCOLOR_COLORVALUE(1.0f,1.0f,1.0f,effectA));
+	}
+
+	//リロード表示
+	if( reloadcnt > 0 ){
+		d3dg->Draw2DTextureFontText(SCREEN_WIDTH/2 - 145 +3, SCREEN_HEIGTH - 180+3, "RELOADING", D3DCOLOR_COLORVALUE(0.2f,0.2f,0.2f,1.0f), 32, 34);
+		d3dg->Draw2DTextureFontText(SCREEN_WIDTH/2 - 145, SCREEN_HEIGTH - 180, "RELOADING", D3DCOLOR_COLORVALUE(1.0f,1.0f,1.0f,1.0f), 32, 34);
+	}
+
+	//武器切り替え表示
+	if( selectweaponcnt > 0 ){
+		d3dg->Draw2DTextureFontText(SCREEN_WIDTH/2 - 130 +3, SCREEN_HEIGTH - 180+3, "CHANGING", D3DCOLOR_COLORVALUE(0.2f,0.2f,0.2f,1.0f), 32, 34);
+		d3dg->Draw2DTextureFontText(SCREEN_WIDTH/2 - 130, SCREEN_HEIGTH - 180, "CHANGING", D3DCOLOR_COLORVALUE(1.0f,1.0f,1.0f,1.0f), 32, 34);
+	}
+
+	//照準表示
+	if( (Camera_F1mode == false)&&(weapon[selectweapon] != NULL)&&(end_framecnt == 0)&&(myHuman->GetScopeMode() == 0)&&(param_scopemode != 2) ){
+		if( GameConfig.GetAnotherGunsightFlag() ){	//オプション型
+			d3dg->Draw2DLine(SCREEN_WIDTH/2, SCREEN_HEIGTH/2, SCREEN_WIDTH/2, SCREEN_HEIGTH/2+4, D3DCOLOR_COLORVALUE(1.0f,0.0f,0.0f,0.5f));
+			d3dg->Draw2DLine(SCREEN_WIDTH/2-15, SCREEN_HEIGTH/2+15, SCREEN_WIDTH/2-19, SCREEN_HEIGTH/2+19, D3DCOLOR_COLORVALUE(1.0f,0.0f,0.0f,0.5f));
+			d3dg->Draw2DLine(SCREEN_WIDTH/2+15, SCREEN_HEIGTH/2+15, SCREEN_WIDTH/2+19, SCREEN_HEIGTH/2+19, D3DCOLOR_COLORVALUE(1.0f,0.0f,0.0f,0.5f));
+			d3dg->Draw2DLine(SCREEN_WIDTH/2-4, SCREEN_HEIGTH/2+4, SCREEN_WIDTH/2+4, SCREEN_HEIGTH/2+4, D3DCOLOR_COLORVALUE(1.0f,0.0f,0.0f,1.0f));
+
+			d3dg->Draw2DLine(SCREEN_WIDTH/2-4 - ErrorRange, SCREEN_HEIGTH/2-4 - ErrorRange, SCREEN_WIDTH/2-4 - ErrorRange, SCREEN_HEIGTH/2+4 + ErrorRange, D3DCOLOR_COLORVALUE(1.0f,0.0f,0.0f,1.0f));
+			d3dg->Draw2DLine(SCREEN_WIDTH/2+4 + ErrorRange, SCREEN_HEIGTH/2-4 - ErrorRange, SCREEN_WIDTH/2+4 + ErrorRange, SCREEN_HEIGTH/2+4 + ErrorRange, D3DCOLOR_COLORVALUE(1.0f,0.0f,0.0f,1.0f));
+		}
+		else{										//標準型
+			d3dg->Draw2DLine(SCREEN_WIDTH/2-13, SCREEN_HEIGTH/2, SCREEN_WIDTH/2-3, SCREEN_HEIGTH/2, D3DCOLOR_COLORVALUE(1.0f,0.0f,0.0f,1.0f));
+			d3dg->Draw2DLine(SCREEN_WIDTH/2+13, SCREEN_HEIGTH/2, SCREEN_WIDTH/2+3, SCREEN_HEIGTH/2, D3DCOLOR_COLORVALUE(1.0f,0.0f,0.0f,1.0f));
+			d3dg->Draw2DLine(SCREEN_WIDTH/2, SCREEN_HEIGTH/2-13, SCREEN_WIDTH/2, SCREEN_HEIGTH/2-3, D3DCOLOR_COLORVALUE(1.0f,0.0f,0.0f,1.0f));
+			d3dg->Draw2DLine(SCREEN_WIDTH/2, SCREEN_HEIGTH/2+13, SCREEN_WIDTH/2, SCREEN_HEIGTH/2+3, D3DCOLOR_COLORVALUE(1.0f,0.0f,0.0f,1.0f));
+
+			d3dg->Draw2DTextureFontText(SCREEN_WIDTH/2 - 16 - ErrorRange, SCREEN_HEIGTH/2 - 16, "ｽ", D3DCOLOR_COLORVALUE(1.0f,0.0f,0.0f,0.5f), 32, 32);
+			d3dg->Draw2DTextureFontText(SCREEN_WIDTH/2 - 16 + ErrorRange, SCREEN_HEIGTH/2 - 16, "ｾ", D3DCOLOR_COLORVALUE(1.0f,0.0f,0.0f,0.5f), 32, 32);
+		}
+	}
+
+
+	//-----------------------------------
+
+	//Zバッファを初期化
+	d3dg->ResetZbuffer();
+
+
+	//HUD表示・モードA
+	if( Camera_F2mode == 0 ){
+		int notselectweapon = selectweapon + 1;
+		if( notselectweapon == TOTAL_HAVEWEAPON ){ notselectweapon = 0; }
+
+		//（3D描画）カメラ座標を暫定設定
+		d3dg->SetCamera(camera_x, camera_y, camera_z, camera_rx, camera_ry, VIEWANGLE_NORMAL);
+
+		//（3D描画）所持している武器モデルの描画・メイン武器
+		GameParamInfo.GetWeapon(weapon_paramid[selectweapon], &weapon_paramdata);
+		Resource.GetWeaponModelTexture(weapon_paramid[selectweapon], &weaponmodel, &weapontexture);
+		d3dg->SetWorldTransformPlayerWeapon(true, camera_x, camera_y, camera_z, camera_rx, camera_ry, (float)M_PI/180*framecnt*2, weapon_paramdata.size);
+		d3dg->RenderModel(weaponmodel, weapontexture);
+
+		//（3D描画）所持している武器モデルの描画・サブ武器
+		GameParamInfo.GetWeapon(weapon_paramid[notselectweapon], &weapon_paramdata);
+		Resource.GetWeaponModelTexture(weapon_paramid[notselectweapon], &weaponmodel, &weapontexture);
+		d3dg->SetWorldTransformPlayerWeapon(false, camera_x, camera_y, camera_z, camera_rx, camera_ry, 0.0f, weapon_paramdata.size);
+		d3dg->RenderModel(weaponmodel, weapontexture);
+	}
+
+	//-----------------------------------
+
+
+	//スタート時のブラックアウト設定
+	if( start_framecnt < 1*((int)GAMEFPS) ){
+		effect = 1.0f/(1*((int)GAMEFPS)) * (1*((int)GAMEFPS) - start_framecnt);
+	}
+	else if( end_framecnt > 0 ){
+		effect = 1.0f/(4*((int)GAMEFPS)) * end_framecnt;
+		if( effect > 1.0f ){ effect = 1.0f; }
+	}
+	else{
+		effect = 0.0f;
+	}
+	d3dg->Draw2DBox(0, 0, SCREEN_WIDTH, SCREEN_HEIGTH, D3DCOLOR_COLORVALUE(0.0f,0.0f,0.0f,effect));
+
+	//終了時のブラックアウト設定
+	if( end_framecnt > 0 ){
+		if( end_framecnt < 1*((int)GAMEFPS) ){
+			effect = 1.0f/(1*((int)GAMEFPS)) * end_framecnt;
+		}
+		else if( end_framecnt > 4*((int)GAMEFPS) ){
+			effect = 1.0f/(1*((int)GAMEFPS)) * (5*((int)GAMEFPS) - end_framecnt);
+		}
+		else{
+			effect = 1.0f;
+		}
+
+		if( GameInfoData.missioncomplete == true ){
+			d3dg->Draw2DTextureFontText(SCREEN_WIDTH/2 - 252, SCREEN_HEIGTH/2 + 10, "objective complete", D3DCOLOR_COLORVALUE(1.0f,0.5f,0.0f,effect), 28, 32);
+		}
+		else{
+			d3dg->Draw2DTextureFontText(SCREEN_WIDTH/2 - 210, SCREEN_HEIGTH/2 + 10, "mission failure", D3DCOLOR_COLORVALUE(1.0f,0.0f,0.0f,effect), 28, 32);
+		}
+	}
+
+
+	time_render = GetTimeMS() - time;
+}
+
+void maingame::Destroy()
+{
+	//ブロックデータ解放
+	d3dg->CleanupMapdata();
+
+	//オブジェクトマネージャー解放
+	ObjMgr.Cleanup();
+
+	//背景空解放
+	Resource.CleanupSkyModelTexture();
+
+	GameState->NextState();
+}
+
+//! コンストラクタ
+result::result()
+{}
+
+//! ディストラクタ
+result::~result()
+{}
+
+//! リザルト画面の2D描画部分
+void result::Render2D()
+{
+	char mname[64];
+	char str[32];
+	float effectA = 1.0f - 0.8f/((int)GAMEFPS)*(framecnt%((int)GAMEFPS));
+	float rate;
+	if( GameInfoData.fire == 0 ){
+		rate = 0.0f;
+	}
+	else{
+		rate = (float)GameInfoData.ontarget / GameInfoData.fire * 100;
+	}
+
+	//メモ：背景画像の描画は、自動的に行われる。
+
+	//固定文字描画
+	d3dg->Draw2DTextureFontText(SCREEN_WIDTH/2 - 50*3, 40, "RESULT", D3DCOLOR_COLORVALUE(1.0f,0.0f,1.0f,effectA), 50, 42);
+
+	//ミッション名を取得し描画
+	if( MIFdata.GetFiletype() == false ){
+		GameParamInfo.GetOfficialMission(GameInfoData.selectmission_id, NULL, mname, NULL, NULL);
+	}
+	else{
+		strcpy(mname, MIFdata.GetMissionFullname());
+	}
+	d3dg->Draw2DTextureFontText(SCREEN_WIDTH/2 - strlen(mname)*18/2, 100, mname, D3DCOLOR_COLORVALUE(0.5f,0.5f,1.0f,1.0f), 18, 25);
+
+	//ミッションクリアーの有無
+	if( GameInfoData.missioncomplete == true ){
+		d3dg->Draw2DTextureFontText(SCREEN_WIDTH/2 - 216, 150, "mission successful", D3DCOLOR_COLORVALUE(0.0f,1.0f,0.0f,1.0f), 24, 32);
+	}
+	else{
+		d3dg->Draw2DTextureFontText(SCREEN_WIDTH/2 - 180, 150, "mission failure", D3DCOLOR_COLORVALUE(1.0f,0.0f,0.0f,1.0f), 24, 32);
+	}
+
+	//結果表示
+	sprintf(str, "Time  %dmin %dsec", GameInfoData.framecnt/(int)GAMEFPS/60, GameInfoData.framecnt/(int)GAMEFPS%60);
+	d3dg->Draw2DTextureFontText(SCREEN_WIDTH/2-strlen(str)*20/2, 210, str, D3DCOLOR_COLORVALUE(1.0f,1.0f,1.0f,1.0f), 20, 32);
+	sprintf(str, "Rounds fired  %d", GameInfoData.fire);
+	d3dg->Draw2DTextureFontText(SCREEN_WIDTH/2-strlen(str)*20/2, 260, str, D3DCOLOR_COLORVALUE(1.0f,1.0f,1.0f,1.0f), 20, 32);
+	sprintf(str, "Rounds on target  %d", GameInfoData.ontarget);
+	d3dg->Draw2DTextureFontText(SCREEN_WIDTH/2-strlen(str)*20/2, 310, str, D3DCOLOR_COLORVALUE(1.0f,1.0f,1.0f,1.0f), 20, 32);
+	sprintf(str, "Accuracy rate  %.1f%%", rate);
+	d3dg->Draw2DTextureFontText(SCREEN_WIDTH/2-strlen(str)*20/2, 360, str, D3DCOLOR_COLORVALUE(1.0f,1.0f,1.0f,1.0f), 20, 32);
+	sprintf(str, "Kill  %d / HeadShot  %d", GameInfoData.kill, GameInfoData.headshot);
+	d3dg->Draw2DTextureFontText(SCREEN_WIDTH/2-strlen(str)*20/2, 410, str, D3DCOLOR_COLORVALUE(1.0f,1.0f,1.0f,1.0f), 20, 32);
+}
+
+//! screen派生クラスの初期化（クラスの設定）
+void InitScreen(opening *Opening, mainmenu *MainMenu, briefing *Briefing, maingame *MainGame, result *Result)
+{
+	Opening->SetClass(&GameState, &d3dg, &inputCtrl, &GameSound);
+	MainMenu->SetClass(&GameState, &d3dg, &inputCtrl, &GameSound);
+	Briefing->SetClass(&GameState, &d3dg, &inputCtrl);
+	MainGame->SetClass(&GameState, &d3dg, &inputCtrl, &GameSound);
+	Result->SetClass(&GameState, &d3dg, &inputCtrl);
+}
+
+//! screen派生クラスの実行
+void ProcessScreen(HWND hWnd, opening *Opening, mainmenu *MainMenu, briefing *Briefing, maingame *MainGame, result *Result, unsigned int framecnt)
+{
+	int error;
+
+	switch(GameState.GetState()){
+		//オープニング初期化
+		case STATE_CREATE_OPENING:
+			error = Opening->Create();
+			if( error == 1 ){
+				MessageBox(hWnd, "block data open failed",  "error", MB_OK);
+				PostMessage(hWnd, WM_CLOSE, 0L, 0L);
+			}
+			if( error == 2 ){
+				MessageBox(hWnd, "point data open failed",  "error", MB_OK);
+				PostMessage(hWnd, WM_CLOSE, 0L, 0L);
+			}
+			break;
+
+		//オープニング実行
+		case STATE_NOW_OPENING:
+			Opening->Input();
+			Opening->Process();
+			Opening->Sound();
+			if( (GameConfig.GetFrameskipFlag() == false)||(framecnt%2 == 0) ){
+				Opening->RenderMain();
+			}
+			break;
+
+		//オープニング廃棄
+		case STATE_DESTROY_OPENING:
+			Opening->Destroy();
+			break;
+
+		//メニュー初期化
+		case STATE_CREATE_MENU:
+			error = MainMenu->Create();
+			if( error == 1 ){
+				MessageBox(hWnd, "block data open failed",  "error", MB_OK);
+				PostMessage(hWnd, WM_CLOSE, 0L, 0L);
+			}
+			if( error == 2 ){
+				MessageBox(hWnd, "point data open failed",  "error", MB_OK);
+				PostMessage(hWnd, WM_CLOSE, 0L, 0L);
+			}
+			break;
+
+		//メニュー実行
+		case STATE_NOW_MENU:
+			MainMenu->Input();
+			MainMenu->Process();
+			MainMenu->Sound();
+			if( (GameConfig.GetFrameskipFlag() == false)||(framecnt%2 == 0) ){
+				MainMenu->RenderMain();
+			}
+			break;
+
+		//メニュー廃棄
+		case STATE_DESTROY_MENU:
+			MainMenu->Destroy();
+			break;
+
+		//ブリーフィング初期化
+		case STATE_CREATE_BRIEFING:
+			error = Briefing->Create();
+			if( error == 1 ){
+				MessageBox(hWnd, "briefing data open failed",  "error", MB_OK);
+				PostMessage(hWnd, WM_CLOSE, 0L, 0L);
+			}
+			break;
+
+		//ブリーフィング実行
+		case STATE_NOW_BRIEFING:
+			Briefing->Input();
+			Briefing->Process();
+			if( (GameConfig.GetFrameskipFlag() == false)||(framecnt%2 == 0) ){
+				Briefing->RenderMain();
+			}
+			break;
+
+		//ブリーフィング廃棄
+		case STATE_DESTROY_BRIEFING:
+			Briefing->Destroy();
+			break;
+
+		//メインゲーム初期化
+		case STATE_CREATE_MAINGAME:
+			error = MainGame->Create();
+			if( error == 1 ){
+				MessageBox(hWnd, "block data open failed",  "error", MB_OK);
+				PostMessage(hWnd, WM_CLOSE, 0L, 0L);
+			}
+			if( error == 2 ){
+				MessageBox(hWnd, "point data open failed",  "error", MB_OK);
+				PostMessage(hWnd, WM_CLOSE, 0L, 0L);
+			}
+			break;
+
+		//メインゲーム実行
+		case STATE_NOW_MAINGAME:
+			MainGame->Input();
+			MainGame->Process();
+			MainGame->Sound();
+			if( (GameConfig.GetFrameskipFlag() == false)||(framecnt%2 == 0) ){
+				MainGame->RenderMain();
+			}
+			break;
+
+		//メインゲーム廃棄
+		case STATE_DESTROY_MAINGAME:
+			MainGame->Destroy();
+			break;
+
+		//リザルト初期化
+		case STATE_CREATE_RESULT:
+			error = Result->Create();
+			break;
+
+		//リザルト実行
+		case STATE_NOW_RESULT:
+			Result->Input();
+			Result->Process();
+			if( (GameConfig.GetFrameskipFlag() == false)||(framecnt%2 == 0) ){
+				Result->RenderMain();
+			}
+			break;
+
+		//リザルト廃棄
+		case STATE_DESTROY_RESULT:
+			Result->Destroy();
+			break;
+
+		//ゲーム終了
+		case STATE_EXIT:
+			PostMessage(hWnd, WM_CLOSE, 0L, 0L);
+			break;
+
+		default:
+			break;
+	}
+}
