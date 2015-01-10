@@ -55,8 +55,7 @@ int WINAPI WinMain(HINSTANCE hInstance,	HINSTANCE hPrevInstance, LPTSTR lpCmdLin
 
 	//実行ファイルのある場所を、カレントディレクトリにする。
 	char path[MAX_PATH];
-	//GetModuleFileName(NULL, path, MAX_PATH);
-	strcpy(path, "K:\\ソフト\\XOPS\\xops096\\");
+	GetModuleFileName(NULL, path, MAX_PATH);
 	PathRemoveFileSpec(path);
 	SetCurrentDirectory(path);
 #endif
