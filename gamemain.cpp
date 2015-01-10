@@ -1927,19 +1927,29 @@ void maingame::Render2D()
 
 	//HUD表示・モードA
 	if( Camera_F2mode == 0 ){
-		//右下エリア用文字コード設定
-		str[0] = 'ｰ';
-		for(int i=1; i<HUDA_WEAPON_SIZEW-1; i++){
-			str[i] = 'ｱ';
-		}
-		str[HUDA_WEAPON_SIZEW-1] = 'ｲ';
-		str[HUDA_WEAPON_SIZEW] = 0x00;
-
 		//左下エリア描画
-		d3dg->Draw2DTextureFontText(15, SCREEN_HEIGTH - 105, "ｳｴｴｴｴｴｴｵ", D3DCOLOR_COLORVALUE(1.0f,1.0f,1.0f,0.5f), 32, 32);
-		d3dg->Draw2DTextureFontText(15, SCREEN_HEIGTH - 105 +32, "ﾃﾄﾄﾄﾄﾄﾄﾅ", D3DCOLOR_COLORVALUE(1.0f,1.0f,1.0f,0.5f), 32, 32);
-		d3dg->Draw2DTextureFontText(15, SCREEN_HEIGTH - 55, "ｳｴｴｶｷｷｷｸｹ", D3DCOLOR_COLORVALUE(1.0f,1.0f,1.0f,0.5f), 32, 32);
-		d3dg->Draw2DTextureFontText(15, SCREEN_HEIGTH - 55 +32, "ﾃﾄﾄﾆﾇﾇﾇﾈﾉ", D3DCOLOR_COLORVALUE(1.0f,1.0f,1.0f,0.5f), 32, 32);
+		//"ｳｴｴｴｴｴｴｵ"
+		str[0] = (signed char)0xB3;		str[1] = (signed char)0xB4;		str[2] = (signed char)0xB4;		str[3] = (signed char)0xB4;		str[4] = (signed char)0xB4;
+		str[5] = (signed char)0xB4;		str[6] = (signed char)0xB4;		str[7] = (signed char)0xB5;		str[8] = (signed char)0x00;
+		d3dg->Draw2DTextureFontText(15, SCREEN_HEIGTH - 105, str, D3DCOLOR_COLORVALUE(1.0f,1.0f,1.0f,0.5f), 32, 32);
+		//"ﾃﾄﾄﾄﾄﾄﾄﾅ"
+		for(int i=0; i<9; i++){ str[i] += (signed char)0x10; }
+		d3dg->Draw2DTextureFontText(15, SCREEN_HEIGTH - 105 +32, str, D3DCOLOR_COLORVALUE(1.0f,1.0f,1.0f,0.5f), 32, 32);
+		//"ｳｴｴｶｷｷｷｸｹ"
+		str[0] = (signed char)0xB3;		str[1] = (signed char)0xB4;		str[2] = (signed char)0xB4;		str[3] = (signed char)0xB6;		str[4] = (signed char)0xB7;
+		str[5] = (signed char)0xB7;		str[6] = (signed char)0xB7;		str[7] = (signed char)0xB8;		str[8] = (signed char)0xB9;		str[9] = (signed char)0x00;
+		d3dg->Draw2DTextureFontText(15, SCREEN_HEIGTH - 55, str, D3DCOLOR_COLORVALUE(1.0f,1.0f,1.0f,0.5f), 32, 32);
+		//"ﾃﾄﾄﾆﾇﾇﾇﾈﾉ"
+		for(int i=0; i<10; i++){ str[i] += (signed char)0x10; }
+		d3dg->Draw2DTextureFontText(15, SCREEN_HEIGTH - 55 +32, str, D3DCOLOR_COLORVALUE(1.0f,1.0f,1.0f,0.5f), 32, 32);
+
+		//右下エリア用文字コード設定
+		str[0] = (signed char)0xB0;//'ｰ';
+		for(int i=1; i<HUDA_WEAPON_SIZEW-1; i++){
+			str[i] = (signed char)0xB1;//'ｱ';
+		}
+		str[HUDA_WEAPON_SIZEW-1] = (signed char)0xB2;//'ｲ';
+		str[HUDA_WEAPON_SIZEW] = 0x00;
 
 		//右下エリア描画
 		d3dg->Draw2DTextureFontText(HUDA_WEAPON_POSX, HUDA_WEAPON_POSY, str, D3DCOLOR_COLORVALUE(1.0f,1.0f,1.0f,0.5f), 32, 32);
@@ -1951,7 +1961,11 @@ void maingame::Render2D()
 		d3dg->Draw2DTextureFontText(HUDA_WEAPON_POSX, HUDA_WEAPON_POSY + 32*(HUDA_WEAPON_SIZEH-1), str, D3DCOLOR_COLORVALUE(1.0f,1.0f,1.0f,0.5f), 32, 32);
 
 		//武器の弾数表示
-		sprintf(str, "ｻ%d ｺ%d", lnbs, (nbs - lnbs));
+		sprintf(str, "A%d B%d", lnbs, (nbs - lnbs));
+		for(int i=0; i<(int)strlen(str); i++){
+			if( str[i] == 'A' ){ str[i] = (signed char)0xBB; }	//'ｻ'
+			if( str[i] == 'B' ){ str[i] = (signed char)0xBA; }	//'ｺ'
+		}
 		d3dg->Draw2DTextureFontText(25, SCREEN_HEIGTH - 96, str, D3DCOLOR_COLORVALUE(1.0f,1.0f,1.0f,1.0f), 23, 24);
 
 		//HPによる色の決定
@@ -2044,8 +2058,10 @@ void maingame::Render2D()
 			d3dg->Draw2DLine(SCREEN_WIDTH/2, SCREEN_HEIGTH/2-13, SCREEN_WIDTH/2, SCREEN_HEIGTH/2-3, D3DCOLOR_COLORVALUE(1.0f,0.0f,0.0f,1.0f));
 			d3dg->Draw2DLine(SCREEN_WIDTH/2, SCREEN_HEIGTH/2+13, SCREEN_WIDTH/2, SCREEN_HEIGTH/2+3, D3DCOLOR_COLORVALUE(1.0f,0.0f,0.0f,1.0f));
 
-			d3dg->Draw2DTextureFontText(SCREEN_WIDTH/2 - 16 - ErrorRange, SCREEN_HEIGTH/2 - 16, "ｽ", D3DCOLOR_COLORVALUE(1.0f,0.0f,0.0f,0.5f), 32, 32);
-			d3dg->Draw2DTextureFontText(SCREEN_WIDTH/2 - 16 + ErrorRange, SCREEN_HEIGTH/2 - 16, "ｾ", D3DCOLOR_COLORVALUE(1.0f,0.0f,0.0f,0.5f), 32, 32);
+			str[0] = (signed char)0xBD;		str[1] = 0x00;	//"ｽ"
+			d3dg->Draw2DTextureFontText(SCREEN_WIDTH/2 - 16 - ErrorRange, SCREEN_HEIGTH/2 - 16, str, D3DCOLOR_COLORVALUE(1.0f,0.0f,0.0f,0.5f), 32, 32);
+			str[0] = (signed char)0xBE;		str[1] = 0x00;	//"ｾ"
+			d3dg->Draw2DTextureFontText(SCREEN_WIDTH/2 - 16 + ErrorRange, SCREEN_HEIGTH/2 - 16, str, D3DCOLOR_COLORVALUE(1.0f,0.0f,0.0f,0.5f), 32, 32);
 		}
 	}
 
