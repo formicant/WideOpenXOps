@@ -128,8 +128,8 @@ void D2Dscene::RenderMain()
 {
 	if( d3dg->StartRender() ){ return; }
 
-	d3dg->Draw2DTexture(0, 0, gametitle, SCREEN_WIDTH, SCREEN_HEIGTH, 1.0f);
-	d3dg->Draw2DBox(11, 11, SCREEN_WIDTH - 10, SCREEN_HEIGTH - 10, D3DCOLOR_COLORVALUE(0.0f,0.0f,0.0f,0.9f));
+	d3dg->Draw2DTexture(0, 0, gametitle, SCREEN_WIDTH, SCREEN_HEIGTH, 0.4f);
+	d3dg->Draw2DBox(11, 11, SCREEN_WIDTH - 10, SCREEN_HEIGTH - 10, D3DCOLOR_COLORVALUE(0.0f,0.0f,0.0f,0.75f));
 
 	Render2D();
 

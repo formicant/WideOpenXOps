@@ -170,6 +170,7 @@ int opening::Create()
 	return 0;
 }
 
+//! @todo カメラの移動を滑らかにする
 void opening::Process()
 {
 	//オブジェクトマネージャーを実行
@@ -182,18 +183,18 @@ void opening::Process()
 
 	//カメラワークを求める
 	if( framecnt < 3*((int)GAMEFPS) ){
-		camera_x = -4.0f;
+		camera_x = -5.0f;
 		camera_y = 58.0f;
-		camera_z = 28.0f;
-		camera_rx = (float)M_PI/180*205;
-		camera_ry = (float)M_PI/180*13;
+		camera_z = 29.0f;
+		camera_rx = (float)M_PI/180*206;
+		camera_ry = (float)M_PI/180*12;
 	}
 	else if( framecnt < 5*((int)GAMEFPS) ){
 		camera_rx += (float)M_PI/180*1.1f;
 		camera_ry -= (float)M_PI/180*0.7f;
 	}
 	else if( framecnt < 17*((int)GAMEFPS) ){
-		camera_z += 0.1f;
+		camera_z += 0.08f;
 		camera_y -= 0.05f;
 	}
 	else {
@@ -608,7 +609,12 @@ void mainmenu::Render2D()
 	d3dg->Draw2DTextureFontText(522, 75, GAMEVERSION, D3DCOLOR_COLORVALUE(1.0f,1.0f,1.0f,1.0f), 18, 22);
 
 	//メニューエリア描画
-	d3dg->Draw2DBox(MAINMENU_X-1, MAINMENU_Y, MAINMENU_X+360, MAINMENU_Y+MAINMENU_H, D3DCOLOR_COLORVALUE(0.0f,0.0f,0.0f,0.5f));
+	if( GameAddon.GetTotaldatas() > 0 ){	//addonがあれば
+		d3dg->Draw2DBox(MAINMENU_X-1, MAINMENU_Y, MAINMENU_X+360, MAINMENU_Y+MAINMENU_H+1, D3DCOLOR_COLORVALUE(0.0f,0.0f,0.0f,0.5f));
+	}
+	else{
+		d3dg->Draw2DBox(MAINMENU_X-1, MAINMENU_Y, MAINMENU_X+360, MAINMENU_Y+MAINMENU_H-24, D3DCOLOR_COLORVALUE(0.0f,0.0f,0.0f,0.5f));
+	}
 	d3dg->Draw2DBox(MAINMENU_X+341, MAINMENU_Y+1, MAINMENU_X+360, MAINMENU_Y+MAINMENU_H-24, D3DCOLOR_COLORVALUE(0.5f,0.5f,0.5f,0.5f));
 
 	//スクロールバー描画
@@ -633,8 +639,9 @@ void mainmenu::Render2D()
 	}
 
 	//'< UP >'描画
-	d3dg->Draw2DTextureFontText(MAINMENU_X+1, MAINMENU_Y+1, "<   UP   >", D3DCOLOR_COLORVALUE(0.0f,0.0f,0.0f,1.0f), 20, 26);
 	if( scrollitems > 0 ){
+		d3dg->Draw2DTextureFontText(MAINMENU_X+1, MAINMENU_Y+1, "<  UP  >", D3DCOLOR_COLORVALUE(0.0f,0.0f,0.0f,1.0f), 25, 26);
+
 		//文字の色を設定
 		if( (MAINMENU_X < mainmenu_mouseX)&&(mainmenu_mouseX < (MAINMENU_X+340))&&(MAINMENU_Y < mainmenu_mouseY)&&(mainmenu_mouseY < MAINMENU_Y+30) ){
 			color = D3DCOLOR_COLORVALUE(0.0f,1.0f,1.0f,1.0f);
@@ -644,12 +651,16 @@ void mainmenu::Render2D()
 		}
 
 		//文字を描画
-		d3dg->Draw2DTextureFontText(MAINMENU_X, MAINMENU_Y, "<   UP   >", color, 20, 26);
+		d3dg->Draw2DTextureFontText(MAINMENU_X, MAINMENU_Y, "<  UP  >", color, 25, 26);
+	}
+	else{
+		d3dg->Draw2DTextureFontText(MAINMENU_X+1, MAINMENU_Y+1, "<  UP  >", D3DCOLOR_COLORVALUE(0.6f,0.6f,0.6f,1.0f), 25, 26);
 	}
 
 	//'< DOWN >'描画
-	d3dg->Draw2DTextureFontText(MAINMENU_X+1, MAINMENU_Y+MAINMENU_H-55+1, "<  DOWN  >", D3DCOLOR_COLORVALUE(0.0f,0.0f,0.0f,1.0f), 20, 26);
 	if( scrollitems < (totalmission - TOTAL_MENUITEMS) ){
+		d3dg->Draw2DTextureFontText(MAINMENU_X+1, MAINMENU_Y+MAINMENU_H-55+1, "< DOWN >", D3DCOLOR_COLORVALUE(0.0f,0.0f,0.0f,1.0f), 25, 26);
+
 		//文字の色を設定
 		if( (MAINMENU_X < mainmenu_mouseX)&&(mainmenu_mouseX < (MAINMENU_X+340))&&((MAINMENU_Y+MAINMENU_H-55) < mainmenu_mouseY)&&(mainmenu_mouseY < (MAINMENU_Y+MAINMENU_H-55+30)) ){
 			color = D3DCOLOR_COLORVALUE(0.0f,1.0f,1.0f,1.0f);
@@ -659,14 +670,14 @@ void mainmenu::Render2D()
 		}
 
 		//文字を描画
-		d3dg->Draw2DTextureFontText(MAINMENU_X, MAINMENU_Y+MAINMENU_H-55, "<  DOWN  >", color, 20, 26);
+		d3dg->Draw2DTextureFontText(MAINMENU_X, MAINMENU_Y+MAINMENU_H-55, "< DOWN >", color, 25, 26);
+	}
+	else{
+		d3dg->Draw2DTextureFontText(MAINMENU_X+1, MAINMENU_Y+MAINMENU_H-55+1, "< DOWN >", D3DCOLOR_COLORVALUE(0.6f,0.6f,0.6f,1.0f), 25, 26);
 	}
 
 	//標準ミッションとaddon切り替え
 	if( GameInfoData.selectaddon == false ){
-		//下地の文字を描画
-		d3dg->Draw2DTextureFontText(MAINMENU_X+1, MAINMENU_Y+MAINMENU_H-25+1, "ADD-ON MISSIONS >>", D3DCOLOR_COLORVALUE(0.0f,0.0f,0.0f,1.0f), 16, 23);
-
 		//addonがあれば
 		if( GameAddon.GetTotaldatas() > 0 ){
 			//文字の色を設定
@@ -678,21 +689,25 @@ void mainmenu::Render2D()
 			}
 
 			//文字を描画
-			d3dg->Draw2DTextureFontText(MAINMENU_X, MAINMENU_Y+MAINMENU_H-25, "ADD-ON MISSIONS >>", color, 16, 23);
+			d3dg->Draw2DTextureFontText(MAINMENU_X+1, MAINMENU_Y+MAINMENU_H-25+1, "ADD-ON MISSIONS >>", D3DCOLOR_COLORVALUE(0.0f,0.0f,0.0f,1.0f), 17, 22);
+			d3dg->Draw2DTextureFontText(MAINMENU_X, MAINMENU_Y+MAINMENU_H-25, "ADD-ON MISSIONS >>", color, 17, 22);
 		}
 	}
 	else{
-		//文字の色を設定
-		if( (MAINMENU_X < mainmenu_mouseX)&&(mainmenu_mouseX < (MAINMENU_X+340))&&((MAINMENU_Y+MAINMENU_H-25) < mainmenu_mouseY)&&(mainmenu_mouseY < (MAINMENU_Y+MAINMENU_H-2)) ){
-			color = D3DCOLOR_COLORVALUE(0.0f,1.0f,1.0f,1.0f);
-		}
-		else{
-			color = D3DCOLOR_COLORVALUE(1.0f,1.0f,1.0f,1.0f);
-		}
+		//addonがあれば
+		//if( GameAddon.GetTotaldatas() > 0 ){
+			//文字の色を設定
+			if( (MAINMENU_X < mainmenu_mouseX)&&(mainmenu_mouseX < (MAINMENU_X+340))&&((MAINMENU_Y+MAINMENU_H-25) < mainmenu_mouseY)&&(mainmenu_mouseY < (MAINMENU_Y+MAINMENU_H-2)) ){
+				color = D3DCOLOR_COLORVALUE(0.0f,1.0f,1.0f,1.0f);
+			}
+			else{
+				color = D3DCOLOR_COLORVALUE(1.0f,1.0f,1.0f,1.0f);
+			}
 
-		//文字を描画
-		d3dg->Draw2DTextureFontText(MAINMENU_X+1, MAINMENU_Y+MAINMENU_H-25+1, "<< STANDARD MISSIONS", D3DCOLOR_COLORVALUE(0.0f,0.0f,0.0f,1.0f), 16, 23);
-		d3dg->Draw2DTextureFontText(MAINMENU_X, MAINMENU_Y+MAINMENU_H-25, "<< STANDARD MISSIONS", color, 16, 23);
+			//文字を描画
+			d3dg->Draw2DTextureFontText(MAINMENU_X+1, MAINMENU_Y+MAINMENU_H-25+1, "<< STANDARD MISSIONS", D3DCOLOR_COLORVALUE(0.0f,0.0f,0.0f,1.0f), 17, 22);
+			d3dg->Draw2DTextureFontText(MAINMENU_X, MAINMENU_Y+MAINMENU_H-25, "<< STANDARD MISSIONS", color, 17, 22);
+		//}
 	}
 
 	//ミッション名を描画
@@ -819,15 +834,15 @@ void briefing::Render2D()
 	float effectA = 1.0f - 0.8f/((int)(GAMEFPS*0.7f))*(framecnt%((int)(GAMEFPS*0.7f)));
 	float effectB = 1.0f - 0.8f/((int)(GAMEFPS*0.8f))*(framecnt%((int)(GAMEFPS*1.0f)));
 	int effectB_sizeW = (int)( (float)(framecnt%((int)(GAMEFPS*1.0f))) * 0.2f + 18 );
-	int effectB_sizeH = (int)( (float)(framecnt%((int)(GAMEFPS*1.0f))) * 1.0f + 25 );
+	int effectB_sizeH = (int)( (float)(framecnt%((int)(GAMEFPS*1.0f))) * 1.0f + 26 );
 
 	//メモ：背景画像の描画は、自動的に行われる。
 
 	//固定文字描画
 	d3dg->Draw2DTextureFontText(SCREEN_WIDTH/2 - 60*4, 30, "BRIEFING", D3DCOLOR_COLORVALUE(1.0f,1.0f,0.0f,effectA), 60, 42);
-	d3dg->Draw2DTextureFontText(SCREEN_WIDTH - 220 - effectB_sizeW*9 - effectB_sizeW/2, SCREEN_HEIGTH - 37 - effectB_sizeH/2,
+	d3dg->Draw2DTextureFontText(SCREEN_WIDTH - 210 - effectB_sizeW*20/2, SCREEN_HEIGTH - 37 - effectB_sizeH/2,
 								"LEFT CLICK TO BEGIN", D3DCOLOR_COLORVALUE(1.0f,1.0f,1.0f,effectB), effectB_sizeW, effectB_sizeH);
-	d3dg->Draw2DTextureFontText(SCREEN_WIDTH - 390, SCREEN_HEIGTH - 50, "LEFT CLICK TO BEGIN", D3DCOLOR_COLORVALUE(1.0f,1.0f,1.0f,1.0f), 18, 25);
+	d3dg->Draw2DTextureFontText(SCREEN_WIDTH - 210 - 18*20/2, SCREEN_HEIGTH - 37 - 26/2, "LEFT CLICK TO BEGIN", D3DCOLOR_COLORVALUE(1.0f,1.0f,1.0f,1.0f), 18, 26);
 
 	//ブリーフィング画像描画
 	if( TwoTexture == false ){
@@ -1933,14 +1948,14 @@ void maingame::Render2D()
 		str[5] = (signed char)0xB4;		str[6] = (signed char)0xB4;		str[7] = (signed char)0xB5;		str[8] = (signed char)0x00;
 		d3dg->Draw2DTextureFontText(15, SCREEN_HEIGTH - 105, str, D3DCOLOR_COLORVALUE(1.0f,1.0f,1.0f,0.5f), 32, 32);
 		//"ﾃﾄﾄﾄﾄﾄﾄﾅ"
-		for(int i=0; i<9; i++){ str[i] += (signed char)0x10; }
+		for(int i=0; str[i] != 0x00; i++){ str[i] += (signed char)0x10; }
 		d3dg->Draw2DTextureFontText(15, SCREEN_HEIGTH - 105 +32, str, D3DCOLOR_COLORVALUE(1.0f,1.0f,1.0f,0.5f), 32, 32);
 		//"ｳｴｴｶｷｷｷｸｹ"
 		str[0] = (signed char)0xB3;		str[1] = (signed char)0xB4;		str[2] = (signed char)0xB4;		str[3] = (signed char)0xB6;		str[4] = (signed char)0xB7;
 		str[5] = (signed char)0xB7;		str[6] = (signed char)0xB7;		str[7] = (signed char)0xB8;		str[8] = (signed char)0xB9;		str[9] = (signed char)0x00;
 		d3dg->Draw2DTextureFontText(15, SCREEN_HEIGTH - 55, str, D3DCOLOR_COLORVALUE(1.0f,1.0f,1.0f,0.5f), 32, 32);
 		//"ﾃﾄﾄﾆﾇﾇﾇﾈﾉ"
-		for(int i=0; i<10; i++){ str[i] += (signed char)0x10; }
+		for(int i=0; str[i] != 0x00; i++){ str[i] += (signed char)0x10; }
 		d3dg->Draw2DTextureFontText(15, SCREEN_HEIGTH - 55 +32, str, D3DCOLOR_COLORVALUE(1.0f,1.0f,1.0f,0.5f), 32, 32);
 
 		//右下エリア用文字コード設定
@@ -2044,13 +2059,17 @@ void maingame::Render2D()
 	//照準表示
 	if( (Camera_F1mode == false)&&(weapon[selectweapon] != NULL)&&(end_framecnt == 0)&&(myHuman->GetScopeMode() == 0)&&(param_scopemode != 2) ){
 		if( GameConfig.GetAnotherGunsightFlag() ){	//オプション型
+			//照準の透明度
+			float alpha = 1.0f - (float)ErrorRange/40.0f;
+			if( alpha < 0.0f ){ alpha = 0.0f; }
+
 			d3dg->Draw2DLine(SCREEN_WIDTH/2, SCREEN_HEIGTH/2, SCREEN_WIDTH/2, SCREEN_HEIGTH/2+4, D3DCOLOR_COLORVALUE(1.0f,0.0f,0.0f,0.5f));
 			d3dg->Draw2DLine(SCREEN_WIDTH/2-15, SCREEN_HEIGTH/2+15, SCREEN_WIDTH/2-19, SCREEN_HEIGTH/2+19, D3DCOLOR_COLORVALUE(1.0f,0.0f,0.0f,0.5f));
 			d3dg->Draw2DLine(SCREEN_WIDTH/2+15, SCREEN_HEIGTH/2+15, SCREEN_WIDTH/2+19, SCREEN_HEIGTH/2+19, D3DCOLOR_COLORVALUE(1.0f,0.0f,0.0f,0.5f));
 			d3dg->Draw2DLine(SCREEN_WIDTH/2-4, SCREEN_HEIGTH/2+4, SCREEN_WIDTH/2+4, SCREEN_HEIGTH/2+4, D3DCOLOR_COLORVALUE(1.0f,0.0f,0.0f,1.0f));
 
-			d3dg->Draw2DLine(SCREEN_WIDTH/2-4 - ErrorRange, SCREEN_HEIGTH/2-4 - ErrorRange, SCREEN_WIDTH/2-4 - ErrorRange, SCREEN_HEIGTH/2+4 + ErrorRange, D3DCOLOR_COLORVALUE(1.0f,0.0f,0.0f,1.0f));
-			d3dg->Draw2DLine(SCREEN_WIDTH/2+4 + ErrorRange, SCREEN_HEIGTH/2-4 - ErrorRange, SCREEN_WIDTH/2+4 + ErrorRange, SCREEN_HEIGTH/2+4 + ErrorRange, D3DCOLOR_COLORVALUE(1.0f,0.0f,0.0f,1.0f));
+			d3dg->Draw2DLine(SCREEN_WIDTH/2-4 - ErrorRange, SCREEN_HEIGTH/2-4 - ErrorRange/2, SCREEN_WIDTH/2-4 - ErrorRange, SCREEN_HEIGTH/2+4 + ErrorRange/2, D3DCOLOR_COLORVALUE(1.0f,0.0f,0.0f,alpha));
+			d3dg->Draw2DLine(SCREEN_WIDTH/2+4 + ErrorRange, SCREEN_HEIGTH/2-4 - ErrorRange/2, SCREEN_WIDTH/2+4 + ErrorRange, SCREEN_HEIGTH/2+4 + ErrorRange/2, D3DCOLOR_COLORVALUE(1.0f,0.0f,0.0f,alpha));
 		}
 		else{										//標準型
 			d3dg->Draw2DLine(SCREEN_WIDTH/2-13, SCREEN_HEIGTH/2, SCREEN_WIDTH/2-3, SCREEN_HEIGTH/2, D3DCOLOR_COLORVALUE(1.0f,0.0f,0.0f,1.0f));

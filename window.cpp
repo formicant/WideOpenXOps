@@ -44,8 +44,7 @@ LRESULT WINAPI WindowProc(HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam);
 HWND InitWindow(HINSTANCE hInstance, char* title, int width, int height, int nCmdShow, bool fullscreen)
 {
 	WNDCLASS wc;
-	//int x, y;
-	//int w, h;
+	int x, y;
 	RECT Rect;
 	DWORD dwStyle;
 	HWND hWnd;
@@ -66,7 +65,7 @@ HWND InitWindow(HINSTANCE hInstance, char* title, int width, int height, int nCm
 	}
 
 	if( fullscreen == false ){
-		dwStyle = WS_OVERLAPPED | WS_SYSMENU | WS_CAPTION;
+		dwStyle = WS_OVERLAPPED | WS_SYSMENU | WS_CAPTION | WS_MINIMIZEBOX;
 	}
 	else{
 		dwStyle = WS_POPUP;
@@ -81,8 +80,21 @@ HWND InitWindow(HINSTANCE hInstance, char* title, int width, int height, int nCm
 	width = Rect.right - Rect.left;
 	height = Rect.bottom - Rect.top;
 
+	//表示位置
+	x = 0;
+	y = 0;
+
+	/*
+	//ウインドウモードなら、ウインドウを画面の中心に配置する
+	if( fullscreen == false ){
+		SystemParametersInfo(SPI_GETWORKAREA, 0, &Rect, 0);
+		x = (Rect.right - width)/2;
+		y = (Rect.bottom - height)/2;
+	}
+	*/
+
 	//ウィンドウ作成
-	hWnd = CreateWindow( "MainWindow", title, dwStyle, 0, 0, width, height, NULL, NULL, hInstance, NULL );
+	hWnd = CreateWindow( "MainWindow", title, dwStyle, x, y, width, height, NULL, NULL, hInstance, NULL );
 	if( hWnd == NULL ){
 		return NULL;
 	}
