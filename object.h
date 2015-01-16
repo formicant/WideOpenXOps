@@ -74,6 +74,7 @@
 #define BULLET_SPEEDSCALE 3				//!< ’e‘¬‚Ì”{—¦
 #define BULLET_DESTROYFRAME 40			//!< ’e‚ÌÁ–ÅƒtƒŒ[ƒ€”
 #define GRENADE_DESTROYFRAME 100		//!< ŽèžÖ’e‚Ì”š”­ƒtƒŒ[ƒ€”
+#define GRENADE_BOUND_ACCELERATION ((0.63662f * 0.4f - 0.7f) * -1)	//!< ŽèžÖ’e‚Ì”½ŽËŒ¸Š—¦
 
 #ifndef H_LAYERLEVEL
  #define H_LAYERLEVEL 2		//!< Select include file.
@@ -300,6 +301,7 @@ public:
 	grenade(int modelid = -1, int textureid = -1);
 	~grenade();
 	void SetParamData(float speed, int _humanid, bool init);
+	float GetSpeed();
 	int RunFrame(class Collision *CollD, class BlockDataInterface *inblockdata);
 	virtual void Render(D3DGraphics *d3dg);
 };

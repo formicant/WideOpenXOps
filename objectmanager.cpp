@@ -1500,15 +1500,19 @@ int ObjectManager::Process(int cmdF5id, float camera_x, float camera_y, float ca
 
 	//手榴弾の処理
 	for(int i=0; i<MAX_GRENADE; i++){
+		float speed = GrenadeIndex[i].GetSpeed();
+
 		//主計算
 		int rcr = GrenadeIndex[i].RunFrame(CollD, BlockData);
 
 		//バウンド・跳ね返ったならば
 		if( rcr == 1 ){
-			//座標を取得し、効果音再生
-			float x, y, z;
-			GrenadeIndex[i].GetPosData(&x, &y, &z, NULL, NULL);
-			GameSound->GrenadeBound(x, y, z);
+			if( speed > 3.4f ){
+				//座標を取得し、効果音再生
+				float x, y, z;
+				GrenadeIndex[i].GetPosData(&x, &y, &z, NULL, NULL);
+				GameSound->GrenadeBound(x, y, z);
+			}
 		}
 
 		//爆発したなら

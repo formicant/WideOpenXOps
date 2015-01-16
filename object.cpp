@@ -2358,6 +2358,13 @@ void grenade::SetParamData(float speed, int _humanid, bool init)
 	}
 }
 
+//! 速度を取得
+//! @return 速度
+float grenade::GetSpeed()
+{
+	return sqrt(move_x*move_x + move_y*move_y + move_z*move_z);
+}
+
 //! 計算を実行（手榴弾の進行・爆発）
 //! @return 爆発：2　バウンド・跳ね返り：1　それ以外：0
 int grenade::RunFrame(class Collision *CollD, class BlockDataInterface *inblockdata)
@@ -2413,9 +2420,9 @@ int grenade::RunFrame(class Collision *CollD, class BlockDataInterface *inblockd
 			CollD->ReflectVector(inblockdata, id, face, move_x/maxDist, move_y/maxDist, move_z/maxDist, &vx, &vy, &vz);
 
 			//減速
-			move_x = vx * maxDist * 0.63662f;
-			move_y = vy * maxDist * 0.63662f;
-			move_z = vz * maxDist * 0.63662f;
+			move_x = vx * maxDist * GRENADE_BOUND_ACCELERATION;
+			move_y = vy * maxDist * GRENADE_BOUND_ACCELERATION;
+			move_z = vz * maxDist * GRENADE_BOUND_ACCELERATION;
 		}
 
 		cnt += 1;
