@@ -1534,8 +1534,8 @@ void maingame::Input()
 			if( inputCtrl->CheckKeyNow(OriginalkeycodeToDinputdef(0x02)) ){ mouse_rx -= (float)M_PI/180 * 3; }		// [←]
 			if( inputCtrl->CheckKeyNow(OriginalkeycodeToDinputdef(0x03)) ){ mouse_rx += (float)M_PI/180 * 3; }		// [→]
 
-			if( mouse_ry > (float)M_PI/3 ) mouse_ry = (float)M_PI/3;
-			if( mouse_ry < (float)M_PI/3 *-1 ) mouse_ry = (float)M_PI/3 *-1;
+			if( mouse_ry > (float)M_PI/18*7 ) mouse_ry = (float)M_PI/18*7;
+			if( mouse_ry < (float)M_PI/18*7 *-1 ) mouse_ry = (float)M_PI/18*7 *-1;
 		}
 	}
 	else{								//デバックモードならば
@@ -1552,8 +1552,8 @@ void maingame::Input()
 		//camera_ry -= y*0.0025f;
 		camera_rx -= x * MouseSensitivity;
 		camera_ry -= y * MouseSensitivity;
-		if( camera_ry > (float)M_PI/3 ) camera_ry = (float)M_PI/3;
-		if( camera_ry < (float)M_PI/3 *-1 ) camera_ry = (float)M_PI/3 *-1;
+		if( camera_ry > (float)M_PI/18*7 ) camera_ry = (float)M_PI/18*7;
+		if( camera_ry < (float)M_PI/18*7 *-1 ) camera_ry = (float)M_PI/18*7 *-1;
 	}
 
 	time_input = GetTimeMS() - time;
