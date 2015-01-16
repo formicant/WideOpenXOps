@@ -183,8 +183,6 @@ human::human(class ParameterInfo *in_Param, float x, float y, float z, float rx,
 		id_runmodel[i] = -1;
 	}
 
-	addposorder_x = 0.0f;
-	addposorder_z = 0.0f;
 	move_rx = 0.0f;
 	MoveFlag = 0x00;
 	MoveFlag_lt = MoveFlag;
@@ -373,6 +371,9 @@ int human::PickupWeapon(class weapon *in_weapon)
 //! @param id 持ち替える武器　（-1 で次の武器）
 void human::ChangeWeapon(int id)
 {
+	//体力がなければ失敗
+	if( hp <= 0 ){ return; }
+
 	//リロード中なら失敗
 	if( weapon[selectweapon] != NULL ){
 		if( weapon[selectweapon]->GetReloadCnt() > 0 ){ return; }
@@ -726,11 +727,13 @@ int human::Jump()
 
 //! 押しだす・力を加える
 //! @param rx 横軸
+//! @param ry 縦軸
 //! @param speed 速度
-void human::AddPosOrder(float rx, float speed)
+void human::AddPosOrder(float rx, float ry, float speed)
 {
-	addposorder_x += cos(rx)*speed;
-	addposorder_z += sin(rx)*speed;
+	move_x += cos(rx) * cos(ry) * speed;
+	move_y += sin(ry) * speed;
+	move_z += sin(rx) * cos(ry) * speed;
 }
 
 //! 弾が 頭 にヒット
@@ -1123,63 +1126,63 @@ void human::ControlProcess()
 	//進行方向と速度を決定
 	if( GetFlag(MoveFlag, MOVEFLAG_WALK) ){
 		move_rx = 0.0f;
-		AddPosOrder(rotation_x*-1 + move_rx + (float)M_PI/2, HUMAN_PROGRESSWALK_SPEED);
+		AddPosOrder(rotation_x*-1 + move_rx + (float)M_PI/2, 0.0f, HUMAN_PROGRESSWALK_ACCELERATION);
 		legmode = LEG_WALK;
 		walkcnt += 1;
 		runcnt = 0;
 	}
 	else if( GetFlag(MoveFlag, (MOVEFLAG_FORWARD | MOVEFLAG_BACK | MOVEFLAG_LEFT | MOVEFLAG_RIGHT)) == MOVEFLAG_FORWARD ){
 		move_rx = 0.0f;
-		AddPosOrder(rotation_x*-1 + move_rx + (float)M_PI/2, HUMAN_PROGRESSRUN_SPEED);
+		AddPosOrder(rotation_x*-1 + move_rx + (float)M_PI/2, 0.0f, HUMAN_PROGRESSRUN_ACCELERATION);
 		legmode = LEG_RUN;
 		walkcnt = 0;
 		runcnt += 1;
 	}
 	else if( GetFlag(MoveFlag, (MOVEFLAG_FORWARD | MOVEFLAG_BACK | MOVEFLAG_LEFT | MOVEFLAG_RIGHT)) == MOVEFLAG_BACK ){
 		move_rx = (float)M_PI;
-		AddPosOrder(rotation_x*-1 + move_rx + (float)M_PI/2, HUMAN_REGRESSRUN_SPEED);
+		AddPosOrder(rotation_x*-1 + move_rx + (float)M_PI/2, 0.0f, HUMAN_REGRESSRUN_ACCELERATION);
 		legmode = LEG_RUN;
 		walkcnt = 0;
 		runcnt += 1;
 	}
 	else if( GetFlag(MoveFlag, (MOVEFLAG_FORWARD | MOVEFLAG_BACK | MOVEFLAG_LEFT | MOVEFLAG_RIGHT)) == MOVEFLAG_LEFT ){
 		move_rx = (float)M_PI/2;
-		AddPosOrder(rotation_x*-1 + move_rx + (float)M_PI/2, HUMAN_SIDEWAYSRUN_SPEED);
+		AddPosOrder(rotation_x*-1 + move_rx + (float)M_PI/2, 0.0f, HUMAN_SIDEWAYSRUN_ACCELERATION);
 		legmode = LEG_RUN;
 		walkcnt = 0;
 		runcnt += 1;
 	}
 	else if( GetFlag(MoveFlag, (MOVEFLAG_FORWARD | MOVEFLAG_BACK | MOVEFLAG_LEFT | MOVEFLAG_RIGHT)) == MOVEFLAG_RIGHT ){
 		move_rx = (float)M_PI/2 * -1;
-		AddPosOrder(rotation_x*-1 + move_rx + (float)M_PI/2, HUMAN_SIDEWAYSRUN_SPEED);
+		AddPosOrder(rotation_x*-1 + move_rx + (float)M_PI/2, 0.0f, HUMAN_SIDEWAYSRUN_ACCELERATION);
 		legmode = LEG_RUN;
 		walkcnt = 0;
 		runcnt += 1;
 	}
 	else if( GetFlag(MoveFlag, (MOVEFLAG_FORWARD | MOVEFLAG_BACK | MOVEFLAG_LEFT | MOVEFLAG_RIGHT)) == (MOVEFLAG_FORWARD | MOVEFLAG_LEFT) ){
 		move_rx = (float)M_PI/4;
-		AddPosOrder(rotation_x*-1 + move_rx + (float)M_PI/2, HUMAN_PROGRESSRUN_SIDEWAYSRUN_SPEED);
+		AddPosOrder(rotation_x*-1 + move_rx + (float)M_PI/2, 0.0f, HUMAN_PROGRESSRUN_SIDEWAYSRUN_ACCELERATION);
 		legmode = LEG_RUN;
 		walkcnt = 0;
 		runcnt += 1;
 	}
 	else if( GetFlag(MoveFlag, (MOVEFLAG_FORWARD | MOVEFLAG_BACK | MOVEFLAG_LEFT | MOVEFLAG_RIGHT)) == (MOVEFLAG_BACK | MOVEFLAG_LEFT) ){
 		move_rx = (float)M_PI/4*3;
-		AddPosOrder(rotation_x*-1 + move_rx + (float)M_PI/2, HUMAN_REGRESSRUN_SIDEWAYSRUN_SPEED);
+		AddPosOrder(rotation_x*-1 + move_rx + (float)M_PI/2, 0.0f, HUMAN_REGRESSRUN_SIDEWAYSRUN_ACCELERATION);
 		legmode = LEG_RUN;
 		walkcnt = 0;
 		runcnt += 1;
 	}
 	else if( GetFlag(MoveFlag, (MOVEFLAG_FORWARD | MOVEFLAG_BACK | MOVEFLAG_LEFT | MOVEFLAG_RIGHT)) == (MOVEFLAG_BACK | MOVEFLAG_RIGHT) ){
 		move_rx = (float)M_PI/4*3 * -1;
-		AddPosOrder(rotation_x*-1 + move_rx + (float)M_PI/2, HUMAN_REGRESSRUN_SIDEWAYSRUN_SPEED);
+		AddPosOrder(rotation_x*-1 + move_rx + (float)M_PI/2, 0.0f, HUMAN_REGRESSRUN_SIDEWAYSRUN_ACCELERATION);
 		legmode = LEG_RUN;
 		walkcnt = 0;
 		runcnt += 1;
 	}
 	else if( GetFlag(MoveFlag, (MOVEFLAG_FORWARD | MOVEFLAG_BACK | MOVEFLAG_LEFT | MOVEFLAG_RIGHT)) == (MOVEFLAG_FORWARD | MOVEFLAG_RIGHT) ){
 		move_rx = (float)M_PI/4 * -1;
-		AddPosOrder(rotation_x*-1 + move_rx + (float)M_PI/2, HUMAN_PROGRESSRUN_SIDEWAYSRUN_SPEED);
+		AddPosOrder(rotation_x*-1 + move_rx + (float)M_PI/2, 0.0f, HUMAN_PROGRESSRUN_SIDEWAYSRUN_ACCELERATION);
 		legmode = LEG_RUN;
 		walkcnt = 0;
 		runcnt += 1;
@@ -1224,19 +1227,16 @@ bool human::CheckBlockAngle(class BlockDataInterface *inblockdata, int bid, int 
 //! マップとの当たり判定
 //! @param CollD Collisionクラスのポインタ
 //! @param inblockdata BlockDataInterfaceクラスのポインタ
-//! @param vx X軸ベクトルのポインタ
-//! @param vz Z軸ベクトルのポインタ
-//! @param speed 水平方向の移動速度
 //! @param FallDist Y軸の移動量を取得するポインタ
 //! @return ブロックに埋まっている：true　埋まっていない：false
-//! @attention 与える vx vz のベクトルは正規化されている必要があります。
-//! @attention 計算結果も vx vz に格納します。計算結果のベクトルは正規化されておらず、ベクトルの長さが新たな水平方向の移動速度を表します。
-bool human::MapCollisionDetection(class Collision *CollD, class BlockDataInterface *inblockdata, float *vx, float *vz, float speed, float *FallDist)
+bool human::MapCollisionDetection(class Collision *CollD, class BlockDataInterface *inblockdata, float *FallDist)
 {
 	bool inside = false;
 	int id;
 	int face;
+	float vx, vz;
 	float vy = 0.1f;
+	float speed;
 	float Dist;
 	float FallDistance;
 	float offset;
@@ -1290,7 +1290,8 @@ bool human::MapCollisionDetection(class Collision *CollD, class BlockDataInterfa
 					move_y_flag = true;
 
 					//押し出す
-					AddPosOrder(atan2(bdata.material[face].vz, bdata.material[face].vx), HUMAN_MAPCOLLISION_SLOPEFORCE);
+					move_x += bdata.material[face].vx * HUMAN_MAPCOLLISION_SLOPEFORCE;
+					move_z += bdata.material[face].vz * HUMAN_MAPCOLLISION_SLOPEFORCE;
 				}
 				else{
 					move_y_flag = false;
@@ -1312,9 +1313,9 @@ bool human::MapCollisionDetection(class Collision *CollD, class BlockDataInterfa
 	//　水平方向のあたり判定（移動）
 	//--------------------------------------------------
 
-	if( speed > 0.0f ){
+	if( (move_x*move_x + move_z*move_z) ){
 		int surface;
-		float ang = atan2(*vz, *vx);
+		float ang = atan2(move_z, move_x);
 		float newpos_x, newpos_y, newpos_z;
 
 		//腰付近を当たり判定
@@ -1325,55 +1326,73 @@ bool human::MapCollisionDetection(class Collision *CollD, class BlockDataInterfa
 			if( surface != -1 ){
 				//HUMAN_MAPCOLLISION_R 分の先を調べる
 				if( CollD->CheckBlockInside(i, pos_x + cos(ang)*HUMAN_MAPCOLLISION_R, pos_y + HUMAN_MAPCOLLISION_HEIGTH, pos_z + sin(ang)*HUMAN_MAPCOLLISION_R, true, NULL) == true ){
-					CollD->ScratchVector(inblockdata, i, surface, *vx, vy, *vz, vx, &vy, vz);
+					CollD->ScratchVector(inblockdata, i, surface, move_x, vy, move_z, &move_x, &vy, &move_z);
 				}
 
 				//左右90度づつを調べる
 				if( CollD->CheckBlockInside(i, pos_x + cos(ang + (float)M_PI/2)*HUMAN_MAPCOLLISION_R, pos_y + HUMAN_MAPCOLLISION_HEIGTH, pos_z + sin(ang + (float)M_PI/2)*HUMAN_MAPCOLLISION_R, true, NULL) == true ){
 					if( CheckBlockAngle(inblockdata, i, surface, cos(ang), sin(ang)) == true ){		//進行方向に対して表向きなら～
-						CollD->ScratchVector(inblockdata, i, surface, *vx, vy, *vz, vx, &vy, vz);
+						CollD->ScratchVector(inblockdata, i, surface, move_x, vy, move_z, &move_x, &vy, &move_z);
 					}
 				}
 				if( CollD->CheckBlockInside(i, pos_x + cos(ang - (float)M_PI/2)*HUMAN_MAPCOLLISION_R, pos_y + HUMAN_MAPCOLLISION_HEIGTH, pos_z + sin(ang - (float)M_PI/2)*HUMAN_MAPCOLLISION_R, true, NULL) == true ){
 					if( CheckBlockAngle(inblockdata, i, surface, cos(ang), sin(ang)) == true ){		//進行方向に対して表向きなら～
-						CollD->ScratchVector(inblockdata, i, surface, *vx, vy, *vz, vx, &vy, vz);
+						CollD->ScratchVector(inblockdata, i, surface, move_x, vy, move_z, &move_x, &vy, &move_z);
 					}
 				}
 			}
 		}
 
+		//進行方向を示すベクトルを算出
+		vx = move_x;
+		vz = move_z;
+		speed = sqrt(vx*vx + vz*vz);
+		if( speed > 0.0f ){
+			vx = vx / speed;
+			vz = vz / speed;
+		}
+
 		//頭を当たり判定
-		if( CollD->CheckALLBlockIntersectDummyRay(pos_x, pos_y + HUMAN_HEIGTH, pos_z, *vx, 0, *vz, NULL, NULL, &Dist, speed) == true ){
-			CollD->CheckALLBlockIntersectRay(pos_x, pos_y + FallDistance + HUMAN_HEIGTH, pos_z, *vx, 0, *vz, &id, &face, &Dist, speed);
-			CollD->ScratchVector(inblockdata, id, face, *vx, vy, *vz, vx, &vy, vz);
+		if( CollD->CheckALLBlockIntersectDummyRay(pos_x, pos_y + HUMAN_HEIGTH, pos_z, vx, 0, vz, NULL, NULL, &Dist, speed) == true ){
+			CollD->CheckALLBlockIntersectRay(pos_x, pos_y + FallDistance + HUMAN_HEIGTH, pos_z, vx, 0, vz, &id, &face, &Dist, speed);
+			CollD->ScratchVector(inblockdata, id, face, move_x, vy, move_z, &move_x, &vy, &move_z);
 		}
 
 		//足元がブロックに埋まっていなければ
 		if( CollD->CheckALLBlockInside(pos_x, pos_y + offset, pos_z) == false ){
 
+			//進行方向を示すベクトルを算出
+			vx = move_x;
+			vz = move_z;
+			speed = sqrt(vx*vx + vz*vz);
+			if( speed > 0.0f ){
+				vx = vx / speed;
+				vz = vz / speed;
+			}
+
 			//足元を当たり判定
-			if( CollD->CheckALLBlockIntersectDummyRay(pos_x, pos_y + offset, pos_z, *vx, 0, *vz, NULL, NULL, &Dist, speed) == true ){
-				CollD->CheckALLBlockIntersectRay(pos_x, pos_y + offset, pos_z, *vx, 0, *vz, &id, &face, &Dist, speed);
+			if( CollD->CheckALLBlockIntersectDummyRay(pos_x, pos_y + offset, pos_z, vx, 0, vz, NULL, NULL, &Dist, speed) == true ){
+				CollD->CheckALLBlockIntersectRay(pos_x, pos_y + offset, pos_z, vx, 0, vz, &id, &face, &Dist, speed);
 
 				struct blockdata bdata;
 				inblockdata->Getdata(&bdata, id);
 
 				if( acos(bdata.material[face].vy) > HUMAN_MAPCOLLISION_SLOPEANGLE ){	//斜面～壁なら
 					//乗り越えられる高さか調べる
-					if( CollD->CheckALLBlockIntersectDummyRay(pos_x, pos_y + 3.5f + offset, pos_z, *vx, 0, *vz, NULL, NULL, &Dist, speed) == false ){
+					if( CollD->CheckALLBlockIntersectDummyRay(pos_x, pos_y + 3.5f + offset, pos_z, vx, 0, vz, NULL, NULL, &Dist, speed) == false ){
 						//人を上に持ち上げる
-						FallDistance = 0.3f;
+						FallDistance = 0.4f;
 						move_y = 0.0f;
 					}
 
 					//足元を当たり判定
-					CollD->ScratchVector(inblockdata, id, face, *vx, vy, *vz, vx, &vy, vz);
+					CollD->ScratchVector(inblockdata, id, face, move_x, vy, move_z, &move_x, &vy, &move_z);
 				}
 				else{																	//水平～斜面なら
 					//移動先の位置を計算
-					newpos_x = pos_x + *vx * speed;
+					newpos_x = pos_x + move_x;
 					newpos_y = pos_y + FallDistance;
-					newpos_z = pos_z + *vz * speed;
+					newpos_z = pos_z + move_z;
 
 					//移動先の高さを調べる
 					if( CollD->CheckALLBlockInside(newpos_x, newpos_y + HUMAN_HEIGTH, newpos_z) == false ){
@@ -1382,7 +1401,7 @@ bool human::MapCollisionDetection(class Collision *CollD, class BlockDataInterfa
 
 							if( height > 0.6f * speed ){
 								//人を上に持ち上げる
-								FallDistance = 0.3f;
+								FallDistance = 0.4f;
 								move_y = 0.0f;
 							}
 							else{
@@ -1396,9 +1415,9 @@ bool human::MapCollisionDetection(class Collision *CollD, class BlockDataInterfa
 		}
 
 		//移動先の位置を計算
-		newpos_x = pos_x + *vx * speed;
+		newpos_x = pos_x + move_x;
 		newpos_y = pos_y + FallDistance;
-		newpos_z = pos_z + *vz * speed;
+		newpos_z = pos_z + move_z;
 
 		//全身を改めて確認
 		if(
@@ -1406,8 +1425,8 @@ bool human::MapCollisionDetection(class Collision *CollD, class BlockDataInterfa
 			(CollD->CheckALLBlockIntersectRay(newpos_x, newpos_y + offset, newpos_z, 0, 1, 0, NULL, NULL, &Dist, HUMAN_HEIGTH - offset - 1.0f) == true)
 		){
 			//めり込むなら移動しない
-			*vx = 0.0f;
-			*vz = 0.0f;
+			move_x = 0.0f;
+			move_z = 0.0f;
 			inside = true;
 		}
 	}
@@ -1431,11 +1450,7 @@ int human::RunFrame(class Collision *CollD, class BlockDataInterface *inblockdat
 	if( hp <= 0 ){ return 0; }
 #endif
 
-	float vx, vz;
-	bool inside;
-
 	float FallDistance;
-	float move_speed;
 
 	//武器切り替えカウント
 	if( selectweaponcnt > 0 ){
@@ -1461,37 +1476,21 @@ int human::RunFrame(class Collision *CollD, class BlockDataInterface *inblockdat
 	//進行方向と速度を決定
 	ControlProcess();
 
-	//進行方向を示すベクトルを算出
-	vx = addposorder_x;
-	vz = addposorder_z;
-	move_speed = sqrt(vx*vx + vz*vz);
-	vx = vx / move_speed;
-	vz = vz / move_speed;
+	//マップとの当たり判定
+	MapCollisionDetection(CollD, inblockdata, &FallDistance);
 
-	//移動量をゼロに戻す
-	move_x = 0.0f;
-	move_z = 0.0f;
-
-	//要求移動量をゼロに戻す
-	addposorder_x = 0.0f;
-	addposorder_z = 0.0f;
-
-	inside = MapCollisionDetection(CollD, inblockdata, &vx, &vz, move_speed, &FallDistance);
-
-	//ブロックに埋まっていなければ
-	if( inside == false ){
-		if( move_speed > 0.0f ){
-			//移動量決定
-			move_x = vx * move_speed;
-			move_z = vz * move_speed;
-
-			//座標移動
-			pos_x += move_x;
-			pos_z += move_z;
-
-			totalmove += abs(vx * move_speed) + abs(vz * move_speed);
-		}
+	//移動するなら
+	if( (move_x*move_x + move_z*move_z) > 0.0f * 0.0f ){
+		totalmove += sqrt(move_x*move_x + move_z*move_z);
 	}
+
+	//座標移動
+	pos_x += move_x;
+	pos_z += move_z;
+
+	//移動量を減衰
+	move_x *= HUMAN_ATTENUATION;
+	move_z *= HUMAN_ATTENUATION;
 
 	//F5を使用していなければ、計算結果を反映
 	if( F5mode == false ){

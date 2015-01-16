@@ -762,7 +762,7 @@ void AIcontrol::Action()
 
 		if( (r < 9.0f*9.0f)&&( abs(y) < 10.0f) ){
 			//捕まえる　（敵を引き付ける）
-			EnemyHuman->AddPosOrder(atan2(z, x), 1.2f);
+			EnemyHuman->AddPosOrder(atan2(z, x), 0.0f, 1.2f);
 
 			//敵の視点をランダムに動かす
 			float erx, ery;

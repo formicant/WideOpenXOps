@@ -476,10 +476,10 @@ bool ObjectManager::CollideHuman(human *in_humanA, human *in_humanB)
 	in_humanB->GetPosData(&h2_x, &h2_y, &h2_z, NULL);
 
 	//円柱の当たり判定
-	if( CollideCylinder(h1_x, h1_y, h1_z, 3.0f, HUMAN_HEIGTH, h2_x, h2_y, h2_z, 3.0f, HUMAN_HEIGTH, &angle, &length) == true ){
+	if( CollideCylinder(h1_x, h1_y, h1_z, 3.0f, HUMAN_HEIGTH-0.5f, h2_x, h2_y, h2_z, 3.0f, HUMAN_HEIGTH-0.5f, &angle, &length) == true ){
 		//めり込んだ分だけ押し出す
-		in_humanA->AddPosOrder(angle, length/2);
-		in_humanB->AddPosOrder(angle + (float)M_PI, length/2);
+		in_humanA->AddPosOrder(angle, 0.0f, length/2);
+		in_humanB->AddPosOrder(angle + (float)M_PI, 0.0f, length/2);
 		return true;
 	}
 
@@ -767,7 +767,7 @@ void ObjectManager::HitBulletHuman(int HitHuman_id, int Hit_id, float x, float y
 	if( Hit_id == 0 ){ HumanIndex[HitHuman_id].HitBulletHead(attacks); }
 	if( Hit_id == 1 ){ HumanIndex[HitHuman_id].HitBulletUp(attacks); }
 	if( Hit_id == 2 ){ HumanIndex[HitHuman_id].HitBulletLeg(attacks); }
-	HumanIndex[HitHuman_id].AddPosOrder(brx, 2.0f);
+	HumanIndex[HitHuman_id].AddPosOrder(brx, 0.0f, 2.0f);
 
 	//エフェクト（血）を表示
 	SetHumanBlood(x, y, z);
@@ -1164,22 +1164,6 @@ int ObjectManager::ShotWeapon(human *MyHuman)
 
 	//（ショットガンなど）発射する弾の数分繰り返す
 	for(int i=0; i<ParamData.burst; i++){
-		//発射する未使用のオブジェクトを取得
-		if( grenadeflag == false ){
-			newbullet = GetNewBulletObject();
-			if( newbullet == NULL ){ break; }
-
-			//番号を取得
-			int index;
-			for(index=0; index<MAX_BULLET; index++){
-				if( &BulletIndex[index] == newbullet ){ break; }
-			}
-		}
-		else{
-			newgrenade = GetNewGrenadeObject();
-			if( newgrenade == NULL ){ break; }
-		}
-
 		//発射角度を決定
 		float rx, ry;
 		rx = rotation_x*-1 + (float)M_PI/2;
@@ -1206,12 +1190,20 @@ int ObjectManager::ShotWeapon(human *MyHuman)
 				attacks = ParamData.attacks;
 			}
 
+			//発射する未使用のオブジェクトを取得
+			newbullet = GetNewBulletObject();
+			if( newbullet == NULL ){ break; }
+
 			//銃弾を発射
 			newbullet->SetPosData(pos_x, pos_y + WEAPONSHOT_HEIGHT, pos_z, rx, ry);
 			newbullet->SetParamData(attacks, ParamData.penetration, ParamData.speed * BULLET_SPEEDSCALE, teamid, humanid, true);
 			newbullet->SetDrawFlag(true);
 		}
 		else{
+			//発射する未使用のオブジェクトを取得
+			newgrenade = GetNewGrenadeObject();
+			if( newgrenade == NULL ){ break; }
+
 			//手榴弾発射
 			newgrenade->SetPosData(pos_x, pos_y + WEAPONSHOT_HEIGHT, pos_z, rx, ry);
 			newgrenade->SetParamData(8.0f, humanid, true);
@@ -1522,15 +1514,15 @@ int ObjectManager::Process(int cmdF5id, float camera_x, float camera_y, float ca
 		//爆発したなら
 		if( rcr == 2 ){
 			//座標を取得
-			float x, y, z;
+			float gx, gy, gz;
 			int humanid;
-			GrenadeIndex[i].GetPosData(&x, &y, &z, NULL, NULL);
+			GrenadeIndex[i].GetPosData(&gx, &gy, &gz, NULL, NULL);
 			GrenadeIndex[i].GetParamData(NULL, NULL, NULL, NULL, &humanid);
 
 			//エフェクト（フラッシュ）の表示
 			for(int j=0; j<MAX_EFFECT; j++){
 				if( EffectIndex[j].GetDrawFlag() == false ){
-					EffectIndex[j].SetPosData(x, y, z, 0.0f);
+					EffectIndex[j].SetPosData(gx, gy, gz, 0.0f);
 					EffectIndex[j].SetParamData(30.0f, 0.0f, 2, Resource->GetEffectMflashTexture(), EFFECT_NORMAL, true);
 					EffectIndex[j].SetDrawFlag(true);
 					break;
@@ -1541,7 +1533,7 @@ int ObjectManager::Process(int cmdF5id, float camera_x, float camera_y, float ca
 			float rnd = (float)M_PI/18*GetRand(18);
 			for(int j=0; j<MAX_EFFECT; j++){
 				if( EffectIndex[j].GetDrawFlag() == false ){
-					EffectIndex[j].SetPosData(x+1.0f, y+1.0f, z+1.0f, 0.0f);
+					EffectIndex[j].SetPosData(gx+1.0f, gy+1.0f, gz+1.0f, 0.0f);
 					EffectIndex[j].SetParamData(10.0f, rnd, (int)GAMEFPS * 3, Resource->GetEffectSmokeTexture(), EFFECT_DISAPPEAR | EFFECT_MAGNIFY | EFFECT_ROTATION, true);
 					EffectIndex[j].SetDrawFlag(true);
 					break;
@@ -1549,7 +1541,7 @@ int ObjectManager::Process(int cmdF5id, float camera_x, float camera_y, float ca
 			}
 			for(int j=0; j<MAX_EFFECT; j++){
 				if( EffectIndex[j].GetDrawFlag() == false ){
-					EffectIndex[j].SetPosData(x-1.0f, y-1.0f, z-1.0f, 0.0f);
+					EffectIndex[j].SetPosData(gx-1.0f, gy-1.0f, gz-1.0f, 0.0f);
 					EffectIndex[j].SetParamData(10.0f, rnd*-1, (int)GAMEFPS * 3, Resource->GetEffectSmokeTexture(), EFFECT_DISAPPEAR | EFFECT_MAGNIFY | EFFECT_ROTATION, true);
 					EffectIndex[j].SetDrawFlag(true);
 					break;
@@ -1557,7 +1549,7 @@ int ObjectManager::Process(int cmdF5id, float camera_x, float camera_y, float ca
 			}
 			for(int j=0; j<MAX_EFFECT; j++){
 				if( EffectIndex[j].GetDrawFlag() == false ){
-					EffectIndex[j].SetPosData(x-1.0f, y-1.0f, z+1.0f, 0.0f);
+					EffectIndex[j].SetPosData(gx-1.0f, gy-1.0f, gz+1.0f, 0.0f);
 					EffectIndex[j].SetParamData(10.0f, rnd, (int)GAMEFPS * 3, Resource->GetEffectSmokeTexture(), EFFECT_DISAPPEAR | EFFECT_MAGNIFY | EFFECT_ROTATION, true);
 					EffectIndex[j].SetDrawFlag(true);
 					break;
@@ -1565,7 +1557,7 @@ int ObjectManager::Process(int cmdF5id, float camera_x, float camera_y, float ca
 			}
 			for(int j=0; j<MAX_EFFECT; j++){
 				if( EffectIndex[j].GetDrawFlag() == false ){
-					EffectIndex[j].SetPosData(x+1.0f, y+1.0f, z-1.0f, 0.0f);
+					EffectIndex[j].SetPosData(gx+1.0f, gy+1.0f, gz-1.0f, 0.0f);
 					EffectIndex[j].SetParamData(10.0f, rnd*-1, (int)GAMEFPS * 3, Resource->GetEffectSmokeTexture(), EFFECT_DISAPPEAR | EFFECT_MAGNIFY | EFFECT_ROTATION, true);
 					EffectIndex[j].SetDrawFlag(true);
 					break;
@@ -1573,12 +1565,14 @@ int ObjectManager::Process(int cmdF5id, float camera_x, float camera_y, float ca
 			}
 
 			//効果音を再生
-			GameSound->GrenadeExplosion(x, y, z);
+			GameSound->GrenadeExplosion(gx, gy, gz);
 
 			//人に爆風の当たり判定
 			for(int j=0; j<MAX_HUMAN; j++){
 				if( HumanIndex[j].GrenadeExplosion(CollD, &(GrenadeIndex[i])) ){
+					float hx, hy, hz;
 					float x, y, z;
+					float arx, ary;
 
 					//倒していれば、発射した人の成果に加算
 					if( HumanIndex[j].GetHP() <= 0 ){
@@ -1586,8 +1580,27 @@ int ObjectManager::Process(int cmdF5id, float camera_x, float camera_y, float ca
 					}
 
 					//エフェクト（血）を表示
-					HumanIndex[j].GetPosData(&x, &y, &z, NULL);
-					SetHumanBlood(x, y+15.0f, z);
+					HumanIndex[j].GetPosData(&hx, &hy, &hz, NULL);
+					SetHumanBlood(hx, hy+15.0f, hz);
+
+					//人と手榴弾の距離を算出
+					x = gx - hx;
+					y = gy - (hy + 1.0f);
+					z = gz - hz;
+
+					//角度を求める
+					arx = atan2(z, x);
+
+					if( sin(atan2(y, sqrt(x*x + z*z))) < 0.0f ){		//上方向に飛ぶなら、角度を計算
+						y = gy - (hy + HUMAN_HEIGTH);
+						ary = atan2(y, sqrt(x*x + z*z)) + (float)M_PI;
+					}
+					else{		//下方向に飛ぶなら、垂直角度は無効。（爆風で地面にめり込むのを防止）
+						ary = 0.0f;
+					}
+
+					//爆風による風圧
+					HumanIndex[j].AddPosOrder(arx, ary, 2.0f);
 				}
 			}
 

@@ -33,14 +33,15 @@
 #define OBJECT_H
 
 // 注意：速度変更時は、当たり判定系の定数も要確認
-#define HUMAN_PROGRESSRUN_SPEED	1.40f			//!< 人の前進（走り）速度
-#define HUMAN_SIDEWAYSRUN_SPEED 1.00f			//!< 人の横走り速度
-#define HUMAN_REGRESSRUN_SPEED 0.75f			//!< 人の後退速度
-//! 人が斜め前に進む速度
-#define HUMAN_PROGRESSRUN_SIDEWAYSRUN_SPEED ((HUMAN_PROGRESSRUN_SPEED + HUMAN_SIDEWAYSRUN_SPEED) / 2)
-//! 人が斜め後ろに進む速度
-#define HUMAN_REGRESSRUN_SIDEWAYSRUN_SPEED (HUMAN_REGRESSRUN_SPEED)
-#define HUMAN_PROGRESSWALK_SPEED	0.70f		//!< 人が歩く速度
+#define HUMAN_PROGRESSRUN_ACCELERATION	0.7f			//!< 人の前進（走り）加速度
+#define HUMAN_SIDEWAYSRUN_ACCELERATION 0.5f			//!< 人の横走り加速度
+#define HUMAN_REGRESSRUN_ACCELERATION 0.38f			//!< 人の後退加速度
+//! 人が斜め前に進む加速度
+#define HUMAN_PROGRESSRUN_SIDEWAYSRUN_ACCELERATION ((HUMAN_PROGRESSRUN_ACCELERATION + HUMAN_SIDEWAYSRUN_ACCELERATION) / 2)
+//! 人が斜め後ろに進む加速度
+#define HUMAN_REGRESSRUN_SIDEWAYSRUN_ACCELERATION (HUMAN_REGRESSRUN_ACCELERATION)
+#define HUMAN_PROGRESSWALK_ACCELERATION	0.35f		//!< 人が歩く加速度
+#define HUMAN_ATTENUATION			0.5f		//!< 人の1フレーム当たりの減衰率　（0.0 < x < 1.0）
 
 #define HUMAN_JUMP_SPEED (2.2f + (HUMAN_DAMAGE_SPEED))	//!< ジャンプする速度
 
@@ -67,7 +68,7 @@
 #define HUMAN_MAPCOLLISION_R 5.0f							//!< 人とマップの当たり判定　半径
 #define HUMAN_MAPCOLLISION_HEIGTH 10.2f						//!< 人とマップの当たり判定　高さ（注：腰程度）
 #define HUMAN_MAPCOLLISION_SLOPEANGLE ((float)M_PI/18*5)	//!< 人とマップの当たり判定　登れない斜面の角度
-#define HUMAN_MAPCOLLISION_SLOPEFORCE 1.4f					//!< 人とマップの当たり判定　登れない斜面が人を押し出す力
+#define HUMAN_MAPCOLLISION_SLOPEFORCE 1.0f					//!< 人とマップの当たり判定　登れない斜面が人を押し出す力
 #define HUMAN_DEADLINE -100.0f			//!< 人が死亡するY座標（デッドライン）
 
 #define BULLET_SPEEDSCALE 3				//!< 弾速の倍率
@@ -140,8 +141,6 @@ protected:
 	int id_legmodel;						//!< 足（静止）
 	int id_walkmodel[TOTAL_WALKMODE];		//!< 足（歩く）
 	int id_runmodel[TOTAL_RUNMODE];			//!< 足（走る）
-	float addposorder_x;	//!< 要求するX軸移動量
-	float addposorder_z;	//!< 要求するZ軸移動量
 	float move_rx;		//!< 移動角度
 	int MoveFlag;		//!< 移動方向を表すフラグ
 	int MoveFlag_lt;	//!< （前回の）移動方向を表すフラグ
@@ -158,7 +157,7 @@ protected:
 	int CheckAndProcessDead(class Collision *CollD);
 	void ControlProcess();
 	bool CheckBlockAngle(class BlockDataInterface *inblockdata, int bid, int fid, float vx, float vz);
-	bool MapCollisionDetection(class Collision *CollD, class BlockDataInterface *inblockdata, float *vx, float *vz, float speed, float *FallDist);
+	bool MapCollisionDetection(class Collision *CollD, class BlockDataInterface *inblockdata, float *FallDist);
 
 public:
 	human(class ParameterInfo *in_Param = NULL, float x = 0.0f, float y = 0.0f, float z = 0.0f, float rx = 0.0f, int id_param = -1, int dataid = 0, signed char p4 = 0, int team = 0, bool flag = false);
@@ -193,7 +192,7 @@ public:
 	virtual void GetRxRy(float *rx, float *ry);
 	virtual void SetRxRy(float rx, float ry);
 	virtual int Jump();
-	virtual void AddPosOrder(float rx, float speed);
+	virtual void AddPosOrder(float rx, float ry, float speed);
 	virtual void HitBulletHead(int attacks);
 	virtual void HitBulletUp(int attacks);
 	virtual void HitBulletLeg(int attacks);
