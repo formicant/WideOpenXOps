@@ -73,6 +73,7 @@ class ObjectManager
 	int *Human_ontarget;	//!< 命中数
 	int *Human_kill;		//!< 倒した敵の数
 	int *Human_headshot;	//!< 敵の頭部に命中した数
+	bool *Human_ShotFlag;	//!< 発砲フラグ（マズルフラッシュ用）
 
 	int Player_HumanID;		//!< プレイヤーが操作する人オブジェクトのID
 
@@ -99,6 +100,7 @@ class ObjectManager
 	void PickupWeapon(human *in_human, weapon *in_weapon);
 	void CleanupPointDataToObject();
 	int SortEffect(float camera_x, float camera_y, float camera_z, effectdata data[]);
+	void ShotWeaponEffect(int humanid);
 
 public:
 	ObjectManager();

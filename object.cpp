@@ -153,6 +153,7 @@ human::human(class ParameterInfo *in_Param, float x, float y, float z, float rx,
 	rotation_y = 0.0f;
 	armrotation_y = 0.0f;
 	reaction_y = 0.0f;
+	legrotation_x = 0.0f;
 	point_dataid = dataid;
 	point_p4 = p4;
 	teamid = team;
@@ -188,7 +189,6 @@ human::human(class ParameterInfo *in_Param, float x, float y, float z, float rx,
 	MoveFlag_lt = MoveFlag;
 	scopemode = 0;
 	HitFlag = false;
-	legmode = LEG_STOP;
 	walkcnt = 0;
 	runcnt = 0;
 	totalmove = 0.0f;
@@ -223,6 +223,7 @@ void human::SetParamData(int id_param, int dataid, signed char p4, int team, boo
 		rotation_y = 0.0f;
 		armrotation_y = (float)M_PI/18 * -3;
 		reaction_y = 0.0f;
+		legrotation_x = 0.0f;
 
 		for(int i=0; i<TOTAL_HAVEWEAPON; i++){
 			weapon[i] = NULL;
@@ -1127,69 +1128,59 @@ void human::ControlProcess()
 	if( GetFlag(MoveFlag, MOVEFLAG_WALK) ){
 		move_rx = 0.0f;
 		AddPosOrder(rotation_x*-1 + move_rx + (float)M_PI/2, 0.0f, HUMAN_PROGRESSWALK_ACCELERATION);
-		legmode = LEG_WALK;
 		walkcnt += 1;
 		runcnt = 0;
 	}
 	else if( GetFlag(MoveFlag, (MOVEFLAG_FORWARD | MOVEFLAG_BACK | MOVEFLAG_LEFT | MOVEFLAG_RIGHT)) == MOVEFLAG_FORWARD ){
 		move_rx = 0.0f;
 		AddPosOrder(rotation_x*-1 + move_rx + (float)M_PI/2, 0.0f, HUMAN_PROGRESSRUN_ACCELERATION);
-		legmode = LEG_RUN;
 		walkcnt = 0;
 		runcnt += 1;
 	}
 	else if( GetFlag(MoveFlag, (MOVEFLAG_FORWARD | MOVEFLAG_BACK | MOVEFLAG_LEFT | MOVEFLAG_RIGHT)) == MOVEFLAG_BACK ){
 		move_rx = (float)M_PI;
 		AddPosOrder(rotation_x*-1 + move_rx + (float)M_PI/2, 0.0f, HUMAN_REGRESSRUN_ACCELERATION);
-		legmode = LEG_RUN;
 		walkcnt = 0;
 		runcnt += 1;
 	}
 	else if( GetFlag(MoveFlag, (MOVEFLAG_FORWARD | MOVEFLAG_BACK | MOVEFLAG_LEFT | MOVEFLAG_RIGHT)) == MOVEFLAG_LEFT ){
 		move_rx = (float)M_PI/2;
 		AddPosOrder(rotation_x*-1 + move_rx + (float)M_PI/2, 0.0f, HUMAN_SIDEWAYSRUN_ACCELERATION);
-		legmode = LEG_RUN;
 		walkcnt = 0;
 		runcnt += 1;
 	}
 	else if( GetFlag(MoveFlag, (MOVEFLAG_FORWARD | MOVEFLAG_BACK | MOVEFLAG_LEFT | MOVEFLAG_RIGHT)) == MOVEFLAG_RIGHT ){
 		move_rx = (float)M_PI/2 * -1;
 		AddPosOrder(rotation_x*-1 + move_rx + (float)M_PI/2, 0.0f, HUMAN_SIDEWAYSRUN_ACCELERATION);
-		legmode = LEG_RUN;
 		walkcnt = 0;
 		runcnt += 1;
 	}
 	else if( GetFlag(MoveFlag, (MOVEFLAG_FORWARD | MOVEFLAG_BACK | MOVEFLAG_LEFT | MOVEFLAG_RIGHT)) == (MOVEFLAG_FORWARD | MOVEFLAG_LEFT) ){
 		move_rx = (float)M_PI/4;
 		AddPosOrder(rotation_x*-1 + move_rx + (float)M_PI/2, 0.0f, HUMAN_PROGRESSRUN_SIDEWAYSRUN_ACCELERATION);
-		legmode = LEG_RUN;
 		walkcnt = 0;
 		runcnt += 1;
 	}
 	else if( GetFlag(MoveFlag, (MOVEFLAG_FORWARD | MOVEFLAG_BACK | MOVEFLAG_LEFT | MOVEFLAG_RIGHT)) == (MOVEFLAG_BACK | MOVEFLAG_LEFT) ){
 		move_rx = (float)M_PI/4*3;
 		AddPosOrder(rotation_x*-1 + move_rx + (float)M_PI/2, 0.0f, HUMAN_REGRESSRUN_SIDEWAYSRUN_ACCELERATION);
-		legmode = LEG_RUN;
 		walkcnt = 0;
 		runcnt += 1;
 	}
 	else if( GetFlag(MoveFlag, (MOVEFLAG_FORWARD | MOVEFLAG_BACK | MOVEFLAG_LEFT | MOVEFLAG_RIGHT)) == (MOVEFLAG_BACK | MOVEFLAG_RIGHT) ){
 		move_rx = (float)M_PI/4*3 * -1;
 		AddPosOrder(rotation_x*-1 + move_rx + (float)M_PI/2, 0.0f, HUMAN_REGRESSRUN_SIDEWAYSRUN_ACCELERATION);
-		legmode = LEG_RUN;
 		walkcnt = 0;
 		runcnt += 1;
 	}
 	else if( GetFlag(MoveFlag, (MOVEFLAG_FORWARD | MOVEFLAG_BACK | MOVEFLAG_LEFT | MOVEFLAG_RIGHT)) == (MOVEFLAG_FORWARD | MOVEFLAG_RIGHT) ){
 		move_rx = (float)M_PI/4 * -1;
 		AddPosOrder(rotation_x*-1 + move_rx + (float)M_PI/2, 0.0f, HUMAN_PROGRESSRUN_SIDEWAYSRUN_ACCELERATION);
-		legmode = LEG_RUN;
 		walkcnt = 0;
 		runcnt += 1;
 	}
 	else{
 		move_rx = 0.0f;
-		legmode = LEG_STOP;
 		walkcnt = 0;
 		runcnt = 0;
 	}
@@ -1467,6 +1458,36 @@ int human::RunFrame(class Collision *CollD, class BlockDataInterface *inblockdat
 		else{ reaction_y = 0.0f; }
 	}
 
+	//リロード中なら腕の角度を再設定
+	if( weapon[selectweapon] != NULL ){
+		if( weapon[selectweapon]->GetReloadCnt() > 0 ){
+			reaction_y = ARMRAD_RELOADWEAPON;
+		}
+	}
+
+	//足の角度を、-90度～90度の範囲に設定
+	if( hp <= 0 ){
+		legrotation_x = 0.0f;
+	}
+	else{
+		float add_legrx;
+
+		//目標値を設定
+		if( fabs(move_rx) > (float)M_PI/2 ){
+			add_legrx = move_rx + (float)M_PI - legrotation_x;
+		}
+		else{
+			add_legrx = move_rx - legrotation_x;
+		}
+		for(; add_legrx > (float)M_PI; add_legrx -= (float)M_PI*2){}
+		for(; add_legrx < (float)M_PI*-1; add_legrx += (float)M_PI*2){}
+
+		//補正していく
+		if( add_legrx > (float)M_PI/18 ){ legrotation_x += (float)M_PI/18; }
+		else if( add_legrx < (float)M_PI/18*-1 ){ legrotation_x -= (float)M_PI/18; }
+		else{ legrotation_x += add_legrx; }
+	}
+
 	//照準の状態誤差の処理
 	GunsightErrorRange();
 
@@ -1529,32 +1550,35 @@ void human::Render(class D3DGraphics *d3dg, class ResourceManager *Resource, boo
 	if( d3dg == NULL ){ return; }
 	if( RenderFlag == false ){ return; }
 
-	//足の角度を、-90度～90度の範囲に設定
-	float leg_rx;
-	if( hp <= 0 ){ leg_rx = 0.0f; }
-	else if( fabs(move_rx) > (float)M_PI/2 ){ leg_rx = move_rx + (float)M_PI; }
-	else{ leg_rx = move_rx; }
-
 	//現在装備する武器のクラスを取得
 	class weapon *nowweapon;
 	nowweapon = weapon[selectweapon];
 
 	if( DrawArm == false ){
+		int legmodelid;
+
 		//上半身を描画
 		d3dg->SetWorldTransform(pos_x, pos_y - 1.0f, pos_z, rotation_x + (float)M_PI, rotation_y, upmodel_size);
 		d3dg->RenderModel(id_upmodel, id_texture);
 
+		//足のモデルを設定
+		legmodelid = id_legmodel;	//立ち止まり
+		if( GetFlag(MoveFlag_lt, MOVEFLAG_WALK) ){
+			legmodelid = id_walkmodel[ (walkcnt/3 % TOTAL_WALKMODE) ];	//歩き
+		}
+		if( GetFlag(MoveFlag_lt, MOVEFLAG_FORWARD) ){
+			legmodelid = id_runmodel[ (runcnt/2 % TOTAL_RUNMODE) ];		//前走り
+		}
+		if( GetFlag(MoveFlag_lt, MOVEFLAG_BACK) ){
+			legmodelid = id_runmodel[ (runcnt/4 % TOTAL_RUNMODE) ];		//後ろ走り
+		}
+		if( GetFlag(MoveFlag_lt, (MOVEFLAG_LEFT | MOVEFLAG_RIGHT)) ){
+			legmodelid = id_runmodel[ (runcnt/3 % TOTAL_RUNMODE) ];		//左右走り
+		}
+
 		//足を描画
-		d3dg->SetWorldTransform(pos_x, pos_y, pos_z, rotation_x + (float)M_PI + leg_rx*-1, rotation_y, legmodel_size);
-		if( legmode == LEG_STOP ){
-			d3dg->RenderModel(id_legmodel, id_texture);
-		}
-		if( legmode == LEG_WALK ){
-			d3dg->RenderModel(id_walkmodel[ (walkcnt/3 % TOTAL_WALKMODE) ], id_texture);
-		}
-		if( legmode == LEG_RUN ){
-			d3dg->RenderModel(id_runmodel[ (runcnt/2 % TOTAL_RUNMODE) ], id_texture);
-		}
+		d3dg->SetWorldTransform(pos_x, pos_y, pos_z, rotation_x + (float)M_PI + legrotation_x*-1, rotation_y, legmodel_size);
+		d3dg->RenderModel(legmodelid, id_texture);
 	}
 
 	//腕を描画
@@ -1590,11 +1614,6 @@ void human::Render(class D3DGraphics *d3dg, class ResourceManager *Resource, boo
 		if( paramdata.WeaponP == 2 ){
 			armmodelid = 0;
 			ry = ARMRAD_NOWEAPON;
-		}
-
-		//リロード時は角度を再設定
-		if( nowweapon->GetReloadCnt() > 0 ){
-			ry = ARMRAD_RELOADWEAPON;
 		}
 
 		//腕を描画
@@ -2410,20 +2429,13 @@ int grenade::RunFrame(class Collision *CollD, class BlockDataInterface *inblockd
 		pos_y += move_y/maxDist * (Dist - 0.1f);
 		pos_z += move_z/maxDist * (Dist - 0.1f);
 
-		if( maxDist < 1.0f ){
-			move_x = 0.0f;
-			move_y = 0.0f;
-			move_z = 0.0f;
-		}
-		else{
-			//反射するベクトルを求める
-			CollD->ReflectVector(inblockdata, id, face, move_x/maxDist, move_y/maxDist, move_z/maxDist, &vx, &vy, &vz);
+		//反射するベクトルを求める
+		CollD->ReflectVector(inblockdata, id, face, move_x, move_y, move_z, &vx, &vy, &vz);
 
-			//減速
-			move_x = vx * maxDist * GRENADE_BOUND_ACCELERATION;
-			move_y = vy * maxDist * GRENADE_BOUND_ACCELERATION;
-			move_z = vz * maxDist * GRENADE_BOUND_ACCELERATION;
-		}
+		//減速
+		move_x = vx * GRENADE_BOUND_ACCELERATION;
+		move_y = vy * GRENADE_BOUND_ACCELERATION;
+		move_z = vz * GRENADE_BOUND_ACCELERATION;
 
 		cnt += 1;
 		return 1;

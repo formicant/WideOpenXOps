@@ -1065,12 +1065,14 @@ void AIcontrol::ControlMoveTurn()
 }
 
 //! 武器をリロード・捨てる
-//! @return 捨てる：1　リロード：2　持ち替える：3　何もしない：0
+//! @return 捨てる：1　リロード：2　持ち替える：3　FULL/SEMI切り替え：4　何もしない：0
 int AIcontrol::ControlWeapon()
 {
 	int selectweapon;
 	class weapon *weapon[TOTAL_HAVEWEAPON];
 	int weaponid, lnbs, nbs;
+	WeaponParameter paramdata;
+	bool blazingmodeS, blazingmodeN;
 
 	for(int i=0; i<TOTAL_HAVEWEAPON; i++){
 		weapon[i] = NULL;
@@ -1080,6 +1082,9 @@ int AIcontrol::ControlWeapon()
 	ctrlhuman->GetWeapon(&selectweapon, weapon);
 	if( weapon[selectweapon] == NULL ){ return 0; }
 	weapon[selectweapon]->GetParamData(&weaponid, &lnbs, &nbs);
+
+	//武器の性能を取得
+	if( Param->GetWeapon(weaponid, &paramdata) == 1 ){ return 0; }
 
 	//スコープ解除
 	ctrlhuman->SetDisableScope();
@@ -1169,6 +1174,31 @@ int AIcontrol::ControlWeapon()
 				ctrlhuman->ChangeWeapon();
 				return 3;
 			//}
+		}
+	}
+
+	//連射切り替えが可能な武器なら
+	if( paramdata.ChangeWeapon != -1 ){
+		//現在の武器の連射設定を取得
+		blazingmodeS = paramdata.blazingmode;
+
+		//新たな武器の連射設定を取得
+		if( Param->GetWeapon(paramdata.ChangeWeapon, &paramdata) == 1 ){ return 0; }
+		blazingmodeN = paramdata.blazingmode;
+
+		if( longattack == false ){
+			//近距離攻撃中で、現在SEMI・切り替えるとFULLになるなら
+			if( (blazingmodeS == false)||(blazingmodeN == true) ){
+				ctrlhuman->ChangeShotMode();	//切り替える
+				return 4;
+			}
+		}
+		else{
+			//遠距離攻撃中で、現在FULL・切り替えるとSEMIになるなら
+			if( (blazingmodeS == true)||(blazingmodeN == false) ){
+				ctrlhuman->ChangeShotMode();	//切り替える
+				return 4;
+			}
 		}
 	}
 

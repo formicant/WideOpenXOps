@@ -45,6 +45,7 @@ ObjectManager::ObjectManager()
 	Human_ontarget = new int[MAX_HUMAN];
 	Human_kill = new int[MAX_HUMAN];
 	Human_headshot = new int[MAX_HUMAN];
+	Human_ShotFlag = new bool[MAX_HUMAN];
 	Player_HumanID = 0;
 	AddHumanIndex_TextureID = -1;
 
@@ -71,6 +72,7 @@ ObjectManager::~ObjectManager()
 	if( Human_ontarget != NULL ){ delete [] Human_ontarget; }
 	if( Human_kill != NULL ){ delete [] Human_kill; }
 	if( Human_headshot != NULL ){ delete [] Human_headshot; }
+	if( Human_ShotFlag != NULL ){ delete [] Human_ShotFlag; }
 }
 
 //! 参照するクラスを設定
@@ -211,6 +213,9 @@ int ObjectManager::AddHumanIndex(pointdata data, pointdata infodata)
 		//人に持たせる
 		HumanIndex[Humanindexid].SetWeapon(Weapon);
 	}
+
+	//発砲フラグを初期化
+	Human_ShotFlag[Humanindexid] = false;
 
 	//プレイヤーならば、番号を記録
 	if( ( (data.p1 == 1)||(data.p1 == 6) )&&(data.p4 == 0) ){
@@ -1216,56 +1221,8 @@ int ObjectManager::ShotWeapon(human *MyHuman)
 
 	//手榴弾でなければ
 	if( grenadeflag == false ){
-		float x, y, z;
-
-		//マズルフラッシュと煙のサイズを決定
-		float flashsize = 3.0f;
-		if( ParamData.silencer == true ){
-			flashsize = 1.0f;
-		}
-
-		//行列でエフェクト座標を計算
-		d3dg->SetWorldTransformHumanWeapon(pos_x, pos_y + 16.0f, pos_z, ParamData.flashx/10, ParamData.flashy/10, ParamData.flashz/10, rotation_x, armrotation_y*-1, 1.0f);
-		d3dg->GetWorldTransformPos(&x, &y, &z);
-		d3dg->ResetWorldTransform();
-
-		//マズルフラッシュ描画
-		for(int i=0; i<MAX_EFFECT; i++){
-			if( EffectIndex[i].GetDrawFlag() == false ){
-				//エフェクト設定
-				EffectIndex[i].SetPosData(x, y, z, 0.0f);
-				EffectIndex[i].SetParamData(flashsize, (float)M_PI/18*GetRand(18), 1, Resource->GetEffectMflashTexture(), EFFECT_NORMAL, true);
-				EffectIndex[i].SetDrawFlag(true);
-				break;
-			}
-		}
-
-		//エフェクト（煙）の表示
-		for(int i=0; i<MAX_EFFECT; i++){
-			if( EffectIndex[i].GetDrawFlag() == false ){
-				//エフェクト設定
-				EffectIndex[i].SetPosData(x, y, z, 0.0f);
-				EffectIndex[i].SetParamData(flashsize, (float)M_PI/18*GetRand(18), (int)(GAMEFPS/3), Resource->GetEffectSmokeTexture(), EFFECT_DISAPPEAR | EFFECT_MAGNIFY | EFFECT_ROTATION, true);
-				EffectIndex[i].SetDrawFlag(true);
-				break;
-			}
-		}
-
-		//行列でエフェクト座標を計算
-		d3dg->SetWorldTransformHumanWeapon(pos_x, pos_y + 16.0f, pos_z, ParamData.yakkyou_px/10, ParamData.yakkyou_py/10, ParamData.yakkyou_pz/10, rotation_x, armrotation_y*-1, 1.0f);
-		d3dg->GetWorldTransformPos(&x, &y, &z);
-		d3dg->ResetWorldTransform();
-
-		//薬莢描画
-		for(int i=0; i<MAX_EFFECT; i++){
-			if( EffectIndex[i].GetDrawFlag() == false ){
-				//エフェクト設定
-				EffectIndex[i].SetPosData(x, y, z, 0.0f);
-				EffectIndex[i].SetParamData(/*3.0f*/2.0f, (float)M_PI/18*GetRand(18), (int)(GAMEFPS/2), Resource->GetEffectYakkyouTexture(), EFFECT_ROTATION | EFFECT_FALL, true);
-				EffectIndex[i].SetDrawFlag(true);
-				break;
-			}
-		}
+		//発砲フラグを設定
+		Human_ShotFlag[humanid] = true;
 	}
 
 	if( ParamData.soundvolume > 0 ){
@@ -1277,6 +1234,75 @@ int ObjectManager::ShotWeapon(human *MyHuman)
 		return 2;
 	}
 	return 1;
+}
+
+//! マズルフラッシュを設定
+//! @param humanid 人の番号
+//! @attention この関数の呼び出しタイミングを誤ると、銃口に対してマズルフラッシュが合いません。
+void ObjectManager::ShotWeaponEffect(int humanid)
+{
+	float pos_x, pos_y, pos_z;
+	float rotation_x, armrotation_y;
+	int weapon_paramid;
+	WeaponParameter ParamData;
+	float x, y, z;
+
+	//人の座標と角度を取得
+	HumanIndex[humanid].GetPosData(&pos_x, &pos_y, &pos_z, NULL);
+	HumanIndex[humanid].GetRxRy(&rotation_x, &armrotation_y);
+
+	//武器の情報を取得
+	weapon_paramid = HumanIndex[humanid].GetMainWeaponTypeNO();
+	if( GameParamInfo->GetWeapon(weapon_paramid, &ParamData) != 0 ){ return; }
+
+	//マズルフラッシュと煙のサイズを決定
+	float flashsize = 3.0f;
+	if( ParamData.silencer == true ){
+		flashsize = 1.0f;
+	}
+
+	//行列でエフェクト座標を計算
+	d3dg->SetWorldTransformHumanWeapon(pos_x, pos_y + 16.0f, pos_z, ParamData.flashx/10, ParamData.flashy/10, ParamData.flashz/10, rotation_x, armrotation_y*-1, 1.0f);
+	d3dg->GetWorldTransformPos(&x, &y, &z);
+	d3dg->ResetWorldTransform();
+
+	//マズルフラッシュ描画
+	for(int i=0; i<MAX_EFFECT; i++){
+		if( EffectIndex[i].GetDrawFlag() == false ){
+			//エフェクト設定
+			EffectIndex[i].SetPosData(x, y, z, 0.0f);
+			EffectIndex[i].SetParamData(flashsize, (float)M_PI/18*GetRand(18), 1, Resource->GetEffectMflashTexture(), EFFECT_NORMAL, true);
+			EffectIndex[i].SetDrawFlag(true);
+			break;
+		}
+	}
+
+	//エフェクト（煙）の表示
+	for(int i=0; i<MAX_EFFECT; i++){
+		if( EffectIndex[i].GetDrawFlag() == false ){
+			//エフェクト設定
+			EffectIndex[i].SetPosData(x, y, z, 0.0f);
+			EffectIndex[i].SetParamData(flashsize, (float)M_PI/18*GetRand(18), (int)(GAMEFPS/3), Resource->GetEffectSmokeTexture(), EFFECT_DISAPPEAR | EFFECT_MAGNIFY | EFFECT_ROTATION, true);
+			EffectIndex[i].SetDrawFlag(true);
+			break;
+		}
+	}
+
+	//行列でエフェクト座標を計算
+	d3dg->SetWorldTransformHumanWeapon(pos_x, pos_y + 16.0f, pos_z, ParamData.yakkyou_px/10, ParamData.yakkyou_py/10, ParamData.yakkyou_pz/10, rotation_x, armrotation_y*-1, 1.0f);
+	d3dg->GetWorldTransformPos(&x, &y, &z);
+	d3dg->ResetWorldTransform();
+
+	//薬莢描画
+	for(int i=0; i<MAX_EFFECT; i++){
+		if( EffectIndex[i].GetDrawFlag() == false ){
+			//エフェクト設定
+			EffectIndex[i].SetPosData(x, y, z, 0.0f);
+			EffectIndex[i].SetParamData(/*3.0f*/2.0f, (float)M_PI/18*GetRand(18), (int)(GAMEFPS/2), Resource->GetEffectYakkyouTexture(), EFFECT_ROTATION | EFFECT_FALL, true);
+			EffectIndex[i].SetDrawFlag(true);
+			break;
+		}
+	}
 }
 
 //! 武器をリロード
@@ -1493,6 +1519,14 @@ int ObjectManager::Process(int cmdF5id, float camera_x, float camera_y, float ca
 		}
 	}
 
+	//武器を発砲した際のエフェクトを出す
+	for(int i=0; i<MAX_HUMAN; i++){
+		if( Human_ShotFlag[i] == true ){
+			ShotWeaponEffect(i);
+			Human_ShotFlag[i] = false;
+		}
+	}
+
 	//エフェクトオブジェクトの処理
 	for(int i=0; i<MAX_EFFECT; i++){
 		EffectIndex[i].RunFrame(camera_rx, camera_ry);
@@ -1575,7 +1609,7 @@ int ObjectManager::Process(int cmdF5id, float camera_x, float camera_y, float ca
 			for(int j=0; j<MAX_HUMAN; j++){
 				if( HumanIndex[j].GrenadeExplosion(CollD, &(GrenadeIndex[i])) ){
 					float hx, hy, hz;
-					float x, y, z;
+					float x, y, y2, z;
 					float arx, ary;
 
 					//倒していれば、発射した人の成果に加算
@@ -1596,15 +1630,15 @@ int ObjectManager::Process(int cmdF5id, float camera_x, float camera_y, float ca
 					arx = atan2(z, x);
 
 					if( sin(atan2(y, sqrt(x*x + z*z))) < 0.0f ){		//上方向に飛ぶなら、角度を計算
-						y = gy - (hy + HUMAN_HEIGTH);
-						ary = atan2(y, sqrt(x*x + z*z)) + (float)M_PI;
+						y2 = gy - (hy + HUMAN_HEIGTH);
+						ary = atan2(y2, sqrt(x*x + z*z)) + (float)M_PI;
 					}
 					else{		//下方向に飛ぶなら、垂直角度は無効。（爆風で地面にめり込むのを防止）
 						ary = 0.0f;
 					}
 
 					//爆風による風圧
-					HumanIndex[j].AddPosOrder(arx, ary, 2.0f);
+					HumanIndex[j].AddPosOrder(arx, ary, 2.2f/MAX_DAMAGE_GRENADE_DISTANCE * (MAX_DAMAGE_GRENADE_DISTANCE - sqrt(x*x + y*y + z*z)));
 				}
 			}
 

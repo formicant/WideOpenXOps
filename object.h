@@ -63,7 +63,7 @@
 #define WEAPONERRORRANGE_SCALE 0.25f	//!< 武器の反動角度の倍率（×0.25 ＝ ÷4）
 
 #define ARMRAD_NOWEAPON ((float)M_PI/2*-1 + (float)M_PI/9)		//!< 手ぶら時の腕の表示角度
-#define ARMRAD_RELOADWEAPON ((float)M_PI/2*-1 + (float)M_PI/3)	//!< リロード時の腕の表示角度
+#define ARMRAD_RELOADWEAPON ((float)M_PI/18*2 * -1)	//!< リロード時の腕の表示角度
 
 #define HUMAN_MAPCOLLISION_R 5.0f							//!< 人とマップの当たり判定　半径
 #define HUMAN_MAPCOLLISION_HEIGTH 10.2f						//!< 人とマップの当たり判定　高さ（注：腰程度）
@@ -127,6 +127,7 @@ protected:
 	float rotation_y;	//!< 全体の回転角度
 	float armrotation_y;	//!< 腕の回転角度
 	float reaction_y;		//!< 腕を上げ下げする角度
+	float legrotation_x;	//!< 足の回転角度
 	float upmodel_size;		//!< 上半身表示サイズ
 	float armmodel_size;	//!< 腕表示サイズ
 	float legmodel_size;	//!< 足表示サイズ
@@ -147,7 +148,6 @@ protected:
 	int MoveFlag_lt;	//!< （前回の）移動方向を表すフラグ
 	int scopemode;		//!< スコープ使用モード
 	bool HitFlag;		//!< 被弾を表すフラグ
-	int legmode;		//!< 足の状態
 	int walkcnt;		//!< 歩くモーションのカウント
 	int runcnt;			//!< 走るモーションのカウント
 	float totalmove;	//!< 合計移動量
