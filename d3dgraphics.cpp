@@ -454,46 +454,6 @@ int D3DGraphics::GetTextureSize(int id, int *width, int *height)
 	return 0;
 }
 
-//! テクスチャがアルファ値を含んでいるかチェック
-//! @param id テクスチャ認識番号
-//! @return アルファ値を含む：1　含まない・エラー：0
-int D3DGraphics::CheckAlphaTexture(int id)
-{
-	//無効な認識番号が指定されていたら、処理せず返す。
-	if( id == -1 ){ return 0; }
-	if( ptextures[id] == NULL ){ return 0; }
-
-	IDirect3DSurface9 *surface;
-	D3DSURFACE_DESC desc;
-	int Format;
-
-	//サーフェイスを取得
-	ptextures[id]->GetSurfaceLevel(0, &surface);
-
-	//幅と高さを取得
-	surface->GetDesc(&desc);
-	Format = desc.Format;
-
-	//サーフェイスを開放
-	surface->Release();
-
-	//http://msdn.microsoft.com/ja-jp/library/cc324320.aspx
-	if( Format == D3DFMT_A8R8G8B8 ){ return 1; }
-	if( Format == D3DFMT_A1R5G5B5 ){ return 1; }
-	if( Format == D3DFMT_A4R4G4B4 ){ return 1; }
-	if( Format == D3DFMT_A8 ){ return 1; }
-	if( Format == D3DFMT_A8R3G3B2 ){ return 1; }
-	if( Format == D3DFMT_A2B10G10R10 ){ return 1; }
-	if( Format == D3DFMT_A8B8G8R8 ){ return 1; }
-	if( Format == D3DFMT_A2R10G10B10 ){ return 1; }
-	if( Format == D3DFMT_A16B16G16R16 ){ return 1; }
-	if( Format == D3DFMT_A8P8 ){ return 1; }
-	if( Format == D3DFMT_A8L8 ){ return 1; }
-	if( Format == D3DFMT_A4L4 ){ return 1; }
-
-	return 0;
-}
-
 //! テクスチャを解放
 //! @param id テクスチャ認識番号
 void D3DGraphics::CleanupTexture(int id)
@@ -1286,7 +1246,7 @@ void D3DGraphics::Draw2DLine(int x1, int y1, int x2, int y2, int color)
 
 	//データ形式を設定し、描画。
 	pd3dDevice->SetFVF(D3DFVF_XYZRHW | D3DFVF_DIFFUSE | D3DFVF_TEX1);
-	pd3dDevice->DrawPrimitiveUP(D3DPT_LINELIST, 2, pLineVertices, sizeof(TLVERTX));
+	pd3dDevice->DrawPrimitiveUP(D3DPT_LINELIST, 1, pLineVertices, sizeof(TLVERTX));
 
 	//2D描画用設定を解除
 	End2DRender();

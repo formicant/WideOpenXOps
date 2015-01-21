@@ -119,7 +119,6 @@ public:
 	void CleanupModel(int id);
 	int LoadTexture(char* filename, bool texturefont, bool BlackTransparent);
 	int GetTextureSize(int id, int *width, int *height);
-	int CheckAlphaTexture(int id);
 	void CleanupTexture(int id);
 	int StartRender();
 	void EndRender();
