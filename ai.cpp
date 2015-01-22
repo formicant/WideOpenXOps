@@ -32,10 +32,11 @@
 #include "ai.h"
 
 //! コンストラクタ
-AIcontrol::AIcontrol(class ObjectManager *in_ObjMgr, class human *in_ctrlhuman, class BlockDataInterface *in_blocks, class PointDataInterface *in_Points, class ParameterInfo *in_Param, class Collision *in_CollD, class SoundManager *in_GameSound)
+AIcontrol::AIcontrol(class ObjectManager *in_ObjMgr, int in_ctrlid, class BlockDataInterface *in_blocks, class PointDataInterface *in_Points, class ParameterInfo *in_Param, class Collision *in_CollD, class SoundManager *in_GameSound)
 {
 	ObjMgr = in_ObjMgr;
-	ctrlhuman = in_ctrlhuman;
+	ctrlid = in_ctrlid;
+	ctrlhuman = in_ObjMgr->GeHumanObject(in_ctrlid);
 	blocks = in_blocks;
 	Points = in_Points;
 	Param = in_Param;
@@ -62,10 +63,11 @@ AIcontrol::~AIcontrol()
 
 //! 対象クラスを設定
 //! @attention この関数で設定を行わないと、クラス自体が正しく機能しません。
-void AIcontrol::SetClass(class ObjectManager *in_ObjMgr, class human *in_ctrlhuman, class BlockDataInterface *in_blocks, class PointDataInterface *in_Points, class ParameterInfo *in_Param, class Collision *in_CollD, class SoundManager *in_GameSound)
+void AIcontrol::SetClass(class ObjectManager *in_ObjMgr, int in_ctrlid, class BlockDataInterface *in_blocks, class PointDataInterface *in_Points, class ParameterInfo *in_Param, class Collision *in_CollD, class SoundManager *in_GameSound)
 {
 	ObjMgr = in_ObjMgr;
-	ctrlhuman = in_ctrlhuman;
+	ctrlid = in_ctrlid;
+	ctrlhuman = in_ObjMgr->GeHumanObject(in_ctrlid);
 	blocks = in_blocks;
 	Points = in_Points;
 	Param = in_Param;
@@ -571,7 +573,7 @@ bool AIcontrol::MoveJump()
 	new_posy = posy + HUMAN_MAPCOLLISION_HEIGTH;
 	new_posz = posz + sin(rx*-1 + (float)M_PI/2) * (AI_CHECKJUMP_DIST + HUMAN_MAPCOLLISION_R);
 	if( CollD->CheckALLBlockInside(new_posx, new_posy, new_posz) == true ){
-		ctrlhuman->Jump();
+		ObjMgr->MoveJump(ctrlid);
 		return true;
 	}
 
@@ -580,11 +582,11 @@ bool AIcontrol::MoveJump()
 	new_posy = posy + AI_CHECKJUMP_HEIGHT;
 	new_posz = posz + sin(rx*-1 + (float)M_PI/2) * AI_CHECKJUMP_DIST;
 	if( CollD->CheckALLBlockInside(new_posx, new_posy, new_posz) == true ){
-		ctrlhuman->Jump();
+		ObjMgr->MoveJump(ctrlid);
 		return true;
 	}
 	else if( CollD->CheckALLBlockIntersectRay(new_posx, new_posy, new_posz, 0.0f, 1.0f, 0.0f, NULL, NULL, &dist_dummy, HUMAN_HEIGTH - AI_CHECKJUMP_HEIGHT) == true ){
-		ctrlhuman->Jump();
+		ObjMgr->MoveJump(ctrlid);
 		return true;
 	}
 
@@ -835,7 +837,7 @@ void AIcontrol::Action()
 
 			//発砲
 			if( random(rand) == 0 ){
-				ObjMgr->ShotWeapon(ctrlhuman);
+				ObjMgr->ShotWeapon(ctrlid);
 			}
 		}
 	}
@@ -937,7 +939,7 @@ int AIcontrol::HaveWeapon()
 
 		//持ち替える
 		if( weapon[notselectweapon] != NULL ){
-			ctrlhuman->ChangeWeapon();
+			ObjMgr->ChangeWeapon(ctrlid);
 			return 1;
 		}
 	}
@@ -1034,19 +1036,19 @@ void AIcontrol::ControlMoveTurn()
 {
 	//移動の実行
 	if( GetFlag(moveturn_mode, AI_CTRL_MOVEFORWARD) ){
-		ctrlhuman->SetMoveForward();
+		ObjMgr->MoveForward(ctrlid);
 	}
 	if( GetFlag(moveturn_mode, AI_CTRL_MOVEBACKWARD) ){
-		ctrlhuman->SetMoveBack();
+		ObjMgr->MoveBack(ctrlid);
 	}
 	if( GetFlag(moveturn_mode, AI_CTRL_MOVELEFT) ){
-		ctrlhuman->SetMoveLeft();
+		ObjMgr->MoveLeft(ctrlid);
 	}
 	if( GetFlag(moveturn_mode, AI_CTRL_MOVERIGHT) ){
-		ctrlhuman->SetMoveRight();
+		ObjMgr->MoveRight(ctrlid);
 	}
 	if( GetFlag(moveturn_mode, AI_CTRL_MOVEWALK) ){
-		ctrlhuman->SetMoveWalk();
+		ObjMgr->MoveWalk(ctrlid);
 	}
 
 	//方向転換の実行
@@ -1110,14 +1112,14 @@ int AIcontrol::ControlWeapon()
 			if( longattack == false ){
 				// 1/100の確率で持ち替える
 				if( (random(100) == 0)&&(nextnds > 0) ){
-					ctrlhuman->ChangeWeapon();
+					ObjMgr->ChangeWeapon(ctrlid);
 					return 3;
 				}
 			}
 			else{
 				// 1/66の確率で持ち替える
 				if( (random(66) == 0)&&(nextnds > 0) ){
-					ctrlhuman->ChangeWeapon();
+					ObjMgr->ChangeWeapon(ctrlid);
 					return 3;
 				}
 			}
@@ -1161,17 +1163,17 @@ int AIcontrol::ControlWeapon()
 
 			//弾が無ければ捨てる
 			if( nbs == 0 ){
-				ctrlhuman->DumpWeapon();
+				ObjMgr->DumpWeapon(ctrlid);
 				return 1;
 			}
 
 			//ランダムに リロード実行 or 武器を持ちかえ
 			if( random(ways) <= under ){
-				ObjMgr->ReloadWeapon(ctrlhuman);
+				ObjMgr->ReloadWeapon(ctrlid);
 				return 2;
 			}
 			//else{
-				ctrlhuman->ChangeWeapon();
+				ObjMgr->ChangeWeapon(ctrlid);
 				return 3;
 			//}
 		}
@@ -1189,14 +1191,14 @@ int AIcontrol::ControlWeapon()
 		if( longattack == false ){
 			//近距離攻撃中で、現在SEMI・切り替えるとFULLになるなら
 			if( (blazingmodeS == false)||(blazingmodeN == true) ){
-				ctrlhuman->ChangeShotMode();	//切り替える
+				ObjMgr->ChangeShotMode(ctrlid);	//切り替える
 				return 4;
 			}
 		}
 		else{
 			//遠距離攻撃中で、現在FULL・切り替えるとSEMIになるなら
 			if( (blazingmodeS == true)||(blazingmodeN == false) ){
-				ctrlhuman->ChangeShotMode();	//切り替える
+				ObjMgr->ChangeShotMode(ctrlid);	//切り替える
 				return 4;
 			}
 		}
@@ -1233,7 +1235,7 @@ int AIcontrol::ThrowGrenade()
 
 	//手榴弾を持っていなければ、切り替える
 	if( i != selectweapon ){
-		ctrlhuman->ChangeWeapon(i);
+		ObjMgr->ChangeWeapon(ctrlid, i);
 	}
 
 	pointdata pdata;
@@ -1286,7 +1288,7 @@ int AIcontrol::ThrowGrenade()
 		//角度を設定
 		ctrlhuman->SetRxRy(rx, ry);
 
-		if( ObjMgr->ShotWeapon(ctrlhuman) != 0 ){
+		if( ObjMgr->ShotWeapon(ctrlid) != 0 ){
 			return 1;
 		}
 	}

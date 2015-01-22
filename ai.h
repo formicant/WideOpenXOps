@@ -112,13 +112,14 @@ class AIcontrol
 	bool CautionMain();
 	bool NormalMain();
 
+	int ctrlid;					//!< 自分自身（制御対象）の人番号
 	class human *ctrlhuman;		//!< 自分自身（制御対象）のhumanクラス
 	class human *enemyhuman;	//!< 攻撃対象のhumanクラス
 
 public:
-	AIcontrol(class ObjectManager *in_ObjMgr = NULL, class human *in_ctrlhuman = NULL, class BlockDataInterface *in_blocks = NULL, class PointDataInterface *in_Points = NULL, class ParameterInfo *in_Param = NULL, class Collision *in_CollD = NULL, class SoundManager *in_GameSound = NULL);
+	AIcontrol(class ObjectManager *in_ObjMgr = NULL, int in_ctrlid = -1, class BlockDataInterface *in_blocks = NULL, class PointDataInterface *in_Points = NULL, class ParameterInfo *in_Param = NULL, class Collision *in_CollD = NULL, class SoundManager *in_GameSound = NULL);
 	~AIcontrol();
-	void SetClass(class ObjectManager *in_ObjMgr, class human *in_ctrlhuman, class BlockDataInterface *in_blocks, class PointDataInterface *in_Points, class ParameterInfo *in_Param, class Collision *in_CollD, class SoundManager *in_GameSound);
+	void SetClass(class ObjectManager *in_ObjMgr, int in_ctrlid, class BlockDataInterface *in_blocks, class PointDataInterface *in_Points, class ParameterInfo *in_Param, class Collision *in_CollD, class SoundManager *in_GameSound);
 	void Init();
 	void SetHoldWait(float px, float pz, float rx);
 	void SetHoldTracking(int id);

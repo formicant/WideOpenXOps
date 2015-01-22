@@ -370,6 +370,7 @@ int human::PickupWeapon(class weapon *in_weapon)
 
 //! 武器を切り替える（持ち替える）
 //! @param id 持ち替える武器　（-1 で次の武器）
+//! @attention ゲーム上から直接呼び出すことは避け、ObjectManagerクラスから呼び出してください。
 void human::ChangeWeapon(int id)
 {
 	//体力がなければ失敗
@@ -464,6 +465,7 @@ bool human::GetWeaponBlazingmode()
 //! @param GunsightErrorRange 発砲した際の照準誤差を受け取るポインタ
 //! @return 成功：1　失敗：0
 //! @attention 弾オブジェクトの処理や、発砲音の再生は別途行う必要があります。
+//! @attention ゲーム上から直接呼び出すことは避け、ObjectManagerクラスから呼び出してください。
 bool human::ShotWeapon(int *weapon_paramid, int *GunsightErrorRange)
 {
 	int param_id;
@@ -526,6 +528,7 @@ bool human::ShotWeapon(int *weapon_paramid, int *GunsightErrorRange)
 
 //! リロード
 //! @return 成功：true　失敗：false
+//! @attention ゲーム上から直接呼び出すことは避け、ObjectManagerクラスから呼び出してください。
 bool human::ReloadWeapon()
 {
 	//武器切り替え中なら失敗
@@ -548,6 +551,7 @@ bool human::ReloadWeapon()
 
 //! 武器を捨てる
 //! @return 成功：true　失敗：false
+//! @attention ゲーム上から直接呼び出すことは避け、ObjectManagerクラスから呼び出してください。
 bool human::DumpWeapon()
 {
 	//武器切り替え中なら失敗
@@ -573,6 +577,7 @@ bool human::DumpWeapon()
 
 //! 武器のショットモード切り替え
 //! @return 成功：0　失敗：1
+//! @attention ゲーム上から直接呼び出すことは避け、ObjectManagerクラスから呼び出してください。
 int human::ChangeShotMode()
 {
 	//武器を装備してなければ失敗
@@ -598,30 +603,35 @@ int human::ChangeShotMode()
 }
 
 //! 前進（走り）を設定
+//! @attention ゲーム上から直接呼び出すことは避け、ObjectManagerクラスから呼び出してください。
 void human::SetMoveForward()
 {
 	SetFlag(MoveFlag, MOVEFLAG_FORWARD);
 }
 
 //! 後退を設定
+//! @attention ゲーム上から直接呼び出すことは避け、ObjectManagerクラスから呼び出してください。
 void human::SetMoveBack()
 {
 	SetFlag(MoveFlag, MOVEFLAG_BACK);
 }
 
 //! 左走りを設定
+//! @attention ゲーム上から直接呼び出すことは避け、ObjectManagerクラスから呼び出してください。
 void human::SetMoveLeft()
 {
 	SetFlag(MoveFlag, MOVEFLAG_LEFT);
 }
 
 //! 右走りを設定
+//! @attention ゲーム上から直接呼び出すことは避け、ObjectManagerクラスから呼び出してください。
 void human::SetMoveRight()
 {
 	SetFlag(MoveFlag, MOVEFLAG_RIGHT);
 }
 
 //! 歩きを設定
+//! @attention ゲーム上から直接呼び出すことは避け、ObjectManagerクラスから呼び出してください。
 void human::SetMoveWalk()
 {
 	SetFlag(MoveFlag, MOVEFLAG_WALK);
@@ -714,6 +724,7 @@ void human::SetRxRy(float rx, float ry)
 
 //! ジャンプ
 //! @return 成功：0　失敗：1
+//! @attention ゲーム上から直接呼び出すことは避け、ObjectManagerクラスから呼び出してください。
 int human::Jump()
 {
 	//地面に触れており、落下速度が0.0ならば

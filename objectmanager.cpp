@@ -968,34 +968,6 @@ void ObjectManager::LoadPointData()
 	}
 }
 
-//! humanクラスを取得
-//! @deprecated この関数で各オブジェクトを直接呼び出すことは避け、このクラスの各種メンバー関数を使用してください。この関数は将来的に削除されます。
-human* ObjectManager::GetHumanList()
-{
-	return HumanIndex;
-}
-
-//! weaponクラスを取得
-//! @deprecated この関数で各オブジェクトを直接呼び出すことは避け、このクラスの各種メンバー関数を使用してください。この関数は将来的に削除されます。
-weapon* ObjectManager::GetWeaponList()
-{
-	return WeaponIndex;
-}
-
-//! smallobjectクラスを取得
-//! @deprecated この関数で各オブジェクトを直接呼び出すことは避け、このクラスの各種メンバー関数を使用してください。この関数は将来的に削除されます。
-smallobject* ObjectManager::GetSmallObjectList()
-{
-	return SmallObjectIndex;
-}
-
-//! bulletクラスを取得
-//! @deprecated この関数で各オブジェクトを直接呼び出すことは避け、このクラスの各種メンバー関数を使用してください。この関数は将来的に削除されます。
-bullet* ObjectManager::GetBulletList()
-{
-	return BulletIndex;
-}
-
 //! プレイヤー番号を取得
 //! @return プレイヤーのデータ番号
 int ObjectManager::GetPlayerID()
@@ -1115,17 +1087,108 @@ smallobject* ObjectManager::SearchSmallobject(signed char p4)
 	return NULL;
 }
 
-//! 発砲
-//! @param MyHuman 発砲する人
-//! @return 通常弾発射：1　手榴弾発射：2　失敗：0
-int ObjectManager::ShotWeapon(human *MyHuman)
+//! 前進（走り）を実行
+//! @param human_id 人の番号（0～MAX_HUMAN-1）
+void ObjectManager::MoveForward(int human_id)
 {
-	//オブジェクトのポインタから、データ番号を取得
-	int humanid;
-	for(humanid=0; humanid<MAX_HUMAN; humanid++){
-		if( &(HumanIndex[humanid]) == MyHuman ){ break; }
-	}
-	if( humanid == MAX_HUMAN ){ return 0; }		//見つからなければ「失敗」として返す
+	//値の範囲をチェック
+	if( (human_id < 0)||(MAX_HUMAN <= human_id) ){ return; }
+
+	//オブジェクトにフラグを設定
+	HumanIndex[human_id].SetMoveForward();
+
+	//走る足音追加
+	float posx, posy, posz;
+	int teamid;
+	HumanIndex[human_id].GetPosData(&posx, &posy, &posz, NULL);
+	HumanIndex[human_id].GetParamData(NULL, NULL, NULL, &teamid);
+	GameSound->SetFootsteps(posx, posy, posz, teamid);
+}
+
+//! 後退を実行
+//! @param human_id 人の番号（0～MAX_HUMAN-1）
+void ObjectManager::MoveBack(int human_id)
+{
+	//値の範囲をチェック
+	if( (human_id < 0)||(MAX_HUMAN <= human_id) ){ return; }
+
+	//オブジェクトにフラグを設定
+	HumanIndex[human_id].SetMoveBack();
+
+	//走る足音追加
+	float posx, posy, posz;
+	int teamid;
+	HumanIndex[human_id].GetPosData(&posx, &posy, &posz, NULL);
+	HumanIndex[human_id].GetParamData(NULL, NULL, NULL, &teamid);
+	GameSound->SetFootsteps(posx, posy, posz, teamid);
+}
+
+//! 左走りを実行
+//! @param human_id 人の番号（0～MAX_HUMAN-1）
+void ObjectManager::MoveLeft(int human_id)
+{
+	//値の範囲をチェック
+	if( (human_id < 0)||(MAX_HUMAN <= human_id) ){ return; }
+
+	//オブジェクトにフラグを設定
+	HumanIndex[human_id].SetMoveLeft();
+
+	//走る足音追加
+	float posx, posy, posz;
+	int teamid;
+	HumanIndex[human_id].GetPosData(&posx, &posy, &posz, NULL);
+	HumanIndex[human_id].GetParamData(NULL, NULL, NULL, &teamid);
+	GameSound->SetFootsteps(posx, posy, posz, teamid);
+}
+
+//! 右走りを実行
+//! @param human_id 人の番号（0～MAX_HUMAN-1）
+void ObjectManager::MoveRight(int human_id)
+{
+	//値の範囲をチェック
+	if( (human_id < 0)||(MAX_HUMAN <= human_id) ){ return; }
+
+	//オブジェクトにフラグを設定
+	HumanIndex[human_id].SetMoveRight();
+
+	//走る足音追加
+	float posx, posy, posz;
+	int teamid;
+	HumanIndex[human_id].GetPosData(&posx, &posy, &posz, NULL);
+	HumanIndex[human_id].GetParamData(NULL, NULL, NULL, &teamid);
+	GameSound->SetFootsteps(posx, posy, posz, teamid);
+}
+
+//! 歩きを実行
+//! @param human_id 人の番号（0～MAX_HUMAN-1）
+void ObjectManager::MoveWalk(int human_id)
+{
+	//値の範囲をチェック
+	if( (human_id < 0)||(MAX_HUMAN <= human_id) ){ return; }
+
+	//オブジェクトにフラグを設定
+	HumanIndex[human_id].SetMoveWalk();
+}
+
+//! ジャンプ
+//! @param human_id 人の番号（0～MAX_HUMAN-1）
+void ObjectManager::MoveJump(int human_id)
+{
+	//値の範囲をチェック
+	if( (human_id < 0)||(MAX_HUMAN <= human_id) ){ return; }
+
+	HumanIndex[human_id].Jump();
+}
+
+//! 発砲
+//! @param human_id 発砲する人番号
+//! @return 通常弾発射：1　手榴弾発射：2　失敗：0
+int ObjectManager::ShotWeapon(int human_id)
+{
+	//値の範囲をチェック
+	if( (human_id < 0)||(MAX_HUMAN <= human_id) ){ return 0; }
+
+	human *MyHuman = &(HumanIndex[human_id]);
 
 	float pos_x, pos_y, pos_z;
 	int teamid;
@@ -1201,7 +1264,7 @@ int ObjectManager::ShotWeapon(human *MyHuman)
 
 			//銃弾を発射
 			newbullet->SetPosData(pos_x, pos_y + WEAPONSHOT_HEIGHT, pos_z, rx, ry);
-			newbullet->SetParamData(attacks, ParamData.penetration, ParamData.speed * BULLET_SPEEDSCALE, teamid, humanid, true);
+			newbullet->SetParamData(attacks, ParamData.penetration, ParamData.speed * BULLET_SPEEDSCALE, teamid, human_id, true);
 			newbullet->SetDrawFlag(true);
 		}
 		else{
@@ -1211,7 +1274,7 @@ int ObjectManager::ShotWeapon(human *MyHuman)
 
 			//手榴弾発射
 			newgrenade->SetPosData(pos_x, pos_y + WEAPONSHOT_HEIGHT, pos_z, rx, ry);
-			newgrenade->SetParamData(8.0f, humanid, true);
+			newgrenade->SetParamData(8.0f, human_id, true);
 			newgrenade->SetDrawFlag(true);
 		}
 
@@ -1222,7 +1285,7 @@ int ObjectManager::ShotWeapon(human *MyHuman)
 	//手榴弾でなければ
 	if( grenadeflag == false ){
 		//発砲フラグを設定
-		Human_ShotFlag[humanid] = true;
+		Human_ShotFlag[human_id] = true;
 	}
 
 	if( ParamData.soundvolume > 0 ){
@@ -1306,26 +1369,180 @@ void ObjectManager::ShotWeaponEffect(int humanid)
 }
 
 //! 武器をリロード
-//! @param in_human 対象の人オブジェクト
-void ObjectManager::ReloadWeapon(human *in_human)
+//! @param human_id 対象の人番号
+void ObjectManager::ReloadWeapon(int human_id)
 {
+	//値の範囲をチェック
+	if( (human_id < 0)||(MAX_HUMAN <= human_id) ){ return; }
+
 	//無効な人ならば処理しない
-	if( in_human->GetDrawFlag() == false ){ return; }
-	if( in_human->GetHP() <= 0 ){ return; }
+	if( HumanIndex[human_id].GetDrawFlag() == false ){ return; }
+	if( HumanIndex[human_id].GetHP() <= 0 ){ return; }
 
 	//リロードを実行
-	if( in_human->ReloadWeapon() == true ){
+	if( HumanIndex[human_id].ReloadWeapon() == true ){
 		float x, y, z;
 		int id;
 
 		//人の座標とチーム番号を取得
-		in_human->GetPosData(&x, &y, &z, NULL);
-		in_human->GetParamData(NULL, NULL, NULL, &id);
+		HumanIndex[human_id].GetPosData(&x, &y, &z, NULL);
+		HumanIndex[human_id].GetParamData(NULL, NULL, NULL, &id);
 		y += 16.0f;
 
 		//音源を配置
 		GameSound->ReloadWeapon(x, y, z, id);
 	}
+}
+
+//! 武器を切り替える（持ち替える）
+//! @param human_id 人の番号（0～MAX_HUMAN-1）
+//! @param id 持ち替える武器　（-1 で次の武器）
+void ObjectManager::ChangeWeapon(int human_id, int id)
+{
+	//値の範囲をチェック
+	if( (human_id < 0)||(MAX_HUMAN <= human_id) ){ return; }
+
+	HumanIndex[human_id].ChangeWeapon(id);
+}
+
+//! 武器を捨てる
+//! @param human_id 人の番号（0～MAX_HUMAN-1）
+//! @return 成功：true　失敗：false
+bool ObjectManager::DumpWeapon(int human_id)
+{
+	//値の範囲をチェック
+	if( (human_id < 0)||(MAX_HUMAN <= human_id) ){ return false; }
+
+	return HumanIndex[human_id].DumpWeapon();
+}
+
+//! スコープモードを切り替え
+//! @param human_id 人の番号（0～MAX_HUMAN-1）
+void ObjectManager::ChangeScopeMode(int human_id)
+{
+	//値の範囲をチェック
+	if( (human_id < 0)||(MAX_HUMAN <= human_id) ){ return; }
+
+	if( HumanIndex[human_id].GetScopeMode() == 0 ){	//スコープを使用していなければ、スコープを設定
+		HumanIndex[human_id].SetEnableScope();
+	}
+	else{											//使用中なら、解除
+		HumanIndex[human_id].SetDisableScope();
+	}
+}
+
+//! 武器のショットモード切り替え
+//! @param human_id 人の番号（0～MAX_HUMAN-1）
+//! @return 成功：0　失敗：1
+int ObjectManager::ChangeShotMode(int human_id)
+{
+	//値の範囲をチェック
+	if( (human_id < 0)||(MAX_HUMAN <= human_id) ){ return 1; }
+
+	return HumanIndex[human_id].ChangeShotMode();
+}
+
+//! 裏技・所持している武器の弾を追加
+//! @param human_id 人の番号（0～MAX_HUMAN-1）
+//! @return 成功：true　失敗：false
+bool ObjectManager::CheatAddBullet(int human_id)
+{
+	//値の範囲をチェック
+	if( (human_id < 0)||(MAX_HUMAN <= human_id) ){ return false; }
+
+	int selectweapon;
+	weapon *weapon[TOTAL_HAVEWEAPON];
+	int id_param, lnbs, nbs;
+	WeaponParameter ParamData;
+
+	//所持している武器を取得
+	for(int i=0; i<TOTAL_HAVEWEAPON; i++){
+		weapon[i] = NULL;
+	}
+	HumanIndex[human_id].GetWeapon(&selectweapon, weapon);
+
+	//何かしらの武器を持っていれば
+	if( weapon[selectweapon] != NULL ){
+		//武器の種類と弾数、武器の設定値を取得
+		weapon[selectweapon]->GetParamData(&id_param, &lnbs, &nbs);
+		if( GameParamInfo->GetWeapon(id_param, &ParamData) == 0 ){
+			//最大弾数分加算し、適用
+			nbs += ParamData.nbsmax;
+			weapon[selectweapon]->ResetWeaponParam(Resource, id_param, lnbs, nbs);
+			return true;
+		}
+	}
+
+	return false;
+}
+
+//! 裏技・所持している武器を変更
+//! @param human_id 人の番号（0～MAX_HUMAN-1）
+//! @param new_weaponID 新たに設定する武器の種類番号
+//! @return 成功：true　失敗：false
+bool ObjectManager::CheatNewWeapon(int human_id, int new_weaponID)
+{
+	//値の範囲をチェック
+	if( (human_id < 0)||(MAX_HUMAN <= human_id) ){ return false; }
+	if( (new_weaponID < 0)||(TOTAL_PARAMETERINFO_WEAPON <= new_weaponID) ){ return false; }
+
+	human *myHuman = &(HumanIndex[human_id]);
+
+	HumanParameter humandata;
+	int selectweapon;
+	weapon *weapon[TOTAL_HAVEWEAPON];
+	int id_param, lnbs, nbs;
+
+	//ゾンビならば処理しない
+	myHuman->GetParamData(&id_param, NULL, NULL, NULL);
+	GameParamInfo->GetHuman(id_param, &humandata);
+	if( humandata.type == 2 ){
+		return false;
+	}
+
+	//所持している武器を取得
+	for(int i=0; i<TOTAL_HAVEWEAPON; i++){
+		weapon[i] = NULL;
+	}
+	myHuman->GetWeapon(&selectweapon, weapon);
+
+	//現在武器を所有しておらず、新たに持たせる武器もないなら
+	if( (weapon[selectweapon] == NULL)&&(new_weaponID == ID_WEAPON_NONE) ){
+		return false;		//処理自体が無意味
+	}
+
+	if( weapon[selectweapon] == NULL ){		//武器を所有していなければ
+		int dataid = -1;
+
+		//新しい武器を配置
+		dataid = AddVisualWeaponIndex(new_weaponID, false);
+
+		//武器が配置できれば、武器を拾わせる
+		if( dataid != -1 ){
+			myHuman->PickupWeapon( &(WeaponIndex[dataid]) );
+			return true;
+		}
+	}
+	else{									//武器を所有していれば
+		if( new_weaponID == ID_WEAPON_NONE ){			//武器を消すなら
+			//一度武器を捨てた上で、その武器を削除
+			if( myHuman->DumpWeapon() == true ){
+				weapon[selectweapon]->SetDrawFlag(false);
+				return true;
+			}
+		}
+		else{											//武器を変更するなら
+			//武器設定を取得（弾数設定を引き継ぐため）
+			weapon[selectweapon]->GetParamData(NULL, &lnbs, &nbs);
+
+			//武器設定を適用
+			weapon[selectweapon]->ResetWeaponParam(Resource, new_weaponID, lnbs, nbs);
+
+			return true;
+		}
+	}
+
+	return false;
 }
 
 //! ゾンビの攻撃を受けるか判定
@@ -1472,15 +1689,6 @@ int ObjectManager::Process(int cmdF5id, float camera_x, float camera_y, float ca
 
 	//人オブジェクトの処理
 	for(int i=0; i<MAX_HUMAN; i++){
-		//走る足音
-		if( HumanIndex[i].GetMovemode(true) == 2 ){
-			float posx, posy, posz;
-			int teamid;
-			HumanIndex[i].GetPosData(&posx, &posy, &posz, NULL);
-			HumanIndex[i].GetParamData(NULL, NULL, NULL, &teamid);
-			GameSound->SetFootsteps(posx, posy, posz, teamid);
-		}
-
 		if( i == cmdF5id ){
 			HumanIndex[i].RunFrame(CollD, BlockData, true);
 		}

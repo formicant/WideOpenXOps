@@ -150,7 +150,7 @@ int opening::Create()
 
 	//AI設定
 	for(int i=0; i<MAX_HUMAN; i++){
-		HumanAI[i].SetClass(&ObjMgr, ObjMgr.GeHumanObject(i), &BlockData, &PointData, &GameParamInfo, &CollD, GameSound);
+		HumanAI[i].SetClass(&ObjMgr, i, &BlockData, &PointData, &GameParamInfo, &CollD, GameSound);
 		HumanAI[i].Init();
 	}
 
@@ -380,7 +380,7 @@ int mainmenu::Create()
 
 	//AI設定
 	for(int i=0; i<MAX_HUMAN; i++){
-		HumanAI[i].SetClass(&ObjMgr, ObjMgr.GeHumanObject(i), &BlockData, &PointData, &GameParamInfo, &CollD, GameSound);
+		HumanAI[i].SetClass(&ObjMgr, i, &BlockData, &PointData, &GameParamInfo, &CollD, GameSound);
 		HumanAI[i].Init();
 	}
 
@@ -951,7 +951,7 @@ int maingame::Create()
 
 	//AI設定
 	for(int i=0; i<MAX_HUMAN; i++){
-		HumanAI[i].SetClass(&ObjMgr, ObjMgr.GeHumanObject(i), &BlockData, &PointData, &GameParamInfo, &CollD, GameSound);
+		HumanAI[i].SetClass(&ObjMgr, i, &BlockData, &PointData, &GameParamInfo, &CollD, GameSound);
 		HumanAI[i].Init();
 	}
 
@@ -1082,6 +1082,7 @@ void maingame::Input()
 
 	//プレイヤーのクラスを取得
 	human *myHuman = ObjMgr.GetPlayerHumanObject();
+	int PlayerID = ObjMgr.GetPlayerID();
 
 	//キー入力を取得
 	inputCtrl->GetInputState(true);
@@ -1089,26 +1090,26 @@ void maingame::Input()
 
 	//前後左右の移動（走り）操作かチェック
 	if( CheckInputControl(KEY_MOVEFORWARD, 0) ){
-		myHuman->SetMoveForward();
+		ObjMgr.MoveForward(PlayerID);
 	}
 	if( CheckInputControl(KEY_MOVEBACKWARD, 0) ){
-		myHuman->SetMoveBack();
+		ObjMgr.MoveBack(PlayerID);
 	}
 	if( CheckInputControl(KEY_MOVELEFT, 0) ){
-		myHuman->SetMoveLeft();
+		ObjMgr.MoveLeft(PlayerID);
 	}
 	if( CheckInputControl(KEY_MOVERIGHT, 0) ){
-		myHuman->SetMoveRight();
+		ObjMgr.MoveRight(PlayerID);
 	}
 
 	//歩き操作かチェック
 	if( CheckInputControl(KEY_WALK, 0) ){
-		myHuman->SetMoveWalk();
+		ObjMgr.MoveWalk(PlayerID);
 	}
 
 	//ジャンプ操作かチェック
 	if( CheckInputControl(KEY_JUMP, 1) ){
-		myHuman->Jump();
+		ObjMgr.MoveJump(PlayerID);
 	}
 
 	if( Camera_Debugmode == true ){		//デバックモードならば
@@ -1173,7 +1174,7 @@ void maingame::Input()
 
 			if( zombie == false ){
 				//弾の発射に成功すれば
-				if( ObjMgr.ShotWeapon(myHuman) == 1 ){
+				if( ObjMgr.ShotWeapon(PlayerID) == 1 ){
 					//スコアに加算
 					MainGameInfo.fire += 1;
 
@@ -1195,38 +1196,33 @@ void maingame::Input()
 
 	//リロード操作かチェック
 	if( CheckInputControl(KEY_RELOAD, 1) ){
-		ObjMgr.ReloadWeapon(myHuman);
+		ObjMgr.ReloadWeapon(PlayerID);
 	}
 
 	//武器の切り替え操作かチェック
 	if( CheckInputControl(KEY_SWITCHWEAPON, 1) ){
-		myHuman->ChangeWeapon(-1);
+		ObjMgr.ChangeWeapon(PlayerID, -1);
 	}
 	if( CheckInputControl(KEY_WEAPON1, 1) ){
-		myHuman->ChangeWeapon(0);
+		ObjMgr.ChangeWeapon(PlayerID, 0);
 	}
 	if( CheckInputControl(KEY_WEAPON2, 1) ){
-		myHuman->ChangeWeapon(1);
+		ObjMgr.ChangeWeapon(PlayerID, 1);
 	}
 
 	//武器の廃棄操作かチェック
 	if( CheckInputControl(KEY_DROPWEAPON, 1) ){
-		myHuman->DumpWeapon();
+		ObjMgr.DumpWeapon(PlayerID);
 	}
 
 	//スコープ操作かチェック
 	if( CheckInputControl(KEY_ZOOM, 1) ){
-		if( myHuman->GetScopeMode() == 0 ){	//スコープを使用していなければ、スコープを設定
-			myHuman->SetEnableScope();
-		}
-		else{								//使用中なら、解除
-			myHuman->SetDisableScope();
-		}
+		ObjMgr.ChangeScopeMode(PlayerID);
 	}
 
 	//連射モード変更操作かチェック
 	if( CheckInputControl(KEY_ShotMODE, 1) ){
-		myHuman->ChangeShotMode();
+		ObjMgr.ChangeShotMode(PlayerID);
 	}
 
 	//ゲーム終了操作かチェック
@@ -1280,13 +1276,8 @@ void maingame::Input()
 	}
 
 	//裏技・上昇の操作かチェック
-	if( inputCtrl->CheckKeyNow( GetFunctionKeycode(5) ) ){
-		if( inputCtrl->CheckKeyNow(OriginalkeycodeToDinputdef(0x0F)) ){		// [ENTER]
-			Cmd_F5 = true;
-		}
-		else{
-			Cmd_F5 = false;
-		}
+	if( (inputCtrl->CheckKeyNow( GetFunctionKeycode(5) ))&&(inputCtrl->CheckKeyNow(OriginalkeycodeToDinputdef(0x0F))) ){	// F5 + [ENTER]
+		Cmd_F5 = true;
 	}
 	else{
 		Cmd_F5 = false;
@@ -1295,90 +1286,29 @@ void maingame::Input()
 	//裏技・弾追加の操作かチェック
 	if( inputCtrl->CheckKeyNow( GetFunctionKeycode(6) ) ){
 		if( inputCtrl->CheckKeyDown(OriginalkeycodeToDinputdef(0x0F)) ){		// [ENTER]
-			int selectweapon;
-			weapon *weapon[TOTAL_HAVEWEAPON];
-			int id_param, lnbs, nbs;
-			WeaponParameter ParamData;
-
-			//所持している武器を取得
-			for(int i=0; i<TOTAL_HAVEWEAPON; i++){
-				weapon[i] = NULL;
-			}
-			myHuman->GetWeapon(&selectweapon, weapon);
-
-			//何かしらの武器を持っていれば
-			if( weapon[selectweapon] != NULL ){
-				//武器の種類と弾数、武器の設定値を取得
-				weapon[selectweapon]->GetParamData(&id_param, &lnbs, &nbs);
-				if( GameParamInfo.GetWeapon(id_param, &ParamData) == 0 ){
-					//最大弾数分加算し、適用
-					nbs += ParamData.nbsmax;
-					weapon[selectweapon]->ResetWeaponParam(&Resource, id_param, lnbs, nbs);
-				}
-			}
+			ObjMgr.CheatAddBullet(PlayerID);
 		}
 	}
 
 	//裏技・武器変更の操作かチェック
 	if( inputCtrl->CheckKeyNow( GetFunctionKeycode(7) ) ){
-		if( (inputCtrl->CheckKeyDown(OriginalkeycodeToDinputdef(0x02)))||(inputCtrl->CheckKeyDown(OriginalkeycodeToDinputdef(0x03))) ){		// [←]・[→]
-			HumanParameter humandata;
-			int selectweapon;
-			weapon *weapon[TOTAL_HAVEWEAPON];
-			int id_param, lnbs, nbs;
+		if( inputCtrl->CheckKeyDown(OriginalkeycodeToDinputdef(0x02)) ){		// [←]
+			int id_param = myHuman->GetMainWeaponTypeNO();
 
-			//ゾンビかどうか判定
-			myHuman->GetParamData(&id_param, NULL, NULL, NULL);
-			GameParamInfo.GetHuman(id_param, &humandata);
-			if( humandata.type != 2 ){
+			//次の武器番号を計算
+			if( id_param >= TOTAL_PARAMETERINFO_WEAPON-1 ){ id_param = 0; }
+			else{ id_param += 1; }
 
-				//所持している武器を取得
-				for(int i=0; i<TOTAL_HAVEWEAPON; i++){
-					weapon[i] = NULL;
-				}
-				myHuman->GetWeapon(&selectweapon, weapon);
+			ObjMgr.CheatNewWeapon(PlayerID, id_param);
+		}
+		if( inputCtrl->CheckKeyDown(OriginalkeycodeToDinputdef(0x03)) ){		// [→]
+			int id_param = myHuman->GetMainWeaponTypeNO();
 
-				if( weapon[selectweapon] == NULL ){		//武器を所有していなければ
-					int dataid = -1;
+			//次の武器番号を計算
+			if( id_param <= 0 ){ id_param = TOTAL_PARAMETERINFO_WEAPON-1; }
+			else{ id_param -= 1; }
 
-					//新しい武器を配置
-					if( inputCtrl->CheckKeyDown(OriginalkeycodeToDinputdef(0x02)) ){		// [←]
-						dataid = ObjMgr.AddVisualWeaponIndex(1, false);
-					}
-					if( inputCtrl->CheckKeyDown(OriginalkeycodeToDinputdef(0x03)) ){		// [→]
-						dataid = ObjMgr.AddVisualWeaponIndex(TOTAL_PARAMETERINFO_WEAPON-1, false);
-					}
-
-					//武器が配置できれば、武器を拾わせる
-					if( dataid != -1 ){
-						myHuman->PickupWeapon( ObjMgr.GeWeaponObject(dataid) );
-					}
-				}
-				else{									//武器を所有していれば
-					//武器設定を取得
-					weapon[selectweapon]->GetParamData(&id_param, &lnbs, &nbs);
-
-					//次の武器番号を計算
-					if( inputCtrl->CheckKeyDown(OriginalkeycodeToDinputdef(0x02)) ){		// [←]
-						if( id_param >= TOTAL_PARAMETERINFO_WEAPON-1 ){ id_param = 0; }
-						else{ id_param += 1; }
-					}
-					if( inputCtrl->CheckKeyDown(OriginalkeycodeToDinputdef(0x03)) ){		// [→]
-						if( id_param <= 0 ){ id_param = TOTAL_PARAMETERINFO_WEAPON-1; }
-						else{ id_param -= 1; }
-					}
-
-					if( id_param == ID_WEAPON_NONE ){
-						if( myHuman->DumpWeapon() == true ){
-							weapon[selectweapon]->SetDrawFlag(false);
-						}
-					}
-					else{
-						//武器設定を適用
-						weapon[selectweapon]->ResetWeaponParam(&Resource, id_param, lnbs, nbs);
-					}
-				}
-			}
+			ObjMgr.CheatNewWeapon(PlayerID, id_param);
 		}
 	}
 
@@ -1448,7 +1378,7 @@ void maingame::Input()
 			//人を追加
 			id = ObjMgr.AddHumanIndex(x, y, z, r, param, team, weapon_paramid);
 			if( id >= 0 ){
-				ObjMgr.GeHumanObject(id)->ChangeWeapon(selectweapon);
+				ObjMgr.ChangeWeapon(id, selectweapon);
 
 				//AIを設定
 				HumanAI[id].Init();
