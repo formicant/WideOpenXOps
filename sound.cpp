@@ -327,6 +327,7 @@ bool SoundControl::CheckSoundFile(char* filename, int *filesize, int *fileoffset
 	}
 
 	//フォーマット情報取得
+	*pwfex = NULL;
 	ckInfo.ckid = mmioFOURCC('f','m','t',' ');
 	if( mmioDescend(hMmio, &ckInfo, &riffckInfo, MMIO_FINDCHUNK) == MMSYSERR_NOERROR ){
 		if( mmioRead(hMmio, (HPSTR) &pcmWaveFormat, sizeof(pcmWaveFormat)) == sizeof(pcmWaveFormat) ){
@@ -341,7 +342,7 @@ bool SoundControl::CheckSoundFile(char* filename, int *filesize, int *fileoffset
 			}
 		}
 	}
-	if( pwfex == NULL ){
+	if( *pwfex == NULL ){
 		mmioClose(hMmio, MMIO_FHOPEN);
 		return true;	//ファイルフォーマットが対応してない
 	}
