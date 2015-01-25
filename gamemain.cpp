@@ -213,7 +213,7 @@ void opening::Render3D()
 	d3dg->SetCamera(camera_x, camera_y, camera_z, camera_rx, camera_ry, VIEWANGLE_NORMAL);
 
 	//カメラ座標に背景空を描画
-	d3dg->SetWorldTransform(camera_x, camera_y, camera_z, 0.0f, 0.0f, 1.0f);
+	d3dg->SetWorldTransform(camera_x, camera_y, camera_z, 0.0f, 0.0f, 2.0f);
 	Resource.GetSkyModelTexture(&skymodel, &skytexture);
 	d3dg->RenderModel(skymodel, skytexture);
 
@@ -233,16 +233,16 @@ void opening::Render2D()
 	float effect;
 
 	//ブラックアウト設定
-	if( framecnt < 1*((int)GAMEFPS) ){
-		effect = 1.0f/(1*((int)GAMEFPS)) * ((1*((int)GAMEFPS)) - framecnt);
+	if( framecnt < (int)(1.0f*GAMEFPS) ){
+		effect = GetEffectAlpha(framecnt, 1.0f, 1.0f, 0.0f, true);
 	}
-	if( (1*((int)GAMEFPS) <= framecnt)&&(framecnt < 13*((int)GAMEFPS)) ){
+	if( ((int)(1.0f*GAMEFPS) <= framecnt)&&(framecnt < (int)(13.0f*GAMEFPS)) ){
 		effect = 0.0f;
 	}
-	if( (11*((int)GAMEFPS) <= framecnt)&&(framecnt < 15*((int)GAMEFPS)) ){
-		effect = 1.0f/(4*((int)GAMEFPS)) * (framecnt - (11*((int)GAMEFPS)));
+	if( ((int)(11.0f*GAMEFPS) <= framecnt)&&(framecnt < (int)(15.0f*GAMEFPS)) ){
+		effect =  GetEffectAlpha(framecnt, 1.0f, 4.0f, 11.0f, false);
 	}
-	if( 15*((int)GAMEFPS) <= framecnt ){
+	if( (int)(15.0f*GAMEFPS) <= framecnt ){
 		effect = 1.0f;
 	}
 	d3dg->Draw2DBox(0, 0, SCREEN_WIDTH, SCREEN_HEIGTH, D3DCOLOR_COLORVALUE(0.0f,0.0f,0.0f,effect));
@@ -256,22 +256,22 @@ void opening::Render2D()
 		char str[32];
 		float effectA = 1.0f;
 		sprintf(str, GAMENAME" project", 0, 0);
-		if( framecnt < (int)(1.5f*GAMEFPS) ){ effectA = 1.0f/GAMEFPS * (framecnt - (int)(0.5f*GAMEFPS)); }
-		if( framecnt > (int)(3.0f*GAMEFPS) ){ effectA = 1.0f - 1.0f/GAMEFPS * (framecnt - (int)(3.0f*GAMEFPS)); }
+		if( framecnt < (int)(1.5f*GAMEFPS) ){ effectA = GetEffectAlpha(framecnt, 1.0f, 1.0f, 0.5f, false); }
+		if( framecnt > (int)(3.0f*GAMEFPS) ){ effectA = GetEffectAlpha(framecnt, 1.0f, 1.0f, 3.0f, true); }
 		d3dg->Draw2DTextureFontText(SCREEN_WIDTH/2 - strlen(str)*22/2, SCREEN_HEIGTH - 140, str, D3DCOLOR_COLORVALUE(1.0f,1.0f,1.0f,effectA), 22, 22);
 	}
 
 	//スタッフ名・その１
 	if( ((int)(4.0f*GAMEFPS) < framecnt)&&(framecnt < (int)(8.0f*GAMEFPS)) ){
 		float effectA = 1.0f;
-		if( framecnt < (int)(5.0f*GAMEFPS) ){ effectA = 1.0f/GAMEFPS * (framecnt - (int)(4.0f*GAMEFPS)); }
-		if( framecnt > (int)(7.0f*GAMEFPS) ){ effectA = 1.0f - 1.0f/GAMEFPS * (framecnt - (int)(7.0f*GAMEFPS)); }
+		if( framecnt < (int)(5.0f*GAMEFPS) ){ effectA = GetEffectAlpha(framecnt, 1.0f, 1.0f, 4.0f, false); }
+		if( framecnt > (int)(7.0f*GAMEFPS) ){ effectA = GetEffectAlpha(framecnt, 1.0f, 1.0f, 7.0f, true); }
 		d3dg->Draw2DTextureFontText(60, 150, "ORIGINAL", D3DCOLOR_COLORVALUE(1.0f,1.0f,1.0f,effectA), 20, 20);
 	}
 	if( ((int)(4.5f*GAMEFPS) < framecnt)&&(framecnt < (int)(8.5f*GAMEFPS)) ){
 		float effectA = 1.0f;
-		if( framecnt < (int)(5.5f*GAMEFPS) ){ effectA = 1.0f/GAMEFPS * (framecnt - (int)(4.5f*GAMEFPS)); }
-		if( framecnt > (int)(7.5f*GAMEFPS) ){ effectA = 1.0f - 1.0f/GAMEFPS * (framecnt - (int)(7.5f*GAMEFPS)); }
+		if( framecnt < (int)(5.5f*GAMEFPS) ){ effectA = GetEffectAlpha(framecnt, 1.0f, 1.0f, 4.5f, false); }
+		if( framecnt > (int)(7.5f*GAMEFPS) ){ effectA = GetEffectAlpha(framecnt, 1.0f, 1.0f, 7.5f, true); }
 		d3dg->Draw2DTextureFontText(100, 180, "nine-two", D3DCOLOR_COLORVALUE(1.0f,1.0f,1.0f,effectA), 20, 20);
 		d3dg->Draw2DTextureFontText(100, 210, "TENNKUU", D3DCOLOR_COLORVALUE(1.0f,1.0f,1.0f,effectA), 20, 20);
 	}
@@ -279,26 +279,26 @@ void opening::Render2D()
 	//スタッフ名・その２
 	if( ((int)(7.0f*GAMEFPS) < framecnt)&&(framecnt < (int)(11.0f*GAMEFPS)) ){
 		float effectA = 1.0f;
-		if( framecnt < (int)(8.0f*GAMEFPS) ){ effectA = 1.0f/GAMEFPS * (framecnt - (int)(7.0f*GAMEFPS)); }
-		if( framecnt > (int)(10.0f*GAMEFPS) ){ effectA = 1.0f - 1.0f/GAMEFPS * (framecnt - (int)(10.0f*GAMEFPS)); }
+		if( framecnt < (int)(8.0f*GAMEFPS) ){ effectA = GetEffectAlpha(framecnt, 1.0f, 1.0f, 7.0f, false); }
+		if( framecnt > (int)(10.0f*GAMEFPS) ){ effectA = GetEffectAlpha(framecnt, 1.0f, 1.0f, 10.0f, true); }
 		d3dg->Draw2DTextureFontText(330, 300, "REMAKE", D3DCOLOR_COLORVALUE(1.0f,1.0f,1.0f,effectA), 20, 20);
 	}
 	if( ((int)(7.5f*GAMEFPS) < framecnt)&&(framecnt < (int)(11.5f*GAMEFPS)) ){
 		float effectA = 1.0f;
-		if( framecnt < (int)(8.5f*GAMEFPS) ){ effectA = 1.0f/GAMEFPS * (framecnt - (int)(7.5f*GAMEFPS)); }
-		if( framecnt > (int)(10.5f*GAMEFPS) ){ effectA = 1.0f - 1.0f/GAMEFPS * (framecnt - (int)(10.5f*GAMEFPS)); }
+		if( framecnt < (int)(8.5f*GAMEFPS) ){ effectA = GetEffectAlpha(framecnt, 1.0f, 1.0f, 7.5f, false); }
+		if( framecnt > (int)(10.5f*GAMEFPS) ){ effectA = GetEffectAlpha(framecnt, 1.0f, 1.0f, 10.5f, true); }
 		d3dg->Draw2DTextureFontText(370, 330, "[-_-;](mikan)", D3DCOLOR_COLORVALUE(1.0f,1.0f,1.0f,effectA), 20, 20);
 		//d3dg->Draw2DTexture(410, 360, opening_banner, 200, 40, effectA);
 	}
 
 	//ゲーム名
-	if( 12*((int)GAMEFPS) <= framecnt ){	//framecnt < 17*((int)GAMEFPS)
+	if( (int)(12.0f*GAMEFPS) <= framecnt ){	//framecnt < (int)(17.0f*GAMEFPS)
 		char str[32];
 		float effectA = 1.0f;
 		sprintf(str, GAMENAME, 0, 0);
-		if( framecnt < (13*((int)GAMEFPS)) ){ effectA = 1.0f/GAMEFPS * (framecnt - 12*((int)GAMEFPS)); }
-		if( (16*((int)GAMEFPS) < framecnt)&&(framecnt < (17*((int)GAMEFPS))) ){ effectA = 1.0f - 1.0f/GAMEFPS * (framecnt - 16*((int)GAMEFPS)); }
-		if( framecnt >= (17*((int)GAMEFPS)) ){ effectA = 0.0f; }
+		if( framecnt < (int)(13.0f*GAMEFPS) ){ effectA = GetEffectAlpha(framecnt, 1.0f, 1.0f, 12.0f, false); }
+		if( ((int)(16.0f*GAMEFPS) < framecnt)&&(framecnt < (int)(17.0f*GAMEFPS)) ){ effectA = GetEffectAlpha(framecnt, 1.0f, 1.0f, 16.0f, true); }
+		if( framecnt >= (int)(17.0f*GAMEFPS) ){ effectA = 0.0f; }
 		d3dg->Draw2DTextureFontText(SCREEN_WIDTH/2 - strlen(str)*22/2, (SCREEN_HEIGTH-11)/2, str, D3DCOLOR_COLORVALUE(1.0f,0.0f,0.0f,effectA), 22, 22);
 	}
 }
@@ -746,8 +746,8 @@ void mainmenu::Render2D()
 	d3dg->Draw2DTexture(20, 25, gametitle, 480, 80, 1.0f);
 
 	//ブラックアウト設定
-	if( framecnt < 2*((int)GAMEFPS) ){
-		effect = 1.0f/(2*((int)GAMEFPS)) * (2*((int)GAMEFPS) - framecnt);
+	if( framecnt < (int)(2.0f*GAMEFPS) ){
+		effect = GetEffectAlpha(framecnt, 1.0f, 2.0f, 0.0f, true);
 	}
 	else{
 		effect = 0.0f;
@@ -831,8 +831,8 @@ int briefing::Create()
 
 void briefing::Render2D()
 {
-	float effectA = 1.0f - 0.8f/((int)(GAMEFPS*0.7f))*(framecnt%((int)(GAMEFPS*0.7f)));
-	float effectB = 1.0f - 0.8f/((int)(GAMEFPS*0.8f))*(framecnt%((int)(GAMEFPS*1.0f)));
+	float effectA = GetEffectAlphaLoop(framecnt, 0.8f, 0.7f, true);
+	float effectB = GetEffectAlphaLoop(framecnt, 0.8f, 1.0f, true);
 	int effectB_sizeW = (int)( (float)(framecnt%((int)(GAMEFPS*1.0f))) * 0.2f + 18 );
 	int effectB_sizeH = (int)( (float)(framecnt%((int)(GAMEFPS*1.0f))) * 1.0f + 26 );
 
@@ -1577,7 +1577,7 @@ void maingame::Process()
 			}
 		}
 	}
-	if( (message_id != -1)&&(message_cnt < TOTAL_EVENTENT_SHOWMESCNT) ){
+	if( (message_id != -1)&&(message_cnt < (int)(TOTAL_EVENTENT_SHOWMESSEC*GAMEFPS)) ){
 		message_cnt += 1;
 	}
 	else{
@@ -1634,7 +1634,7 @@ void maingame::Process()
 	redflash_flag = myHuman->CheckHit();
 
 	framecnt += 1;
-	if( start_framecnt < 1*((int)GAMEFPS) ){	//ミッション開始中なら
+	if( start_framecnt < (int)(1.0f*GAMEFPS) ){	//ミッション開始中なら
 		start_framecnt += 1;
 	}
 	if( end_framecnt == 1 ){					//ミッション終了直後ならば
@@ -1643,7 +1643,7 @@ void maingame::Process()
 		end_framecnt += 1;
 	}
 	else if( end_framecnt > 0 ){				//ミッション終了中ならば
-		if( end_framecnt < 5*((int)GAMEFPS) ){
+		if( end_framecnt < (int)(5.0f*GAMEFPS) ){
 			end_framecnt += 1;
 		}
 		else{
@@ -1688,7 +1688,7 @@ void maingame::Render3D()
 	}
 
 	//カメラ座標に背景空を描画
-	d3dg->SetWorldTransform(camera_x, camera_y, camera_z, 0.0f, 0.0f, 1.0f);
+	d3dg->SetWorldTransform(camera_x, camera_y, camera_z, 0.0f, 0.0f, 2.0f);
 	Resource.GetSkyModelTexture(&skymodel, &skytexture);
 	d3dg->RenderModel(skymodel, skytexture);
 
@@ -1964,12 +1964,12 @@ void maingame::Render2D()
 	}
 
 	//イベントメッセージ表示
-	if( (message_id != -1)&&(message_cnt < TOTAL_EVENTENT_SHOWMESCNT) ){
+	if( (message_id != -1)&&(message_cnt < (int)(TOTAL_EVENTENT_SHOWMESSEC*GAMEFPS)) ){
 		char messtr[MAX_POINTMESSAGEBYTE];
 		PointData.GetMessageText(messtr, message_id);
 		float effectA = 1.0f;
-		if( message_cnt < (int)(0.2f*GAMEFPS) ){ effectA = 1.0f/(0.2f*GAMEFPS) * (message_cnt - (int)(0.0f*GAMEFPS)); }
-		if( TOTAL_EVENTENT_SHOWMESCNT-(int)(0.2f*GAMEFPS) < message_cnt ){ effectA = 1.0f - 1.0f/(0.2f*GAMEFPS) * (message_cnt - TOTAL_EVENTENT_SHOWMESCNT-(int)(0.2f*GAMEFPS)); }
+		if( message_cnt < (int)(0.2f*GAMEFPS) ){ effectA = GetEffectAlpha(message_cnt, 1.0f, 0.2f, 0.0f, false); }
+		if( (int)((TOTAL_EVENTENT_SHOWMESSEC-0.2f)*GAMEFPS) < message_cnt ){ effectA = GetEffectAlpha(message_cnt, 1.0f, 0.2f, (TOTAL_EVENTENT_SHOWMESSEC - 0.2f), true); }
 		d3dg->Draw2DMSFontTextCenter(0 +1, SCREEN_HEIGTH - 140 +1, SCREEN_WIDTH, 140, messtr, D3DCOLOR_COLORVALUE(0.1f,0.1f,0.1f,effectA));
 		d3dg->Draw2DMSFontTextCenter(0, SCREEN_HEIGTH - 140, SCREEN_WIDTH, 140, messtr, D3DCOLOR_COLORVALUE(1.0f,1.0f,1.0f,effectA));
 	}
@@ -2045,26 +2045,25 @@ void maingame::Render2D()
 	//-----------------------------------
 
 
-	//スタート時のブラックアウト設定
-	if( start_framecnt < 1*((int)GAMEFPS) ){
-		effect = 1.0f/(1*((int)GAMEFPS)) * (1*((int)GAMEFPS) - start_framecnt);
+	//スタート時と終了時のブラックアウト設定
+	if( start_framecnt < (int)(1.0f*GAMEFPS) ){
+		effect = GetEffectAlpha(start_framecnt, 1.0f, 1.0f, 0.0f, true);
 	}
 	else if( end_framecnt > 0 ){
-		effect = 1.0f/(4*((int)GAMEFPS)) * end_framecnt;
-		if( effect > 1.0f ){ effect = 1.0f; }
+		effect = GetEffectAlpha(end_framecnt, 1.0f, 4.0f, 0.0f, false);
 	}
 	else{
 		effect = 0.0f;
 	}
 	d3dg->Draw2DBox(0, 0, SCREEN_WIDTH, SCREEN_HEIGTH, D3DCOLOR_COLORVALUE(0.0f,0.0f,0.0f,effect));
 
-	//終了時のブラックアウト設定
+	//終了時の文字表示
 	if( end_framecnt > 0 ){
-		if( end_framecnt < 1*((int)GAMEFPS) ){
-			effect = 1.0f/(1*((int)GAMEFPS)) * end_framecnt;
+		if( end_framecnt < (int)(1.0f*GAMEFPS) ){
+			effect = GetEffectAlpha(end_framecnt, 1.0f, 1.0f, 0.0f, false);
 		}
-		else if( end_framecnt > 4*((int)GAMEFPS) ){
-			effect = 1.0f/(1*((int)GAMEFPS)) * (5*((int)GAMEFPS) - end_framecnt);
+		else if( end_framecnt > (int)(4.0f*GAMEFPS) ){
+			effect = GetEffectAlpha(end_framecnt, 1.0f, 1.0f, 4.0f, true);
 		}
 		else{
 			effect = 1.0f;
@@ -2109,7 +2108,7 @@ void result::Render2D()
 {
 	char mname[64];
 	char str[32];
-	float effectA = 1.0f - 0.8f/((int)GAMEFPS)*(framecnt%((int)GAMEFPS));
+	float effectA = GetEffectAlphaLoop(framecnt, 1.0f, 0.8f, true);
 	float rate;
 	if( GameInfoData.fire == 0 ){
 		rate = 0.0f;

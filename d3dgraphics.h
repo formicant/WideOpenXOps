@@ -35,7 +35,7 @@
 #define MAX_MODEL 96		//!< 最大モデル数
 #define MAX_TEXTURE 64		//!< 最大テクスチャ数
 
-#define CLIPPINGPLANE_NEAR 0.1f		//!< 近クリップ面（≒描画する最小距離）
+#define CLIPPINGPLANE_NEAR 1.0f		//!< 近クリップ面（≒描画する最小距離）
 #define CLIPPINGPLANE_FAR 800.0f	//!< 遠クリップ面（≒描画する最大距離）
 
 #ifndef H_LAYERLEVEL

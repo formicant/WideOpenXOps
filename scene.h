@@ -54,6 +54,8 @@ public:
 	virtual void Process();
 	virtual void RenderMain();
 	virtual void Destroy();
+	float GetEffectAlpha(unsigned int tframecnt, float MaxAlpha, float timingsec, float offsetsec, bool reversal);
+	float GetEffectAlphaLoop(unsigned int tframecnt, float MaxAlpha, float timingsec, bool reversal);
 };
 
 //! @brief 2D画面管理クラス（基底クラス）

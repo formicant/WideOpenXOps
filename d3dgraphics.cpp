@@ -109,7 +109,7 @@ int D3DGraphics::InitD3D(HWND hWnd, char *TextureFontFilename, bool fullscreen)
 		d3dpp.BackBufferFormat = D3DFMT_UNKNOWN;
 		d3dpp.SwapEffect = D3DSWAPEFFECT_DISCARD;
 		d3dpp.EnableAutoDepthStencil = TRUE;
-		d3dpp.AutoDepthStencilFormat = D3DFMT_D24X8;
+		d3dpp.AutoDepthStencilFormat = D3DFMT_D24S8;
 		d3dpp.FullScreen_RefreshRateInHz = 0;
 	}
 	else{
@@ -122,7 +122,7 @@ int D3DGraphics::InitD3D(HWND hWnd, char *TextureFontFilename, bool fullscreen)
 		d3dpp.BackBufferFormat = dispmode.Format;
 		d3dpp.SwapEffect = D3DSWAPEFFECT_DISCARD;
 		d3dpp.EnableAutoDepthStencil = TRUE;
-		d3dpp.AutoDepthStencilFormat = D3DFMT_D24X8;
+		d3dpp.AutoDepthStencilFormat = D3DFMT_D24S8;
 		d3dpp.FullScreen_RefreshRateInHz = dispmode.RefreshRate;
 	}
 
@@ -225,7 +225,7 @@ int D3DGraphics::ResetD3D(HWND hWnd)
 		d3dpp.BackBufferFormat = D3DFMT_UNKNOWN;
 		d3dpp.SwapEffect = D3DSWAPEFFECT_DISCARD;
 		d3dpp.EnableAutoDepthStencil = TRUE;
-		d3dpp.AutoDepthStencilFormat = D3DFMT_D24X8;
+		d3dpp.AutoDepthStencilFormat = D3DFMT_D24S8;
 		d3dpp.FullScreen_RefreshRateInHz = 0;
 	}
 	else{
@@ -238,7 +238,7 @@ int D3DGraphics::ResetD3D(HWND hWnd)
 		d3dpp.BackBufferFormat = dispmode.Format;
 		d3dpp.SwapEffect = D3DSWAPEFFECT_DISCARD;
 		d3dpp.EnableAutoDepthStencil = TRUE;
-		d3dpp.AutoDepthStencilFormat = D3DFMT_D24X8;
+		d3dpp.AutoDepthStencilFormat = D3DFMT_D24S8;
 		d3dpp.FullScreen_RefreshRateInHz = dispmode.RefreshRate;
 	}
 
@@ -477,7 +477,7 @@ int D3DGraphics::StartRender()
 
 	if( SUCCEEDED( pd3dDevice->BeginScene() ) ){
 		//Zバッファ初期化
-		pd3dDevice->SetRenderState(D3DRS_ZENABLE, TRUE);
+		pd3dDevice->SetRenderState(D3DRS_ZENABLE, D3DZB_TRUE);
 
 		//座標ゼロ地点にワールド変換行列
 		ResetWorldTransform();
@@ -509,9 +509,9 @@ void D3DGraphics::EndRender()
 void D3DGraphics::ResetZbuffer()
 {
 	//Zバッファを一度無効にし、初期化後、再度有効に
-	pd3dDevice->SetRenderState(D3DRS_ZENABLE, FALSE);
+	pd3dDevice->SetRenderState(D3DRS_ZENABLE, D3DZB_FALSE);
 	pd3dDevice->Clear(0, NULL, D3DCLEAR_ZBUFFER, D3DCOLOR_XRGB(0,0,0), 1.0f, 0);
-	pd3dDevice->SetRenderState(D3DRS_ZENABLE, TRUE);
+	pd3dDevice->SetRenderState(D3DRS_ZENABLE, D3DZB_TRUE);
 }
 
 //! ワールド空間を原点（0,0,0）に戻す　など

@@ -52,7 +52,7 @@
 #define TOTAL_EVENTENTRYPOINT_1 -110	//!< ライン 1 の開始認識番号
 #define TOTAL_EVENTENTRYPOINT_2 -120	//!< ライン 2 の開始認識番号
 
-#define TOTAL_EVENTENT_SHOWMESCNT (5*(int)GAMEFPS)	//!< イベントメッセージを表示するカウント数
+#define TOTAL_EVENTENT_SHOWMESSEC 5.0f		//!< イベントメッセージを表示する秒数
 
 #ifndef H_LAYERLEVEL
  #define H_LAYERLEVEL 3		//!< Select include file.

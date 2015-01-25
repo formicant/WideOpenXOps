@@ -100,6 +100,52 @@ void scene::Destroy()
 	GameState->NextState();
 }
 
+//! フレームカウントを元にアルファ値・透明度を設定（1回）
+//! @param tframecnt 対象とするカウント値
+//! @param MaxAlpha 最大アルファ値
+//! @param timingsec 間隔・秒数
+//! @param offsetsec オフセット・秒数
+//! @param reversal 反転フラグ（false：フィールドイン　true：フィールドアウト）
+//! @return アルファ値
+float scene::GetEffectAlpha(unsigned int tframecnt, float MaxAlpha, float timingsec, float offsetsec, bool reversal)
+{
+	float alpha;
+	unsigned int frametiming;
+	unsigned int frameoffset;
+
+	frametiming = (unsigned int)(timingsec*GAMEFPS);
+	frameoffset = (unsigned int)(offsetsec*GAMEFPS);
+	alpha = MaxAlpha/frametiming * (tframecnt - frameoffset);
+
+	if( alpha < 0.0f ){ alpha = 0.0f; }
+	if( alpha > 1.0f ){ alpha = 1.0f; }
+
+	if( reversal == true ){
+		return 1.0f - alpha;
+	}
+	return alpha;
+}
+
+//! フレームカウントを元にアルファ値・透明度を設定（ループ）
+//! @param tframecnt 対象とするカウント値
+//! @param MaxAlpha 最大アルファ値
+//! @param timingsec 間隔・秒数
+//! @param reversal 反転フラグ（false：フィールドイン　true：フィールドアウト）
+//! @return アルファ値
+float scene::GetEffectAlphaLoop(unsigned int tframecnt, float MaxAlpha, float timingsec, bool reversal)
+{
+	float alpha;
+	unsigned int frametiming;
+
+	frametiming = (unsigned int)(timingsec*GAMEFPS);
+	alpha = MaxAlpha/frametiming * (tframecnt%frametiming);
+
+	if( reversal == true ){
+		return 1.0f - alpha;
+	}
+	return alpha;
+}
+
 //! コンストラクタ
 D2Dscene::D2Dscene()
 {}
