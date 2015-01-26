@@ -107,6 +107,7 @@ void SoundControl::SetCamera(float x, float y, float z, float rx)
 //! サウンドを読み込む
 //! @param filename ファイル名
 //! @return 成功：0以上の認識番号　失敗：-1
+//! @attention 2チャンネル（ステレオ）データが指定された場合、右側のデータだけ取得され、左側のデータは無視されます。
 int SoundControl::LoadSound(char* filename)
 {
 	if( pDSound == NULL ){ return -1; }
@@ -121,12 +122,24 @@ int SoundControl::LoadSound(char* filename)
 	WAVEFORMATEX* pwfex;
 	int WavSize = 0;
 	int Wavoffset = 0;
+	bool d2channels = false;
 
 	//Waveファイルの情報を取得
 	if( CheckSoundFile(filename, &WavSize, &Wavoffset, &pwfex) == true ){
 		return -1;
 	}
 	pwfex->cbSize = 0;
+
+	//もしステレオデータなら
+	if( pwfex->nChannels == 2 ){
+		d2channels = true;		//フラグを設定
+		WavSize /= 2;			//サイズを半分に
+
+		//モノラルとして強制的に再計算
+		pwfex->nChannels = 1;
+		pwfex->nAvgBytesPerSec /= 2;
+		pwfex->nBlockAlign /= 2;
+	}
 
 	// DirectSoundセカンダリーバッファー作成
 	DSBUFFERDESC dsbd;  
@@ -151,6 +164,9 @@ int SoundControl::LoadSound(char* filename)
 	BYTE* pWavData;
 	int dwSize = dwBufferSize;
 	if( dwSize > WavSize ){ dwSize = WavSize; }
+	if( d2channels == true ){
+		dwSize = dwSize * 2;
+	}
 	pWavData = new BYTE[dwSize];
 	if( pWavData == NULL ){
 		//WAVEファイルを読み込むメモリーが確保できない
@@ -165,8 +181,23 @@ int SoundControl::LoadSound(char* filename)
 	fclose(fp);
 
 	//一時領域からセカンダリバッファーへコピー
-	for(int i=0; i<dwSize; i++){
-		*((BYTE*)pBuffer+i) = *((BYTE*) pWavData+i);
+	if( d2channels == false ){
+		//モノラルデータなら1バイトづつコピーする
+		for(int i=0; i<dwSize; i++){
+			*((BYTE*)pBuffer+i) = *((BYTE*) pWavData+i);
+		}
+	}
+	else{
+		//サンプリングバイト数を取得
+		int samplingbytes = pwfex->wBitsPerSample/2;
+		
+		//ステレオデータなら、右側のデータだけ格納
+		int byte = 0;
+		for(int i=0; i<dwSize; i++){
+			*((BYTE*)pBuffer+byte) = *((BYTE*) pWavData+i);
+			byte += 1;
+			if( i%samplingbytes == samplingbytes-1 ){ i += samplingbytes; }		//左側のデータはスキップ
+		}
 	}
 
 	//ロック解除
@@ -332,7 +363,7 @@ bool SoundControl::CheckSoundFile(char* filename, int *filesize, int *fileoffset
 	if( mmioDescend(hMmio, &ckInfo, &riffckInfo, MMIO_FINDCHUNK) == MMSYSERR_NOERROR ){
 		if( mmioRead(hMmio, (HPSTR) &pcmWaveFormat, sizeof(pcmWaveFormat)) == sizeof(pcmWaveFormat) ){
 			if( pcmWaveFormat.wf.wFormatTag == WAVE_FORMAT_PCM ){
-				if( pcmWaveFormat.wf.nChannels == 1 ){	//3D
+				if( (pcmWaveFormat.wf.nChannels == 1)||(pcmWaveFormat.wf.nChannels == 2) ){
 					*pwfex = (WAVEFORMATEX*)new CHAR[ sizeof(WAVEFORMATEX) ];
 					if( *pwfex != NULL ){
 						memcpy( *pwfex, &pcmWaveFormat, sizeof(pcmWaveFormat) );
@@ -362,7 +393,7 @@ bool SoundControl::CheckSoundFile(char* filename, int *filesize, int *fileoffset
 	mmioClose(hMmio, MMIO_FHOPEN);
 
 	*filesize = ckInfo.cksize;
-	*fileoffset = riffckInfo.dwDataOffset + sizeof(FOURCC);
+	*fileoffset = ckInfo.dwDataOffset;
 	return false;
 }
 
