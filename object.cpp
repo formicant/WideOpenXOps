@@ -321,7 +321,7 @@ void human::SetModel(int upmodel, int armmodel[], int legmodel, int walkmodel[],
 
 //! 武器を設定
 //! @param in_weapon[] 設定するweaponクラスのポインタ配列
-//! @warning 初期化時のみ使用すること
+//! @warning 通常は PickupWeapon()関数 を使用すること
 void human::SetWeapon(class weapon *in_weapon[])
 {
 	for(int i=0; i<TOTAL_HAVEWEAPON; i++){

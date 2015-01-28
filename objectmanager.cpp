@@ -1488,17 +1488,9 @@ bool ObjectManager::CheatNewWeapon(int human_id, int new_weaponID)
 
 	human *myHuman = &(HumanIndex[human_id]);
 
-	HumanParameter humandata;
 	int selectweapon;
 	weapon *weapon[TOTAL_HAVEWEAPON];
-	int id_param, lnbs, nbs;
-
-	//ゾンビならば処理しない
-	myHuman->GetParamData(&id_param, NULL, NULL, NULL);
-	GameParamInfo->GetHuman(id_param, &humandata);
-	if( humandata.type == 2 ){
-		return false;
-	}
+	int lnbs, nbs;
 
 	//所持している武器を取得
 	for(int i=0; i<TOTAL_HAVEWEAPON; i++){
@@ -1517,9 +1509,10 @@ bool ObjectManager::CheatNewWeapon(int human_id, int new_weaponID)
 		//新しい武器を配置
 		dataid = AddVisualWeaponIndex(new_weaponID, false);
 
-		//武器が配置できれば、武器を拾わせる
+		//武器が配置できれば、武器を持たせる
 		if( dataid != -1 ){
-			myHuman->PickupWeapon( &(WeaponIndex[dataid]) );
+			weapon[selectweapon] = &(WeaponIndex[dataid]);
+			myHuman->SetWeapon(weapon);
 			return true;
 		}
 	}
