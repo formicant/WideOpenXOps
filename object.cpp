@@ -1553,9 +1553,10 @@ int human::GetGunsightErrorRange()
 //! @param d3dg D3DGraphicsのポインタ
 //! @param Resource ResourceManagerのポインタ
 //! @param DrawArm 腕と武器のみ描画する
+//! @param player 対象の人物がプレイヤーかどうか
 //! @todo 腕の位置を行列で求める
 //! @todo 死体の部位の高さ（Y軸）がおかしい
-void human::Render(class D3DGraphics *d3dg, class ResourceManager *Resource, bool DrawArm)
+void human::Render(class D3DGraphics *d3dg, class ResourceManager *Resource, bool DrawArm, bool player)
 {
 	//正しく初期化されていなければ、処理しない
 	if( d3dg == NULL ){ return; }
@@ -1577,14 +1578,14 @@ void human::Render(class D3DGraphics *d3dg, class ResourceManager *Resource, boo
 		if( GetFlag(MoveFlag_lt, MOVEFLAG_WALK) ){
 			legmodelid = id_walkmodel[ (walkcnt/3 % TOTAL_WALKMODE) ];	//歩き
 		}
+		if( GetFlag(MoveFlag_lt, (MOVEFLAG_LEFT | MOVEFLAG_RIGHT)) ){
+			legmodelid = id_runmodel[ (runcnt/3 % TOTAL_RUNMODE) ];		//左右走り
+		}
 		if( GetFlag(MoveFlag_lt, MOVEFLAG_FORWARD) ){
 			legmodelid = id_runmodel[ (runcnt/2 % TOTAL_RUNMODE) ];		//前走り
 		}
 		if( GetFlag(MoveFlag_lt, MOVEFLAG_BACK) ){
 			legmodelid = id_runmodel[ (runcnt/4 % TOTAL_RUNMODE) ];		//後ろ走り
-		}
-		if( GetFlag(MoveFlag_lt, (MOVEFLAG_LEFT | MOVEFLAG_RIGHT)) ){
-			legmodelid = id_runmodel[ (runcnt/3 % TOTAL_RUNMODE) ];		//左右走り
 		}
 
 		//足を描画
@@ -1594,12 +1595,21 @@ void human::Render(class D3DGraphics *d3dg, class ResourceManager *Resource, boo
 
 	//腕を描画
 	if( rotation_y != 0.0f ){		//死亡して倒れている or 倒れ始めた
-		d3dg->SetWorldTransform(pos_x + cos(rotation_x*-1 - (float)M_PI/2)*sin(rotation_y)*16.0f, pos_y + cos(rotation_y)*16.0f, pos_z + sin(rotation_x*-1 - (float)M_PI/2)*sin(rotation_y)*16.0f,
-			rotation_x + (float)M_PI, armrotation_y + rotation_y, armmodel_size);
+		float x = pos_x + cos(rotation_x*-1 - (float)M_PI/2)*sin(rotation_y)*16.0f;
+		float y = pos_y + cos(rotation_y)*16.0f;
+		float z = pos_z + sin(rotation_x*-1 - (float)M_PI/2)*sin(rotation_y)*16.0f;
+		d3dg->SetWorldTransform(x, y, z, rotation_x + (float)M_PI, armrotation_y + rotation_y, armmodel_size);
 		d3dg->RenderModel(id_armmodel[0], id_texture);
 	}
 	else if( nowweapon == NULL ){	//手ぶら
-		d3dg->SetWorldTransform(pos_x, pos_y + 16.0f, pos_z, rotation_x + (float)M_PI, armrotation_y, armmodel_size);
+		float ry;
+		if( player == true ){
+			ry = ARMRAD_NOWEAPON;
+		}
+		else{
+			ry = armrotation_y;
+		}
+		d3dg->SetWorldTransform(pos_x, pos_y + 16.0f, pos_z, rotation_x + (float)M_PI, ry, armmodel_size);
 		d3dg->RenderModel(id_armmodel[0], id_texture);
 	}
 	else{							//何か武器を持っている
@@ -1613,7 +1623,7 @@ void human::Render(class D3DGraphics *d3dg, class ResourceManager *Resource, boo
 		Param->GetWeapon(id_param, &paramdata);
 		Resource->GetWeaponModelTexture(id_param, &model, &texture);
 
-		//腕の形を決定
+		//腕の形と角度を決定
 		if( paramdata.WeaponP == 0 ){
 			armmodelid = 1;
 			ry = armrotation_y + reaction_y;

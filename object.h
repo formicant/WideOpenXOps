@@ -203,7 +203,7 @@ public:
 	virtual float GetTotalMove();
 	virtual int RunFrame(class Collision *CollD, class BlockDataInterface *inblockdata, bool F5mode);
 	virtual int GetGunsightErrorRange();
-	virtual void Render(class D3DGraphics *d3dg, class ResourceManager *Resource, bool DrawArm);
+	virtual void Render(class D3DGraphics *d3dg, class ResourceManager *Resource, bool DrawArm, bool player);
 };
 
 //! @brief •ŠíŠÇ—ƒNƒ‰ƒX

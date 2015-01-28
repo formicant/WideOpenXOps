@@ -1507,10 +1507,7 @@ void maingame::Process()
 	GameParamInfo.GetWeapon(weaponid, &data);
 
 	//プレイヤー（オブジェクト）の向きを設定
-	if( data.WeaponP == 2 ){
-		myHuman->SetRxRy(mouse_rx, ARMRAD_NOWEAPON);
-	}
-	else{
+	if( myHuman->GetHP() > 0 ){
 		myHuman->SetRxRy(mouse_rx, mouse_ry);
 	}
 
@@ -1740,6 +1737,7 @@ void maingame::Render2D()
 	char weaponname[16];
 	int hp;
 	int param_scopemode;
+	int param_WeaponP;
 	int ErrorRange;
 
 	//各種設定やゲーム情報を取得
@@ -1756,11 +1754,11 @@ void maingame::Render2D()
 		}
 	}
 	selectweaponcnt = myHuman->GetChangeWeaponCnt();
-	WeaponParameter param;
-	GameParamInfo.GetWeapon(weapon_paramid[selectweapon], &param);
-	strcpy(weaponname, param.name);
+	GameParamInfo.GetWeapon(weapon_paramid[selectweapon], &weapon_paramdata);
+	strcpy(weaponname, weapon_paramdata.name);
 	hp = myHuman->GetHP();
-	param_scopemode = param.scopemode;
+	param_scopemode = weapon_paramdata.scopemode;
+	param_WeaponP = weapon_paramdata.WeaponP;
 	ErrorRange = myHuman->GetGunsightErrorRange();
 
 	float human_x, human_y, human_z, human_rx;
@@ -1987,7 +1985,7 @@ void maingame::Render2D()
 	}
 
 	//照準表示
-	if( (Camera_F1mode == false)&&(weapon[selectweapon] != NULL)&&(end_framecnt == 0)&&(myHuman->GetScopeMode() == 0)&&(param_scopemode != 2) ){
+	if( (Camera_F1mode == false)&&(weapon[selectweapon] != NULL)&&(end_framecnt == 0)&&(myHuman->GetScopeMode() == 0)&&(param_scopemode != 2)&&(param_WeaponP != 2) ){
 		if( GameConfig.GetAnotherGunsightFlag() ){	//オプション型
 			//照準の透明度
 			float alpha = 1.0f - (float)ErrorRange/40.0f;

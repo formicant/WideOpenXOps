@@ -1957,21 +1957,31 @@ void ObjectManager::Render(float camera_x, float camera_y, float camera_z, int H
 
 	//人描画
 	for(int i=0; i<MAX_HUMAN; i++){
+		bool DrawArm, player;
+
+		//腕の表示
 		if( HidePlayer == 0 ){
-			HumanIndex[i].Render(d3dg, Resource, false);
+			DrawArm = false;
 		}
 		else if( Player_HumanID != i ){	// HidePlayer != 0
-			HumanIndex[i].Render(d3dg, Resource, false);
+			DrawArm = false;
 		}
 		else if( HidePlayer == 2 ){		// Player_HumanID == i
-			HumanIndex[i].Render(d3dg, Resource, true);
+			DrawArm = true;
 		}
-	}
+		else{							// Player_HumanID == i && HidePlayer == 1
+			continue;	//プレイヤー自身を表示しないならスキップ
+		}
 
-	for(int i=0; i<MAX_HUMAN; i++){
-		if( (HidePlayer == false)||(Player_HumanID != i) ){
-			HumanIndex[i].Render(d3dg, Resource, true);
+		//プレイヤーかどうか判定
+		if( Player_HumanID == i ){
+			player = true;
 		}
+		else{
+			player = false;
+		}
+
+		HumanIndex[i].Render(d3dg, Resource, DrawArm, player);
 	}
 
 	//武器描画
