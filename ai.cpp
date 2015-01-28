@@ -630,6 +630,19 @@ void AIcontrol::Action()
 	float r = x * x + z * z;
 	float atan;
 
+	//©•ª‚ªèÖ’e ˆÈŠO ‚ğ‚Á‚Ä‚¢‚ê‚Î`
+	if( weaponid != ID_WEAPON_GRENADE ){
+		float mx, mz;
+		float scale;
+		EnemyHuman->GetMovePos(&mx, NULL, &mz);
+		if( longattack == false ){ scale = 1.5f; }
+		else{ scale = 0.12f; }
+
+		//“G‚ÌˆÚ“®‚ğŒ©’´‚·
+		x -= mx * scale;
+		z -= mz * scale;
+	}
+
 	//–Ú•W’n“_‚Ö‚ÌŠp“x‚ğ‹‚ß‚é
 	atan = atan2(x, z) - rx + (float)M_PI;
 	for(; atan > (float)M_PI; atan -= (float)M_PI*2){}
@@ -672,26 +685,16 @@ void AIcontrol::Action()
 	}
 	else{
 		float y2 = y;
-		float sqrtr = sqrt(r);
 		float addry;
 
-		//©•ª‚ª•Ší‚ğ‚Á‚Ä‚¢‚ê‚Î`
-		if( weaponid != ID_WEAPON_NONE ){
-			//“G‚ÌˆÚ“®‚ğŒ©’´‚·
-			/*
-			if( weaponid == ID_WEAPON_GRENADE ){	//èÖ’e‚È‚ç‚’¼Šp“xi‚‚³j
-				float scale;
-				if( sqrtr < 200.0f ){ scale = 0.12f; }
-				else{ scale = 0.4f; }
-				y2 += (sqrtr - 200.0f) * scale;
-			}
-			else{							//èÖ’eˆÈŠO‚È‚ç…•½Šp“x
-				float mx, mz;
-				EnemyHuman->GetMovePos(&mx, NULL, &mz);
-				if( sqrtr < 200.0f ){ rx += atan2(mz * 1.5f, mx * 1.5f); }
-				else{ rx += atan2(sqrtr * mz * 0.12f, sqrtr * mx * 0.12f); }
-			}
-			*/
+		//©•ª‚ªèÖ’e‚ğ‚Á‚Ä‚¢‚ê‚Î`
+		if( weaponid == ID_WEAPON_GRENADE ){
+			float scale;
+			if( longattack == false ){ scale = 0.12f; }
+			else{ scale = 0.4f; }
+
+			//‹——£‚É‰‚¶‚Ä‚‚³‚ğ•Ï‚¦‚é
+			y2 -= (sqrt(r) - 200.0f) * scale;
 		}
 
 		//©•ª‚ªè‚Ô‚ç‚È‚ç‚Î`
