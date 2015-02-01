@@ -523,7 +523,7 @@ int ResourceManager::LoadAddSmallObject(char *modelpath, char *texturepath, char
 	smallobject_sound[dataid] = SoundCtrl->LoadSound(soundpath);
 	if( smallobject_sound[dataid] == -1 ){ cnt += 1; }
 
-	return 0;
+	return cnt;
 }
 
 //! スコープテクスチャを読み込む
