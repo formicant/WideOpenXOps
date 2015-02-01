@@ -133,7 +133,7 @@ public:
 	void SetFog(int skynumber);
 	void SetCamera(float camera_x, float camera_y, float camera_z, float camera_rx, float camera_ry, float viewangle);
 	void LoadMapdata(class BlockDataInterface* in_blockdata, char *directory);
-	void DrawMapdata();
+	void DrawMapdata(bool wireframe);
 	int GetMapTextureID(int id);
 	void CleanupMapdata();
 	void RenderModel(int id_model, int id_texture);
@@ -147,6 +147,7 @@ public:
 	void Draw2DLine(int x1, int y1, int x2, int y2, int color);
 	void Draw2DBox(int x1, int y1, int x2, int y2, int color);
 	void Draw2DTexture(int x, int y, int id, int width, int height, float alpha);
+	bool SaveScreenShot(char *fname);
 };
 
 #endif

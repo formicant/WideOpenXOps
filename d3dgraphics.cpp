@@ -840,7 +840,8 @@ void D3DGraphics::LoadMapdata(BlockDataInterface* in_blockdata, char *directory)
 }
 
 //! マップデータを描画
-void D3DGraphics::DrawMapdata()
+//! @param wireframe ワイヤーフレーム表示
+void D3DGraphics::DrawMapdata(bool wireframe)
 {
 	//ブロックデータが読み込まれていなければ、処理しない。
 	if( blockdata == NULL ){ return; }
@@ -848,6 +849,26 @@ void D3DGraphics::DrawMapdata()
 	struct blockdata data;
 	D3DMATERIAL9 mtrl = {0};
 	int textureID;
+
+	if( wireframe == true ){
+		//ワイヤーフレーム表示
+		for(int i=0; i<bs; i++){
+			blockdata->Getdata(&data, i);
+			Drawline(data.x[0], data.y[0], data.z[0], data.x[1], data.y[1], data.z[1]);
+			Drawline(data.x[1], data.y[1], data.z[1], data.x[2], data.y[2], data.z[2]);
+			Drawline(data.x[2], data.y[2], data.z[2], data.x[3], data.y[3], data.z[3]);
+			Drawline(data.x[3], data.y[3], data.z[3], data.x[0], data.y[0], data.z[0]);
+			Drawline(data.x[4], data.y[4], data.z[4], data.x[5], data.y[5], data.z[5]);
+			Drawline(data.x[5], data.y[5], data.z[5], data.x[6], data.y[6], data.z[6]);
+			Drawline(data.x[6], data.y[6], data.z[6], data.x[7], data.y[7], data.z[7]);
+			Drawline(data.x[7], data.y[7], data.z[7], data.x[4], data.y[4], data.z[4]);
+			Drawline(data.x[0], data.y[0], data.z[0], data.x[4], data.y[4], data.z[4]);
+			Drawline(data.x[1], data.y[1], data.z[1], data.x[5], data.y[5], data.z[5]);
+			Drawline(data.x[2], data.y[2], data.z[2], data.x[6], data.y[6], data.z[6]);
+			Drawline(data.x[3], data.y[3], data.z[3], data.x[7], data.y[7], data.z[7]);
+		}
+		return;
+	}
 
 	//深度バッファ比較関数を設定
 	//pd3dDevice->SetRenderState(D3DRS_ZFUNC, D3DCMP_LESS);
@@ -1355,4 +1376,27 @@ void D3DGraphics::End2DRender()
 
 	//深度バッファ比較関数を元に戻す
 	pd3dDevice->SetRenderState(D3DRS_ZFUNC, D3DCMP_LESSEQUAL);
+}
+
+//! 画面のスクリーンショットを保存
+//! @param filename ファイル名
+//! @return 成功：true　失敗：false
+bool D3DGraphics::SaveScreenShot(char* filename)
+{
+	LPDIRECT3DSURFACE9 pSurface = NULL;
+	HRESULT hr;
+
+	//サーフェースを作成し、画面を取得
+	pd3dDevice->GetBackBuffer(0, 0, D3DBACKBUFFER_TYPE_MONO, &pSurface);
+
+	//サーフェイスを画像に出力
+	hr = D3DXSaveSurfaceToFile(filename, D3DXIFF_BMP, pSurface, NULL, NULL);
+
+	//解放
+	pSurface->Release();
+
+	if( hr == D3D_OK ){
+		return true;
+	}
+	return false;
 }

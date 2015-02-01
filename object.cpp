@@ -243,6 +243,7 @@ void human::SetParamData(int id_param, int dataid, signed char p4, int team, boo
 		scopemode = 0;
 		HitFlag = false;
 		totalmove = 0.0f;
+		Invincible = false;
 	}
 }
 
@@ -266,6 +267,20 @@ int human::GetHP()
 	return hp;
 }
 
+//! HPを設定
+//! @param in_hp 新たに設定するHP
+//! @return 成功：true　失敗：false
+//! @attention HPが1以上の人に対して実行しないと失敗します。
+bool human::SetHP(int in_hp)
+{
+	if( hp > 0 ){
+		hp = in_hp;
+		return true;
+	}
+	return false;
+}
+
+
 //! 死体かどうか判定
 //! @return 死体：true　死体でない：false
 //! @warning 完全に静止した状態を「死体」と判定します。倒れている最中の人は対象に含まれないため、hp <= 0 が全て死体と判定されるとは限りません。
@@ -285,6 +300,22 @@ bool human::GetDeadFlag()
 void human::SetTeamID(int id)
 {
 	teamid = id;
+}
+
+//! 無敵フラグを取得
+//! @return true：無敵　false：通常
+//! @attention 無敵状態の場合、銃弾・手榴弾の爆発・落下　によるダメージを一切受けません。
+bool human::GetInvincibleFlag()
+{
+	return Invincible;
+}
+
+//! 無敵フラグを設定
+//! @param flag true：無敵　false：通常
+//! @attention 無敵状態の場合、銃弾・手榴弾の爆発・落下　によるダメージを一切受けません。
+void human::SetInvincibleFlag(bool flag)
+{
+	Invincible = flag;
 }
 
 //! 前処理の移動量を取得
@@ -752,7 +783,9 @@ void human::AddPosOrder(float rx, float ry, float speed)
 //! @param attacks 弾の攻撃力
 void human::HitBulletHead(int attacks)
 {
-	hp -= (int)((float)attacks * HUMAN_DAMAGE_HEAD);
+	if( Invincible == false ){
+		hp -= (int)((float)attacks * HUMAN_DAMAGE_HEAD);
+	}
 	HitFlag = true;
 }
 
@@ -760,7 +793,9 @@ void human::HitBulletHead(int attacks)
 //! @param attacks 弾の攻撃力
 void human::HitBulletUp(int attacks)
 {
-	hp -= (int)((float)attacks * HUMAN_DAMAGE_UP);
+	if( Invincible == false ){
+		hp -= (int)((float)attacks * HUMAN_DAMAGE_UP);
+	}
 	HitFlag = true;
 }
 
@@ -768,14 +803,18 @@ void human::HitBulletUp(int attacks)
 //! @param attacks 弾の攻撃力
 void human::HitBulletLeg(int attacks)
 {
-	hp -= (int)((float)attacks * HUMAN_DAMAGE_LEG);
+	if( Invincible == false ){
+		hp -= (int)((float)attacks * HUMAN_DAMAGE_LEG);
+	}
 	HitFlag = true;
 }
 
 //! ゾンビの攻撃がヒット
 void human::HitZombieAttack()
 {
-	hp -= HUMAN_DAMAGE_ZOMBIEU + GetRand(HUMAN_DAMAGE_ZOMBIEA);
+	if( Invincible == false ){
+		hp -= HUMAN_DAMAGE_ZOMBIEU + GetRand(HUMAN_DAMAGE_ZOMBIEA);
+	}
 	HitFlag = true;
 }
 
@@ -813,7 +852,7 @@ int human::GrenadeExplosion(class Collision *CollD, class grenade *tGrenade)
 		//ダメージ量を計算し、反映
 		damage = HUMAN_DAMAGE_GRENADE_LEG - (int)((float)HUMAN_DAMAGE_GRENADE_LEG/MAX_DAMAGE_GRENADE_DISTANCE * r);
 		if( damage > 0 ){
-			hp -= damage;
+			if( Invincible == false ){ hp -= damage; }
 			HitFlag = true;
 			returncode = 1;
 		}
@@ -827,7 +866,7 @@ int human::GrenadeExplosion(class Collision *CollD, class grenade *tGrenade)
 		//ダメージ量を計算し、反映
 		damage = HUMAN_DAMAGE_GRENADE_HEAD - (int)((float)HUMAN_DAMAGE_GRENADE_HEAD/MAX_DAMAGE_GRENADE_DISTANCE * r);
 		if( damage > 0 ){
-			hp -= damage;
+			if( Invincible == false ){ hp -= damage; }
 			HitFlag = true;
 			returncode = 1;
 		}
@@ -1277,9 +1316,11 @@ bool human::MapCollisionDetection(class Collision *CollD, class BlockDataInterfa
 			if( CollD->CheckALLBlockIntersectDummyRay(pos_x, pos_y + offset, pos_z, 0, -1, 0, NULL, NULL, &Dist, move_y*-1 + offset) == true ){
 				CollD->CheckALLBlockIntersectRay(pos_x, pos_y + offset, pos_z, 0, -1, 0, &id, &face, &Dist, move_y + offset);
 
-				//ダメージ計算
-				if( move_y > HUMAN_DAMAGE_MINSPEED ){ hp -= 0; }
-				else{ hp -= (int)((float)HUMAN_DAMAGE_MAXFALL / abs(HUMAN_DAMAGE_MAXSPEED - (HUMAN_DAMAGE_MINSPEED)) * abs(move_y - (HUMAN_DAMAGE_MINSPEED))); }
+				if( Invincible == false ){
+					//ダメージ計算
+					if( move_y > HUMAN_DAMAGE_MINSPEED ){ hp -= 0; }
+					else{ hp -= (int)((float)HUMAN_DAMAGE_MAXFALL / abs(HUMAN_DAMAGE_MAXSPEED - (HUMAN_DAMAGE_MINSPEED)) * abs(move_y - (HUMAN_DAMAGE_MINSPEED))); }
+				}
 
 				FallDistance = (Dist - offset) * -1;
 				move_y = 0.0f;

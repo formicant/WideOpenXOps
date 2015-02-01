@@ -32,13 +32,15 @@
 #ifndef GAMEMAIN_H
 #define GAMEMAIN_H
 
+#define ENABLE_DEBUGCONSOLE	//!< @brief デバック用コンソールの有効化（コメント化で機能無効）
+
 #define MAINMENU_X 280		//!< メニューの表示 X座標（左上基準）
 #define MAINMENU_Y 140		//!< メニューの表示 Y座標（〃）
 #define TOTAL_MENUITEMS 8	//!< メニュー1画面に表示するミッション数
 #define MAINMENU_H (TOTAL_MENUITEMS+2)*30 + 25	//!< メニューの表示サイズ・高さ
 
 #define HUDA_WEAPON_POSX (SCREEN_WIDTH - 255)	//!< 武器情報を表示する領域・X座標
-#define HUDA_WEAPON_POSY (SCREEN_HEIGTH - 98)	//!< 武器情報を表示する領域・Y座標
+#define HUDA_WEAPON_POSY (SCREEN_HEIGHT - 98)	//!< 武器情報を表示する領域・Y座標
 #define HUDA_WEAPON_SIZEW 8		//!< 武器情報を表示する領域・横サイズ（32ピクセルの配置個数）
 #define HUDA_WEAPON_SIZEH 3		//!< 武器情報を表示する領域・縦サイズ（32ピクセルの配置個数）
 
@@ -53,6 +55,12 @@
 #define TOTAL_EVENTENTRYPOINT_2 -120	//!< ライン 2 の開始認識番号
 
 #define TOTAL_EVENTENT_SHOWMESSEC 5.0f		//!< イベントメッセージを表示する秒数
+
+#ifdef ENABLE_DEBUGCONSOLE
+ #define MAX_CONSOLELEN 45		//!< デバック用コンソールの文字数（行）
+ #define MAX_CONSOLELINES 8		//!< デバック用コンソールの行数
+ #define CONSOLE_PROMPT ">"		//!< デバック用コンソールのプロンプト
+#endif
 
 #ifndef H_LAYERLEVEL
  #define H_LAYERLEVEL 3		//!< Select include file.
@@ -72,6 +80,14 @@ struct GameInfo{
 	int kill;		//!< 倒した敵の数	
 	int headshot;	//!< 敵の頭部に命中した数
 };
+
+#ifdef ENABLE_DEBUGCONSOLE
+//! コンソールを管理する構造体
+struct ConsoleData{
+	int color;						//!< 色
+	char textdata[MAX_CONSOLELEN];	//!< 文字列
+};
+#endif
 
 //! @brief オープニング画面管理クラス
 //! @details オープニング画面を管理します。
@@ -143,11 +159,18 @@ class maingame : public D3Dscene
 	float view_rx;		//!< マウス角度とカメラ角度の差（水平軸）
 	float view_ry;		//!< マウス角度とカメラ角度の差（垂直軸） 
 	bool ShowInfo_Debugmode;	//!< 座標などを表示するデバックモード
-	bool Camera_Debugmode;	//!< カメラデバックモード
-	bool Camera_F1mode;		//!< カメラF1モード
-	int Camera_F2mode;		//!< カメラF2モード
+	bool Camera_Debugmode;		//!< カメラデバックモード
+	bool tag;					//!< オブジェクトのタグを表示
+	bool wireframe;				//!< マップをワイヤーフレーム表示
+	bool CenterLine;			//!< 3D空間に中心線を表示
+	bool Camera_F1mode;			//!< カメラF1モード
+	int Camera_F2mode;			//!< カメラF2モード
 	bool Camera_HOMEmode;		//!< カメラHOMEモード
 	bool Cmd_F5;				//!< 裏技F5モード
+	int InvincibleID;			//!< 無敵な人の判定
+	bool PlayerAI;				//!< プレイヤー操作をAIに委ねる
+	bool AIstop;				//!< AI処理を停止する
+	bool AINoFight;				//!< AIが非戦闘化する（戦わない）
 	int start_framecnt;			//!< メインゲーム開始時のカウント
 	int end_framecnt;			//!< メインゲーム終了のカウント
 	int message_id;				//!< 表示中のイベントメッセージ番号
@@ -164,6 +187,21 @@ class maingame : public D3Dscene
 	bool CheckInputControl(int CheckKey, int mode);
 	void Render3D();
 	void Render2D();
+
+#ifdef ENABLE_DEBUGCONSOLE
+	bool Show_Console;			//!< デバック用コンソールを表示
+	ConsoleData *InfoConsoleData;			//!< デバック用コンソールデータ（表示済み）
+	ConsoleData *InputConsoleData;			//!< デバック用コンソールデータ（入力中）
+	char NewCommand[MAX_CONSOLELEN];	//!< 新たに入力された未処理のコマンド
+	bool ScreenShot;		//!< SSを撮影する
+	void AddInfoConsole(int color, char *str);
+	void ConsoleInputText(char inchar);
+	void ConsoleDeleteText();
+	bool GetCommandNum(char *cmd, int *num);
+	void InputConsole();
+	void ProcessConsole();
+	void RenderConsole();
+#endif
 
 public:
 	maingame();

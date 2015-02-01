@@ -39,6 +39,7 @@
 
 #include <windows.h>
 #include <mmsystem.h>
+#include <time.h>
 
 #pragma comment(lib, "winmm.lib")
 
@@ -46,6 +47,7 @@ HWND InitWindow(HINSTANCE hInstance, char* title, int width, int height, int nCm
 float GetFps(int getcnt);
 bool ControlFps();
 unsigned int GetTimeMS();
+void GetTimeName(char *str);
 void InitRand();
 int GetRand(int num);
 

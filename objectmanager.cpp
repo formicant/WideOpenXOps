@@ -431,6 +431,41 @@ int ObjectManager::AddSmallObjectIndex(pointdata data)
 	return -1;
 }
 
+//! 小物追加（ゲーム中用）
+//! @param px X座標
+//! @param py Y座標
+//! @param pz Z座標
+//! @param rx X軸向き
+//! @param paramID 種類番号
+//! @param MapColl 位置修正フラグ
+//! @return 成功：データ番号（0以上）　失敗：-1
+int ObjectManager::AddSmallObjectIndex(float px, float py, float pz, float rx, int paramID, bool MapColl)
+{
+	//モデルとテクスチャを取得
+	int model, texture;
+	if( Resource->GetSmallObjectModelTexture(paramID, &model, &texture) == 1 ){
+		return -1;
+	}
+
+	for(int j=0; j<MAX_SMALLOBJECT; j++){
+		if( SmallObjectIndex[j].GetDrawFlag() == false ){
+			//初期化
+			SmallObjectIndex[j].SetPosData(px, py, pz, rx);
+			SmallObjectIndex[j].SetParamData(paramID, 0, true);
+			SmallObjectIndex[j].SetModel(model, 5.0f);
+			SmallObjectIndex[j].SetTexture(texture);
+			SmallObjectIndex[j].SetDrawFlag(true);
+
+			//位置修正フラグが有効ならば、マップと判定
+			if( MapColl == true ){
+				SmallObjectIndex[j].CollisionMap(CollD);
+			}
+			return j;
+		}
+	}
+	return -1;
+}
+
 //! 出血させる
 //! @param x X座標
 //! @param y Y座標
@@ -1001,16 +1036,25 @@ human* ObjectManager::GetPlayerHumanObject()
 //! 指定したデータ番号のweaponクラスを取得
 //! @param id データ番号
 //! @return 武器オブジェクトのポインタ　（無効なデータ番号で NULL）
-weapon* ObjectManager::GeWeaponObject(int id)
+weapon* ObjectManager::GetWeaponObject(int id)
 {
 	if( (id < 0)||(MAX_WEAPON-1 < id) ){ return NULL; }
 	return &(WeaponIndex[id]);
 }
 
+//! 指定したデータ番号のsmallobjectクラスを取得
+//! @param id データ番号
+//! @return 小物オブジェクトのポインタ　（無効なデータ番号で NULL）
+smallobject* ObjectManager::GetSmallObject(int id)
+{
+	if( (id < 0)||(MAX_SMALLOBJECT-1 < id) ){ return NULL; }
+	return &(SmallObjectIndex[id]);
+}
+
 //! 指定したデータ番号のbulletクラスを取得
 //! @param id データ番号
 //! @return 弾オブジェクトのポインタ　（無効なデータ番号で NULL）
-bullet* ObjectManager::GeBulletObject(int id)
+bullet* ObjectManager::GetBulletObject(int id)
 {
 	if( (id < 0)||(MAX_BULLET-1 < id) ){ return NULL; }
 	return &(BulletIndex[id]);
@@ -1612,6 +1656,28 @@ void ObjectManager::HitZombieAttack(human* EnemyHuman)
 	GameSound->HitHuman(tx, ty, tz);
 }
 
+//! 死者を蘇生する
+//! @param id 人の番号（0～MAX_HUMAN-1）
+//! @return true：成功　false：失敗
+//! @warning 手ぶらのまま蘇生します
+//! @attention 無効な人番号が指定された場合や、指定した人が生存していた場合、あるいは謎人間に対して実行した場合、この関数は失敗します。
+bool ObjectManager::HumanResuscitation(int id)
+{
+	if( (id < 0)||(MAX_HUMAN-1 < id) ){ return false; }
+
+	//使用されていないか、生存していれば処理しない。
+	if( HumanIndex[id].GetDrawFlag() == false ){ return false; }
+	if( HumanIndex[id].GetDeadFlag() == false ){ return false; }
+
+	int id_param, dataid, team;
+	signed char p4;
+	HumanIndex[id].GetParamData(&id_param, &dataid, &p4, &team);
+	if( (id_param < 0)||( TOTAL_PARAMETERINFO_HUMAN-1 < id_param) ){ return false; }	//謎人間なら処理しない
+	HumanIndex[id].SetParamData(id_param, dataid, p4, team, true);
+
+	return true;
+}
+
 //! ゲームクリアー・ゲームオーバーの判定
 //! @return ゲームクリアー：1　ゲームオーバー：2　判定なし：0
 //! @attention ゲームクリア―とゲームオーバーが同時に成立する条件では、本家XOPSと同様に「ゲームクリアー」と判定されます。
@@ -1662,6 +1728,129 @@ int ObjectManager::CheckGameOverorComplete()
 	return 0;
 }
 
+//! オブジェクトの情報を取得
+//! @param camera_x カメラのX座標
+//! @param camera_y カメラのY座標
+//! @param camera_z カメラのZ座標
+//! @param camera_rx カメラの横軸角度
+//! @param camera_ry カメラの縦軸角度
+//! @param color 色を取得するポインタ
+//! @param infostr 文字を取得するポインタ
+//! @return 表示情報あり：true　表示情報なし：false
+bool ObjectManager::GetObjectInfoTag(float camera_x, float camera_y, float camera_z, float camera_rx, float camera_ry, int *color, char *infostr)
+{
+	float dist = 50.0f * 50.0f;
+	float px, py, pz;
+	float x, y, z, r;
+	int Player_teamID;
+
+	//文字を初期化
+	infostr[0] = NULL;
+
+	//プレイヤーのチーム番号を取得
+	HumanIndex[Player_HumanID].GetParamData(NULL, NULL, NULL, &Player_teamID);
+
+	//人
+	for(int i=0; i<MAX_HUMAN; i++){
+		//プレイヤー自身なら処理しない
+		if( i == Player_HumanID ){ continue; }
+
+		if( HumanIndex[i].GetDrawFlag() == true ){
+			HumanIndex[i].GetPosData(&px, &py, &pz, NULL);
+			x = px - camera_x;
+			y = py - camera_y;
+			z = pz - camera_z;
+			r = x*x + y*y + z*z;
+			if( r < dist ){
+				float rx;
+				int team;
+
+				//視点を基準に対象までの角度を算出（-π～π）
+				rx = atan2(z, x) - camera_rx;
+				for(; rx > (float)M_PI; rx -= (float)M_PI*2){}
+				for(; rx < (float)M_PI*-1; rx += (float)M_PI*2){}
+
+				//角度上、視界に入っていれば
+				if( abs(rx) < (float)M_PI/18 ){
+					HumanIndex[i].GetParamData(NULL, NULL, NULL, &team);
+					if( team == Player_teamID ){
+						*color = D3DCOLOR_COLORVALUE(0.0f,0.0f,1.0f,1.0f);
+						sprintf(infostr, "Human[%d]  HP %d : Friend", i, HumanIndex[i].GetHP());
+					}
+					else{
+						*color = D3DCOLOR_COLORVALUE(1.0f,0.0f,0.0f,1.0f);
+						sprintf(infostr, "Human[%d]  HP %d : Enemy", i, HumanIndex[i].GetHP());
+					}
+					dist = r;
+				}
+			}
+		}
+	}
+
+	//武器
+	for(int i=0; i<MAX_WEAPON; i++){
+		if( (WeaponIndex[i].GetDrawFlag() == true)&&(WeaponIndex[i].GetUsingFlag() == false) ){
+			int lnbs, nbs;
+
+			WeaponIndex[i].GetPosData(&px, &py, &pz, NULL);
+			WeaponIndex[i].GetParamData(NULL, &lnbs, &nbs);
+			x = px - camera_x;
+			y = py - camera_y;
+			z = pz - camera_z;
+			r = x*x + y*y + z*z;
+			if( r < dist ){
+				float rx, ry;
+
+				//視点を基準に対象までの角度を算出（-π～π）
+				rx = atan2(z, x) - camera_rx;
+				for(; rx > (float)M_PI; rx -= (float)M_PI*2){}
+				for(; rx < (float)M_PI*-1; rx += (float)M_PI*2){}
+				ry = atan2(y, sqrt(x*x + z*z))  - camera_ry;
+
+				//角度上、視界に入っていれば
+				if( (abs(rx) < (float)M_PI/18)&&(abs(ry) < (float)M_PI/18) ){
+					*color = D3DCOLOR_COLORVALUE(0.0f,1.0f,0.0f,1.0f);
+					sprintf(infostr, "WeaponIndex[%d]  %d:%d", i, lnbs, (nbs - lnbs));
+					dist = r;
+				}
+			}
+		}
+	}
+
+	//小物
+	for(int i=0; i<MAX_SMALLOBJECT; i++){
+		if( SmallObjectIndex[i].GetDrawFlag() == true ){
+			SmallObjectIndex[i].GetPosData(&px, &py, &pz, NULL);
+			x = px - camera_x;
+			y = py - camera_y;
+			z = pz - camera_z;
+			r = x*x + y*y + z*z;
+			if( r < dist ){
+				float rx, ry;
+
+				//視点を基準に対象までの角度を算出（-π～π）
+				rx = atan2(z, x) - camera_rx;
+				for(; rx > (float)M_PI; rx -= (float)M_PI*2){}
+				for(; rx < (float)M_PI*-1; rx += (float)M_PI*2){}
+				ry = atan2(y, sqrt(x*x + z*z))  - camera_ry;
+
+				//角度上、視界に入っていれば
+				if( (abs(rx) < (float)M_PI/18)&&(abs(ry) < (float)M_PI/18) ){
+					*color = D3DCOLOR_COLORVALUE(1.0f,1.0f,0.0f,1.0f);
+					sprintf(infostr, "SmallObject[%d]  HP %d", i, SmallObjectIndex[i].GetHP());
+					dist = r;
+				}
+			}
+		}
+	}
+
+	//文字が設定されているかどうかで、有効な処理がされたか判定。
+	if( infostr[0] == NULL ){
+		return false;
+	}
+	return true;
+}
+
 //! オブジェクトの主計算処理
 //! @param cmdF5id 上昇機能（F5裏技）させる人データ番号（-1で機能無効）
 //! @param camera_x カメラのX座標
@@ -1682,12 +1871,16 @@ int ObjectManager::Process(int cmdF5id, float camera_x, float camera_y, float ca
 
 	//人オブジェクトの処理
 	for(int i=0; i<MAX_HUMAN; i++){
+		bool cmdF5;
+
 		if( i == cmdF5id ){
-			HumanIndex[i].RunFrame(CollD, BlockData, true);
+			cmdF5 = true;
 		}
 		else{
-			HumanIndex[i].RunFrame(CollD, BlockData, false);
+			cmdF5 = false;
 		}
+
+		HumanIndex[i].RunFrame(CollD, BlockData, cmdF5);
 	}
 
 	//武器オブジェクトの処理

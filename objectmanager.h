@@ -108,13 +108,15 @@ public:
 	void SetClass(ParameterInfo *in_GameParamInfo, D3DGraphics *in_d3dg, ResourceManager *in_Resource, BlockDataInterface *in_BlockData, PointDataInterface *in_PointData, Collision *in_CollD, SoundManager *in_GameSound, MIFInterface *in_MIFdata);
 	int AddHumanIndex(float px, float py, float pz, float rx, int CharacterID, int TeamID, int WeaponID[]);
 	int AddVisualWeaponIndex(int WeaponID, bool loadbullet);
+	int AddSmallObjectIndex(float px, float py, float pz, float rx, int paramID, bool MapColl);
 	void LoadPointData();
 	int GetPlayerID();
 	void SetPlayerID(int id);
 	human* GeHumanObject(int id);
 	human* GetPlayerHumanObject();
-	weapon* GeWeaponObject(int id);
-	bullet* GeBulletObject(int id);
+	weapon* GetWeaponObject(int id);
+	smallobject* GetSmallObject(int id);
+	bullet* GetBulletObject(int id);
 	bullet* GetNewBulletObject();
 	grenade* GetNewGrenadeObject();
 	human* SearchHuman(signed char p4);
@@ -135,7 +137,9 @@ public:
 	bool CheatNewWeapon(int human_id, int new_weaponID);
 	bool CheckZombieAttack(human* MyHuman, human* EnemyHuman);
 	void HitZombieAttack(human* EnemyHuman);
+	bool HumanResuscitation(int id);
 	int CheckGameOverorComplete();
+	bool GetObjectInfoTag(float camera_x, float camera_y, float camera_z, float camera_rx, float camera_ry, int *color, char *infostr);
 	int Process(int cmdF5id, float camera_x, float camera_y, float camera_z, float camera_rx, float camera_ry);
 	bool GetHumanShotInfo(int id, int *ontarget, int *kill, int *headshot);
 	void Render(float camera_x, float camera_y, float camera_z, int HidePlayer);

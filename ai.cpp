@@ -865,6 +865,11 @@ void AIcontrol::Action()
 //! 攻撃をキャンセル
 bool AIcontrol::ActionCancel()
 {
+	//非戦闘化フラグが有効なら終了
+	if( NoFight == true ){
+		return true;
+	}
+
 	//敵が死亡したら終了
 	if( enemyhuman->GetDeadFlag() == true ){
 		return true;
@@ -1333,6 +1338,11 @@ void AIcontrol::ArmAngle()
 //! 敵を探す
 int AIcontrol::SearchEnemy()
 {
+	//非戦闘化フラグが有効なら敵を見つけない
+	if( NoFight == true ){
+		return 0;
+	}
+
 	if( battlemode == AI_ACTION ){ return 0; }
 
 	int weaponid = ctrlhuman->GetMainWeaponTypeNO();
@@ -1630,6 +1640,11 @@ bool AIcontrol::CautionMain()
 	soundlist soundlist[MAX_SOUNDMGR_LIST];
 	int soundlists = GameSound->GetWorldSound(posx, posy + VIEW_HEIGHT, posz, teamid, soundlist);
 
+	//非戦闘化フラグが有効なら、音は聞こえないことにする
+	if( NoFight == true ){
+		soundlists = 0;
+	}
+
 	//回転と腕の角度
 	TurnSeen();
 	ArmAngle();
@@ -1708,6 +1723,11 @@ bool AIcontrol::NormalMain()
 	soundlist soundlist[MAX_SOUNDMGR_LIST];
 	int soundlists = GameSound->GetWorldSound(posx, posy + VIEW_HEIGHT, posz, teamid, soundlist);
 
+	//非戦闘化フラグが有効なら、音は聞こえないことにする
+	if( NoFight == true ){
+		soundlists = 0;
+	}
+
 	//ランダムパスなら処理実行
 	if( movemode == AI_RANDOM ){
 		SearchTarget(true);
@@ -1766,6 +1786,7 @@ void AIcontrol::Init()
 
 	//ステートを初期化
 	hold = false;
+	NoFight = false;
 	battlemode = AI_NORMAL;
 	movemode = AI_NULL;
 	enemyhuman = NULL;
@@ -1811,6 +1832,29 @@ void AIcontrol::SetHoldTracking(int id)
 	movemode = AI_TRACKING;
 	hold = false;
 	target_pointid = id;
+}
+
+//! 強制的に警戒させる
+//! @warning 優先的な走り を実行中の場合、この関数は何もしません。
+void AIcontrol::SetCautionMode()
+{
+	//優先的な走りならば何もしない
+	if( movemode == AI_RUN2 ){ return; }
+
+	if( battlemode == AI_NORMAL ){
+		target_posx = posx;
+		target_posz = posz;
+	}
+	battlemode = AI_CAUTION;
+	cautioncnt = 160;
+}
+
+//! 非戦闘化フラグを設定
+//! @param flag true：戦闘を行わない（非戦闘化）　false：戦闘を行う（通常）
+//! @attention フラグを有効にすると敵を認識しなくなります。
+void AIcontrol::SetNoFightFlag(bool flag)
+{
+	NoFight = flag;
 }
 
 //! 処理系関数

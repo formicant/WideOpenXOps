@@ -175,6 +175,19 @@ unsigned int GetTimeMS()
 	return time;
 }
 
+//! “ú‚É‚æ‚é•¶š—ñ‚ğæ“¾
+//! @param str •¶š—ñ‚ğó‚¯æ‚éƒ|ƒCƒ“ƒ^
+void GetTimeName(char *str)
+{
+	time_t timer;
+	struct tm *local;
+
+	timer = time(NULL);
+	local = localtime(&timer);
+
+	sprintf(str, "%04d%02d%02d%02d%02d%02d", local->tm_year + 1900, local->tm_mon + 1, local->tm_mday, local->tm_hour, local->tm_min, local->tm_sec);
+}
+
 //! —”‚ğ‰Šú‰»
 void InitRand()
 {

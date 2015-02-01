@@ -65,6 +65,7 @@ class AIcontrol
 	int battlemode;		//!< 戦闘モード
 	int movemode;		//!< 移動モード
 	bool hold;		//!< 移動パスを読まない
+	bool NoFight;	//!< 非戦闘化フラグ
 	float posx;		//!< X座標
 	float posy;		//!< Y座標
 	float posz;		//!< Z座標
@@ -123,6 +124,8 @@ public:
 	void Init();
 	void SetHoldWait(float px, float pz, float rx);
 	void SetHoldTracking(int id);
+	void SetCautionMode();
+	void SetNoFightFlag(bool flag);
 	void Process();
 };
 

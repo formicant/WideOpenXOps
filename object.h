@@ -153,6 +153,7 @@ protected:
 	float totalmove;	//!< ‡ŒvˆÚ“®—Ê
 	int StateGunsightErrorRange;		//!< Æ€‚Ìó‘ÔŒë·
 	int ReactionGunsightErrorRange;		//!< Æ€‚Ì”½“®Œë·
+	bool Invincible;	//!< –³“Gƒtƒ‰ƒO
 
 	void GunsightErrorRange();
 	int CheckAndProcessDead(class Collision *CollD);
@@ -168,8 +169,11 @@ public:
 	virtual void GetMovePos(float *x, float *y, float *z);
 	virtual void SetModel(int upmodel, int armmodel[], int legmodel, int walkmodel[], int runmodel[]);
 	virtual int GetHP();
+	virtual bool SetHP(int in_hp);
 	virtual bool GetDeadFlag();
 	virtual void SetTeamID(int id);
+	virtual bool GetInvincibleFlag();
+	virtual void SetInvincibleFlag(bool flag);
 	virtual void SetWeapon(class weapon *in_weapon[]);
 	virtual int PickupWeapon(class weapon *in_weapon);
 	virtual void ChangeWeapon(int id = -1);
