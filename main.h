@@ -57,7 +57,7 @@
 #define GAMEFRAMEMS 30			//!< フレームあたりの処理時間（ms）
 #define GAMEFPS (1000.0f/GAMEFRAMEMS)	//!< FPS（フレームレート）　1000 / 30 = 33.333[FPS]
 #define SCREEN_WIDTH 640		//!< スクリーンの幅
-#define SCREEN_HEIGTH 480		//!< スクリーンの高さ
+#define SCREEN_HEIGHT 480		//!< スクリーンの高さ
 
 #define MAX_ADDONLIST 128	//!< ADDONを読み込む最大数
 

@@ -208,7 +208,7 @@ void InputControl::MoveMouseCenter()
 
 	//ウインドウ座標の中央を求める
 	point.x = SCREEN_WIDTH/2;
-	point.y = SCREEN_HEIGTH/2;
+	point.y = SCREEN_HEIGHT/2;
 
 	//前回の座標を書き換え
 	point_lt = point;

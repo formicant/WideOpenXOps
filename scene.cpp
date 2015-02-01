@@ -86,10 +86,10 @@ void scene::RenderMain()
 {
 	if( d3dg->StartRender() ){ return; }
 
-	d3dg->Draw2DBox(0, 0, SCREEN_WIDTH, SCREEN_HEIGTH, D3DCOLOR_COLORVALUE(0.0f,0.0f,0.0f,1.0f));
+	d3dg->Draw2DBox(0, 0, SCREEN_WIDTH, SCREEN_HEIGHT, D3DCOLOR_COLORVALUE(0.0f,0.0f,0.0f,1.0f));
 	d3dg->Draw2DTextureFontText(10, 10, "hello world !", D3DCOLOR_COLORVALUE(1.0f,1.0f,1.0f,1.0f), 20, 32);
 
-	d3dg->ScreenBrightness(SCREEN_WIDTH, SCREEN_HEIGTH, GameConfig.GetBrightness());
+	d3dg->ScreenBrightness(SCREEN_WIDTH, SCREEN_HEIGHT, GameConfig.GetBrightness());
 
 	d3dg->EndRender();
 }
@@ -174,12 +174,12 @@ void D2Dscene::RenderMain()
 {
 	if( d3dg->StartRender() ){ return; }
 
-	d3dg->Draw2DTexture(0, 0, gametitle, SCREEN_WIDTH, SCREEN_HEIGTH, 0.4f);
-	d3dg->Draw2DBox(11, 11, SCREEN_WIDTH - 10, SCREEN_HEIGTH - 10, D3DCOLOR_COLORVALUE(0.0f,0.0f,0.0f,0.75f));
+	d3dg->Draw2DTexture(0, 0, gametitle, SCREEN_WIDTH, SCREEN_HEIGHT, 0.4f);
+	d3dg->Draw2DBox(11, 11, SCREEN_WIDTH - 10, SCREEN_HEIGHT - 10, D3DCOLOR_COLORVALUE(0.0f,0.0f,0.0f,0.75f));
 
 	Render2D();
 
-	d3dg->ScreenBrightness(SCREEN_WIDTH, SCREEN_HEIGTH, GameConfig.GetBrightness());
+	d3dg->ScreenBrightness(SCREEN_WIDTH, SCREEN_HEIGHT, GameConfig.GetBrightness());
 
 	d3dg->EndRender();
 }
@@ -238,7 +238,7 @@ void D3Dscene::RenderMain()
 	Render3D();
 	Render2D();
 
-	d3dg->ScreenBrightness(SCREEN_WIDTH, SCREEN_HEIGTH, GameConfig.GetBrightness());
+	d3dg->ScreenBrightness(SCREEN_WIDTH, SCREEN_HEIGHT, GameConfig.GetBrightness());
 
 	d3dg->EndRender();
 }

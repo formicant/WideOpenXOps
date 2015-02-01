@@ -74,7 +74,7 @@ int WINAPI WinMain(HINSTANCE hInstance,	HINSTANCE hPrevInstance, LPTSTR lpCmdLin
 
 	//ウィンドウ初期化
 	HWND hWnd;
-	hWnd = InitWindow(hPrevInstance, GAMENAME, SCREEN_WIDTH, SCREEN_HEIGTH, nCmdShow, GameConfig.GetFullscreenFlag());
+	hWnd = InitWindow(hPrevInstance, GAMENAME, SCREEN_WIDTH, SCREEN_HEIGHT, nCmdShow, GameConfig.GetFullscreenFlag());
 
 	//基本的な初期化処理
 	if( InitGame(hWnd) ){
