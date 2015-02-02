@@ -220,10 +220,7 @@ bool AIcontrol::SearchTarget(bool next)
 //! 目標地点に移動
 void AIcontrol::MoveTarget()
 {
-	float x = posx - target_posx;
-	float z = posz - target_posz;
-	float r = x * x + z * z;
-	float atan;
+	float r, atan;
 	int paramid;
 	HumanParameter Paraminfo;
 	bool zombie;
@@ -239,23 +236,21 @@ void AIcontrol::MoveTarget()
 	}
 
 	//目標地点への角度を求める
-	atan = atan2(x, z) - rx + (float)M_PI;
-	for(; atan > (float)M_PI; atan -= (float)M_PI*2){}
-	for(; atan < (float)M_PI*-1; atan += (float)M_PI*2){}
+	CheckTargetAngle(posx, 0.0f, posz, rx*-1 + (float)M_PI/2, 0.0f, target_posx, 0.0f, target_posz, 0.0f, &atan, NULL, &r);
 
 	//大きな差があれば少しづつ旋回するだけ
 	if( atan > AI_TURNRAD ){
-		SetFlag(moveturn_mode, AI_CTRL_TURNRIGHT);
+		SetFlag(moveturn_mode, AI_CTRL_TURNLEFT);
 	}
 	if( atan < AI_TURNRAD*-1 ){
-		SetFlag(moveturn_mode, AI_CTRL_TURNLEFT);
+		SetFlag(moveturn_mode, AI_CTRL_TURNRIGHT);
 	}
 
 	//微々たる差なら一気に向く
-	if( (atan <= AI_TURNRAD) && (atan >= AI_TURNRAD*-1) ){
+	if( abs(atan) <= AI_TURNRAD ){
 		DelFlag(moveturn_mode, AI_CTRL_TURNRIGHT);
 		DelFlag(moveturn_mode, AI_CTRL_TURNLEFT);
-		rx += atan;
+		rx -= atan;
 	}
 
 	//前進する
@@ -296,7 +291,7 @@ void AIcontrol::MoveTarget()
 	}
 
 	//ジャンプ
-	if( random(128) == 0 ){
+	if( random(16) == 0 ){
 		MoveJump();
 	}
 
@@ -315,23 +310,10 @@ void AIcontrol::MoveTarget()
 //! 目標地点に移動（優先的な走り用）
 void AIcontrol::MoveTarget2()
 {
-	float x = target_posx - posx;
-	float z = target_posz - posz;
-	float atan, rx2, trx;
+	float atan;
 
-	//人の向き・視点を求める　（0.0～2π）
-	rx2 = rx*-1 + (float)M_PI/2;
-	for(; rx2 > (float)M_PI*2; rx2 -= (float)M_PI*2){}
-	for(; rx2 < 0.0f; rx2 += (float)M_PI*2){}
-
-	//ポイントまでの角度を求める　（0.0～2π）
-	trx = atan2(z, x);
-	if( trx < 0.0f ){ trx += (float)M_PI*2; }
-
-	//視点を基準にポイントまでの角度を算出（-π～π）
-	atan = trx - rx2;
-	for(; atan > (float)M_PI; atan -= (float)M_PI*2){}
-	for(; atan < (float)M_PI*-1; atan += (float)M_PI*2){}
+	//目標地点への角度を求める
+	CheckTargetAngle(posx, 0.0f, posz, rx*-1 + (float)M_PI/2, 0.0f, target_posx, 0.0f, target_posz, 0.0f, &atan, NULL, NULL);
 
 	//前後移動の処理
 	if( abs(atan) < (float)M_PI/180*56 ){
@@ -350,7 +332,7 @@ void AIcontrol::MoveTarget2()
 	}
 
 	//ジャンプ
-	if( random(128) == 0 ){
+	if( random(16) == 0 ){
 		MoveJump();
 	}
 
@@ -548,7 +530,7 @@ bool AIcontrol::StopSeen()
 	}
 
 	//微々たる差なら一気に向ける。
-	if( (tr <= AI_TURNRAD) && (tr >= AI_TURNRAD*-1) ){
+	if( abs(tr) <= AI_TURNRAD ){
 		DelFlag(moveturn_mode, AI_CTRL_TURNRIGHT);
 		DelFlag(moveturn_mode, AI_CTRL_TURNLEFT);
 		rx += tr;
@@ -562,7 +544,7 @@ bool AIcontrol::StopSeen()
 bool AIcontrol::MoveJump()
 {
 	//立ち止まっていれば処理しない
-	if( ctrlhuman->GetMovemode(true) == 0 ){ return false; }
+	if( ctrlhuman->GetMovemode(false) == 0 ){ return false; }
 
 	float dist_dummy;
 
@@ -624,14 +606,23 @@ void AIcontrol::Action()
 	//所持している武器の種類を取得
 	int weaponid = ctrlhuman->GetMainWeaponTypeNO();
 
-	float x = posx - tx;
-	float y = posy2 - ty;
-	float z = posz - tz;
-	float r = x * x + z * z;
-	float atan;
+	float atanx, atany, r;
 
-	//自分が手榴弾 以外 を持っていれば～
-	if( weaponid != ID_WEAPON_GRENADE ){
+	//自分が手榴弾を持っていれば～
+	if( weaponid == ID_WEAPON_GRENADE ){
+		if( zombie == false ){
+			float x = posx - tx;
+			float z = posz - tz;
+			float r = x * x + z * z;
+			float scale;
+			if( longattack == false ){ scale = 0.12f; }
+			else{ scale = 0.4f; }
+
+			//距離に応じて高さを変える
+			ty += (sqrt(r) - 200.0f) * scale;
+		}
+	}
+	else{
 		float mx, mz;
 		float scale;
 		EnemyHuman->GetMovePos(&mx, NULL, &mz);
@@ -639,28 +630,26 @@ void AIcontrol::Action()
 		else{ scale = 0.12f; }
 
 		//敵の移動を見超す
-		x -= mx * scale;
-		z -= mz * scale;
+		tx += mx * scale;
+		tz += mz * scale;
 	}
 
 	//目標地点への角度を求める
-	atan = atan2(x, z) - rx + (float)M_PI;
-	for(; atan > (float)M_PI; atan -= (float)M_PI*2){}
-	for(; atan < (float)M_PI*-1; atan += (float)M_PI*2){}
+	CheckTargetAngle(posx, posy2, posz, rx*-1 + (float)M_PI/2, ry, tx, ty, tz, 0.0f, &atanx, &atany, &r);
 
 	//大きな差があれば少しづつ旋回するだけ
-	if( atan > AI_TURNRAD ){
-		SetFlag(moveturn_mode, AI_CTRL_TURNRIGHT);
-	}
-	if( atan < AI_TURNRAD*-1 ){
+	if( atanx > AI_TURNRAD ){
 		SetFlag(moveturn_mode, AI_CTRL_TURNLEFT);
+	}
+	if( atanx < AI_TURNRAD*-1 ){
+		SetFlag(moveturn_mode, AI_CTRL_TURNRIGHT);
 	}
 
 	//微々たる差なら一気に向ける
-	if( (atan <= AI_TURNRAD) && (atan >= AI_TURNRAD*-1) ){
+	if( abs(atanx) <= AI_TURNRAD ){
 		DelFlag(moveturn_mode, AI_CTRL_TURNRIGHT);
 		DelFlag(moveturn_mode, AI_CTRL_TURNLEFT);
-		rx += atan;
+		rx -= atanx;
 		rx += (float)M_PI/180 * (random(5) - 2);
 	}
 
@@ -677,25 +666,14 @@ void AIcontrol::Action()
 		}
 
 		//微々たる差なら一気に向ける
-		if( (ry <= AI_TURNRAD) && (ry >= AI_TURNRAD*-1) ){
+		if( abs(ry) <= AI_TURNRAD ){
 			DelFlag(moveturn_mode, AI_CTRL_TURNUP);
 			DelFlag(moveturn_mode, AI_CTRL_TURNDOWN);
 			ry = 0.0f;
 		}
 	}
 	else{
-		float y2 = y;
 		float addry;
-
-		//自分が手榴弾を持っていれば～
-		if( weaponid == ID_WEAPON_GRENADE ){
-			float scale;
-			if( longattack == false ){ scale = 0.12f; }
-			else{ scale = 0.4f; }
-
-			//距離に応じて高さを変える
-			y2 -= (sqrt(r) - 200.0f) * scale;
-		}
 
 		//自分が手ぶらならば～
 		if( weaponid == ID_WEAPON_NONE ){
@@ -707,7 +685,7 @@ void AIcontrol::Action()
 			}
 		}
 		else{
-			addry = atan2(y2, sqrt(r)) * -1 - ry;
+			addry = atany;
 		}
 
 		//大きな差があれば少しづつ旋回するだけ
@@ -719,7 +697,7 @@ void AIcontrol::Action()
 		}
 
 		//微々たる差なら一気に向ける
-		if( (addry <= AI_TURNRAD) && (addry >= AI_TURNRAD*-1) ){
+		if( abs(addry) <= AI_TURNRAD ){
 			DelFlag(moveturn_mode, AI_CTRL_TURNUP);
 			DelFlag(moveturn_mode, AI_CTRL_TURNDOWN);
 			ry += addry;
@@ -739,6 +717,7 @@ void AIcontrol::Action()
 
 	
 	if( zombie == true ){	//ゾンビの攻撃
+		float y = posy2 - ty;
 
 		//もし走っていれば、一度歩きに切り替える
 		if( GetFlag(moveturn_mode, AI_CTRL_MOVEFORWARD) ){
@@ -747,8 +726,8 @@ void AIcontrol::Action()
 		}
 
 		//敵に向かって前進する
-		if( (atan <= (float)M_PI/180*25) && (atan >= (float)M_PI/180*25*-1) ){
-			if( (atan <= (float)M_PI/180*15) && (atan >= (float)M_PI/180*15*-1) && (r < 24.0f*24.0f) && (actioncnt%50 > 20) ){
+		if( abs(atanx) <= (float)M_PI/180*25 ){
+			if( (abs(atanx) <= (float)M_PI/180*15) && (r < 24.0f*24.0f) && (actioncnt%50 > 20) ){
 				//歩きを取り消し、走る
 				SetFlag(moveturn_mode, AI_CTRL_MOVEFORWARD);
 				DelFlag(moveturn_mode, AI_CTRL_MOVEWALK);
@@ -760,12 +739,15 @@ void AIcontrol::Action()
 
 		/*
 		//ジャンプ
-		if( random(128) == 0 ){
+		if( random(16) == 0 ){
 			MoveJump();
 		}
 		*/
 
 		if( (r < 9.0f*9.0f)&&( abs(y) < 10.0f) ){
+			float x = posx - tx;
+			float z = posz - tz;
+
 			//捕まえる　（敵を引き付ける）
 			EnemyHuman->AddPosOrder(atan2(z, x), 0.0f, 1.2f);
 
@@ -833,7 +815,7 @@ void AIcontrol::Action()
 		}
 
 		//敵を捉えていれば
-		float atanxy = atan + atan2(y, r);
+		float atanxy = atanx + atany;
 		if( atanxy < ShotAngle ){
 			int rand = LevelParam->attack;
 			if( longattack == true ){ rand += 1; }
@@ -1248,29 +1230,21 @@ int AIcontrol::ThrowGrenade()
 
 	pointdata pdata;
 	float posy2;
+	float atan_rx, atan_ry;
 
 	//パスと人の高さを取得
 	Points->Getdata(&pdata, target_pointid);
 	posy2 = posy + VIEW_HEIGHT;
 
-	float x = posx - target_posx;
-	float y = pdata.y - posy2;
-	float z = posz - target_posz;
-	float r = x * x + z * z;
-	float atan_rx, atan_ry;
-
 	//目標地点への角度を求める
-	atan_rx = atan2(x, z) - rx + (float)M_PI;
-	for(; atan_rx > (float)M_PI; atan_rx -= (float)M_PI*2){}
-	for(; atan_rx < (float)M_PI*-1; atan_rx += (float)M_PI*2){}
-	atan_ry = atan2(y, sqrt(r)) - ry;
+	CheckTargetAngle(posx, pdata.y, posz, rx*-1 + (float)M_PI/2, ry, target_posx, posy2, target_posz, 0.0f, &atan_rx, &atan_ry, NULL);
 
 	//大きな差があれば少しづつ旋回するだけ
 	if( atan_rx > AI_TURNRAD ){
-		SetFlag(moveturn_mode, AI_CTRL_TURNRIGHT);
+		SetFlag(moveturn_mode, AI_CTRL_TURNLEFT);
 	}
 	if( atan_rx < AI_TURNRAD*-1 ){
-		SetFlag(moveturn_mode, AI_CTRL_TURNLEFT);
+		SetFlag(moveturn_mode, AI_CTRL_TURNRIGHT);
 	}
 	if( atan_ry > AI_TURNRAD ){
 		SetFlag(moveturn_mode, AI_CTRL_TURNUP);
@@ -1280,12 +1254,12 @@ int AIcontrol::ThrowGrenade()
 	}
 
 	//微々たる差なら一気に向ける
-	if( (atan_rx <= AI_TURNRAD) && (atan_rx >= AI_TURNRAD*-1) ){
+	if( abs(atan_rx) <= AI_TURNRAD ){
 		DelFlag(moveturn_mode, AI_CTRL_TURNRIGHT);
 		DelFlag(moveturn_mode, AI_CTRL_TURNLEFT);
 		rx += atan_rx;
 	}
-	if( (atan_ry <= AI_TURNRAD) && (atan_ry >= AI_TURNRAD*-1) ){
+	if( abs(atan_ry) <= AI_TURNRAD ){
 		DelFlag(moveturn_mode, AI_CTRL_TURNUP);
 		DelFlag(moveturn_mode, AI_CTRL_TURNDOWN);
 		ry += atan_ry;
@@ -1328,7 +1302,7 @@ void AIcontrol::ArmAngle()
 	}
 
 	//微々たる差なら一気に向ける
-	if( (addry <= AI_TURNRAD) && (addry >= AI_TURNRAD*-1) ){
+	if( abs(addry) <= AI_TURNRAD ){
 		DelFlag(moveturn_mode, AI_CTRL_TURNUP);
 		DelFlag(moveturn_mode, AI_CTRL_TURNDOWN);
 		ry += addry;
@@ -1457,38 +1431,25 @@ bool AIcontrol::CheckLookEnemy(class human* thuman, float search_rx, float searc
 
 	//自分と敵が同一人物でなければ
 	if( ctrlteam != targetteam ){
-		float Dist;
+		float mrx, mry;
+		float Dist2 , Dist;
 		float Dist_dummy; 
-		float x, y, z;
 
-		//距離を取得
-		x = tx - posx;
-		y = ty - posy;
-		z = tz - posz;
-		Dist = sqrt(x*x + y*y + z*z);
-
-		//判定を行う距離より近ければ
-		if( Dist < maxDist ){
-			float rx2, trx, mrx;
-
-			//人の向き・視点を求める　（0.0～2π）
-			rx2 = rx*-1 + (float)M_PI/2;
-			for(; rx2 > (float)M_PI*2; rx2 -= (float)M_PI*2){}
-			for(; rx2 < 0.0f; rx2 += (float)M_PI*2){}
-
-			//ポイントまでの角度を求める　（0.0～2π）
-			trx = atan2(z, x);
-			if( trx < 0.0f ){ trx += (float)M_PI*2; }
-
-			//視点を基準にポイントまでの角度を算出（-π～π）
-			mrx = trx - rx2;
-			for(; mrx > (float)M_PI; mrx -= (float)M_PI*2){}
-			for(; mrx < (float)M_PI*-1; mrx += (float)M_PI*2){}
-
+		//距離を判定し、角度も取得
+		if( CheckTargetAngle(posx, posy, posz, rx*-1 + (float)M_PI/2, 0.0f, tx, ty, tz, maxDist, &mrx, &mry, &Dist2) == true ){
 			//角度上、視界に入っていれば
-			if( (abs(mrx) < search_rx/2)&&(abs(atan2(y, sqrt(x*x + z*z))) < search_ry/2) ){
+			if( (abs(mrx) < search_rx/2)&&(abs(mry) < search_ry/2) ){
+				float vx, vy, vz;
+
+				Dist = sqrt(Dist2);
+
+				//ベクトルを取得
+				vx = (tx - posx)/Dist;
+				vy = (ty - posy)/Dist;
+				vz = (tz - posz)/Dist;
+
 				//ブロックが遮っていなければ　（レイで当たり判定を行い、当たっていなければ）
-				if( CollD->CheckALLBlockIntersectRay(posx, posy + VIEW_HEIGHT, posz, x/Dist, y/Dist, z/Dist, NULL, NULL, &Dist_dummy, Dist) == false ){
+				if( CollD->CheckALLBlockIntersectRay(posx, posy + VIEW_HEIGHT, posz, vx, vy, vz, NULL, NULL, &Dist_dummy, Dist) == false ){
 					if( out_minDist != NULL ){ *out_minDist = Dist; }
 					enemyhuman = thuman;
 					return true;
@@ -1523,22 +1484,13 @@ bool AIcontrol::CheckCorpse(int id)
 		//味方ならば
 		if( ctrlteam == targetteam ){
 			float tposx, tposy, tposz;
-			float x, y, z, r;
 			float atan;
 
 			//座標から距離を取得
 			thuman->GetPosData(&tposx, &tposy, &tposz, NULL);
-			x = posx - tposx;
-			y = posy - tposy;
-			z = posz - tposz;
-			r = x*x + y*y + z*z;
 
-			if( r < 22.0f * 22.0f ){
-				//死体への角度を求める
-				atan = atan2(x, z) - rx + (float)M_PI;
-				for(; atan > (float)M_PI; atan -= (float)M_PI*2){}
-				for(; atan < (float)M_PI*-1; atan += (float)M_PI*2){}
-
+			//距離と角度を計算
+			if( CheckTargetAngle(posx, posy, posz, rx*-1 + (float)M_PI/2, 0.0f, tposx, tposy, tposz, 22.0f, &atan, NULL, NULL) == true ){
 				if( abs(atan) < (float)M_PI/18*4 ){
 					return true;
 				}

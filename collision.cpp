@@ -938,3 +938,57 @@ float DistancePosRay(float Pos_x, float Pos_y, float Pos_z, float RayPos_x, floa
 
 	return sqrt(out.x*out.x + out.y*out.y + out.z*out.z) / maxDist;
 }
+
+//! 観測点から対象点への 距離判定・角度算出
+//! @param pos_x 観測点のX座標
+//! @param pos_y 観測点のY座標
+//! @param pos_z 観測点のZ座標
+//! @param rx 観測点の水平角度
+//! @param ry 観測点の垂直角度
+//! @param target_x 対象点のX座標
+//! @param target_y 対象点のY座標
+//! @param target_z 対象点のZ座標
+//! @param checkdist 判定距離（0.0f以下で判定無効）
+//! @param out_rx 対象点への水平角度（π～-π）を受け取るポインタ（NULL可）
+//! @param out_ry 対象点への垂直角度を受け取るポインタ（NULL可）
+//! @param out_dist2 対象点への距離<b>の二乗</b>を受け取るポインタ（NULL可）
+//! @return 成功：true 失敗：false
+//! @warning out_dist2は距離の<b>二乗</b>です。必要に応じて改めて sqrt()関数 などを用いてください。
+//! @attention 引数 checkdist に有効な距離を与えた場合は、観測点から対象点への距離判定も行います。指定された距離より離れている場合、角度を計算せずに false を返します。
+//! @attention 逆に、引数 checkdist に0.0f以下を与えた場合、距離による判定を行いません。関数は常に true を返します。
+bool CheckTargetAngle(float pos_x, float pos_y, float pos_z, float rx, float ry, float target_x, float target_y, float target_z, float checkdist, float *out_rx, float *out_ry, float *out_dist2)
+{
+	float x, y, z;
+	float dist2 = 0.0f;
+	float angleX, angleY;
+
+	x = target_x - pos_x;
+	y = target_y - pos_y;
+	z = target_z - pos_z;
+
+	if( (checkdist > 0.0f)||(out_dist2 != NULL) ){
+		dist2 = (x*x + y*y + z*z);
+	}
+
+	if( checkdist > 0.0f ){
+		if( dist2 > checkdist * checkdist ){
+			return false;
+		}
+	}
+
+	if( out_rx != NULL ){
+		angleX = atan2(z, x) - rx;
+		for(; angleX > (float)M_PI; angleX -= (float)M_PI*2){}
+		for(; angleX < (float)M_PI*-1; angleX += (float)M_PI*2){}
+
+		*out_rx = angleX;
+	}
+	if( out_ry != NULL ){
+		angleY = atan2(y, sqrt(x*x + z*z))  - ry;
+
+		*out_ry = angleY;
+	}
+	if( out_dist2 != NULL ){ *out_dist2 = dist2; }
+
+	return true;
+}

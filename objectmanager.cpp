@@ -1739,9 +1739,10 @@ int ObjectManager::CheckGameOverorComplete()
 //! @return 表示情報あり：true　表示情報なし：false
 bool ObjectManager::GetObjectInfoTag(float camera_x, float camera_y, float camera_z, float camera_rx, float camera_ry, int *color, char *infostr)
 {
-	float dist = 50.0f * 50.0f;
+	float dist = 50.0f;
 	float px, py, pz;
-	float x, y, z, r;
+	float rx, ry;
+	float r;
 	int Player_teamID;
 
 	//文字を初期化
@@ -1757,18 +1758,10 @@ bool ObjectManager::GetObjectInfoTag(float camera_x, float camera_y, float camer
 
 		if( HumanIndex[i].GetDrawFlag() == true ){
 			HumanIndex[i].GetPosData(&px, &py, &pz, NULL);
-			x = px - camera_x;
-			y = py - camera_y;
-			z = pz - camera_z;
-			r = x*x + y*y + z*z;
-			if( r < dist ){
-				float rx;
-				int team;
 
-				//視点を基準に対象までの角度を算出（-π～π）
-				rx = atan2(z, x) - camera_rx;
-				for(; rx > (float)M_PI; rx -= (float)M_PI*2){}
-				for(; rx < (float)M_PI*-1; rx += (float)M_PI*2){}
+			//視点を基準に対象までの角度を算出
+			if( CheckTargetAngle(camera_x, camera_y, camera_z, camera_rx, 0.0f, px, py, pz, dist, &rx, NULL, &r) == true ){
+				int team;
 
 				//角度上、視界に入っていれば
 				if( abs(rx) < (float)M_PI/18 ){
@@ -1781,7 +1774,7 @@ bool ObjectManager::GetObjectInfoTag(float camera_x, float camera_y, float camer
 						*color = D3DCOLOR_COLORVALUE(1.0f,0.0f,0.0f,1.0f);
 						sprintf(infostr, "Human[%d]  HP %d : Enemy", i, HumanIndex[i].GetHP());
 					}
-					dist = r;
+					dist = sqrt(r);
 				}
 			}
 		}
@@ -1794,24 +1787,14 @@ bool ObjectManager::GetObjectInfoTag(float camera_x, float camera_y, float camer
 
 			WeaponIndex[i].GetPosData(&px, &py, &pz, NULL);
 			WeaponIndex[i].GetParamData(NULL, &lnbs, &nbs);
-			x = px - camera_x;
-			y = py - camera_y;
-			z = pz - camera_z;
-			r = x*x + y*y + z*z;
-			if( r < dist ){
-				float rx, ry;
 
-				//視点を基準に対象までの角度を算出（-π～π）
-				rx = atan2(z, x) - camera_rx;
-				for(; rx > (float)M_PI; rx -= (float)M_PI*2){}
-				for(; rx < (float)M_PI*-1; rx += (float)M_PI*2){}
-				ry = atan2(y, sqrt(x*x + z*z))  - camera_ry;
-
+			//視点を基準に対象までの角度を算出
+			if( CheckTargetAngle(camera_x, camera_y, camera_z, camera_rx, camera_ry, px, py, pz, dist, &rx, &ry, &r) == true ){
 				//角度上、視界に入っていれば
 				if( (abs(rx) < (float)M_PI/18)&&(abs(ry) < (float)M_PI/18) ){
 					*color = D3DCOLOR_COLORVALUE(0.0f,1.0f,0.0f,1.0f);
 					sprintf(infostr, "Weapon[%d]  %d:%d", i, lnbs, (nbs - lnbs));
-					dist = r;
+					dist = sqrt(r);
 				}
 			}
 		}
@@ -1821,24 +1804,14 @@ bool ObjectManager::GetObjectInfoTag(float camera_x, float camera_y, float camer
 	for(int i=0; i<MAX_SMALLOBJECT; i++){
 		if( SmallObjectIndex[i].GetDrawFlag() == true ){
 			SmallObjectIndex[i].GetPosData(&px, &py, &pz, NULL);
-			x = px - camera_x;
-			y = py - camera_y;
-			z = pz - camera_z;
-			r = x*x + y*y + z*z;
-			if( r < dist ){
-				float rx, ry;
-
-				//視点を基準に対象までの角度を算出（-π～π）
-				rx = atan2(z, x) - camera_rx;
-				for(; rx > (float)M_PI; rx -= (float)M_PI*2){}
-				for(; rx < (float)M_PI*-1; rx += (float)M_PI*2){}
-				ry = atan2(y, sqrt(x*x + z*z))  - camera_ry;
-
+			
+			//視点を基準に対象までの角度を算出
+			if( CheckTargetAngle(camera_x, camera_y, camera_z, camera_rx, camera_ry, px, py, pz, dist, &rx, &ry, &r) == true ){
 				//角度上、視界に入っていれば
 				if( (abs(rx) < (float)M_PI/18)&&(abs(ry) < (float)M_PI/18) ){
 					*color = D3DCOLOR_COLORVALUE(1.0f,1.0f,0.0f,1.0f);
 					sprintf(infostr, "SmallObject[%d]  HP %d", i, SmallObjectIndex[i].GetHP());
-					dist = r;
+					dist = sqrt(r);
 				}
 			}
 		}
