@@ -1810,7 +1810,7 @@ bool ObjectManager::GetObjectInfoTag(float camera_x, float camera_y, float camer
 				//Šp“xãA‹ŠE‚É“ü‚Á‚Ä‚¢‚ê‚Î
 				if( (abs(rx) < (float)M_PI/18)&&(abs(ry) < (float)M_PI/18) ){
 					*color = D3DCOLOR_COLORVALUE(0.0f,1.0f,0.0f,1.0f);
-					sprintf(infostr, "WeaponIndex[%d]  %d:%d", i, lnbs, (nbs - lnbs));
+					sprintf(infostr, "Weapon[%d]  %d:%d", i, lnbs, (nbs - lnbs));
 					dist = r;
 				}
 			}
