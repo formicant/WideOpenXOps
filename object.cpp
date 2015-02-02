@@ -1417,6 +1417,9 @@ bool human::MapCollisionDetection(class Collision *CollD, class BlockDataInterfa
 			if( CollD->CheckALLBlockIntersectDummyRay(pos_x, pos_y + offset, pos_z, vx, 0, vz, NULL, NULL, &Dist, speed) == true ){
 				CollD->CheckALLBlockIntersectRay(pos_x, pos_y + offset, pos_z, vx, 0, vz, &id, &face, &Dist, speed);
 
+				//地面と認めない　（ジャンプ対策）
+				move_y_flag = true;
+
 				struct blockdata bdata;
 				inblockdata->Getdata(&bdata, id);
 
