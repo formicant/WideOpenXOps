@@ -951,8 +951,8 @@ void AddonList::Sort()
 
 	//ミッション名を一度小文字に変換する
 	for(int i=0; i<datas; i++){
-		for(int j=0; j<(signed)strlen(mission_name[i]); j++){
-			mission_name_c[i][j] = tolower(mission_name[i][j]);
+		for(int j=0; j<(int)strlen(mission_name[i]); j++){
+			mission_name_c[i][j] = (char)tolower(mission_name[i][j]);
 		}
 		mission_name_c[i][strlen(mission_name[i])] = 0x00;
 	}

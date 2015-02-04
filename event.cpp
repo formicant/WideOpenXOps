@@ -99,7 +99,7 @@ bool EventControl::CheckHaveCase(human *in_human)
 int EventControl::Execution(int *endcnt, bool *complete, int *MessageID, bool *SetMessageID)
 {
 	pointdata data, pathdata;
-	int cnt;
+	int cnt = 0;
 	human* thuman;
 	smallobject* tsmallobject;
 	float hx, hy, hz;

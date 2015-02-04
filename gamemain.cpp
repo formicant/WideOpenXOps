@@ -174,7 +174,7 @@ int opening::Create()
 void opening::Process()
 {
 	//オブジェクトマネージャーを実行
-	ObjMgr.Process(-1, camera_x, camera_y, camera_z, camera_rx, camera_ry);
+	ObjMgr.Process(-1, camera_rx, camera_ry);
 
 	//AIを実行
 	for(int i=0; i<MAX_HUMAN; i++){
@@ -230,7 +230,7 @@ void opening::Render3D()
 
 void opening::Render2D()
 {
-	float effect;
+	float effect = 0.0f;
 
 	//ブラックアウト設定
 	if( framecnt < (int)(1.0f*GAMEFPS) ){
@@ -545,7 +545,7 @@ void mainmenu::Input()
 void mainmenu::Process()
 {
 	//オブジェクトマネージャーを実行
-	ObjMgr.Process(-1, camera_x, camera_y, camera_z, camera_rx, camera_ry);
+	ObjMgr.Process(-1, camera_rx, camera_ry);
 
 	//AIを実行
 	for(int i=0; i<MAX_HUMAN; i++){
@@ -1117,7 +1117,7 @@ void maingame::Input()
 	inputCtrl->GetMouseMovement(&x, &y);
 
 	//視点の移動量計算
-	float mang;
+	float mang = 0.0f;
 	if( myHuman->GetScopeMode() == 0 ){ mang = 0.01f; }
 	if( myHuman->GetScopeMode() == 1 ){ mang = 0.0032f; }
 	if( myHuman->GetScopeMode() == 2 ){ mang = 0.0060f; }
@@ -1529,10 +1529,10 @@ void maingame::Process()
 
 	//オブジェクトマネージャーを実行
 	if( Cmd_F5 == true ){
-		ObjMgr.Process( ObjMgr.GetPlayerID() , camera_x, camera_y, camera_z, camera_rx, camera_ry);
+		ObjMgr.Process( ObjMgr.GetPlayerID() , camera_rx, camera_ry);
 	}
 	else{
-		ObjMgr.Process(-1, camera_x, camera_y, camera_z, camera_rx, camera_ry);
+		ObjMgr.Process(-1, camera_rx, camera_ry);
 	}
 
 	//プレイヤーの戦歴を加算
@@ -1705,7 +1705,7 @@ void maingame::Render3D()
 	d3dg->SetFog(MIFdata.GetSkynumber());
 	if( Camera_F1mode == false ){
 		int scopemode = myHuman->GetScopeMode();
-		float viewangle;
+		float viewangle = 0.0f;
 
 		//スコープによる視野角を決定
 		if( scopemode == 0 ){ viewangle = VIEWANGLE_NORMAL; }
@@ -1752,6 +1752,7 @@ void maingame::Render3D()
 void maingame::Render2D()
 {
 	char str[256];
+	unsigned char stru[256];
 	float fps = GetFps(10);
 	float effect;
 
@@ -1904,44 +1905,44 @@ void maingame::Render2D()
 	if( Camera_F2mode == 0 ){
 		//左下エリア描画
 		//"ｳｴｴｴｴｴｴｵ"
-		str[0] = (signed char)0xB3;		str[1] = (signed char)0xB4;		str[2] = (signed char)0xB4;		str[3] = (signed char)0xB4;		str[4] = (signed char)0xB4;
-		str[5] = (signed char)0xB4;		str[6] = (signed char)0xB4;		str[7] = (signed char)0xB5;		str[8] = (signed char)0x00;
-		d3dg->Draw2DTextureFontText(15, SCREEN_HEIGHT - 105, str, D3DCOLOR_COLORVALUE(1.0f,1.0f,1.0f,0.5f), 32, 32);
+		stru[0] = 0xB3;		stru[1] = 0xB4;		stru[2] = 0xB4;		stru[3] = 0xB4;		stru[4] = 0xB4;
+		stru[5] = 0xB4;		stru[6] = 0xB4;		stru[7] = 0xB5;		stru[8] = 0x00;
+		d3dg->Draw2DTextureFontText(15, SCREEN_HEIGHT - 105, (char*)stru, D3DCOLOR_COLORVALUE(1.0f,1.0f,1.0f,0.5f), 32, 32);
 		//"ﾃﾄﾄﾄﾄﾄﾄﾅ"
-		for(int i=0; str[i] != 0x00; i++){ str[i] += (signed char)0x10; }
-		d3dg->Draw2DTextureFontText(15, SCREEN_HEIGHT - 105 +32, str, D3DCOLOR_COLORVALUE(1.0f,1.0f,1.0f,0.5f), 32, 32);
+		for(int i=0; stru[i] != 0x00; i++){ stru[i] += 0x10; }
+		d3dg->Draw2DTextureFontText(15, SCREEN_HEIGHT - 105 +32, (char*)stru, D3DCOLOR_COLORVALUE(1.0f,1.0f,1.0f,0.5f), 32, 32);
 		//"ｳｴｴｶｷｷｷｸｹ"
-		str[0] = (signed char)0xB3;		str[1] = (signed char)0xB4;		str[2] = (signed char)0xB4;		str[3] = (signed char)0xB6;		str[4] = (signed char)0xB7;
-		str[5] = (signed char)0xB7;		str[6] = (signed char)0xB7;		str[7] = (signed char)0xB8;		str[8] = (signed char)0xB9;		str[9] = (signed char)0x00;
-		d3dg->Draw2DTextureFontText(15, SCREEN_HEIGHT - 55, str, D3DCOLOR_COLORVALUE(1.0f,1.0f,1.0f,0.5f), 32, 32);
+		stru[0] = 0xB3;		stru[1] = 0xB4;		stru[2] = 0xB4;		stru[3] = 0xB6;		stru[4] = 0xB7;
+		stru[5] = 0xB7;		stru[6] = 0xB7;		stru[7] = 0xB8;		stru[8] = 0xB9;		stru[9] = 0x00;
+		d3dg->Draw2DTextureFontText(15, SCREEN_HEIGHT - 55, (char*)stru, D3DCOLOR_COLORVALUE(1.0f,1.0f,1.0f,0.5f), 32, 32);
 		//"ﾃﾄﾄﾆﾇﾇﾇﾈﾉ"
-		for(int i=0; str[i] != 0x00; i++){ str[i] += (signed char)0x10; }
-		d3dg->Draw2DTextureFontText(15, SCREEN_HEIGHT - 55 +32, str, D3DCOLOR_COLORVALUE(1.0f,1.0f,1.0f,0.5f), 32, 32);
+		for(int i=0; stru[i] != 0x00; i++){ stru[i] += 0x10; }
+		d3dg->Draw2DTextureFontText(15, SCREEN_HEIGHT - 55 +32, (char*)stru, D3DCOLOR_COLORVALUE(1.0f,1.0f,1.0f,0.5f), 32, 32);
 
 		//右下エリア用文字コード設定
-		str[0] = (signed char)0xB0;//'ｰ';
+		stru[0] = 0xB0;//'ｰ';
 		for(int i=1; i<HUDA_WEAPON_SIZEW-1; i++){
-			str[i] = (signed char)0xB1;//'ｱ';
+			stru[i] = 0xB1;//'ｱ';
 		}
-		str[HUDA_WEAPON_SIZEW-1] = (signed char)0xB2;//'ｲ';
-		str[HUDA_WEAPON_SIZEW] = 0x00;
+		stru[HUDA_WEAPON_SIZEW-1] = 0xB2;//'ｲ';
+		stru[HUDA_WEAPON_SIZEW] = 0x00;
 
 		//右下エリア描画
-		d3dg->Draw2DTextureFontText(HUDA_WEAPON_POSX, HUDA_WEAPON_POSY, str, D3DCOLOR_COLORVALUE(1.0f,1.0f,1.0f,0.5f), 32, 32);
-		for(int i=0; i<HUDA_WEAPON_SIZEW; i++){ str[i] += 0x10; }
+		d3dg->Draw2DTextureFontText(HUDA_WEAPON_POSX, HUDA_WEAPON_POSY, (char*)stru, D3DCOLOR_COLORVALUE(1.0f,1.0f,1.0f,0.5f), 32, 32);
+		for(int i=0; i<HUDA_WEAPON_SIZEW; i++){ stru[i] += 0x10; }
 		for(int i=1; i<HUDA_WEAPON_SIZEH-1; i++){
-			d3dg->Draw2DTextureFontText(HUDA_WEAPON_POSX, HUDA_WEAPON_POSY + 32*i, str, D3DCOLOR_COLORVALUE(1.0f,1.0f,1.0f,0.5f), 32, 32);
+			d3dg->Draw2DTextureFontText(HUDA_WEAPON_POSX, HUDA_WEAPON_POSY + 32*i, (char*)stru, D3DCOLOR_COLORVALUE(1.0f,1.0f,1.0f,0.5f), 32, 32);
 		}
-		for(int i=0; i<HUDA_WEAPON_SIZEW; i++){ str[i] += 0x10; }
-		d3dg->Draw2DTextureFontText(HUDA_WEAPON_POSX, HUDA_WEAPON_POSY + 32*(HUDA_WEAPON_SIZEH-1), str, D3DCOLOR_COLORVALUE(1.0f,1.0f,1.0f,0.5f), 32, 32);
+		for(int i=0; i<HUDA_WEAPON_SIZEW; i++){ stru[i] += 0x10; }
+		d3dg->Draw2DTextureFontText(HUDA_WEAPON_POSX, HUDA_WEAPON_POSY + 32*(HUDA_WEAPON_SIZEH-1), (char*)stru, D3DCOLOR_COLORVALUE(1.0f,1.0f,1.0f,0.5f), 32, 32);
 
 		//武器の弾数表示
-		sprintf(str, "A%d B%d", lnbs, (nbs - lnbs));
-		for(int i=0; i<(int)strlen(str); i++){
-			if( str[i] == 'A' ){ str[i] = (signed char)0xBB; }	//'ｻ'
-			if( str[i] == 'B' ){ str[i] = (signed char)0xBA; }	//'ｺ'
+		sprintf((char*)stru, "A%d B%d", lnbs, (nbs - lnbs));
+		for(int i=0; i<(int)strlen((char*)stru); i++){
+			if( stru[i] == 'A' ){ stru[i] = 0xBB; }	//'ｻ'
+			if( stru[i] == 'B' ){ stru[i] = 0xBA; }	//'ｺ'
 		}
-		d3dg->Draw2DTextureFontText(25, SCREEN_HEIGHT - 96, str, D3DCOLOR_COLORVALUE(1.0f,1.0f,1.0f,1.0f), 23, 24);
+		d3dg->Draw2DTextureFontText(25, SCREEN_HEIGHT - 96, (char*)stru, D3DCOLOR_COLORVALUE(1.0f,1.0f,1.0f,1.0f), 23, 24);
 
 		//HPによる色の決定
 		int statecolor;
@@ -2037,10 +2038,10 @@ void maingame::Render2D()
 			d3dg->Draw2DLine(SCREEN_WIDTH/2, SCREEN_HEIGHT/2-13, SCREEN_WIDTH/2, SCREEN_HEIGHT/2-3, D3DCOLOR_COLORVALUE(1.0f,0.0f,0.0f,1.0f));
 			d3dg->Draw2DLine(SCREEN_WIDTH/2, SCREEN_HEIGHT/2+13, SCREEN_WIDTH/2, SCREEN_HEIGHT/2+3, D3DCOLOR_COLORVALUE(1.0f,0.0f,0.0f,1.0f));
 
-			str[0] = (signed char)0xBD;		str[1] = 0x00;	//"ｽ"
-			d3dg->Draw2DTextureFontText(SCREEN_WIDTH/2 - 16 - ErrorRange, SCREEN_HEIGHT/2 - 16, str, D3DCOLOR_COLORVALUE(1.0f,0.0f,0.0f,0.5f), 32, 32);
-			str[0] = (signed char)0xBE;		str[1] = 0x00;	//"ｾ"
-			d3dg->Draw2DTextureFontText(SCREEN_WIDTH/2 - 16 + ErrorRange, SCREEN_HEIGHT/2 - 16, str, D3DCOLOR_COLORVALUE(1.0f,0.0f,0.0f,0.5f), 32, 32);
+			stru[0] = 0xBD;		stru[1] = 0x00;	//"ｽ"
+			d3dg->Draw2DTextureFontText(SCREEN_WIDTH/2 - 16 - ErrorRange, SCREEN_HEIGHT/2 - 16, (char*)stru, D3DCOLOR_COLORVALUE(1.0f,0.0f,0.0f,0.5f), 32, 32);
+			stru[0] = 0xBE;		stru[1] = 0x00;	//"ｾ"
+			d3dg->Draw2DTextureFontText(SCREEN_WIDTH/2 - 16 + ErrorRange, SCREEN_HEIGHT/2 - 16, (char*)stru, D3DCOLOR_COLORVALUE(1.0f,0.0f,0.0f,0.5f), 32, 32);
 		}
 	}
 
@@ -2170,7 +2171,7 @@ void maingame::ConsoleInputText(char inchar)
 void maingame::ConsoleDeleteText()
 {
 	int s = strlen(InputConsoleData->textdata);
-	if( s == strlen(CONSOLE_PROMPT) ){ return; }
+	if( s == (int)strlen(CONSOLE_PROMPT) ){ return; }
 	InputConsoleData->textdata[ s-1 ] = NULL;
 }
 
@@ -2213,19 +2214,19 @@ void maingame::InputConsole()
 	}
 	else{
 		//数字
-		for(int key=0x16; key<=0x1F; key++){
+		for(char key=0x16; key<=0x1F; key++){
 			if( inputCtrl->CheckKeyDown(OriginalkeycodeToDinputdef(key)) ){
 				ConsoleInputText(key + 0x1A);
 			}
 		}
-		for(int key=0x04; key<=0x0D; key++){
+		for(char key=0x04; key<=0x0D; key++){
 			if( inputCtrl->CheckKeyDown(OriginalkeycodeToDinputdef(key)) ){
 				ConsoleInputText(key + 0x2C);
 			}
 		}
 
 		//アルファベット小文字
-		for(int key=0x20; key<=0x39; key++){
+		for(char key=0x20; key<=0x39; key++){
 			if( inputCtrl->CheckKeyDown(OriginalkeycodeToDinputdef(key)) ){
 				ConsoleInputText(key + 0x41);
 			}

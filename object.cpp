@@ -1616,7 +1616,7 @@ void human::Render(class D3DGraphics *d3dg, class ResourceManager *Resource, boo
 		int armmodelid = 0;
 		WeaponParameter paramdata;
 		int model, texture;
-		float ry;
+		float ry = 0.0f;
 		nowweapon->GetParamData(&id_param, NULL, NULL);
 		Param->GetWeapon(id_param, &paramdata);
 		Resource->GetWeaponModelTexture(id_param, &model, &texture);
@@ -2007,6 +2007,7 @@ void weapon::Render(class D3DGraphics *d3dg)
 smallobject::smallobject(class ParameterInfo *in_Param, class MIFInterface *in_MIFdata, float x, float y, float z, float rx, int id_param, signed char p4, bool flag)
 {
 	Param = in_Param;
+	MIFdata = in_MIFdata;
 	pos_x = x;
 	pos_y = y;
 	pos_z = z;

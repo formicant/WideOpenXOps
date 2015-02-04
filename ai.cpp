@@ -139,7 +139,7 @@ bool AIcontrol::SearchTarget(bool next)
 		return false;
 	}
 
-	int nextpointp4;
+	signed char nextpointp4;
 
 	//次のポイントを検索するなら
 	if( next == true ){
@@ -513,7 +513,7 @@ void AIcontrol::TurnSeen()
 bool AIcontrol::StopSeen()
 {
 	float tr;
-	bool returnflag;
+	bool returnflag = false;
 
 	tr = target_rx - rx;
 	for(; tr > (float)M_PI; tr -= (float)M_PI*2){}
@@ -863,10 +863,10 @@ bool AIcontrol::ActionCancel()
 	float x = posx - tx;
 	float y = posy - ty;
 	float z = posz - tz;
-	float r = sqrt(x*x + y*y + z*z);
+	float r = x*x + y*y + z*z;
 
 	//距離が離れ過ぎていたら終了
-	if( (x*x + y*y + z*z) > 620.0f*620.0f ){
+	if( r > 620.0f*620.0f ){
 		return true;
 	}
 

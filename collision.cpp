@@ -76,6 +76,7 @@ int Collision::InitCollision(BlockDataInterface* in_blockdata)
 	struct blockdata data;
 	int vID[4];
 	float g0, g1, costheta;
+	D3DXVECTOR3 dv1, dv2, dv3;
 
 	if( in_blockdata == NULL ){ return 1; }
 	blockdata = in_blockdata;
@@ -92,14 +93,14 @@ int Collision::InitCollision(BlockDataInterface* in_blockdata)
 		for(int j=0; j<6; j++){
 			blockdataface(j, &vID[0], NULL);
 
-			D3DXPlaneFromPoints(&bdata_plane[i][j][0],
-				&D3DXVECTOR3( data.x[ vID[1] ], data.y[ vID[1] ], data.z[ vID[1] ] ),
-				&D3DXVECTOR3( data.x[ vID[2] ], data.y[ vID[2] ], data.z[ vID[2] ] ),
-				&D3DXVECTOR3( data.x[ vID[0] ], data.y[ vID[0] ], data.z[ vID[0] ] ) );
-			D3DXPlaneFromPoints(&bdata_plane[i][j][1],
-				&D3DXVECTOR3( data.x[ vID[0] ], data.y[ vID[0] ], data.z[ vID[0] ] ),
-				&D3DXVECTOR3( data.x[ vID[2] ], data.y[ vID[2] ], data.z[ vID[2] ] ),
-				&D3DXVECTOR3( data.x[ vID[3] ], data.y[ vID[3] ], data.z[ vID[3] ] ) );
+			dv1 = D3DXVECTOR3( data.x[ vID[1] ], data.y[ vID[1] ], data.z[ vID[1] ] );
+			dv2 = D3DXVECTOR3( data.x[ vID[2] ], data.y[ vID[2] ], data.z[ vID[2] ] );
+			dv3 = D3DXVECTOR3( data.x[ vID[0] ], data.y[ vID[0] ], data.z[ vID[0] ] );
+			D3DXPlaneFromPoints(&bdata_plane[i][j][0], &dv1, &dv2, &dv3);
+			dv1 = D3DXVECTOR3( data.x[ vID[0] ], data.y[ vID[0] ], data.z[ vID[0] ] );
+			dv2 = D3DXVECTOR3( data.x[ vID[2] ], data.y[ vID[2] ], data.z[ vID[2] ] );
+			dv3 = D3DXVECTOR3( data.x[ vID[3] ], data.y[ vID[3] ], data.z[ vID[3] ] );
+			D3DXPlaneFromPoints(&bdata_plane[i][j][1], &dv1, &dv2, &dv3);
 
 			//2つの三角形が持つ法線のなす角を求める
 			g0 = sqrt(bdata_plane[i][j][0].a * bdata_plane[i][j][0].a + bdata_plane[i][j][0].b * bdata_plane[i][j][0].b + bdata_plane[i][j][0].c * bdata_plane[i][j][0].c);
@@ -109,14 +110,14 @@ int Collision::InitCollision(BlockDataInterface* in_blockdata)
 			//1つの面で法線が90度以上違う（＝異常）なら～
 			if( acos(costheta) > (float)M_PI/2 ){
 				//違う三角形で作る
-				D3DXPlaneFromPoints(&bdata_plane[i][j][0],
-					&D3DXVECTOR3( data.x[ vID[2] ], data.y[ vID[2] ], data.z[ vID[2] ] ),
-					&D3DXVECTOR3( data.x[ vID[3] ], data.y[ vID[3] ], data.z[ vID[3] ] ),
-					&D3DXVECTOR3( data.x[ vID[1] ], data.y[ vID[1] ], data.z[ vID[1] ] ) );
-				D3DXPlaneFromPoints(&bdata_plane[i][j][1],
-					&D3DXVECTOR3( data.x[ vID[1] ], data.y[ vID[1] ], data.z[ vID[1] ] ),
-					&D3DXVECTOR3( data.x[ vID[3] ], data.y[ vID[3] ], data.z[ vID[3] ] ),
-					&D3DXVECTOR3( data.x[ vID[0] ], data.y[ vID[0] ], data.z[ vID[0] ] ) );
+				dv1 = D3DXVECTOR3( data.x[ vID[2] ], data.y[ vID[2] ], data.z[ vID[2] ] );
+				dv2 = D3DXVECTOR3( data.x[ vID[3] ], data.y[ vID[3] ], data.z[ vID[3] ] );
+				dv3 = D3DXVECTOR3( data.x[ vID[1] ], data.y[ vID[1] ], data.z[ vID[1] ] );
+				D3DXPlaneFromPoints(&bdata_plane[i][j][0], &dv1, &dv2, &dv3);
+				dv1 = D3DXVECTOR3( data.x[ vID[1] ], data.y[ vID[1] ], data.z[ vID[1] ] );
+				dv2 = D3DXVECTOR3( data.x[ vID[3] ], data.y[ vID[3] ], data.z[ vID[3] ] );
+				dv3 = D3DXVECTOR3( data.x[ vID[0] ], data.y[ vID[0] ], data.z[ vID[0] ] );
+				D3DXPlaneFromPoints(&bdata_plane[i][j][1], &dv1, &dv2, &dv3);
 			}
 		}
 	}
@@ -212,6 +213,8 @@ int Collision::GetWorldGroup(float x, float z)
 //! @warning *planeid が返す表面（0～5）は、複数の面が該当する場合でも、最初に見つけた1面のみ返します。
 bool Collision::CheckBlockInside(int blockid, float x, float y, float z, bool worldgroup, int *planeid)
 {
+	D3DXVECTOR3 dv;
+
 	if( blockdata == NULL ){ return false; }
 	if( (blockid < 0)||(blockdata->GetTotaldatas() <= blockid) ){ return false; }
 
@@ -244,7 +247,8 @@ bool Collision::CheckBlockInside(int blockid, float x, float y, float z, bool wo
 
 	//6面から見て全て裏面かどうか
 	for(int i=0; i<6; i++){
-		if( (D3DXPlaneDotCoord(&bdata_plane[blockid][i][0], &D3DXVECTOR3( x, y, z )) > 0)||(D3DXPlaneDotCoord(&bdata_plane[blockid][i][1], &D3DXVECTOR3( x, y, z )) > 0) ){
+		dv = D3DXVECTOR3( x, y, z );
+		if( (D3DXPlaneDotCoord(&bdata_plane[blockid][i][0], &dv) > 0)||(D3DXPlaneDotCoord(&bdata_plane[blockid][i][1], &dv) > 0) ){
 			if( planeid != NULL ){ *planeid = i; }
 			return false;	//表面ならば終了
 		}
@@ -271,7 +275,7 @@ bool Collision::CheckALLBlockInside(float x, float y, float z)
 	return false;
 }
 
-//! 全てのブロックとレイ（光線）のあたり判定
+//! ブロックとレイ（光線）のあたり判定
 //! @param blockid 判定するブロック番号
 //! @param RayPos_x レイの位置（始点）を指定する X座標
 //! @param RayPos_y レイの位置（始点）を指定する Y座標
@@ -291,14 +295,19 @@ bool Collision::CheckBlockIntersectRay(int blockid, float RayPos_x, float RayPos
 {
 	if( blockdata == NULL ){ return false; }
 
-	int bs = blockdata->GetTotaldatas();
 	struct blockdata data;
 	int vID[4];
 	float pDist;
 	float min_pDist = FLT_MAX;
 	int min_blockface = -1;
-	float rmin_x, rmin_y, rmin_z, rmax_x, rmax_y, rmax_z;
-	int worldgroupA, worldgroupB;
+	float rmin_x = 0.0f;
+	float rmin_y = 0.0f;
+	float rmin_z = 0.0f;
+	float rmax_x = 0.0f;
+	float rmax_y = 0.0f;
+	float rmax_z = 0.0f;
+	int worldgroupA = 0;
+	int worldgroupB = 0;
 
 	//板状のブロックは計算外
 	if( BoardBlock[blockid] == true ){
@@ -365,16 +374,19 @@ bool Collision::CheckBlockIntersectRay(int blockid, float RayPos_x, float RayPos
 	for(int i=0; i<6; i++){
 		blockdataface(i, vID, NULL);
 		if( (D3DXPlaneDotCoord(&bdata_plane[blockid][i][0], &pRayPos) >= 0)||(D3DXPlaneDotCoord(&bdata_plane[blockid][i][1], &pRayPos) >= 0) ){
-			if( (D3DXIntersectTri(
-				&D3DXVECTOR3( data.x[vID[0]], data.y[vID[0]], data.z[vID[0]]),
-				&D3DXVECTOR3( data.x[vID[1]], data.y[vID[1]], data.z[vID[1]]),
-				&D3DXVECTOR3( data.x[vID[2]], data.y[vID[2]], data.z[vID[2]]), 
-				&pRayPos, &pRayDir, NULL,  NULL, &pDist) == TRUE)||
-				(D3DXIntersectTri(
-				&D3DXVECTOR3( data.x[vID[2]], data.y[vID[2]], data.z[vID[2]]),
-				&D3DXVECTOR3( data.x[vID[3]], data.y[vID[3]], data.z[vID[3]]),
-				&D3DXVECTOR3( data.x[vID[0]], data.y[vID[0]], data.z[vID[0]]), 
-				&pRayPos, &pRayDir, NULL,  NULL, &pDist) == TRUE)
+			D3DXVECTOR3 dv11, dv12, dv13;
+			D3DXVECTOR3 dv21, dv22, dv23;
+
+			dv11 = D3DXVECTOR3( data.x[vID[0]], data.y[vID[0]], data.z[vID[0]]);
+			dv12 = D3DXVECTOR3( data.x[vID[1]], data.y[vID[1]], data.z[vID[1]]);
+			dv13 = D3DXVECTOR3( data.x[vID[2]], data.y[vID[2]], data.z[vID[2]]);
+
+			dv21 = D3DXVECTOR3( data.x[vID[2]], data.y[vID[2]], data.z[vID[2]]);
+			dv22 = D3DXVECTOR3( data.x[vID[3]], data.y[vID[3]], data.z[vID[3]]);
+			dv23 = D3DXVECTOR3( data.x[vID[0]], data.y[vID[0]], data.z[vID[0]]);
+
+			if( (D3DXIntersectTri(&dv11, &dv12, &dv13, &pRayPos, &pRayDir, NULL,  NULL, &pDist) == TRUE)||
+				(D3DXIntersectTri(&dv21, &dv22, &dv23, &pRayPos, &pRayDir, NULL,  NULL, &pDist) == TRUE)
 			){
 				if( min_pDist > pDist ){
 					min_pDist = pDist;
@@ -425,8 +437,14 @@ bool Collision::CheckALLBlockIntersectRay(float RayPos_x, float RayPos_y, float 
 	float min_pDist = FLT_MAX;
 	int min_blockid = -1;
 	int min_blockface = -1;
-	float rmin_x, rmin_y, rmin_z, rmax_x, rmax_y, rmax_z;
-	int worldgroupA, worldgroupB;
+	float rmin_x = 0.0f;
+	float rmin_y = 0.0f;
+	float rmin_z = 0.0f;
+	float rmax_x = 0.0f;
+	float rmax_y = 0.0f;
+	float rmax_z = 0.0f;
+	int worldgroupA = 0;
+	int worldgroupB = 0;
 
 	if( maxDist > 0.0f ){
 		//レイのAABBを作る
@@ -486,16 +504,19 @@ bool Collision::CheckALLBlockIntersectRay(float RayPos_x, float RayPos_y, float 
 		for(int j=0; j<6; j++){
 			blockdataface(j, vID, NULL);
 			if( (D3DXPlaneDotCoord(&bdata_plane[i][j][0], &pRayPos) >= 0)||(D3DXPlaneDotCoord(&bdata_plane[i][j][1], &pRayPos) >= 0) ){
-				if( (D3DXIntersectTri(
-					&D3DXVECTOR3( data.x[vID[0]], data.y[vID[0]], data.z[vID[0]]),
-					&D3DXVECTOR3( data.x[vID[1]], data.y[vID[1]], data.z[vID[1]]),
-					&D3DXVECTOR3( data.x[vID[2]], data.y[vID[2]], data.z[vID[2]]), 
-					&pRayPos, &pRayDir, NULL,  NULL, &pDist) == TRUE)||
-					(D3DXIntersectTri(
-					&D3DXVECTOR3( data.x[vID[2]], data.y[vID[2]], data.z[vID[2]]),
-					&D3DXVECTOR3( data.x[vID[3]], data.y[vID[3]], data.z[vID[3]]),
-					&D3DXVECTOR3( data.x[vID[0]], data.y[vID[0]], data.z[vID[0]]), 
-					&pRayPos, &pRayDir, NULL,  NULL, &pDist) == TRUE)
+				D3DXVECTOR3 dv11, dv12, dv13;
+				D3DXVECTOR3 dv21, dv22, dv23;
+
+				dv11 = D3DXVECTOR3( data.x[vID[0]], data.y[vID[0]], data.z[vID[0]]);
+				dv12 = D3DXVECTOR3( data.x[vID[1]], data.y[vID[1]], data.z[vID[1]]);
+				dv13 = D3DXVECTOR3( data.x[vID[2]], data.y[vID[2]], data.z[vID[2]]);
+
+				dv21 = D3DXVECTOR3( data.x[vID[2]], data.y[vID[2]], data.z[vID[2]]);
+				dv22 = D3DXVECTOR3( data.x[vID[3]], data.y[vID[3]], data.z[vID[3]]);
+				dv23 = D3DXVECTOR3( data.x[vID[0]], data.y[vID[0]], data.z[vID[0]]);
+
+				if( (D3DXIntersectTri(&dv11, &dv12, &dv13, &pRayPos, &pRayDir, NULL,  NULL, &pDist) == TRUE)||
+					(D3DXIntersectTri(&dv21, &dv22, &dv23, &pRayPos, &pRayDir, NULL,  NULL, &pDist) == TRUE)
 				){
 					if( min_pDist > pDist ){
 						min_pDist = pDist;
@@ -925,7 +946,7 @@ float DistancePosRay(float Pos_x, float Pos_y, float Pos_z, float RayPos_x, floa
 {
 	float x1, y1, z1;
 	float x2, y2, z2;
-	D3DXVECTOR3 out;
+	D3DXVECTOR3 in1, in2, out;
 
 	x1 = Pos_x - RayPos_x;
 	y1 = Pos_y - RayPos_y;
@@ -934,7 +955,10 @@ float DistancePosRay(float Pos_x, float Pos_y, float Pos_z, float RayPos_x, floa
 	y2 = RayDir_y * maxDist;
 	z2 = RayDir_z * maxDist;
 
-	D3DXVec3Cross(&out, &D3DXVECTOR3(x1, y1, z1), &D3DXVECTOR3(x2, y2, z2));
+	in1 = D3DXVECTOR3(x1, y1, z1);
+	in2 = D3DXVECTOR3(x2, y2, z2);
+
+	D3DXVec3Cross(&out, &in1, &in2);
 
 	return sqrt(out.x*out.x + out.y*out.y + out.z*out.z) / maxDist;
 }

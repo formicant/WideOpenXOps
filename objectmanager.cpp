@@ -2013,14 +2013,11 @@ bool ObjectManager::GetObjectInfoTag(float camera_x, float camera_y, float camer
 
 //! オブジェクトの主計算処理
 //! @param cmdF5id 上昇機能（F5裏技）させる人データ番号（-1で機能無効）
-//! @param camera_x カメラのX座標
-//! @param camera_y カメラのY座標
-//! @param camera_z カメラのZ座標
 //! @param camera_rx カメラの横軸角度
 //! @param camera_ry カメラの縦軸角度
 //! @return 常に 0
 //! @attention 一般的に cmdF5id は、F5裏技使用中はプレイヤー番号（GetPlayerID()関数で取得）、未使用時は -1 を指定します。
-int ObjectManager::Process(int cmdF5id, float camera_x, float camera_y, float camera_z, float camera_rx, float camera_ry)
+int ObjectManager::Process(int cmdF5id, float camera_rx, float camera_ry)
 {
 	//このフレームの戦歴を初期化
 	for(int i=0; i<MAX_HUMAN; i++){

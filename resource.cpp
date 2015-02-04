@@ -331,8 +331,6 @@ int ResourceManager::GetWeaponModelTexture(int id, int *model, int *texture)
 //! 武器のモデルやテクスチャを一括解放
 void ResourceManager::CleanupWeaponModelTexture()
 {
-	int cnt = 0;
-
 	if( d3dg == NULL ){ return; }
 
 	for(int i=0; i<TOTAL_PARAMETERINFO_WEAPON; i++){
@@ -448,8 +446,6 @@ int ResourceManager::GetSmallObjectModelTexture(int id, int *model, int *texture
 //! 小物のモデルやテクスチャを一括解放
 void ResourceManager::CleanupSmallObjectModelTexture()
 {
-	int cnt = 0;
-
 	if( d3dg == NULL ){ return; }
 
 	for(int i=0; i<TOTAL_PARAMETERINFO_SMALLOBJECT+1; i++){

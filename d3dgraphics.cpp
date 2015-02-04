@@ -847,7 +847,6 @@ void D3DGraphics::DrawMapdata(bool wireframe)
 	if( blockdata == NULL ){ return; }
 
 	struct blockdata data;
-	D3DMATERIAL9 mtrl = {0};
 	int textureID;
 
 	if( wireframe == true ){
