@@ -403,7 +403,7 @@ int mainmenu::Create()
 	}
 
 	//addonのスクロールバーの設定
-	if( TOTAL_OFFICIALMISSION > TOTAL_MENUITEMS ){
+	if( GameAddon.GetTotaldatas() > TOTAL_MENUITEMS ){
 		mainmenu_scrollbar_addon_height = (float)(MAINMENU_H-25) / GameAddon.GetTotaldatas() * TOTAL_MENUITEMS;
 		mainmenu_scrollbar_addon_scale = ((float)(MAINMENU_H-25) - mainmenu_scrollbar_addon_height) / (GameAddon.GetTotaldatas() - TOTAL_MENUITEMS);
 	}
