@@ -202,7 +202,7 @@ public:
 	virtual void HitBulletUp(int attacks);
 	virtual void HitBulletLeg(int attacks);
 	virtual void HitZombieAttack();
-	virtual int GrenadeExplosion(class Collision *CollD, class grenade *tGrenade);
+	virtual void HitGrenadeExplosion(int attacks);
 	virtual bool CheckHit();
 	virtual float GetTotalMove();
 	virtual int RunFrame(class Collision *CollD, class BlockDataInterface *inblockdata, bool F5mode);
@@ -265,7 +265,7 @@ public:
 	virtual int GetHP();
 	virtual float CollisionMap(class Collision *CollD);
 	virtual void HitBullet(int attacks);
-	virtual int GrenadeExplosion(class Collision *CollD, class grenade *tGrenade);
+	virtual void HitGrenadeExplosion(int attacks);
 	virtual void Destruction();
 	virtual int RunFrame();
 	virtual void Render(D3DGraphics *d3dg);

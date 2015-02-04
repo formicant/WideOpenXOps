@@ -859,6 +859,193 @@ void ObjectManager::HitBulletSmallObject(int HitSmallObject_id, float x, float y
 	GameSound->HitSmallObject(x, y, z, id);
 }
 
+//! 手榴弾のダメージ判定と処理
+//! @param in_grenade 対象の手榴弾オブジェクト
+//! @return 当たった：true　当たっていない：false
+//! @attention 判定を行う対象は「人」と「小物」です。
+//! @attention ダメージ判定に限らず、ダメージ計算や効果音再生まで一貫して行います。
+bool ObjectManager::GrenadeExplosion(grenade *in_grenade)
+{
+	bool returnflag = false;
+
+	//座標を取得
+	float gx, gy, gz;
+	int humanid;
+	in_grenade->GetPosData(&gx, &gy, &gz, NULL, NULL);
+	in_grenade->GetParamData(NULL, NULL, NULL, NULL, &humanid);
+
+	//人に爆風の当たり判定
+	for(int i=0; i<MAX_HUMAN; i++){
+		//初期化されていないか、死亡していれば処理しない。
+		if( HumanIndex[i].GetDrawFlag() == false ){ continue; }
+		if( HumanIndex[i].GetHP() <= 0 ){ continue; }
+
+		float hx, hy, hz;
+		float x, y, z, r;
+
+		//人の座標を取得し、距離を計算
+		HumanIndex[i].GetPosData(&hx, &hy, &hz, NULL);
+		x = hx - gx;
+		y = hy - gy;
+		z = hz - gz;
+		r = sqrt(x*x + y*y + z*z);
+
+		//100.0より遠ければ計算しない
+		if( r > MAX_DAMAGE_GRENADE_DISTANCE + HUMAN_HEIGTH ){ continue; }
+
+		float dummy = 0.0f;
+		int total_damage = 0;
+		int damage;
+
+		//足元に当たり判定
+		y = hy + 2.0f - gy;
+		r = sqrt(x*x + y*y + z*z);
+		//ブロックが遮っていなければ　（レイで当たり判定を行い、当たっていなければ）
+		if( CollD->CheckALLBlockIntersectRay(gx, gy, gz, x/r, y/r, z/r, NULL, NULL, &dummy, r) == false ){
+			//ダメージ量を計算
+			damage = HUMAN_DAMAGE_GRENADE_LEG - (int)((float)HUMAN_DAMAGE_GRENADE_LEG/MAX_DAMAGE_GRENADE_DISTANCE * r);
+			if( damage > 0 ){
+				total_damage += damage;
+			}
+		}
+
+		//頭に当たり判定
+		y = hy + 18.0f - gy;
+		r = sqrt(x*x + y*y + z*z);
+		//ブロックが遮っていなければ　（レイで当たり判定を行い、当たっていなければ）
+		if( CollD->CheckALLBlockIntersectRay(gx, gy, gz, x/r, y/r, z/r, NULL, NULL, &dummy, r) == false ){
+			//ダメージ量を計算
+			damage = HUMAN_DAMAGE_GRENADE_HEAD - (int)((float)HUMAN_DAMAGE_GRENADE_HEAD/MAX_DAMAGE_GRENADE_DISTANCE * r);
+			if( damage > 0 ){
+				total_damage += damage;
+			}
+		}
+
+		if( total_damage > 0 ){
+			//ダメージを反映
+			HumanIndex[i].HitGrenadeExplosion(total_damage);
+
+			float y2;
+			float arx, ary;
+
+			//倒していれば、発射した人の成果に加算
+			if( HumanIndex[i].GetHP() <= 0 ){
+				Human_kill[humanid] += 1;
+			}
+
+			//エフェクト（血）を表示
+			SetHumanBlood(hx, hy+15.0f, hz);
+
+			//人と手榴弾の距離を算出
+			x = gx - hx;
+			y = gy - (hy + 1.0f);
+			z = gz - hz;
+
+			//角度を求める
+			arx = atan2(z, x);
+
+			if( sin(atan2(y, sqrt(x*x + z*z))) < 0.0f ){		//上方向に飛ぶなら、角度を計算
+				y2 = gy - (hy + HUMAN_HEIGTH);
+				ary = atan2(y2, sqrt(x*x + z*z)) + (float)M_PI;
+			}
+			else{		//下方向に飛ぶなら、垂直角度は無効。（爆風で地面にめり込むのを防止）
+				ary = 0.0f;
+			}
+
+			//爆風による風圧
+			HumanIndex[i].AddPosOrder(arx, ary, 2.2f/MAX_DAMAGE_GRENADE_DISTANCE * (MAX_DAMAGE_GRENADE_DISTANCE - sqrt(x*x + y*y + z*z)));
+
+			returnflag = true;
+		}
+	}
+
+	//小物に爆風の当たり判定
+	for(int i=0; i<MAX_SMALLOBJECT; i++){
+		//使用されていれば処理しない
+		if( SmallObjectIndex[i].GetDrawFlag() == false ){ continue; }
+
+		float sx, sy, sz;
+		float x, y, z, r;
+
+		//小物の座標を取得し、距離を計算
+		SmallObjectIndex[i].GetPosData(&sx, &sy, &sz, NULL);
+		x = sx - gx;
+		y = sy - gy;
+		z = sz - gz;
+		r = sqrt(x*x + y*y + z*z);
+
+		//100.0より遠ければ計算しない
+		if( r > MAX_DAMAGE_GRENADE_DISTANCE ){ continue; }
+
+		float dummy = 0.0f;
+
+		//ブロックが遮っていなければ　（レイで当たり判定を行い、当たっていなければ）
+		if( CollD->CheckALLBlockIntersectRay(gx, gy, gz, x/r, y/r, z/r, NULL, NULL, &dummy, r) == false ){
+			int id, damage;
+			SmallObjectIndex[i].GetParamData(&id, NULL);
+
+			//ダメージ量を計算し、反映
+			damage = SMALLOBJECT_DAMAGE_GRENADE - (int)((float)SMALLOBJECT_DAMAGE_GRENADE/MAX_DAMAGE_GRENADE_DISTANCE * r);
+			SmallObjectIndex[i].HitGrenadeExplosion(damage);
+
+			//小物から効果音を発する
+			GameSound->HitSmallObject(sx, sy, sz, id);
+
+			returnflag = true;
+		}
+	}
+
+	//エフェクト（フラッシュ）の表示
+	for(int i=0; i<MAX_EFFECT; i++){
+		if( EffectIndex[i].GetDrawFlag() == false ){
+			EffectIndex[i].SetPosData(gx, gy, gz, 0.0f);
+			EffectIndex[i].SetParamData(30.0f, 0.0f, 2, Resource->GetEffectMflashTexture(), EFFECT_NORMAL, true);
+			EffectIndex[i].SetDrawFlag(true);
+			break;
+		}
+	}
+
+	//エフェクト（煙）の表示
+	float rnd = (float)M_PI/18*GetRand(18);
+	for(int i=0; i<MAX_EFFECT; i++){
+		if( EffectIndex[i].GetDrawFlag() == false ){
+			EffectIndex[i].SetPosData(gx+1.0f, gy+1.0f, gz+1.0f, 0.0f);
+			EffectIndex[i].SetParamData(10.0f, rnd, (int)GAMEFPS * 3, Resource->GetEffectSmokeTexture(), EFFECT_DISAPPEAR | EFFECT_MAGNIFY | EFFECT_ROTATION, true);
+			EffectIndex[i].SetDrawFlag(true);
+			break;
+		}
+	}
+	for(int i=0; i<MAX_EFFECT; i++){
+		if( EffectIndex[i].GetDrawFlag() == false ){
+			EffectIndex[i].SetPosData(gx-1.0f, gy-1.0f, gz-1.0f, 0.0f);
+			EffectIndex[i].SetParamData(10.0f, rnd*-1, (int)GAMEFPS * 3, Resource->GetEffectSmokeTexture(), EFFECT_DISAPPEAR | EFFECT_MAGNIFY | EFFECT_ROTATION, true);
+			EffectIndex[i].SetDrawFlag(true);
+			break;
+		}
+	}
+	for(int i=0; i<MAX_EFFECT; i++){
+		if( EffectIndex[i].GetDrawFlag() == false ){
+			EffectIndex[i].SetPosData(gx-1.0f, gy-1.0f, gz+1.0f, 0.0f);
+			EffectIndex[i].SetParamData(10.0f, rnd, (int)GAMEFPS * 3, Resource->GetEffectSmokeTexture(), EFFECT_DISAPPEAR | EFFECT_MAGNIFY | EFFECT_ROTATION, true);
+			EffectIndex[i].SetDrawFlag(true);
+			break;
+		}
+	}
+	for(int i=0; i<MAX_EFFECT; i++){
+		if( EffectIndex[i].GetDrawFlag() == false ){
+			EffectIndex[i].SetPosData(gx+1.0f, gy+1.0f, gz-1.0f, 0.0f);
+			EffectIndex[i].SetParamData(10.0f, rnd*-1, (int)GAMEFPS * 3, Resource->GetEffectSmokeTexture(), EFFECT_DISAPPEAR | EFFECT_MAGNIFY | EFFECT_ROTATION, true);
+			EffectIndex[i].SetDrawFlag(true);
+			break;
+		}
+	}
+
+	//効果音を再生
+	GameSound->GrenadeExplosion(gx, gy, gz);
+
+	return returnflag;
+}
+
 //! 武器を拾う
 //! @param in_human 対象の人オブジェクト
 //! @param in_weapon 対象の武器オブジェクト
@@ -1918,109 +2105,7 @@ int ObjectManager::Process(int cmdF5id, float camera_x, float camera_y, float ca
 
 		//爆発したなら
 		if( rcr == 2 ){
-			//座標を取得
-			float gx, gy, gz;
-			int humanid;
-			GrenadeIndex[i].GetPosData(&gx, &gy, &gz, NULL, NULL);
-			GrenadeIndex[i].GetParamData(NULL, NULL, NULL, NULL, &humanid);
-
-			//エフェクト（フラッシュ）の表示
-			for(int j=0; j<MAX_EFFECT; j++){
-				if( EffectIndex[j].GetDrawFlag() == false ){
-					EffectIndex[j].SetPosData(gx, gy, gz, 0.0f);
-					EffectIndex[j].SetParamData(30.0f, 0.0f, 2, Resource->GetEffectMflashTexture(), EFFECT_NORMAL, true);
-					EffectIndex[j].SetDrawFlag(true);
-					break;
-				}
-			}
-
-			//エフェクト（煙）の表示
-			float rnd = (float)M_PI/18*GetRand(18);
-			for(int j=0; j<MAX_EFFECT; j++){
-				if( EffectIndex[j].GetDrawFlag() == false ){
-					EffectIndex[j].SetPosData(gx+1.0f, gy+1.0f, gz+1.0f, 0.0f);
-					EffectIndex[j].SetParamData(10.0f, rnd, (int)GAMEFPS * 3, Resource->GetEffectSmokeTexture(), EFFECT_DISAPPEAR | EFFECT_MAGNIFY | EFFECT_ROTATION, true);
-					EffectIndex[j].SetDrawFlag(true);
-					break;
-				}
-			}
-			for(int j=0; j<MAX_EFFECT; j++){
-				if( EffectIndex[j].GetDrawFlag() == false ){
-					EffectIndex[j].SetPosData(gx-1.0f, gy-1.0f, gz-1.0f, 0.0f);
-					EffectIndex[j].SetParamData(10.0f, rnd*-1, (int)GAMEFPS * 3, Resource->GetEffectSmokeTexture(), EFFECT_DISAPPEAR | EFFECT_MAGNIFY | EFFECT_ROTATION, true);
-					EffectIndex[j].SetDrawFlag(true);
-					break;
-				}
-			}
-			for(int j=0; j<MAX_EFFECT; j++){
-				if( EffectIndex[j].GetDrawFlag() == false ){
-					EffectIndex[j].SetPosData(gx-1.0f, gy-1.0f, gz+1.0f, 0.0f);
-					EffectIndex[j].SetParamData(10.0f, rnd, (int)GAMEFPS * 3, Resource->GetEffectSmokeTexture(), EFFECT_DISAPPEAR | EFFECT_MAGNIFY | EFFECT_ROTATION, true);
-					EffectIndex[j].SetDrawFlag(true);
-					break;
-				}
-			}
-			for(int j=0; j<MAX_EFFECT; j++){
-				if( EffectIndex[j].GetDrawFlag() == false ){
-					EffectIndex[j].SetPosData(gx+1.0f, gy+1.0f, gz-1.0f, 0.0f);
-					EffectIndex[j].SetParamData(10.0f, rnd*-1, (int)GAMEFPS * 3, Resource->GetEffectSmokeTexture(), EFFECT_DISAPPEAR | EFFECT_MAGNIFY | EFFECT_ROTATION, true);
-					EffectIndex[j].SetDrawFlag(true);
-					break;
-				}
-			}
-
-			//効果音を再生
-			GameSound->GrenadeExplosion(gx, gy, gz);
-
-			//人に爆風の当たり判定
-			for(int j=0; j<MAX_HUMAN; j++){
-				if( HumanIndex[j].GrenadeExplosion(CollD, &(GrenadeIndex[i])) ){
-					float hx, hy, hz;
-					float x, y, y2, z;
-					float arx, ary;
-
-					//倒していれば、発射した人の成果に加算
-					if( HumanIndex[j].GetHP() <= 0 ){
-						Human_kill[humanid] += 1;
-					}
-
-					//エフェクト（血）を表示
-					HumanIndex[j].GetPosData(&hx, &hy, &hz, NULL);
-					SetHumanBlood(hx, hy+15.0f, hz);
-
-					//人と手榴弾の距離を算出
-					x = gx - hx;
-					y = gy - (hy + 1.0f);
-					z = gz - hz;
-
-					//角度を求める
-					arx = atan2(z, x);
-
-					if( sin(atan2(y, sqrt(x*x + z*z))) < 0.0f ){		//上方向に飛ぶなら、角度を計算
-						y2 = gy - (hy + HUMAN_HEIGTH);
-						ary = atan2(y2, sqrt(x*x + z*z)) + (float)M_PI;
-					}
-					else{		//下方向に飛ぶなら、垂直角度は無効。（爆風で地面にめり込むのを防止）
-						ary = 0.0f;
-					}
-
-					//爆風による風圧
-					HumanIndex[j].AddPosOrder(arx, ary, 2.2f/MAX_DAMAGE_GRENADE_DISTANCE * (MAX_DAMAGE_GRENADE_DISTANCE - sqrt(x*x + y*y + z*z)));
-				}
-			}
-
-			//小物に爆風の当たり判定
-			for(int j=0; j<MAX_SMALLOBJECT; j++){
-				//もし爆風に当たったら
-				if( SmallObjectIndex[j].GrenadeExplosion(CollD, &(GrenadeIndex[i])) ){
-					//小物から効果音を発する
-					float sx, sy, sz;
-					int id;
-					SmallObjectIndex[j].GetPosData(&sx, &sy, &sz, NULL);
-					SmallObjectIndex[j].GetParamData(&id, NULL);
-					GameSound->HitSmallObject(sx, sy, sz, id);
-				}
-			}
+			GrenadeExplosion(&(GrenadeIndex[i]));
 		}
 	}
 

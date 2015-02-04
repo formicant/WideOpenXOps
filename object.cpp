@@ -818,61 +818,15 @@ void human::HitZombieAttack()
 	HitFlag = true;
 }
 
-//! 手榴弾が爆発した
-//! @param CollD Collisionクラス
-//! @param tGrenade 爆発したgrenadeクラスのポインタ
-//! @return 当たった：1　当たっていない：0
-int human::GrenadeExplosion(class Collision *CollD, class grenade *tGrenade)
+//! 手榴弾の爆風がヒット
+//! @param attacks 爆風の攻撃力
+//! @attention 距離による計算を事前に済ませてください。
+void human::HitGrenadeExplosion(int attacks)
 {
-	//初期化されていないか、死亡していれば処理しない。
-	if( RenderFlag == false ){ return 0; }
-	if( hp <= 0 ){ return 0; }
-
-	//手榴弾の座標を取得し、距離を計算
-	float gre_x, gre_y, gre_z;
-	float x, y, z, r;
-	tGrenade->GetPosData(&gre_x, &gre_y, &gre_z, NULL, NULL);
-	x = pos_x - gre_x;
-	y = pos_y - gre_y;
-	z = pos_z - gre_z;
-	r = sqrt(x*x + y*y + z*z);
-
-	//100.0より遠ければ計算しない
-	if( r > MAX_DAMAGE_GRENADE_DISTANCE + HUMAN_HEIGTH ){ return 0; }
-
-	float dummy = 0.0f;
-	int damage;
-	int returncode = 0;
-
-	//足元に当たり判定
-	y = pos_y + 2.0f - gre_y;
-	r = sqrt(x*x + y*y + z*z);
-	//ブロックが遮っていなければ　（レイで当たり判定を行い、当たっていなければ）
-	if( CollD->CheckALLBlockIntersectRay(gre_x, gre_y, gre_z, x/r, y/r, z/r, NULL, NULL, &dummy, r) == false ){
-		//ダメージ量を計算し、反映
-		damage = HUMAN_DAMAGE_GRENADE_LEG - (int)((float)HUMAN_DAMAGE_GRENADE_LEG/MAX_DAMAGE_GRENADE_DISTANCE * r);
-		if( damage > 0 ){
-			if( Invincible == false ){ hp -= damage; }
-			HitFlag = true;
-			returncode = 1;
-		}
+	if( Invincible == false ){
+		hp -= attacks;
 	}
-
-	//頭に当たり判定
-	y = pos_y + 18.0f - gre_y;
-	r = sqrt(x*x + y*y + z*z);
-	//ブロックが遮っていなければ　（レイで当たり判定を行い、当たっていなければ）
-	if( CollD->CheckALLBlockIntersectRay(gre_x, gre_y, gre_z, x/r, y/r, z/r, NULL, NULL, &dummy, r) == false ){
-		//ダメージ量を計算し、反映
-		damage = HUMAN_DAMAGE_GRENADE_HEAD - (int)((float)HUMAN_DAMAGE_GRENADE_HEAD/MAX_DAMAGE_GRENADE_DISTANCE * r);
-		if( damage > 0 ){
-			if( Invincible == false ){ hp -= damage; }
-			HitFlag = true;
-			returncode = 1;
-		}
-	}
-
-	return returncode;
+	HitFlag = true;
 }
 
 //! 被弾したかチェックする
@@ -2186,42 +2140,15 @@ void smallobject::HitBullet(int attacks)
 	}
 }
 
-//! 手榴弾が爆発した
-//! @param CollD Collisionクラス
-//! @param tGrenade 爆発したgrenadeクラスのポインタ
-//! @return 破壊された：2　当たっただけ：1　当たっていない：0
-int smallobject::GrenadeExplosion(class Collision *CollD, class grenade *tGrenade)
+//! 手榴弾の爆風がヒットした
+//! @param attacks 爆風の攻撃力
+//! @attention 距離による計算を事前に済ませてください。
+void smallobject::HitGrenadeExplosion(int attacks)
 {
-	//初期化されていないか、死亡していれば処理しない。
-	if( RenderFlag == false ){ return 0; }
-	if( hp <= 0 ){ return 0; }
-
-	//手榴弾の座標を取得し、距離を計算
-	float gre_x, gre_y, gre_z;
-	float x, y, z, r;
-	tGrenade->GetPosData(&gre_x, &gre_y, &gre_z, NULL, NULL);
-	x = pos_x - gre_x;
-	y = pos_y - gre_y;
-	z = pos_z - gre_z;
-	r = sqrt(x*x + y*y + z*z);
-
-	//100.0より遠ければ計算しない
-	if( r > MAX_DAMAGE_GRENADE_DISTANCE ){ return 0; }
-
-	float dummy = 0.0f;
-
-	//ブロックが遮っていなければ　（レイで当たり判定を行い、当たっていなければ）
-	if( CollD->CheckALLBlockIntersectRay(gre_x, gre_y, gre_z, x/r, y/r, z/r, NULL, NULL, &dummy, r) == false ){
-		//ダメージ量を計算し、反映
-		hp -= SMALLOBJECT_DAMAGE_GRENADE - (int)((float)SMALLOBJECT_DAMAGE_GRENADE/MAX_DAMAGE_GRENADE_DISTANCE * r);
-		if( hp <= 0 ){
-			Destruction();
-			return 2;
-		}
-		return 1;
+	hp -= attacks;
+	if( hp <= 0 ){
+		Destruction();
 	}
-
-	return 0;
 }
 
 //! 小物を破壊する
