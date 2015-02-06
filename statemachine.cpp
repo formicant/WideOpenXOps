@@ -31,7 +31,7 @@
 
 #include "statemachine.h"
 
-//! コンストラクタ
+//! @brief コンストラクタ
 StateMachine::StateMachine()
 {
 	NowState = STATE_CREATE_OPENING;
@@ -39,11 +39,11 @@ StateMachine::StateMachine()
 	f12 = false;
 }
 
-//! ディストラクタ
+//! @brief ディストラクタ
 StateMachine::~StateMachine()
 {}
 
-//! 次の状態へ移行
+//! @brief 次の状態へ移行
 void StateMachine::NextState()
 {
 	switch(NowState){
@@ -118,7 +118,7 @@ void StateMachine::NextState()
 	}
 }
 
-//! マウスクリック を受けた
+//! @brief マウスクリック を受けた
 void StateMachine::PushMouseButton()
 {
 	back = false;
@@ -126,7 +126,7 @@ void StateMachine::PushMouseButton()
 	NextState();
 }
 
-//! BackSpace キーを受けた
+//! @brief BackSpace キーを受けた
 void StateMachine::PushBackSpaceKey()
 {
 	back = true;
@@ -134,7 +134,7 @@ void StateMachine::PushBackSpaceKey()
 	NextState();
 }
 
-//! F12 キーを受けた
+//! @brief F12 キーを受けた
 void StateMachine::PushF12Key()
 {
 	if( NowState != STATE_NOW_MAINGAME ){ return; }
@@ -143,7 +143,7 @@ void StateMachine::PushF12Key()
 	NextState();
 }
 
-//! 現在の状態を返す
+//! @brief 現在の状態を返す
 int StateMachine::GetState()
 {
 	return NowState;

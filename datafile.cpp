@@ -31,17 +31,17 @@
 
 #include "datafile.h"
 
-//! コンストラクタ
+//! @brief コンストラクタ
 DataInterface::DataInterface()
 {
 	datas = 0;
 }
 
-//! ディストラクタ
+//! @brief ディストラクタ
 DataInterface::~DataInterface()
 {}
 
-//! データファイルを読みこむ
+//! @brief データファイルを読みこむ
 //! @param fname ファイル名
 //! @return 成功：0　失敗：1
 int DataInterface::LoadFiledata(char *fname)
@@ -49,14 +49,14 @@ int DataInterface::LoadFiledata(char *fname)
 	return 0;
 }
 
-//! 合計データ数の取得
+//! @brief 合計データ数の取得
 //! @return 合計データ数
 int DataInterface::GetTotaldatas()
 {
 	return datas;
 }
 
-//! データを取得
+//! @brief データを取得
 //! @param out_data 受け取るポインタ
 //! @param id 認識番号
 //! @return 成功：0　失敗：0以外
@@ -65,7 +65,7 @@ int DataInterface::Getdata(void *out_data, int id)
 	return 0;
 }
 
-//! コンストラクタ
+//! @brief コンストラクタ
 BlockDataInterface::BlockDataInterface()
 {
 	//blockdata構造体初期化
@@ -77,14 +77,14 @@ BlockDataInterface::BlockDataInterface()
 	}
 }
 
-//! ディストラクタ
+//! @brief ディストラクタ
 BlockDataInterface::~BlockDataInterface()
 {
 	//blockdata構造体解放
 	if( data != NULL ) delete [] data;
 }
 
-//! ブロックデータファイルを読みこむ
+//! @brief ブロックデータファイルを読みこむ
 //! @param fname ファイル名
 //! @return 成功：0　失敗：1
 int BlockDataInterface::LoadFiledata(char *fname)
@@ -148,7 +148,7 @@ int BlockDataInterface::LoadFiledata(char *fname)
 	return 0;
 }
 
-//! ブロックデータの法線・影を算出する
+//! @brief ブロックデータの法線・影を算出する
 //! @param screen ブロックを暗くする
 //! @attention LoadBlockdata()関数で読みこんだ後、一度だけ実行。
 void BlockDataInterface::CalculationBlockdata(bool screen)
@@ -209,7 +209,7 @@ void BlockDataInterface::CalculationBlockdata(bool screen)
 	}
 }
 
-//! ブロックデータに設定されたテクスチャのファイル名を取得
+//! @brief ブロックデータに設定されたテクスチャのファイル名を取得
 //! @param fname ファイル名を受け取る文字列型ポインタ
 //! @param id テクスチャ番号
 //! @return 成功：0　失敗：0以外
@@ -224,7 +224,7 @@ int BlockDataInterface::GetTexture(char *fname, int id)
 	return 0;
 }
 
-//! ブロックデータを取得
+//! @brief ブロックデータを取得
 //! @param out_data 受け取るblockdata型ポインタ
 //! @param id 認識番号
 //! @return 成功：0　失敗：0以外
@@ -239,7 +239,7 @@ int BlockDataInterface::Getdata(blockdata *out_data, int id)
 	return 0;
 }
 
-//! ブロック頂点データの関連付けを取得
+//! @brief ブロック頂点データの関連付けを取得
 //
 //	    3 ・----・2
 //	     /|    /|
@@ -320,7 +320,7 @@ bool blockdataface(int faceID, int* vID, int* uvID)
 	return FALSE;
 }
 
-//! コンストラクタ
+//! @brief コンストラクタ
 PointDataInterface::PointDataInterface()
 {
 	//pointdata構造体初期化
@@ -332,7 +332,7 @@ PointDataInterface::PointDataInterface()
 	}
 }
 
-//! ディストラクタ
+//! @brief ディストラクタ
 PointDataInterface::~PointDataInterface()
 {
 	//pointdata構造体解放
@@ -344,7 +344,7 @@ PointDataInterface::~PointDataInterface()
 	}
 }
 
-//! ポイントデータファイルを読みこむ
+//! @brief ポイントデータファイルを読みこむ
 //! @param fname ファイル名
 //! @return 成功：0　失敗：1
 int PointDataInterface::LoadFiledata(char *fname)
@@ -422,7 +422,7 @@ int PointDataInterface::LoadFiledata(char *fname)
 	return 0;
 }
 
-//! ポイントデータを取得
+//! @brief ポイントデータを取得
 //! @param out_data 受け取るpointdata型ポインタ
 //! @param id 認識番号
 //! @return 成功：0　失敗：0以外
@@ -437,7 +437,7 @@ int PointDataInterface::Getdata(pointdata *out_data, int id)
 	return 0;
 }
 
-//! ポイントのパラメーターを書き換え
+//! @brief ポイントのパラメーターを書き換え
 //! @param id 認識番号
 //! @param p1 第1パラメータ
 //! @param p2 第2パラメータ
@@ -459,7 +459,7 @@ int PointDataInterface::SetParam(int id, signed char p1, signed char p2, signed 
 	return 0;
 }
 
-//! メッセージ（1行）を取得
+//! @brief メッセージ（1行）を取得
 //! @param str 文字列を受け取るポインタ
 //! @param id 認識番号
 //! @return 成功：0　失敗：1
@@ -472,7 +472,7 @@ int PointDataInterface::GetMessageText(char *str, int id)
 	return 0;
 }
 
-//! ポイントデータを検索
+//! @brief ポイントデータを検索
 //! @param id 最初に該当したデータ番号を受け取るポインタ　（NULL 可）
 //! @param pmask パラメータのマスク
 //! @param p1 第1パラメータ
@@ -523,7 +523,7 @@ int PointDataInterface::SearchPointdata(int* id, unsigned char pmask, signed cha
 	return cnt;
 }
 
-//! ポイントデータを検索
+//! @brief ポイントデータを検索
 //! @param out_data 最初に該当したデータを受け取るpointdata型ポインタ　（NULL 可）
 //! @param pmask パラメータのマスク
 //! @param p1 第1パラメータ
@@ -549,7 +549,7 @@ int PointDataInterface::SearchPointdata(pointdata *out_data, unsigned char pmask
 	return total;
 }
 
-//! コンストラクタ
+//! @brief コンストラクタ
 MIFInterface::MIFInterface()
 {
 	datas = 0;
@@ -574,11 +574,11 @@ MIFInterface::MIFInterface()
 	addsmallobject_jump = 0;
 }
 
-//! ディストラクタ
+//! @brief ディストラクタ
 MIFInterface::~MIFInterface()
 {}
 
-//! データファイルを読みこむ
+//! @brief データファイルを読みこむ
 //! @param fname ファイル名
 //! @return 成功：0　失敗：1
 int MIFInterface::LoadFiledata(char *fname)
@@ -767,7 +767,7 @@ int MIFInterface::LoadFiledata(char *fname)
 	return 0;
 }
 
-//! 読み込んだデータファイルの形式を取得
+//! @brief 読み込んだデータファイルの形式を取得
 //! @return 標準形式：false　MIF形式：true
 //! @attention ファイルを正常に読み込んだ後に実行してください。
 bool MIFInterface::GetFiletype()
@@ -775,21 +775,21 @@ bool MIFInterface::GetFiletype()
 	return mif;
 }
 
-//! ミッション識別名を取得
+//! @brief ミッション識別名を取得
 //! @return 識別名のポインタ（最大：24）
 char* MIFInterface::GetMissionName()
 {
 	return mission_name;
 }
 
-//! ミッション正式名称を取得
+//! @brief ミッション正式名称を取得
 //! @return 正式名称のポインタ（最大：64）
 char* MIFInterface::GetMissionFullname()
 {
 	return mission_fullname;
 }
 
-//! ブロックデータとポイントデータのパスを取得
+//! @brief ブロックデータとポイントデータのパスを取得
 //! @param *blockfile ブロックデータを受け取るポインタ
 //! @param *pointfile ポイントデータを受け取るポインタ
 void MIFInterface::GetDatafilePath(char *blockfile, char *pointfile)
@@ -798,7 +798,7 @@ void MIFInterface::GetDatafilePath(char *blockfile, char *pointfile)
 	strcpy(pointfile, pointfile_path);
 }
 
-//! 背景空を取得
+//! @brief 背景空を取得
 //! @return 空の番号（0～5）
 //! @attention 番号 0 は「背景なし」を意味します。
 int MIFInterface::GetSkynumber()
@@ -806,7 +806,7 @@ int MIFInterface::GetSkynumber()
 	return skynumber;
 }
 
-//! ブリーフィング画像ファイルのパスを取得
+//! @brief ブリーフィング画像ファイルのパスを取得
 //! @param *picturefileA 画像ファイルAのパスを受け取るポインタ
 //! @param *picturefileB 画像ファイルBのパスを受け取るポインタ
 //! @attention 設定されていない場合は「!」が返されます。
@@ -817,7 +817,7 @@ void MIFInterface::GetPicturefilePath(char *picturefileA, char *picturefileB)
 	strcpy(picturefileB, picturefileB_path);
 }
 
-//! ブリーフィング文章（本文）を取得
+//! @brief ブリーフィング文章（本文）を取得
 //! @return 文章のポインタ（最大：816）
 //! @attention 改行コードも含めて、最大17行分が一度に返されます。
 //! @attention 行数は GetTotaldatas() で取得できます。
@@ -826,63 +826,63 @@ char* MIFInterface::GetBriefingText()
 	return briefingtext;
 }
 
-//! 追加のあたり判定を示すフラグを取得
+//! @brief 追加のあたり判定を示すフラグを取得
 //! @return 有効：true　無効：false
 bool MIFInterface::GetCollisionFlag()
 {
 	return collision;
 }
 
-//! 画面を暗くを示すフラグを取得
+//! @brief 画面を暗くを示すフラグを取得
 //! @return 有効：true　無効：false
 bool MIFInterface::GetScreenFlag()
 {
 	return screen;
 }
 
-//! 追加小物のモデルデータパスを取得
+//! @brief 追加小物のモデルデータパスを取得
 //! @return モデルデータパスのポインタ（最大：_MAX_PATH）
 char* MIFInterface::GetAddSmallobjectModelPath()
 {
 	return addsmallobject_modelpath;
 }
 
-//! 追加小物のテクスチャパスを取得
+//! @brief 追加小物のテクスチャパスを取得
 //! @return テクスチャパスのポインタ（最大：_MAX_PATH）
 char* MIFInterface::GetAddSmallobjectTexturePath()
 {
 	return addsmallobject_texturepath;
 }
 
-//! 追加小物の当たり判定の大きさを取得
+//! @brief 追加小物の当たり判定の大きさを取得
 //! @return 当たり判定の大きさ
 int MIFInterface::GetAddSmallobjectDecide()
 {
 	return addsmallobject_decide;
 }
 
-//! 追加小物の耐久力を取得
+//! @brief 追加小物の耐久力を取得
 //! @return 耐久力
 int MIFInterface::GetAddSmallobjectHP()
 {
 	return addsmallobject_hp;
 }
 
-//! 追加小物のサウンドデータパスを取得
+//! @brief 追加小物のサウンドデータパスを取得
 //! @return サウンドデータパスのポインタ（最大：_MAX_PATH）
 char* MIFInterface::GetAddSmallobjectSoundPath()
 {
 	return addsmallobject_soundpath;
 }
 
-//! 追加小物の飛び具合を取得
+//! @brief 追加小物の飛び具合を取得
 //! @return 飛び具合
 int MIFInterface::GetAddSmallobjectJump()
 {
 	return addsmallobject_jump;
 }
 
-//! コンストラクタ
+//! @brief コンストラクタ
 AddonList::AddonList()
 {
 	datas = 0;
@@ -893,11 +893,11 @@ AddonList::AddonList()
 	}
 }
 
-//! ディストラクタ
+//! @brief ディストラクタ
 AddonList::~AddonList()
 {}
 
-//! .mifファイルを取得
+//! @brief .mifファイルを取得
 void AddonList::GetMIFlist(char *dir)
 {
 	char SearchDIR[_MAX_PATH];
@@ -922,7 +922,7 @@ void AddonList::GetMIFlist(char *dir)
 	FindClose(hFind);
 }
 
-//! ミッション名を取得
+//! @brief ミッション名を取得
 void AddonList::GetMissionName(char *dir)
 {
 	char str[_MAX_PATH];
@@ -942,7 +942,7 @@ void AddonList::GetMissionName(char *dir)
 	}
 }
 
-//! ミッション名をソートする
+//! @brief ミッション名をソートする
 void AddonList::Sort()
 {
 	char mission_name_c[MAX_ADDONLIST][24];
@@ -979,7 +979,7 @@ void AddonList::Sort()
 
 }
 
-//! ADDONリストを取得する
+//! @brief ADDONリストを取得する
 //! @param dir ADDON（.mif）が入ったディレクトリ　（標準："addon\\"）
 //! @return addonの総数
 int AddonList::LoadFiledata(char *dir)
@@ -998,7 +998,7 @@ int AddonList::LoadFiledata(char *dir)
 	return datas;
 }
 
-//! ミッション名を取得
+//! @brief ミッション名を取得
 //! @param id 認識番号
 //! @return ミッション名
 char* AddonList::GetMissionName(int id)
@@ -1006,7 +1006,7 @@ char* AddonList::GetMissionName(int id)
 	return mission_name[id];
 }
 
-//! ファイル名を取得
+//! @brief ファイル名を取得
 //! @param id 認識番号
 //! @return ファイル名
 char* AddonList::GetFileName(int id)
@@ -1015,7 +1015,7 @@ char* AddonList::GetFileName(int id)
 }
 
 
-//! fgets()用　改行コードを取り除く
+//! @brief fgets()用　改行コードを取り除く
 //! @param str 文字列
 //! @return 成功：0　失敗：1
 int DeleteLinefeed(char str[])

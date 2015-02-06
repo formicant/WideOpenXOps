@@ -33,7 +33,7 @@
 
 LRESULT WINAPI WindowProc(HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam);
 
-//! メインウィンドウ作成
+//! @brief メインウィンドウ作成
 //! @param hInstance インスタンス ハンドル
 //! @param title ウィンドウタイトル
 //! @param width ウィンドウの幅
@@ -106,7 +106,7 @@ HWND InitWindow(HINSTANCE hInstance, char* title, int width, int height, int nCm
 
 }
 
-//! メインウィンドウのウィンドウプロシージャ
+//! @brief メインウィンドウのウィンドウプロシージャ
 LRESULT WINAPI WindowProc(HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam)
 {
 	switch( msg ){
@@ -117,7 +117,7 @@ LRESULT WINAPI WindowProc(HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam)
 	return DefWindowProc(hWnd, msg, wParam, lParam);
 }
 
-//! fps（Frames Per Second：フレームレート）計算
+//! @brief fps（Frames Per Second：フレームレート）計算
 //! @param getcnt fpsを取得する周期（フレーム単位）
 //! @return fps数
 float GetFps(int getcnt)
@@ -142,7 +142,7 @@ float GetFps(int getcnt)
 	return pfps;
 }
 
-//! fps（Frames Per Second：フレームレート）調整
+//! @brief fps（Frames Per Second：フレームレート）調整
 //! @return 調整を実施：true　　調整を実施せず：false
 bool ControlFps()
 {
@@ -162,7 +162,7 @@ bool ControlFps()
 	return false;
 }
 
-//! ミリ秒単位を返す
+//! @brief ミリ秒単位を返す
 //! @return ミリ秒
 unsigned int GetTimeMS()
 {
@@ -175,7 +175,7 @@ unsigned int GetTimeMS()
 	return time;
 }
 
-//! 日時による文字列を取得
+//! @brief 日時による文字列を取得
 //! @param str 文字列を受け取るポインタ
 void GetTimeName(char *str)
 {
@@ -188,13 +188,13 @@ void GetTimeName(char *str)
 	sprintf(str, "%04d%02d%02d%02d%02d%02d", local->tm_year + 1900, local->tm_mon + 1, local->tm_mday, local->tm_hour, local->tm_min, local->tm_sec);
 }
 
-//! 乱数を初期化
+//! @brief 乱数を初期化
 void InitRand()
 {
 	srand(GetTimeMS());
 }
 
-//! ランダムな整数値を返す
+//! @brief ランダムな整数値を返す
 //! @param num 範囲
 //! @return 0～num-1
 int GetRand(int num)

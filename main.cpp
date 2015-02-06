@@ -43,7 +43,7 @@ StateMachine GameState;
 //! ゲーム設定データ
 Config GameConfig;
 
-//! WinMain()関数
+//! @brief WinMain()関数
 int WINAPI WinMain(HINSTANCE hInstance,	HINSTANCE hPrevInstance, LPTSTR lpCmdLine, int nCmdShow)
 {
 	//乱数初期化

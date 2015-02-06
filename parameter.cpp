@@ -34,7 +34,7 @@
 
 #include "parameter.h"
 
-//! コンストラクタ
+//! @brief コンストラクタ
 ParameterInfo::ParameterInfo()
 {
 	Human = NULL;
@@ -52,7 +52,7 @@ ParameterInfo::ParameterInfo()
 	AIlevel = NULL;
 }
 
-//! ディストラクタ
+//! @brief ディストラクタ
 ParameterInfo::~ParameterInfo()
 {
 	//CleanupModelTextureWeapon();
@@ -64,7 +64,8 @@ ParameterInfo::~ParameterInfo()
 	if( AIlevel != NULL ){ delete [] AIlevel; }
 }
 
-//! 初期化（パラメータの設定）
+//! @brief 初期化（パラメータの設定）
+//! @attention この関数を呼び出さないと、クラス自体が正しく機能しません。
 void ParameterInfo::InitInfo()
 {
 	Human = new HumanParameter[TOTAL_PARAMETERINFO_HUMAN];
@@ -1533,7 +1534,7 @@ void ParameterInfo::InitInfo()
 	AIlevel[5].limitserror = 253;
 }
 
-//! 人の設定を取得
+//! @brief 人の設定を取得
 //! @param id 番号
 //! @param out_data 受け取るHumanParameter型ポインタ
 //! @return 成功：0　失敗：1
@@ -1545,7 +1546,7 @@ int ParameterInfo::GetHuman(int id, HumanParameter *out_data)
 	return 0;
 }
 
-//! 人のテクスチャファイルのパスを取得
+//! @brief 人のテクスチャファイルのパスを取得
 //! @param id 番号
 //! @param *out_str 受け取るポインタ
 //! @return 成功：0　失敗：1
@@ -1557,7 +1558,7 @@ int ParameterInfo::GetHumanTexturePath(int id, char *out_str)
 	return 0;
 }
 
-//! 武器の設定を取得
+//! @brief 武器の設定を取得
 //! @param id 番号
 //! @param out_data 受け取るWeaponParameter型ポインタ
 //! @return 成功：0　失敗：1
@@ -1569,7 +1570,7 @@ int ParameterInfo::GetWeapon(int id, WeaponParameter *out_data)
 	return 0;
 }
 
-//! 小物の設定を取得
+//! @brief 小物の設定を取得
 //! @param id 番号
 //! @param out_data 受け取るSmallObjectParameter型ポインタ
 //! @return 成功：0　失敗：1
@@ -1581,7 +1582,7 @@ int ParameterInfo::GetSmallObject(int id, SmallObjectParameter *out_data)
 	return 0;
 }
 
-//! 標準ミッションを取得
+//! @brief 標準ミッションを取得
 //! @param id 番号
 //! @param name ミッション識別名を受け取るポインタ　（NULL可）
 //! @param fullname ミッション正式名称を受け取るポインタ　（NULL可）
@@ -1600,7 +1601,7 @@ int ParameterInfo::GetOfficialMission(int id, char *name, char *fullname, char* 
 	return 0;
 }
 
-//! AIレベルの設定（性能値）を取得
+//! @brief AIレベルの設定（性能値）を取得
 //! @param level AIレベル
 //! @param out_AIlevel 受け取るAIParameter型ポインタのポインタ（2重ポインタ）
 //! @return 成功：0　失敗：1

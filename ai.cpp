@@ -31,7 +31,7 @@
 
 #include "ai.h"
 
-//! コンストラクタ
+//! @brief コンストラクタ
 AIcontrol::AIcontrol(class ObjectManager *in_ObjMgr, int in_ctrlid, class BlockDataInterface *in_blocks, class PointDataInterface *in_Points, class ParameterInfo *in_Param, class Collision *in_CollD, class SoundManager *in_GameSound)
 {
 	ObjMgr = in_ObjMgr;
@@ -57,11 +57,11 @@ AIcontrol::AIcontrol(class ObjectManager *in_ObjMgr, int in_ctrlid, class BlockD
 	longattack = false;
 }
 
-//! ディストラクタ
+//! @brief ディストラクタ
 AIcontrol::~AIcontrol()
 {}
 
-//! 対象クラスを設定
+//! @brief 対象クラスを設定
 //! @attention この関数で設定を行わないと、クラス自体が正しく機能しません。
 void AIcontrol::SetClass(class ObjectManager *in_ObjMgr, int in_ctrlid, class BlockDataInterface *in_blocks, class PointDataInterface *in_Points, class ParameterInfo *in_Param, class Collision *in_CollD, class SoundManager *in_GameSound)
 {
@@ -75,7 +75,7 @@ void AIcontrol::SetClass(class ObjectManager *in_ObjMgr, int in_ctrlid, class Bl
 	GameSound = in_GameSound;
 }
 
-//! ランダムな整数値を返す
+//! @brief ランダムな整数値を返す
 //! @param num 範囲
 //! @return 0～num-1
 int AIcontrol::random(int num)
@@ -83,7 +83,7 @@ int AIcontrol::random(int num)
 	return GetRand(num);
 }
 
-//! 人を検索
+//! @brief 人を検索
 //! @param in_p4 検索する人の第4パラメータ（認識番号）
 //! @param out_x X座標を受け取るポインタ
 //! @param out_z Z座標を受け取るポインタ
@@ -104,7 +104,7 @@ int AIcontrol::SearchHumanPos(signed char in_p4, float *out_x, float *out_z)
 	return 1;
 }
 
-//! 目標地点に移動しているか確認
+//! @brief 目標地点に移動しているか確認
 //! @return 到達：true　非到達：false
 bool AIcontrol::CheckTargetPos()
 {
@@ -127,7 +127,7 @@ bool AIcontrol::CheckTargetPos()
 	return false;
 }
 
-//! 目標地点を検索
+//! @brief 目標地点を検索
 //! @param next 次を検索する
 //! @return 完了：true　失敗：false
 bool AIcontrol::SearchTarget(bool next)
@@ -217,7 +217,7 @@ bool AIcontrol::SearchTarget(bool next)
 	return false;
 }
 
-//! 目標地点に移動
+//! @brief 目標地点に移動
 void AIcontrol::MoveTarget()
 {
 	float r, atan;
@@ -307,7 +307,7 @@ void AIcontrol::MoveTarget()
 	total_move = ctrlhuman->GetTotalMove();
 }
 
-//! 目標地点に移動（優先的な走り用）
+//! @brief 目標地点に移動（優先的な走り用）
 void AIcontrol::MoveTarget2()
 {
 	float atan;
@@ -348,7 +348,7 @@ void AIcontrol::MoveTarget2()
 	total_move = ctrlhuman->GetTotalMove();
 }
 
-//! 前後左右ランダムに移動（攻撃中用）
+//! @brief 前後左右ランダムに移動（攻撃中用）
 void AIcontrol::MoveRandom()
 {
 	int forwardstart, backstart, sidestart;
@@ -455,7 +455,7 @@ void AIcontrol::MoveRandom()
 	}
 }
 
-//! その場を見まわす
+//! @brief その場を見まわす
 void AIcontrol::TurnSeen()
 {
 	int turnstart, turnstop;
@@ -509,7 +509,7 @@ void AIcontrol::TurnSeen()
 	}
 }
 
-//! 特定の方向を見続ける
+//! @brief 特定の方向を見続ける
 bool AIcontrol::StopSeen()
 {
 	float tr;
@@ -540,7 +540,7 @@ bool AIcontrol::StopSeen()
 	return returnflag;
 }
 
-//! 進行方向に障害物があればジャンプする
+//! @brief 進行方向に障害物があればジャンプする
 bool AIcontrol::MoveJump()
 {
 	//立ち止まっていれば処理しない
@@ -575,7 +575,7 @@ bool AIcontrol::MoveJump()
 	return false;
 }
 
-//! 攻撃
+//! @brief 攻撃
 //! @todo ゾンビの相手を捕まえる処理
 void AIcontrol::Action()
 {
@@ -844,7 +844,7 @@ void AIcontrol::Action()
 	actioncnt += 1;
 }
 
-//! 攻撃をキャンセル
+//! @brief 攻撃をキャンセル
 bool AIcontrol::ActionCancel()
 {
 	//非戦闘化フラグが有効なら終了
@@ -902,7 +902,7 @@ bool AIcontrol::ActionCancel()
 	return false;
 }
 
-//! 武器を持つ
+//! @brief 武器を持つ
 int AIcontrol::HaveWeapon()
 {
 	int selectweapon;
@@ -937,7 +937,7 @@ int AIcontrol::HaveWeapon()
 	return 0;
 }
 
-//! 移動や方向転換をランダムに終了
+//! @brief 移動や方向転換をランダムに終了
 void AIcontrol::CancelMoveTurn()
 {
 	int forward, back, side, updown, rightleft;
@@ -1021,7 +1021,7 @@ void AIcontrol::CancelMoveTurn()
 	}
 }
 
-//! 移動や方向転換を実行
+//! @brief 移動や方向転換を実行
 void AIcontrol::ControlMoveTurn()
 {
 	//移動の実行
@@ -1056,7 +1056,7 @@ void AIcontrol::ControlMoveTurn()
 	}
 }
 
-//! 武器をリロード・捨てる
+//! @brief 武器をリロード・捨てる
 //! @return 捨てる：1　リロード：2　持ち替える：3　FULL/SEMI切り替え：4　何もしない：0
 int AIcontrol::ControlWeapon()
 {
@@ -1197,7 +1197,7 @@ int AIcontrol::ControlWeapon()
 	return 0;
 }
 
-//! 手榴弾を投げる
+//! @brief 手榴弾を投げる
 //! @return 処理中：0　投げ終わった：1　手榴弾を持っていない：2
 int AIcontrol::ThrowGrenade()
 {
@@ -1278,7 +1278,7 @@ int AIcontrol::ThrowGrenade()
 	return 0;
 }
 
-//! 腕の角度を設定
+//! @brief 腕の角度を設定
 void AIcontrol::ArmAngle()
 {
 	float addry;
@@ -1309,7 +1309,7 @@ void AIcontrol::ArmAngle()
 	}
 }
 
-//! 敵を探す
+//! @brief 敵を探す
 int AIcontrol::SearchEnemy()
 {
 	//非戦闘化フラグが有効なら敵を見つけない
@@ -1379,7 +1379,7 @@ int AIcontrol::SearchEnemy()
 	return 0;
 }
 
-//! 敵を探す（遠距離攻撃中に近距離を探す）
+//! @brief 敵を探す（遠距離攻撃中に近距離を探す）
 int AIcontrol::SearchShortEnemy()
 {
 	float A_rx, A_ry;
@@ -1397,7 +1397,7 @@ int AIcontrol::SearchShortEnemy()
 	return 0;
 }
 
-//! 敵が見えるか判定
+//! @brief 敵が見えるか判定
 bool AIcontrol::CheckLookEnemy(int id, float search_rx, float search_ry, float maxDist, float *out_minDist)
 {
 	if( ObjMgr == NULL ){ return false; }
@@ -1411,7 +1411,7 @@ bool AIcontrol::CheckLookEnemy(int id, float search_rx, float search_ry, float m
 	return CheckLookEnemy(thuman, search_rx, search_ry, maxDist, out_minDist);
 }
 
-//! 敵が見えるか判定
+//! @brief 敵が見えるか判定
 bool AIcontrol::CheckLookEnemy(class human* thuman, float search_rx, float search_ry, float maxDist, float *out_minDist)
 {
 	//return false;
@@ -1460,7 +1460,7 @@ bool AIcontrol::CheckLookEnemy(class human* thuman, float search_rx, float searc
 	return false;
 }
 
-//! 死体があるか確認
+//! @brief 死体があるか確認
 bool AIcontrol::CheckCorpse(int id)
 {
 	//クラス設定がおかしければ処理しない
@@ -1500,7 +1500,7 @@ bool AIcontrol::CheckCorpse(int id)
 	return false;
 }
 
-//! パスによる移動
+//! @brief パスによる移動
 void AIcontrol::MovePath()
 {
 	if( movemode == AI_NULL ){			//異常なパス
@@ -1530,7 +1530,7 @@ void AIcontrol::MovePath()
 	}
 }
 
-//! 攻撃メイン処理
+//! @brief 攻撃メイン処理
 //! @return 不変：false　変更：true
 bool AIcontrol::ActionMain()
 {
@@ -1577,7 +1577,7 @@ bool AIcontrol::ActionMain()
 	return false;
 }
 
-//! 警戒メイン処理
+//! @brief 警戒メイン処理
 //! @return 不変：false　変更：true
 bool AIcontrol::CautionMain()
 {
@@ -1655,7 +1655,7 @@ bool AIcontrol::CautionMain()
 	return false;
 }
 
-//! 通常メイン処理
+//! @brief 通常メイン処理
 //! @return 不変：false　変更：true
 bool AIcontrol::NormalMain()
 {
@@ -1724,7 +1724,7 @@ bool AIcontrol::NormalMain()
 	return false;
 }
 
-//! 初期化系関数
+//! @brief 初期化系関数
 void AIcontrol::Init()
 {
 	//クラス設定がおかしければ処理しない
@@ -1762,7 +1762,7 @@ void AIcontrol::Init()
 	SearchTarget(true);
 }
 
-//! 指定した場所へ待機させる
+//! @brief 指定した場所へ待機させる
 //! @param px X座標
 //! @param pz Z座標
 //! @param rx 重視する向き
@@ -1776,7 +1776,7 @@ void AIcontrol::SetHoldWait(float px, float pz, float rx)
 	target_rx = rx;
 }
 
-//! 指定した人を追尾させる
+//! @brief 指定した人を追尾させる
 //! @param id 人のデータ番号
 //! @attention 移動パスに関わらず、指定した人への追尾を強制します。Init()関数を再度実行するまで元に戻せません。
 void AIcontrol::SetHoldTracking(int id)
@@ -1786,7 +1786,7 @@ void AIcontrol::SetHoldTracking(int id)
 	target_pointid = id;
 }
 
-//! 強制的に警戒させる
+//! @brief 強制的に警戒させる
 //! @warning 優先的な走り を実行中の場合、この関数は何もしません。
 void AIcontrol::SetCautionMode()
 {
@@ -1801,7 +1801,7 @@ void AIcontrol::SetCautionMode()
 	cautioncnt = 160;
 }
 
-//! 非戦闘化フラグを設定
+//! @brief 非戦闘化フラグを設定
 //! @param flag true：戦闘を行わない（非戦闘化）　false：戦闘を行う（通常）
 //! @attention フラグを有効にすると敵を認識しなくなります。
 void AIcontrol::SetNoFightFlag(bool flag)
@@ -1809,7 +1809,7 @@ void AIcontrol::SetNoFightFlag(bool flag)
 	NoFight = flag;
 }
 
-//! 処理系関数
+//! @brief 処理系関数
 void AIcontrol::Process()
 {
 	//クラス設定がおかしければ処理しない

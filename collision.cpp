@@ -31,7 +31,7 @@
 
 #include "collision.h"
 
-//! コンストラクタ
+//! @brief コンストラクタ
 Collision::Collision()
 {
 	blockdata = NULL;
@@ -55,7 +55,7 @@ Collision::Collision()
 	}
 }
 
-//! ディストラクタ
+//! @brief ディストラクタ
 Collision::~Collision()
 {
 	if( bmin_x != NULL ){ delete [] bmin_x; }
@@ -68,7 +68,7 @@ Collision::~Collision()
 	if( bdata_worldgroup != NULL ){ delete [] bdata_worldgroup; }
 }
 
-//! ブロックデータを取り込む
+//! @brief ブロックデータを取り込む
 //! @param in_blockdata ブロックデータ
 int Collision::InitCollision(BlockDataInterface* in_blockdata)
 {
@@ -161,7 +161,7 @@ int Collision::InitCollision(BlockDataInterface* in_blockdata)
 	return 0;
 }
 
-//! ブロックの座標最大値・最小値を返す
+//! @brief ブロックの座標最大値・最小値を返す
 //! @param data ブロックデータの構造体
 //! @param *min_x 最小 X座標を返すポインタ
 //! @param *min_y 最小 Y座標を返すポインタ
@@ -188,7 +188,7 @@ void Collision::GetBlockPosMINMAX(struct blockdata data, float *min_x, float *mi
 	}
 }
 
-//! 空間分割のグループを算出
+//! @brief 空間分割のグループを算出
 //! @param x X座標
 //! @param z Z座標
 //! @return グループ番号
@@ -202,7 +202,7 @@ int Collision::GetWorldGroup(float x, float z)
 	return 0;
 }
 
-//! ブロックに埋まっていないか調べる
+//! @brief ブロックに埋まっていないか調べる
 //! @param blockid 判定するブロック番号
 //! @param x X座標
 //! @param y X座標
@@ -257,7 +257,7 @@ bool Collision::CheckBlockInside(int blockid, float x, float y, float z, bool wo
 	return true;
 }
 
-//! 全てのブロックに埋まっていないか調べる
+//! @brief 全てのブロックに埋まっていないか調べる
 //! @param x X座標
 //! @param y X座標
 //! @param z X座標
@@ -275,7 +275,7 @@ bool Collision::CheckALLBlockInside(float x, float y, float z)
 	return false;
 }
 
-//! ブロックとレイ（光線）のあたり判定
+//! @brief ブロックとレイ（光線）のあたり判定
 //! @param blockid 判定するブロック番号
 //! @param RayPos_x レイの位置（始点）を指定する X座標
 //! @param RayPos_y レイの位置（始点）を指定する Y座標
@@ -409,7 +409,7 @@ bool Collision::CheckBlockIntersectRay(int blockid, float RayPos_x, float RayPos
 	return true;
 }
 
-//! 全てのブロックとレイ（光線）のあたり判定
+//! @brief 全てのブロックとレイ（光線）のあたり判定
 //! @param RayPos_x レイの位置（始点）を指定する X座標
 //! @param RayPos_y レイの位置（始点）を指定する Y座標
 //! @param RayPos_z レイの位置（始点）を指定する Z座標
@@ -550,7 +550,7 @@ bool Collision::CheckALLBlockIntersectRay(float RayPos_x, float RayPos_y, float 
 	return true;
 }
 
-//! 全てのブロックと衝突しているか判定
+//! @brief 全てのブロックと衝突しているか判定
 //! @param RayPos_x 始点 X座標
 //! @param RayPos_y 始点 Y座標
 //! @param RayPos_z 始点 Z座標
@@ -626,7 +626,7 @@ bool Collision::CheckALLBlockIntersectDummyRay(float RayPos_x, float RayPos_y, f
 	return false;
 }
 
-//! ブロックに沿って移動するベクトルを求める
+//! @brief ブロックに沿って移動するベクトルを求める
 void Collision::ScratchVector(BlockDataInterface* in_blockdata, int id, int face, float in_vx, float in_vy, float in_vz, float *out_vx, float *out_vy, float *out_vz)
 {
 	struct blockdata bdata;
@@ -644,7 +644,7 @@ void Collision::ScratchVector(BlockDataInterface* in_blockdata, int id, int face
 	*out_vz = out.z;
 }
 
-//! ブロックに反射するベクトルを求める
+//! @brief ブロックに反射するベクトルを求める
 void Collision::ReflectVector(BlockDataInterface* in_blockdata, int id, int face, float in_vx, float in_vy, float in_vz, float *out_vx, float *out_vy, float *out_vz)
 {
 	struct blockdata bdata;
@@ -663,7 +663,7 @@ void Collision::ReflectVector(BlockDataInterface* in_blockdata, int id, int face
 }
 
 
-//! AABBによるあたり判定
+//! @brief AABBによるあたり判定
 //! @param box1_min_x 物体Aの最少 X座標
 //! @param box1_min_y 物体Aの最少 Y座標
 //! @param box1_min_z 物体Aの最少 Z座標
@@ -699,7 +699,7 @@ bool CollideBoxAABB(float box1_min_x, float box1_min_y, float box1_min_z, float 
 	return false;
 }
 
-//! 円柱同士の当たり判定
+//! @brief 円柱同士の当たり判定
 //! @param c1_x 円柱1 底辺のx座標
 //! @param c1_y 円柱1 底辺のy座標
 //! @param c1_z 円柱1 底辺のz座標
@@ -733,7 +733,7 @@ bool CollideCylinder(float c1_x, float c1_y, float c1_z, float c1_r, float c1_h,
 	return false;
 }
 
-//! 球体とレイ（光線）のあたり判定
+//! @brief 球体とレイ（光線）のあたり判定
 //! @param s_x 球体のx座標
 //! @param s_y 球体のy座標
 //! @param s_z 球体のz座標
@@ -811,7 +811,7 @@ bool CollideSphereRay(float s_x, float s_y, float s_z, float s_r, float RayPos_x
 	return false;
 }
 
-//! AABBとレイ（光線）のあたり判定
+//! @brief AABBとレイ（光線）のあたり判定
 //! @param box_min_x 物体の最少 X座標
 //! @param box_min_y 物体の最少 Y座標
 //! @param box_min_z 物体の最少 Z座標
@@ -929,7 +929,7 @@ bool CollideAABBRay(float box_min_x, float box_min_y, float box_min_z, float box
 	return false;
 }
 
-//! 点とレイの最短距離を求める
+//! @brief 点とレイの最短距離を求める
 //! @param Pos_x 点のX座標
 //! @param Pos_y 点のY座標
 //! @param Pos_z 点のZ座標
@@ -963,7 +963,7 @@ float DistancePosRay(float Pos_x, float Pos_y, float Pos_z, float RayPos_x, floa
 	return sqrt(out.x*out.x + out.y*out.y + out.z*out.z) / maxDist;
 }
 
-//! 観測点から対象点への 距離判定・角度算出
+//! @brief 観測点から対象点への 距離判定・角度算出
 //! @param pos_x 観測点のX座標
 //! @param pos_y 観測点のY座標
 //! @param pos_z 観測点のZ座標

@@ -31,7 +31,7 @@
 
 #include "event.h"
 
-//! コンストラクタ
+//! @brief コンストラクタ
 EventControl::EventControl(PointDataInterface *in_Point, ObjectManager *in_ObjMgr)
 {
 	Point = in_Point;
@@ -40,11 +40,11 @@ EventControl::EventControl(PointDataInterface *in_Point, ObjectManager *in_ObjMg
 	waitcnt = 0;
 }
 
-//! ディストラクタ
+//! @brief ディストラクタ
 EventControl::~EventControl()
 {}
 
-//! 対象クラスを設定
+//! @brief 対象クラスを設定
 //! @param in_Point ポイントデータ管理クラス
 //! @param in_ObjMgr オブジェクト管理クラス
 //! @attention この関数で設定を行わないと、クラス自体が正しく機能しません。
@@ -54,7 +54,7 @@ void EventControl::SetClass(PointDataInterface *in_Point, ObjectManager *in_ObjM
 	ObjMgr = in_ObjMgr;
 }
 
-//! リセット
+//! @brief リセット
 //! @param EntryP4 イベント処理を開始する認識番号　（-100、-110、-120　など）
 void EventControl::Reset(signed char EntryP4)
 {
@@ -62,7 +62,7 @@ void EventControl::Reset(signed char EntryP4)
 	waitcnt = 0;
 }
 
-//! 対象の人物がケースを持っているかチェック
+//! @brief 対象の人物がケースを持っているかチェック
 //! @param in_human 調べる対象のhumanのポインタ
 //! @return 持っている：true　持っていない：false
 bool EventControl::CheckHaveCase(human *in_human)
@@ -88,7 +88,7 @@ bool EventControl::CheckHaveCase(human *in_human)
 	return false;
 }
 
-//! 処理を実行
+//! @brief 処理を実行
 //! @param endcnt 終了カウントのポインタ
 //! @param complete ミッション成功フラグのポインタ
 //! @param MessageID イベントメッセージ番号のポインタ

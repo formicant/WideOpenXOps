@@ -31,7 +31,7 @@
 
 #include "config.h"
 
-//! コンストラクタ
+//! @brief コンストラクタ
 Config::Config()
 {
 	//各種メンバー変数初期化
@@ -49,11 +49,11 @@ Config::Config()
 	strcpy(PlayerName, "");
 }
 
-//! ディストラクタ
+//! @brief ディストラクタ
 Config::~Config()
 {}
 
-//! 設定ファイルを読み込む
+//! @brief 設定ファイルを読み込む
 //! @param fname ファイル名
 //! @return 成功：0　失敗：1
 int Config::LoadFile(char *fname)
@@ -119,7 +119,7 @@ int Config::LoadFile(char *fname)
 	return 0;
 }
 
-//! オリジナルキーコードを取得
+//! @brief オリジナルキーコードを取得
 //! @param id 定数
 //! @return オリジナルキーコード
 int Config::GetKeycode(int id)
@@ -129,63 +129,63 @@ int Config::GetKeycode(int id)
 	return Keycode[id];
 }
 
-//! マウス感度取得
+//! @brief マウス感度取得
 //! @return 生の値
 int Config::GetMouseSensitivity()
 {
 	return MouseSensitivity;
 }
 
-//! 画面表示モード取得
+//! @brief 画面表示モード取得
 //! @return ウィンドウ：false　フルスクリーン：true
 bool Config::GetFullscreenFlag()
 {
 	return FullscreenFlag;
 }
 
-//! 効果音設定取得
+//! @brief 効果音設定取得
 //! @return 無効：false　有効：true
 bool Config::GetSoundFlag()
 {
 	return SoundFlag;
 }
 
-//! 出血設定取得
+//! @brief 出血設定取得
 //! @return 無効：false　有効：true
 bool Config::GetBloodFlag()
 {
 	return BloodFlag;
 }
 
-//! 画面の明るさ設定取得
+//! @brief 画面の明るさ設定取得
 //! @return 生の値
 int Config::GetBrightness()
 {
 	return Brightness;
 }
 
-//! マウス反転設定取得
+//! @brief マウス反転設定取得
 //! @return 無効：false　有効：true
 bool Config::GetInvertMouseFlag()
 {
 	return InvertMouseFlag;
 }
 
-//! フレームスキップ設定取得
+//! @brief フレームスキップ設定取得
 //! @return 無効：false　有効：true
 bool Config::GetFrameskipFlag()
 {
 	return FrameskipFlag;
 }
 
-//! 別の照準を使用設定取得
+//! @brief 別の照準を使用設定取得
 //! @return 無効：false　有効：true
 bool Config::GetAnotherGunsightFlag()
 {
 	return AnotherGunsightFlag;
 }
 
-//! プレイヤー名取得
+//! @brief プレイヤー名取得
 //! @param out_str 受け取る文字列型ポインタ
 //! @return プレイヤー名文字数
 int Config::GetPlayerName(char *out_str)

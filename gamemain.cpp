@@ -56,7 +56,7 @@ GameInfo GameInfoData;				//!< ゲームの状態
 EventControl Event[TOTAL_EVENTLINE];	//!< イベント制御クラス
 
 
-//! 基本的な初期化処理
+//! @brief 基本的な初期化処理
 int InitGame(HWND hWnd)
 {
 	//DirectX初期化
@@ -121,11 +121,11 @@ int InitGame(HWND hWnd)
 	return 0;
 }
 
-//! コンストラクタ
+//! @brief コンストラクタ
 opening::opening()
 {}
 
-//! ディストラクタ
+//! @brief ディストラクタ
 opening::~opening()
 {}
 
@@ -319,14 +319,14 @@ void opening::Destroy()
 	GameState->NextState();
 }
 
-//! コンストラクタ
+//! @brief コンストラクタ
 mainmenu::mainmenu()
 {
 	mainmenu_scrollitems_official = 0;
 	mainmenu_scrollitems_addon = 0;
 }
 
-//! ディストラクタ
+//! @brief ディストラクタ
 mainmenu::~mainmenu()
 {}
 
@@ -771,11 +771,11 @@ void mainmenu::Destroy()
 	GameState->NextState();
 }
 
-//! コンストラクタ
+//! @brief コンストラクタ
 briefing::briefing()
 {}
 
-//! ディストラクタ
+//! @brief ディストラクタ
 briefing::~briefing()
 {}
 
@@ -882,7 +882,7 @@ void briefing::Destroy(){
 	GameState->NextState();
 }
 
-//! コンストラクタ
+//! @brief コンストラクタ
 maingame::maingame()
 {
 	ShowInfo_Debugmode = false;
@@ -896,7 +896,7 @@ maingame::maingame()
 	time_render = 0;
 }
 
-//! ディストラクタ
+//! @brief ディストラクタ
 maingame::~maingame()
 {}
 
@@ -1016,7 +1016,7 @@ int maingame::Create()
 	return 0;
 }
 
-//! 特定操作の入力をチェック
+//! @brief 特定操作の入力をチェック
 bool maingame::CheckInputControl(int CheckKey, int mode)
 {
 	int KeyCode = OriginalkeycodeToDinputdef(GameConfig.GetKeycode(CheckKey));
@@ -2132,7 +2132,7 @@ void maingame::Render2D()
 
 #ifdef ENABLE_DEBUGCONSOLE
 
-//! デバック用コンソールに新たな文字列を追加
+//! @brief デバック用コンソールに新たな文字列を追加
 //! @param color 文字の色
 //! @param str 追加する文字列のポインタ
 //! @attention 新しい文字列は常に下から追加されます。
@@ -2154,7 +2154,7 @@ void maingame::AddInfoConsole(int color, char *str)
 	strcpy(InfoConsoleData[MAX_CONSOLELINES-1].textdata, str);
 }
 
-//! 入力用コンソールに文字を一文字追加
+//! @brief 入力用コンソールに文字を一文字追加
 //! @param inchar 追加する文字
 void maingame::ConsoleInputText(char inchar)
 {
@@ -2167,7 +2167,7 @@ void maingame::ConsoleInputText(char inchar)
 	}
 }
 
-//! 入力用コンソールの文字を一文字削除
+//! @brief 入力用コンソールの文字を一文字削除
 void maingame::ConsoleDeleteText()
 {
 	int s = strlen(InputConsoleData->textdata);
@@ -2175,7 +2175,7 @@ void maingame::ConsoleDeleteText()
 	InputConsoleData->textdata[ s-1 ] = NULL;
 }
 
-//! コマンドの判定および引数（整数値）を取得
+//! @brief コマンドの判定および引数（整数値）を取得
 //! @param cmd 判定するコマンド文字のポインタ
 //! @param num 与えられた引数を受け取るポインタ
 //! @return 取得：true　判定外：false
@@ -2196,7 +2196,7 @@ bool maingame::GetCommandNum(char *cmd, int *num)
 	return true;
 }
 
-//! デバック用コンソールの入力処理
+//! @brief デバック用コンソールの入力処理
 void maingame::InputConsole()
 {
 	NewCommand[0] = NULL;
@@ -2244,7 +2244,7 @@ void maingame::InputConsole()
 	}
 }
 
-//! デバック用コンソールのメイン処理
+//! @brief デバック用コンソールのメイン処理
 void maingame::ProcessConsole()
 {
 	char str[MAX_CONSOLELEN];
@@ -2580,7 +2580,7 @@ void maingame::ProcessConsole()
 	}
 }
 
-//! デバック用コンソールの描画処理
+//! @brief デバック用コンソールの描画処理
 void maingame::RenderConsole()
 {
 	//下地
@@ -2625,15 +2625,15 @@ void maingame::Destroy()
 	GameState->NextState();
 }
 
-//! コンストラクタ
+//! @brief コンストラクタ
 result::result()
 {}
 
-//! ディストラクタ
+//! @brief ディストラクタ
 result::~result()
 {}
 
-//! リザルト画面の2D描画部分
+//! @brief リザルト画面の2D描画部分
 void result::Render2D()
 {
 	char mname[64];
@@ -2682,7 +2682,7 @@ void result::Render2D()
 	d3dg->Draw2DTextureFontText(SCREEN_WIDTH/2-strlen(str)*20/2, 410, str, D3DCOLOR_COLORVALUE(1.0f,1.0f,1.0f,1.0f), 20, 32);
 }
 
-//! screen派生クラスの初期化（クラスの設定）
+//! @brief screen派生クラスの初期化（クラスの設定）
 void InitScreen(opening *Opening, mainmenu *MainMenu, briefing *Briefing, maingame *MainGame, result *Result)
 {
 	Opening->SetClass(&GameState, &d3dg, &inputCtrl, &GameSound);
@@ -2692,7 +2692,7 @@ void InitScreen(opening *Opening, mainmenu *MainMenu, briefing *Briefing, mainga
 	Result->SetClass(&GameState, &d3dg, &inputCtrl);
 }
 
-//! screen派生クラスの実行
+//! @brief screen派生クラスの実行
 void ProcessScreen(HWND hWnd, opening *Opening, mainmenu *MainMenu, briefing *Briefing, maingame *MainGame, result *Result, unsigned int framecnt)
 {
 	int error;

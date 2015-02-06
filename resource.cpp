@@ -31,7 +31,7 @@
 
 #include "resource.h"
 
-//! コンストラクタ
+//! @brief コンストラクタ
 ResourceManager::ResourceManager()
 {
 	ParamInfo = NULL;
@@ -83,7 +83,7 @@ ResourceManager::ResourceManager()
 	effecttexture_yakkyou = -1;
 }
 
-//! ディストラクタ
+//! @brief ディストラクタ
 ResourceManager::~ResourceManager()
 {
 	CleanupHumanModel();
@@ -97,7 +97,7 @@ ResourceManager::~ResourceManager()
 	CleanupEffectTexture();
 }
 
-//! 参照するParameterInfoクラスを設定
+//! @brief 参照するParameterInfoクラスを設定
 //! @param *_ParamInfo ParameterInfoクラスのポインタ
 //! @attention この関数で設定を行わないと、クラス自体が正しく機能しません。
 void ResourceManager::SetParameterInfo(ParameterInfo *_ParamInfo)
@@ -105,7 +105,7 @@ void ResourceManager::SetParameterInfo(ParameterInfo *_ParamInfo)
 	ParamInfo = _ParamInfo;
 }
 
-//! 参照するD3DGraphicsクラスを設定
+//! @brief 参照するD3DGraphicsクラスを設定
 //! @param *_d3dg D3DGraphicsクラスのポインタ
 //! @attention この関数で設定を行わないと、クラス自体が正しく機能しません。
 void ResourceManager::SetD3DGraphics(D3DGraphics *_d3dg)
@@ -113,7 +113,7 @@ void ResourceManager::SetD3DGraphics(D3DGraphics *_d3dg)
 	d3dg = _d3dg;
 }
 
-//! 参照するSoundControlクラスを設定
+//! @brief 参照するSoundControlクラスを設定
 //! @param *_SoundCtrl SoundControlクラスのポインタ
 //! @attention この関数で設定を行わないと、クラス自体が正しく機能しません。
 void ResourceManager::SetSoundControl(SoundControl *_SoundCtrl)
@@ -121,7 +121,7 @@ void ResourceManager::SetSoundControl(SoundControl *_SoundCtrl)
 	SoundCtrl = _SoundCtrl;
 }
 
-//! 人のモデルを読み込み
+//! @brief 人のモデルを読み込み
 //! @return 成功：0　失敗：1
 int ResourceManager::LoadHumanModel()
 {
@@ -178,7 +178,7 @@ int ResourceManager::LoadHumanModel()
 	return 0;
 }
 
-//! 人のモデル認識番号を取得
+//! @brief 人のモデル認識番号を取得
 //! @param out_upmodel[] 上半身のモデル　（配列数：TOTAL_UPMODE）
 //! @param out_armmodel[] 腕のモデル　（配列数：TOTAL_ARMMODE）
 //! @param *legmodel 足（静止状態）のモデルのポインタ
@@ -201,7 +201,7 @@ void ResourceManager::GetHumanModel(int out_upmodel[], int out_armmodel[], int *
 	}
 }
 
-//! 人のモデルを解放
+//! @brief 人のモデルを解放
 void ResourceManager::CleanupHumanModel()
 {
 	if( d3dg == NULL ){ return; }
@@ -225,7 +225,7 @@ void ResourceManager::CleanupHumanModel()
 	}
 }
 
-//! 人のテクスチャを読み込む
+//! @brief 人のテクスチャを読み込む
 //! @param id 人の種類ID
 //! @return 成功：0以上　失敗：-1
 int ResourceManager::AddHumanTexture(int id)
@@ -258,7 +258,7 @@ int ResourceManager::AddHumanTexture(int id)
 	return -1;
 }
 
-//! 人のテクスチャ番号を取得
+//! @brief 人のテクスチャ番号を取得
 //! @param id 人の種類ID
 //! @return 成功：テクスチャID　失敗：-1
 int ResourceManager::GetHumanTexture(int id)
@@ -277,7 +277,7 @@ int ResourceManager::GetHumanTexture(int id)
 	return -1;
 }
 
-//! 人のテクスチャを一括解放
+//! @brief 人のテクスチャを一括解放
 void ResourceManager::CleanupHumanTexture()
 {
 	if( d3dg == NULL ){ return; }
@@ -291,7 +291,7 @@ void ResourceManager::CleanupHumanTexture()
 	}
 }
 
-//! 武器のモデルやテクスチャを一括読み込み
+//! @brief 武器のモデルやテクスチャを一括読み込み
 //! @return 成功：0　失敗：1以上
 int ResourceManager::LoadWeaponModelTexture()
 {
@@ -317,7 +317,7 @@ int ResourceManager::LoadWeaponModelTexture()
 	return cnt;
 }
 
-//! 武器のモデルとテクスチャを取得
+//! @brief 武器のモデルとテクスチャを取得
 //! @return 成功：0　失敗：1
 int ResourceManager::GetWeaponModelTexture(int id, int *model, int *texture)
 {
@@ -328,7 +328,7 @@ int ResourceManager::GetWeaponModelTexture(int id, int *model, int *texture)
 	return 0;
 }
 
-//! 武器のモデルやテクスチャを一括解放
+//! @brief 武器のモデルやテクスチャを一括解放
 void ResourceManager::CleanupWeaponModelTexture()
 {
 	if( d3dg == NULL ){ return; }
@@ -341,7 +341,7 @@ void ResourceManager::CleanupWeaponModelTexture()
 	}
 }
 
-//! 武器のサウンドを読み込む
+//! @brief 武器のサウンドを読み込む
 //! @return 成功：0　失敗：1
 int ResourceManager::LoadWeaponSound()
 {
@@ -395,7 +395,7 @@ int ResourceManager::LoadWeaponSound()
 	return 0;
 }
 
-//! 武器のサウンドを取得
+//! @brief 武器のサウンドを取得
 //! @param id 0以上で武器の認識番号、-1でリロード音
 //! @return 成功：0　失敗：-1
 int ResourceManager::GetWeaponSound(int id)
@@ -406,7 +406,7 @@ int ResourceManager::GetWeaponSound(int id)
 	return weapon_sound[id];
 }
 
-//! 小物のモデルやテクスチャを一括読み込み
+//! @brief 小物のモデルやテクスチャを一括読み込み
 //! @return 成功：0　失敗：1以上
 int ResourceManager::LoadSmallObjectModelTexture()
 {
@@ -432,7 +432,7 @@ int ResourceManager::LoadSmallObjectModelTexture()
 	return cnt;
 }
 
-//! 小物のモデルとテクスチャを取得
+//! @brief 小物のモデルとテクスチャを取得
 //! @return 成功：0　失敗：1
 int ResourceManager::GetSmallObjectModelTexture(int id, int *model, int *texture)
 {
@@ -443,7 +443,7 @@ int ResourceManager::GetSmallObjectModelTexture(int id, int *model, int *texture
 	return 0;
 }
 
-//! 小物のモデルやテクスチャを一括解放
+//! @brief 小物のモデルやテクスチャを一括解放
 void ResourceManager::CleanupSmallObjectModelTexture()
 {
 	if( d3dg == NULL ){ return; }
@@ -456,7 +456,7 @@ void ResourceManager::CleanupSmallObjectModelTexture()
 	}
 }
 
-//! 小物のサウンドを読み込む
+//! @brief 小物のサウンドを読み込む
 //! @return 成功：0　失敗：1
 int ResourceManager::LoadSmallObjectSound()
 {
@@ -489,7 +489,7 @@ int ResourceManager::LoadSmallObjectSound()
 	return 0;
 }
 
-//! 小物のサウンドを取得
+//! @brief 小物のサウンドを取得
 //! @param id 小物の認識番号
 //! @return 成功：0　失敗：-1
 int ResourceManager::GetSmallObjectSound(int id)
@@ -498,7 +498,7 @@ int ResourceManager::GetSmallObjectSound(int id)
 	return smallobject_sound[id];
 }
 
-//! 追加小物のモデル・テクスチャ・サウンドを取得
+//! @brief 追加小物のモデル・テクスチャ・サウンドを取得
 //! @param modelpath モデルデータのパス
 //! @param texturepath テクスチャデータのパス
 //! @param soundpath サウンドデータのパス
@@ -522,7 +522,7 @@ int ResourceManager::LoadAddSmallObject(char *modelpath, char *texturepath, char
 	return cnt;
 }
 
-//! スコープテクスチャを読み込む
+//! @brief スコープテクスチャを読み込む
 //! @return 成功：0　失敗：1
 int ResourceManager::LoadScopeTexture()
 {
@@ -531,14 +531,14 @@ int ResourceManager::LoadScopeTexture()
 	return 0;
 }
 
-//! スコープテクスチャを取得
+//! @brief スコープテクスチャを取得
 //! @return テクスチャの認識番号
 int ResourceManager::GetScopeTexture()
 {
 	return scopetexture;
 }
 
-//! スコープテクスチャを解放
+//! @brief スコープテクスチャを解放
 void ResourceManager::CleanupScopeTexture()
 {
 	if( scopetexture == -1 ){ return; }
@@ -547,7 +547,7 @@ void ResourceManager::CleanupScopeTexture()
 	scopetexture = -1;
 }
 
-//! 背景空のテクスチャを読み込む
+//! @brief 背景空のテクスチャを読み込む
 //! @param id 空の番号（1～5）
 //! @return 成功：0　失敗：1
 int ResourceManager::LoadSkyModelTexture(int id)
@@ -568,14 +568,14 @@ int ResourceManager::LoadSkyModelTexture(int id)
 	return 0;
 }
 
-//! 背景空のモデルとテクスチャを取得
+//! @brief 背景空のモデルとテクスチャを取得
 void ResourceManager::GetSkyModelTexture(int *model, int *texture)
 {
 	*model = skymodel;
 	*texture = skytexture;
 }
 
-//! 背景空のモデルとテクスチャを解放
+//! @brief 背景空のモデルとテクスチャを解放
 void ResourceManager::CleanupSkyModelTexture()
 {
 	if( d3dg == NULL ){ return; }
@@ -588,7 +588,7 @@ void ResourceManager::CleanupSkyModelTexture()
 	skytexture = -1;
 }
 
-//! 弾のモデルとテクスチャを読み込む
+//! @brief 弾のモデルとテクスチャを読み込む
 //! @return 成功：0　失敗：1
 int ResourceManager::LoadBulletModelTexture()
 {
@@ -602,7 +602,7 @@ int ResourceManager::LoadBulletModelTexture()
 	return 0;
 }
 
-//! 弾のモデルとテクスチャを取得
+//! @brief 弾のモデルとテクスチャを取得
 //! @return 成功：0　失敗：1
 void ResourceManager::GetBulletModelTexture(int *model, int *texture)
 {
@@ -610,7 +610,7 @@ void ResourceManager::GetBulletModelTexture(int *model, int *texture)
 	*texture = bullettexture;
 }
 
-//! 弾のモデルとテクスチャを解放
+//! @brief 弾のモデルとテクスチャを解放
 void ResourceManager::CleanupBulletModelTexture()
 {
 	if( d3dg == NULL ){ return; }
@@ -625,7 +625,7 @@ void ResourceManager::CleanupBulletModelTexture()
 	}
 }
 
-//! 弾・手榴弾のサウンドを読み込む
+//! @brief 弾・手榴弾のサウンドを読み込む
 //! @return 成功：0　失敗：1
 int ResourceManager::LoadBulletSound()
 {
@@ -645,7 +645,7 @@ int ResourceManager::LoadBulletSound()
 	return 0;
 }
 
-//! 弾・手榴弾のサウンドを取得
+//! @brief 弾・手榴弾のサウンドを取得
 //! @param hitsoundA 弾ヒットサウンド：A　（NULL可）
 //! @param hitsoundB 弾ヒットサウンド：B　（NULL可）
 //! @param humanhitsound 弾ヒットサウンド：人　（NULL可）
@@ -662,7 +662,7 @@ void ResourceManager::GetBulletSound(int *hitsoundA, int *hitsoundB, int *humanh
 	if( grenadecco != NULL ){ *grenadecco = grenade_cco; }
 }
 
-//! エフェクトのテクスチャを読み込む
+//! @brief エフェクトのテクスチャを読み込む
 //! @return 成功：0　失敗：1
 int ResourceManager::LoadEffectTexture()
 {
@@ -680,35 +680,35 @@ int ResourceManager::LoadEffectTexture()
 	return 0;
 }
 
-//! 血テクスチャ取得
+//! @brief 血テクスチャ取得
 //! @return テクスチャの認識番号
 int ResourceManager::GetEffectBloodTexture()
 {
 	return effecttexture_blood;
 }
 
-//! フラッシュテクスチャ取得
+//! @brief フラッシュテクスチャ取得
 //! @return テクスチャの認識番号
 int ResourceManager::GetEffectMflashTexture()
 {
 	return effecttexture_mflash;
 }
 
-//! 煙テクスチャ取得
+//! @brief 煙テクスチャ取得
 //! @return テクスチャの認識番号
 int ResourceManager::GetEffectSmokeTexture()
 {
 	return effecttexture_smoke;
 }
 
-//! 薬莢テクスチャ取得
+//! @brief 薬莢テクスチャ取得
 //! @return テクスチャの認識番号
 int ResourceManager::GetEffectYakkyouTexture()
 {
 	return effecttexture_yakkyou;
 }
 
-//! エフェクトのテクスチャを解放
+//! @brief エフェクトのテクスチャを解放
 void ResourceManager::CleanupEffectTexture()
 {
 	if( d3dg == NULL ){ return; }

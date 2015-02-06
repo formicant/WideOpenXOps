@@ -31,7 +31,7 @@
 
 #include "soundmanager.h"
 
-//! コンストラクタ
+//! @brief コンストラクタ
 SoundManager::SoundManager(SoundControl *in_SoundCtrl, ResourceManager *in_Resource, ParameterInfo *in_Param)
 {
 	SoundCtrl = in_SoundCtrl;
@@ -44,14 +44,14 @@ SoundManager::SoundManager(SoundControl *in_SoundCtrl, ResourceManager *in_Resou
 	listBdatas = 0;
 }
 
-//! ディストラクタ
+//! @brief ディストラクタ
 SoundManager::~SoundManager()
 {
 	if( soundlistA != NULL ){ delete [] soundlistA; }
 	if( soundlistB != NULL ){ delete [] soundlistB; }
 }
 
-//! 使用するクラスを設定
+//! @brief 使用するクラスを設定
 //! @param in_SoundCtrl サウンドコントロールクラス
 //! @param in_Resource リソース管理クラス
 //! @param in_Param 設定値管理クラス
@@ -63,7 +63,7 @@ void SoundManager::SetClass(SoundControl *in_SoundCtrl, ResourceManager *in_Reso
 	Param = in_Param;
 }
 
-//! 空間の音源を初期化
+//! @brief 空間の音源を初期化
 void SoundManager::InitWorldSound()
 {
 	changeAB = false;
@@ -71,7 +71,7 @@ void SoundManager::InitWorldSound()
 	listBdatas = 0;
 }
 
-//! 空間に発砲音を追加
+//! @brief 空間に発砲音を追加
 //! @param x 音源のX座標
 //! @param y 音源のY座標
 //! @param z 音源のZ座標
@@ -99,7 +99,7 @@ bool SoundManager::ShotWeapon(float x, float y, float z, int id, int teamID, boo
 	return true;
 }
 
-//! 空間にマップ着弾音を追加
+//! @brief 空間にマップ着弾音を追加
 //! @param x 音源のX座標
 //! @param y 音源のY座標
 //! @param z 音源のZ座標
@@ -117,7 +117,7 @@ bool SoundManager::HitMap(float x, float y, float z)
 	return true;
 }
 
-//! 空間に被弾音を追加
+//! @brief 空間に被弾音を追加
 //! @param x 音源のX座標
 //! @param y 音源のY座標
 //! @param z 音源のZ座標
@@ -135,7 +135,7 @@ bool SoundManager::HitHuman(float x, float y, float z)
 	return true;
 }
 
-//! 空間に小物着弾音を追加
+//! @brief 空間に小物着弾音を追加
 //! @param x 音源のX座標
 //! @param y 音源のY座標
 //! @param z 音源のZ座標
@@ -155,7 +155,7 @@ bool SoundManager::HitSmallObject(float x, float y, float z, int id)
 	return true;
 }
 
-//! 弾の通過・横切る音を追加
+//! @brief 弾の通過・横切る音を追加
 //! @param x 音源のX座標
 //! @param y 音源のY座標
 //! @param z 音源のZ座標
@@ -180,7 +180,7 @@ bool SoundManager::PassingBullet(float x, float y, float z, float move_x, float 
 	return true;
 }
 
-//! 空間に手榴弾バウンド・跳ね返り音を追加
+//! @brief 空間に手榴弾バウンド・跳ね返り音を追加
 //! @param x 音源のX座標
 //! @param y 音源のY座標
 //! @param z 音源のZ座標
@@ -198,7 +198,7 @@ bool SoundManager::GrenadeBound(float x, float y, float z)
 	return true;
 }
 
-//! 空間に手榴弾爆発音を追加
+//! @brief 空間に手榴弾爆発音を追加
 //! @param x 音源のX座標
 //! @param y 音源のY座標
 //! @param z 音源のZ座標
@@ -216,7 +216,7 @@ bool SoundManager::GrenadeExplosion(float x, float y, float z)
 	return true;
 }
 
-//! 空間に足音を追加
+//! @brief 空間に足音を追加
 //! @param x 音源のX座標
 //! @param y 音源のY座標
 //! @param z 音源のZ座標
@@ -236,7 +236,7 @@ bool SoundManager::SetFootsteps(float x, float y, float z, int teamID)
 	return true;
 }
 
-//! 空間に武器リロード音を追加
+//! @brief 空間に武器リロード音を追加
 //! @param x 音源のX座標
 //! @param y 音源のY座標
 //! @param z 音源のZ座標
@@ -256,7 +256,7 @@ bool SoundManager::ReloadWeapon(float x, float y, float z, int teamID)
 	return true;
 }
 
-//! 指定した位置の周辺にある音源を取得
+//! @brief 指定した位置の周辺にある音源を取得
 //! @param pos_x 音源のX座標
 //! @param pos_y 音源のY座標
 //! @param pos_z 音源のZ座標
@@ -337,7 +337,7 @@ int SoundManager::GetWorldSound(float pos_x, float pos_y, float pos_z, int teamI
 	return newlists;
 }
 
-//! 空間上のサウンドを再生
+//! @brief 空間上のサウンドを再生
 //! @param camera_x カメラのX座標
 //! @param camera_y カメラのY座標
 //! @param camera_z カメラのZ座標
@@ -376,7 +376,7 @@ void SoundManager::PlayWorldSound(float camera_x, float camera_y, float camera_z
 	}
 }
 
-//! 新しいサウンドリスト（単一）を取得
+//! @brief 新しいサウンドリスト（単一）を取得
 //! @param plist 新しいサウンドリスト（単一）の二重ポインタ
 //! @return 成功：true　失敗：false
 bool SoundManager::GetNewList(soundlist **plist)
@@ -399,7 +399,7 @@ bool SoundManager::GetNewList(soundlist **plist)
 	return true;
 }
 
-//! 処理対象のサウンドリストを取得
+//! @brief 処理対象のサウンドリストを取得
 //! @param plist 処理対象のサウンドリストの二重ポインタ
 //! @return 取得したサウンドリストに含まれる音源の数
 int SoundManager::GetTargetList(soundlist **plist)
@@ -414,7 +414,7 @@ int SoundManager::GetTargetList(soundlist **plist)
 	//}
 }
 
-//! 音源がカメラ（視点）に最も近づくか確認
+//! @brief 音源がカメラ（視点）に最も近づくか確認
 //! @param plist 処理対象のサウンドリスト（単一）のポインタ
 //! @param camera_x カメラのX座標
 //! @param camera_y カメラのY座標
@@ -470,7 +470,7 @@ bool SoundManager::CheckApproach(soundlist *plist, float camera_x, float camera_
 	return false;
 }
 
-//! 指定したサウンドリスト（1音源）を再生
+//! @brief 指定したサウンドリスト（1音源）を再生
 //! @param plist 再生するサウンドリスト（単一）のポインタ
 //! @param camera_x カメラのX座標
 //! @param camera_y カメラのY座標

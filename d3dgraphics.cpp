@@ -31,7 +31,7 @@
 
 #include "d3dgraphics.h"
 
-//! コンストラクタ
+//! @brief コンストラクタ
 D3DGraphics::D3DGraphics()
 {
 	pD3D = NULL;
@@ -59,7 +59,7 @@ D3DGraphics::D3DGraphics()
 	TextureFont_height = 0;
 }
 
-//! ディストラクタ
+//! @brief ディストラクタ
 D3DGraphics::~D3DGraphics()
 {
 	if( TextureFont != -1 ){ CleanupTexture(TextureFont); }
@@ -79,7 +79,7 @@ D3DGraphics::~D3DGraphics()
 	if( pD3D != NULL ) pD3D->Release();
 }
 
-//! 初期化@n
+//! @brief 初期化@n
 //! （DirectX 9）
 //! @param hWnd ウィンドウハンドル
 //! @param TextureFontFilename 使用するテクスチャフォントのファイル名
@@ -205,7 +205,7 @@ int D3DGraphics::InitD3D(HWND hWnd, char *TextureFontFilename, bool fullscreen)
 }
 
 /*
-//! リセット@n
+//! @brief リセット@n
 //! （ウィンドウ最小化からの復帰　など）
 //! @param hWnd ウィンドウハンドル
 //! @return 成功：0　失敗：1
@@ -252,7 +252,7 @@ int D3DGraphics::ResetD3D(HWND hWnd)
 }
 */
 
-//! モデルファイルを読み込む（.x）
+//! @brief モデルファイルを読み込む（.x）
 //! @param filename ファイル名
 //! @return 成功：モデル認識番号（0以上）　失敗：-1
 int D3DGraphics::LoadModel(char* filename)
@@ -294,7 +294,7 @@ int D3DGraphics::LoadModel(char* filename)
 	return id;
 }
 
-//! モデルファイルの中間データを作成（モーフィング）
+//! @brief モデルファイルの中間データを作成（モーフィング）
 //! @param idA モデルAの認識番号
 //! @param idB モデルBの認識番号
 //! @return 成功：新しいモデル認識番号（0以上）　失敗：-1
@@ -371,7 +371,7 @@ int D3DGraphics::MorphingModel(int idA, int idB)
 	return idN;
 }
 
-//! モデルファイルを解放
+//! @brief モデルファイルを解放
 //! @param id モデル認識番号
 void D3DGraphics::CleanupModel(int id)
 {
@@ -384,7 +384,7 @@ void D3DGraphics::CleanupModel(int id)
 	}
 }
 
-//! テクスチャを読み込む
+//! @brief テクスチャを読み込む
 //! @param filename ファイル名
 //! @param texturefont テクスチャフォントフラグ
 //! @param BlackTransparent 黒を透過する
@@ -425,7 +425,7 @@ int D3DGraphics::LoadTexture(char* filename, bool texturefont, bool BlackTranspa
 	return id;
 }
 
-//! テクスチャのサイズを取得
+//! @brief テクスチャのサイズを取得
 //! @param id テクスチャ認識番号
 //! @param width 幅を受け取るポインタ
 //! @param height 高さを受け取るポインタ
@@ -454,7 +454,7 @@ int D3DGraphics::GetTextureSize(int id, int *width, int *height)
 	return 0;
 }
 
-//! テクスチャを解放
+//! @brief テクスチャを解放
 //! @param id テクスチャ認識番号
 void D3DGraphics::CleanupTexture(int id)
 {
@@ -465,7 +465,7 @@ void D3DGraphics::CleanupTexture(int id)
 	}
 }
 
-//! 全ての描画処理を開始
+//! @brief 全ての描画処理を開始
 //! @return 成功：0　失敗：1
 //! @attention 描画処理の最初に呼び出す必要があります。
 int D3DGraphics::StartRender()
@@ -490,7 +490,7 @@ int D3DGraphics::StartRender()
 	return 1;
 }
 
-//! 全ての描画処理を終了
+//! @brief 全ての描画処理を終了
 //! @attention 描画処理の最後に呼び出す必要があります。
 void D3DGraphics::EndRender()
 {
@@ -505,7 +505,7 @@ void D3DGraphics::EndRender()
 	StartRenderFlag = false;
 }
 
-//! Zバッファをリセット
+//! @brief Zバッファをリセット
 void D3DGraphics::ResetZbuffer()
 {
 	//Zバッファを一度無効にし、初期化後、再度有効に
@@ -514,7 +514,7 @@ void D3DGraphics::ResetZbuffer()
 	pd3dDevice->SetRenderState(D3DRS_ZENABLE, D3DZB_TRUE);
 }
 
-//! ワールド空間を原点（0,0,0）に戻す　など
+//! @brief ワールド空間を原点（0,0,0）に戻す　など
 void D3DGraphics::ResetWorldTransform()
 {
 	D3DXMATRIX matWorld;
@@ -522,7 +522,7 @@ void D3DGraphics::ResetWorldTransform()
 	pd3dDevice->SetTransform(D3DTS_WORLD, &matWorld);
 }
 
-//! ワールド空間の座標・角度・拡大率を設定
+//! @brief ワールド空間の座標・角度・拡大率を設定
 //! @param x X座標
 //! @param y Y座標
 //! @param z Z座標
@@ -534,7 +534,7 @@ void D3DGraphics::SetWorldTransform(float x, float y, float z, float rx, float r
 	SetWorldTransform(x, y, z, rx, ry, 0.0f, size);
 }
 
-//! ワールド空間の座標・角度・拡大率を設定
+//! @brief ワールド空間の座標・角度・拡大率を設定
 //! @param x X座標
 //! @param y Y座標
 //! @param z Z座標
@@ -561,7 +561,7 @@ void D3DGraphics::SetWorldTransform(float x, float y, float z, float rx, float r
 	pd3dDevice->SetTransform( D3DTS_WORLD, &matWorld );
 }
 
-//! ワールド空間の座標・角度・拡大率を設定（エフェクト用）
+//! @brief ワールド空間の座標・角度・拡大率を設定（エフェクト用）
 //! @param x X座標
 //! @param y Y座標
 //! @param z Z座標
@@ -588,7 +588,7 @@ void D3DGraphics::SetWorldTransformEffect(float x, float y, float z, float rx, f
 	pd3dDevice->SetTransform( D3DTS_WORLD, &matWorld );
 }
 
-//! ワールド空間を人が武器を持つ場所に設定
+//! @brief ワールド空間を人が武器を持つ場所に設定
 //! @param x X座標
 //! @param y Y座標
 //! @param z Z座標
@@ -617,7 +617,7 @@ void D3DGraphics::SetWorldTransformHumanWeapon(float x, float y, float z, float 
 	pd3dDevice->SetTransform( D3DTS_WORLD, &matWorld );
 }
 
-//! ワールド空間を所持している武器を表示する場所に設定
+//! @brief ワールド空間を所持している武器を表示する場所に設定
 //! @param rotation 武器を回転させる
 //! @param camera_x カメラのX座標
 //! @param camera_y カメラのY座標
@@ -657,7 +657,7 @@ void D3DGraphics::SetWorldTransformPlayerWeapon(bool rotation, float camera_x, f
 	pd3dDevice->SetTransform( D3DTS_WORLD, &matWorld );
 }
 
-//! ワールド空間の座標を取得
+//! @brief ワールド空間の座標を取得
 //! @param *x x軸を受け取るポインタ
 //! @param *y y軸を受け取るポインタ
 //! @param *z z軸を受け取るポインタ
@@ -670,7 +670,7 @@ void D3DGraphics::GetWorldTransformPos(float *x, float *y, float *z)
 	*z = matWorld._43;
 }
 
-//! フォグを設定
+//! @brief フォグを設定
 //! @param skynumber 空の番号
 void D3DGraphics::SetFog(int skynumber)
 {
@@ -690,7 +690,7 @@ void D3DGraphics::SetFog(int skynumber)
 	pd3dDevice->SetRenderState(D3DRS_FOGCOLOR, skycolor);
 }
 
-//! カメラ（視点）を設定
+//! @brief カメラ（視点）を設定
 //! @param camera_x カメラのX座標
 //! @param camera_y カメラのY座標
 //! @param camera_z カメラのZ座標
@@ -731,7 +731,7 @@ void D3DGraphics::SetCamera(float camera_x, float camera_y, float camera_z, floa
 	pd3dDevice->SetTransform(D3DTS_PROJECTION, &matProj);
 }
 
-//! マップデータを取り込む
+//! @brief マップデータを取り込む
 //! @param in_blockdata ブロックデータ
 //! @param directory ブロックデータが存在するディレクトリ
 void D3DGraphics::LoadMapdata(BlockDataInterface* in_blockdata, char *directory)
@@ -839,7 +839,7 @@ void D3DGraphics::LoadMapdata(BlockDataInterface* in_blockdata, char *directory)
 #endif
 }
 
-//! マップデータを描画
+//! @brief マップデータを描画
 //! @param wireframe ワイヤーフレーム表示
 void D3DGraphics::DrawMapdata(bool wireframe)
 {
@@ -939,7 +939,7 @@ void D3DGraphics::DrawMapdata(bool wireframe)
 	//pd3dDevice->SetRenderState(D3DRS_ZFUNC, D3DCMP_LESSEQUAL);
 }
 
-//! マップテクスチャを取得
+//! @brief マップテクスチャを取得
 //! @param id テクスチャ番号
 //! @return テクスチャ認識番号（失敗：-1）
 int D3DGraphics::GetMapTextureID(int id)
@@ -948,7 +948,7 @@ int D3DGraphics::GetMapTextureID(int id)
 	return mapTextureID[id];
 }
 
-//! マップデータを解放
+//! @brief マップデータを解放
 void D3DGraphics::CleanupMapdata()
 {
 	//テクスチャを開放
@@ -968,7 +968,7 @@ void D3DGraphics::CleanupMapdata()
 	blockdata = NULL;
 }
 
-//! モデルファイルを描画
+//! @brief モデルファイルを描画
 //! @param id_model モデル認識番号
 //! @param id_texture テクスチャ認識番号
 void D3DGraphics::RenderModel(int id_model, int id_texture)
@@ -993,7 +993,7 @@ void D3DGraphics::RenderModel(int id_model, int id_texture)
 	}
 }
 
-//! 板を描画
+//! @brief 板を描画
 //! @param id_texture テクスチャ認識番号
 //! @param alpha 透明度　（0.0～1.0　0.0：完全透明）
 void D3DGraphics::RenderBoard(int id_texture, float alpha)
@@ -1035,7 +1035,7 @@ void D3DGraphics::RenderBoard(int id_texture, float alpha)
 	pd3dDevice->SetTextureStageState(0, D3DTSS_ALPHAARG1, D3DTA_TEXTURE);
 }
 
-//! 画面の明るさを設定
+//! @brief 画面の明るさを設定
 //! @param Width 幅
 //! @param Height 高さ
 //! @param Brightness 画面の明るさ　（0 で不変、1 以上で明るさの度合い）
@@ -1049,7 +1049,7 @@ void D3DGraphics::ScreenBrightness(int Width, int Height, int Brightness)
 	Draw2DBox(0, 0, Width, Height, D3DCOLOR_COLORVALUE(1.0f,1.0f,1.0f,alpha));
 }
 
-//! 【デバック用】中心線描画
+//! @brief 【デバック用】中心線描画
 void D3DGraphics::Centerline()
 {
 	ResetWorldTransform();
@@ -1058,7 +1058,7 @@ void D3DGraphics::Centerline()
 	Drawline(0.0f, 0.0f, 100.0f, 0.0f, 0.0f, -100.0f);
 }
 
-//! 【デバック用】緑線描画
+//! @brief 【デバック用】緑線描画
 void D3DGraphics::Drawline(float x1, float y1, float z1, float x2, float y2, float z2)
 {
 	VERTEXTXTA mv[2];
@@ -1075,14 +1075,14 @@ void D3DGraphics::Drawline(float x1, float y1, float z1, float x2, float y2, flo
 	pd3dDevice->DrawPrimitiveUP(D3DPT_LINELIST, 1, mv, sizeof(VERTEXTXTA));
 }
 
-//! 2D システムフォントによるテキスト描画を開始
+//! @brief 2D システムフォントによるテキスト描画を開始
 //! @attention DirectXの ID3DXSprite を初期化しています。
 void D3DGraphics::Start2DMSFontTextRender()
 {
 	ptextsprite->Begin(D3DXSPRITE_ALPHABLEND);
 }
 
-//! 文字を描画（システムフォント使用）
+//! @brief 文字を描画（システムフォント使用）
 //! @param x x座標
 //! @param y y座標
 //! @param str 文字列　（改行コード：可）
@@ -1111,7 +1111,7 @@ void D3DGraphics::Draw2DMSFontText(int x, int y, char *str, int color)
 	End2DMSFontTextRender();
 }
 
-//! 文字を中央揃えで描画（システムフォント使用）
+//! @brief 文字を中央揃えで描画（システムフォント使用）
 //! @param x x座標
 //! @param y y座標
 //! @param w 横の大きさ
@@ -1142,14 +1142,14 @@ void D3DGraphics::Draw2DMSFontTextCenter(int x, int y, int w, int h, char *str, 
 	End2DMSFontTextRender();
 }
 
-//! 2D システムフォントによるテキスト描画を終了
+//! @brief 2D システムフォントによるテキスト描画を終了
 //! @attention DirectXの ID3DXSprite を解放しています。
 void D3DGraphics::End2DMSFontTextRender()
 {
 	ptextsprite->End();
 }
 
-//! 2D描画用設定
+//! @brief 2D描画用設定
 void D3DGraphics::Start2DRender()
 {
 	pd3dDevice->SetTextureStageState(0, D3DTSS_ALPHAOP, D3DTOP_MODULATE);
@@ -1160,7 +1160,7 @@ void D3DGraphics::Start2DRender()
 	pd3dDevice->SetRenderState(D3DRS_ZFUNC, D3DCMP_ALWAYS);
 }
 
-//! 文字を描画（テクスチャフォント使用）
+//! @brief 文字を描画（テクスチャフォント使用）
 //! @param x x座標
 //! @param y y座標
 //! @param str 文字列　（改行コード：<b>不可</b>）
@@ -1233,7 +1233,7 @@ void D3DGraphics::Draw2DTextureFontText(int x, int y, char *str, int color, int 
 	End2DRender();
 }
 
-//! 線を描画
+//! @brief 線を描画
 //! @param x1 始点の x座標
 //! @param y1 始点の y座標
 //! @param x2 終点の x座標
@@ -1272,7 +1272,7 @@ void D3DGraphics::Draw2DLine(int x1, int y1, int x2, int y2, int color)
 	End2DRender();
 }
 
-//! 四角形を描画
+//! @brief 四角形を描画
 //! @param x1 左上の x座標
 //! @param y1 左上の y座標
 //! @param x2 右下の x座標
@@ -1315,7 +1315,7 @@ void D3DGraphics::Draw2DBox(int x1, int y1, int x2, int y2, int color)
 	End2DRender();
 }
 
-//! 画像を描画
+//! @brief 画像を描画
 //! @param x x座標
 //! @param y y座標
 //! @param id テクスチャ認識番号
@@ -1367,7 +1367,7 @@ void D3DGraphics::Draw2DTexture(int x, int y, int id, int width, int height, flo
 	End2DRender();
 }
 
-//! 2D描画用設定を解除
+//! @brief 2D描画用設定を解除
 void D3DGraphics::End2DRender()
 {
 	pd3dDevice->SetTextureStageState(0, D3DTSS_ALPHAOP, D3DTOP_SELECTARG1);
@@ -1377,7 +1377,7 @@ void D3DGraphics::End2DRender()
 	pd3dDevice->SetRenderState(D3DRS_ZFUNC, D3DCMP_LESSEQUAL);
 }
 
-//! 画面のスクリーンショットを保存
+//! @brief 画面のスクリーンショットを保存
 //! @param filename ファイル名
 //! @return 成功：true　失敗：false
 bool D3DGraphics::SaveScreenShot(char* filename)

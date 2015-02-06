@@ -31,7 +31,7 @@
 
 #include "object.h"
 
-//! コンストラクタ
+//! @brief コンストラクタ
 object::object(class ParameterInfo *in_Param, float x, float y, float z, float rx, float size, bool flag)
 {
 	Param = in_Param;
@@ -47,18 +47,18 @@ object::object(class ParameterInfo *in_Param, float x, float y, float z, float r
 	id_texture = -1;
 }
 
-//! ディストラクタ
+//! @brief ディストラクタ
 object::~object()
 {}
 
-//! 設定値を管理するクラスを登録
+//! @brief 設定値を管理するクラスを登録
 //! @attention 各関数を使用する前に実行すること。
 void object::SetParameterInfoClass(class ParameterInfo *in_Param)
 {
 	Param = in_Param;
 }
 
-//! 座標と角度を設定
+//! @brief 座標と角度を設定
 //! @param x X座標
 //! @param y Y座標
 //! @param z Z座標
@@ -71,7 +71,7 @@ void object::SetPosData(float x, float y, float z, float rx)
 	rotation_x = rx;
 }
 
-//! 座標と角度を取得
+//! @brief 座標と角度を取得
 //! @param x X座標を受け取るポインタ（NULL可）
 //! @param y Y座標を受け取るポインタ（NULL可）
 //! @param z Z座標を受け取るポインタ（NULL可）
@@ -84,21 +84,21 @@ void object::GetPosData(float *x, float *y, float *z, float *rx)
 	if( rx != NULL ){ *rx = rotation_x; }
 }
 
-//! 描画フラグを設定
+//! @brief 描画フラグを設定
 //! @param flag 設定するフラグ
 void object::SetDrawFlag(bool flag)
 {
 	RenderFlag = flag;
 }
 
-//! 描画フラグを取得
+//! @brief 描画フラグを取得
 //! @return 現在設定されているフラグ
 bool object::GetDrawFlag()
 {
 	return RenderFlag;
 }
 
-//! モデルデータを設定
+//! @brief モデルデータを設定
 //! @param id モデル認識番号
 //! @param size 表示倍率
 void object::SetModel(int id, float size)
@@ -107,20 +107,20 @@ void object::SetModel(int id, float size)
 	model_size = size;
 }
 
-//! テクスチャを設定
+//! @brief テクスチャを設定
 //! @param id テクスチャ認識番号
 void object::SetTexture(int id)
 {
 	id_texture = id;
 }
 
-//! 計算を実行（自由落下など）
+//! @brief 計算を実行（自由落下など）
 int object::RunFrame()
 {
 	return 0;
 }
 
-//! 描画
+//! @brief 描画
 //! @param d3dg D3DGraphicsのポインタ
 void object::Render(D3DGraphics *d3dg)
 {
@@ -131,7 +131,7 @@ void object::Render(D3DGraphics *d3dg)
 	d3dg->RenderModel(id_model, id_texture);
 }
 
-//! コンストラクタ
+//! @brief コンストラクタ
 human::human(class ParameterInfo *in_Param, float x, float y, float z, float rx, int id_param, int dataid, signed char p4, int team, bool flag)
 {
 	//HumanParameter data;
@@ -196,11 +196,11 @@ human::human(class ParameterInfo *in_Param, float x, float y, float z, float rx,
 	ReactionGunsightErrorRange = 0;
 }
 
-//! ディストラクタ
+//! @brief ディストラクタ
 human::~human()
 {}
 
-//! 設定値を設定
+//! @brief 設定値を設定
 //! @param id_param 人の種類番号
 //! @param dataid ポイントのデータ番号
 //! @param p4 第4パラメータ
@@ -247,7 +247,7 @@ void human::SetParamData(int id_param, int dataid, signed char p4, int team, boo
 	}
 }
 
-//! 設定値を取得
+//! @brief 設定値を取得
 //! @param id_param 人の種類番号を受け取るポインタ（NULL可）
 //! @param dataid ポイントのデータ番号を受け取るポインタ（NULL可）
 //! @param p4 第4パラメータを受け取るポインタ（NULL可）
@@ -260,14 +260,14 @@ void human::GetParamData(int *id_param, int *dataid, signed char *p4, int *team)
 	if( team != NULL ){ *team = teamid; }
 }
 
-//! HPを取得
+//! @brief HPを取得
 //! @return HP
 int human::GetHP()
 {
 	return hp;
 }
 
-//! HPを設定
+//! @brief HPを設定
 //! @param in_hp 新たに設定するHP
 //! @return 成功：true　失敗：false
 //! @attention HPが1以上の人に対して実行しないと失敗します。
@@ -281,7 +281,7 @@ bool human::SetHP(int in_hp)
 }
 
 
-//! 死体かどうか判定
+//! @brief 死体かどうか判定
 //! @return 死体：true　死体でない：false
 //! @warning 完全に静止した状態を「死体」と判定します。倒れている最中の人は対象に含まれないため、hp <= 0 が全て死体と判定されるとは限りません。
 bool human::GetDeadFlag()
@@ -295,14 +295,14 @@ bool human::GetDeadFlag()
 #endif
 }
 
-//! チーム番号を設定（上書き）
+//! @brief チーム番号を設定（上書き）
 //! @param id 新しいチーム番号
 void human::SetTeamID(int id)
 {
 	teamid = id;
 }
 
-//! 無敵フラグを取得
+//! @brief 無敵フラグを取得
 //! @return true：無敵　false：通常
 //! @attention 無敵状態の場合、銃弾・手榴弾の爆発・落下　によるダメージを一切受けません。
 bool human::GetInvincibleFlag()
@@ -310,7 +310,7 @@ bool human::GetInvincibleFlag()
 	return Invincible;
 }
 
-//! 無敵フラグを設定
+//! @brief 無敵フラグを設定
 //! @param flag true：無敵　false：通常
 //! @attention 無敵状態の場合、銃弾・手榴弾の爆発・落下　によるダメージを一切受けません。
 void human::SetInvincibleFlag(bool flag)
@@ -318,7 +318,7 @@ void human::SetInvincibleFlag(bool flag)
 	Invincible = flag;
 }
 
-//! 前処理の移動量を取得
+//! @brief 前処理の移動量を取得
 //! @param *x X軸移動量を取得するポインタ（NULL可）
 //! @param *y Y軸移動量を取得するポインタ（NULL可）
 //! @param *z Z軸移動量を取得するポインタ（NULL可）
@@ -329,7 +329,7 @@ void human::GetMovePos(float *x, float *y, float *z)
 	if( z != NULL ){ *z = move_z; }
 }
 
-//! モデルデータを設定
+//! @brief モデルデータを設定
 //! @param upmodel 上半身のモデル
 //! @param armmodel[] 腕のモデルの配列（配列数：TOTAL_ARMMODE）
 //! @param legmodel 足（静止状態）のモデル
@@ -350,7 +350,7 @@ void human::SetModel(int upmodel, int armmodel[], int legmodel, int walkmodel[],
 	}
 }
 
-//! 武器を設定
+//! @brief 武器を設定
 //! @param in_weapon[] 設定するweaponクラスのポインタ配列
 //! @warning 通常は PickupWeapon()関数 を使用すること
 void human::SetWeapon(class weapon *in_weapon[])
@@ -368,7 +368,7 @@ void human::SetWeapon(class weapon *in_weapon[])
 	}
 }
 
-//! 武器を拾う
+//! @brief 武器を拾う
 //! @param in_weapon[] 設定するweaponクラスのポインタ
 //! @return 成功：1　失敗：0
 //! @attention 人の種類が ゾンビ の場合、この関数は失敗します。
@@ -399,7 +399,7 @@ int human::PickupWeapon(class weapon *in_weapon)
 	return 0;
 }
 
-//! 武器を切り替える（持ち替える）
+//! @brief 武器を切り替える（持ち替える）
 //! @param id 持ち替える武器　（-1 で次の武器）
 //! @attention ゲーム上から直接呼び出すことは避け、ObjectManagerクラスから呼び出してください。
 void human::ChangeWeapon(int id)
@@ -441,14 +441,14 @@ void human::ChangeWeapon(int id)
 	selectweaponcnt = 10;
 }
 
-//! 武器の切り替えカウントを取得
+//! @brief 武器の切り替えカウントを取得
 //! @return カウント数　（1以上で切り替え中）
 int human::GetChangeWeaponCnt()
 {
 	return selectweaponcnt;
 }
 
-//! 武器を取得
+//! @brief 武器を取得
 //! @param out_selectweapon 選択されている武器　（0 ～ [TOTAL_HAVEWEAPON]-1）
 //! @param out_weapon 受け取るweaponクラスのポインタ配列　（配列数：TOTAL_HAVEWEAPON）
 void human::GetWeapon(int *out_selectweapon, class weapon *out_weapon[])
@@ -459,7 +459,7 @@ void human::GetWeapon(int *out_selectweapon, class weapon *out_weapon[])
 	}
 }
 
-//! 現在装備している武器の種類番号を取得
+//! @brief 現在装備している武器の種類番号を取得
 //! @return 武器の種類番号（0 ～ TOTAL_PARAMETERINFO_WEAPON -1）
 //! @attention 現在手に持っている武器の種類番号です。　GetWeapon()関数 を用いて調べるのと同等です。
 int human::GetMainWeaponTypeNO()
@@ -473,7 +473,7 @@ int human::GetMainWeaponTypeNO()
 	return id_param;
 }
 
-//! 連射設定を取得
+//! @brief 連射設定を取得
 //! @return 連射可能：true　連射不可：false
 bool human::GetWeaponBlazingmode()
 {
@@ -491,7 +491,7 @@ bool human::GetWeaponBlazingmode()
 	return data.blazingmode;
 }
 
-//! 発砲処理
+//! @brief 発砲処理
 //! @param weapon_paramid 発砲した武器の番号を受け取るポインタ
 //! @param GunsightErrorRange 発砲した際の照準誤差を受け取るポインタ
 //! @return 成功：1　失敗：0
@@ -557,7 +557,7 @@ bool human::ShotWeapon(int *weapon_paramid, int *GunsightErrorRange)
 	return true;
 }
 
-//! リロード
+//! @brief リロード
 //! @return 成功：true　失敗：false
 //! @attention ゲーム上から直接呼び出すことは避け、ObjectManagerクラスから呼び出してください。
 bool human::ReloadWeapon()
@@ -580,7 +580,7 @@ bool human::ReloadWeapon()
 	return false;
 }
 
-//! 武器を捨てる
+//! @brief 武器を捨てる
 //! @return 成功：true　失敗：false
 //! @attention ゲーム上から直接呼び出すことは避け、ObjectManagerクラスから呼び出してください。
 bool human::DumpWeapon()
@@ -606,7 +606,7 @@ bool human::DumpWeapon()
 	return false;
 }
 
-//! 武器のショットモード切り替え
+//! @brief 武器のショットモード切り替え
 //! @return 成功：0　失敗：1
 //! @attention ゲーム上から直接呼び出すことは避け、ObjectManagerクラスから呼び出してください。
 int human::ChangeShotMode()
@@ -633,43 +633,43 @@ int human::ChangeShotMode()
 	return 0;
 }
 
-//! 前進（走り）を設定
+//! @brief 前進（走り）を設定
 //! @attention ゲーム上から直接呼び出すことは避け、ObjectManagerクラスから呼び出してください。
 void human::SetMoveForward()
 {
 	SetFlag(MoveFlag, MOVEFLAG_FORWARD);
 }
 
-//! 後退を設定
+//! @brief 後退を設定
 //! @attention ゲーム上から直接呼び出すことは避け、ObjectManagerクラスから呼び出してください。
 void human::SetMoveBack()
 {
 	SetFlag(MoveFlag, MOVEFLAG_BACK);
 }
 
-//! 左走りを設定
+//! @brief 左走りを設定
 //! @attention ゲーム上から直接呼び出すことは避け、ObjectManagerクラスから呼び出してください。
 void human::SetMoveLeft()
 {
 	SetFlag(MoveFlag, MOVEFLAG_LEFT);
 }
 
-//! 右走りを設定
+//! @brief 右走りを設定
 //! @attention ゲーム上から直接呼び出すことは避け、ObjectManagerクラスから呼び出してください。
 void human::SetMoveRight()
 {
 	SetFlag(MoveFlag, MOVEFLAG_RIGHT);
 }
 
-//! 歩きを設定
+//! @brief 歩きを設定
 //! @attention ゲーム上から直接呼び出すことは避け、ObjectManagerクラスから呼び出してください。
 void human::SetMoveWalk()
 {
 	SetFlag(MoveFlag, MOVEFLAG_WALK);
 }
 
-//! 人の移動モードを取得
-//　@param nowdata 現在の値を取得：true　前フレームの値を使用：false
+//! @brief 人の移動モードを取得
+//! @param nowdata 現在の値を取得：true　前フレームの値を使用：false
 //! @return 歩き：1　走り：2　移動してない：0
 int human::GetMovemode(bool nowdata)
 {
@@ -702,7 +702,7 @@ int human::GetMovemode(bool nowdata)
 	return 0;
 }
 
-//! スコープを設定
+//! @brief スコープを設定
 //! @return 成功：true　失敗：false
 bool human::SetEnableScope()
 {
@@ -723,19 +723,19 @@ bool human::SetEnableScope()
 	return true;
 }
 
-//! スコープを解除
+//! @brief スコープを解除
 void human::SetDisableScope()
 {
 	scopemode = 0;
 }
 
-//! スコープ設定を取得
+//! @brief スコープ設定を取得
 int human::GetScopeMode()
 {
 	return scopemode;
 }
 
-//! 横軸と縦軸の向きを取得
+//! @brief 横軸と縦軸の向きを取得
 //! @param rx 横軸を取得するポインタ
 //! @param ry 縦軸を取得するポインタ
 void human::GetRxRy(float *rx, float *ry)
@@ -744,7 +744,7 @@ void human::GetRxRy(float *rx, float *ry)
 	*ry = armrotation_y;
 }
 
-//! 横軸と縦軸の向きを設定
+//! @brief 横軸と縦軸の向きを設定
 //! @param rx 設定する横軸
 //! @param ry 設定する縦軸
 void human::SetRxRy(float rx, float ry)
@@ -753,7 +753,7 @@ void human::SetRxRy(float rx, float ry)
 	armrotation_y = ry;
 }
 
-//! ジャンプ
+//! @brief ジャンプ
 //! @return 成功：0　失敗：1
 //! @attention ゲーム上から直接呼び出すことは避け、ObjectManagerクラスから呼び出してください。
 int human::Jump()
@@ -768,7 +768,7 @@ int human::Jump()
 	return 1;
 }
 
-//! 押しだす・力を加える
+//! @brief 押しだす・力を加える
 //! @param rx 横軸
 //! @param ry 縦軸
 //! @param speed 速度
@@ -779,7 +779,7 @@ void human::AddPosOrder(float rx, float ry, float speed)
 	move_z += sin(rx) * cos(ry) * speed;
 }
 
-//! 弾が 頭 にヒット
+//! @brief 弾が 頭 にヒット
 //! @param attacks 弾の攻撃力
 void human::HitBulletHead(int attacks)
 {
@@ -789,7 +789,7 @@ void human::HitBulletHead(int attacks)
 	HitFlag = true;
 }
 
-//! 弾が 上半身 にヒット
+//! @brief 弾が 上半身 にヒット
 //! @param attacks 弾の攻撃力
 void human::HitBulletUp(int attacks)
 {
@@ -799,7 +799,7 @@ void human::HitBulletUp(int attacks)
 	HitFlag = true;
 }
 
-//! 弾が 下半身 にヒット
+//! @brief 弾が 下半身 にヒット
 //! @param attacks 弾の攻撃力
 void human::HitBulletLeg(int attacks)
 {
@@ -809,7 +809,7 @@ void human::HitBulletLeg(int attacks)
 	HitFlag = true;
 }
 
-//! ゾンビの攻撃がヒット
+//! @brief ゾンビの攻撃がヒット
 void human::HitZombieAttack()
 {
 	if( Invincible == false ){
@@ -818,7 +818,7 @@ void human::HitZombieAttack()
 	HitFlag = true;
 }
 
-//! 手榴弾の爆風がヒット
+//! @brief 手榴弾の爆風がヒット
 //! @param attacks 爆風の攻撃力
 //! @attention 距離による計算を事前に済ませてください。
 void human::HitGrenadeExplosion(int attacks)
@@ -829,7 +829,7 @@ void human::HitGrenadeExplosion(int attacks)
 	HitFlag = true;
 }
 
-//! 被弾したかチェックする
+//! @brief 被弾したかチェックする
 //! @return 被弾した：true　被弾してない：false
 //! @attention 実行すると、フラグは false に初期化されます。
 bool human::CheckHit()
@@ -839,14 +839,14 @@ bool human::CheckHit()
 	return returnflag;
 }
 
-//! 合計移動量を取得
+//! @brief 合計移動量を取得
 //! @return 合計移動量
 float human::GetTotalMove()
 {
 	return totalmove;
 }
 
-//! 照準の状態誤差の処理
+//! @brief 照準の状態誤差の処理
 //!	@attention ControlProcess()より前で処理すること
 void human::GunsightErrorRange()
 {
@@ -893,7 +893,7 @@ void human::GunsightErrorRange()
 	}
 }
 
-//! 死亡判定と倒れる処理
+//! @brief 死亡判定と倒れる処理
 //! @return 倒れ終わった：3　倒れている最中：2　倒れ始める：1　何もしない：0
 int human::CheckAndProcessDead(class Collision *CollD)
 {
@@ -1124,7 +1124,7 @@ int human::CheckAndProcessDead(class Collision *CollD)
 #endif
 }
 
-//! 操作による移動計算
+//! @brief 操作による移動計算
 //! @attention 実行すると、各キーフラグは false に初期化されます。
 void human::ControlProcess()
 {
@@ -1196,7 +1196,7 @@ void human::ControlProcess()
 	MoveFlag = 0x00;
 }
 
-//! 特定の方向（ベクトル）に対して、ブロックの面が表面か裏面か調べる
+//! @brief 特定の方向（ベクトル）に対して、ブロックの面が表面か裏面か調べる
 //! @param inblockdata BlockDataInterfaceクラスのポインタ
 //! @param bid 判定するブロック番号
 //! @param fid 判定する面番号
@@ -1219,7 +1219,7 @@ bool human::CheckBlockAngle(class BlockDataInterface *inblockdata, int bid, int 
 	return false;
 }
 
-//! マップとの当たり判定
+//! @brief マップとの当たり判定
 //! @param CollD Collisionクラスのポインタ
 //! @param inblockdata BlockDataInterfaceクラスのポインタ
 //! @param FallDist Y軸の移動量を取得するポインタ
@@ -1435,7 +1435,7 @@ bool human::MapCollisionDetection(class Collision *CollD, class BlockDataInterfa
 	return inside;
 }
 
-//! 計算を実行（当たり判定）
+//! @brief 計算を実行（当たり判定）
 //! @param CollD Collisionのポインタ
 //! @param inblockdata BlockDataInterfaceのポインタ
 //! @param F5mode 上昇機能（F5裏技）のフラグ　（有効：true　無効：false）
@@ -1541,13 +1541,13 @@ int human::RunFrame(class Collision *CollD, class BlockDataInterface *inblockdat
 	return 0;
 }
 
-//! 標準誤差を取得
+//! @brief 標準誤差を取得
 int human::GetGunsightErrorRange()
 {
 	return StateGunsightErrorRange + ReactionGunsightErrorRange;
 }
 
-//! 描画
+//! @brief 描画
 //! @param d3dg D3DGraphicsのポインタ
 //! @param Resource ResourceManagerのポインタ
 //! @param DrawArm 腕と武器のみ描画する
@@ -1645,7 +1645,7 @@ void human::Render(class D3DGraphics *d3dg, class ResourceManager *Resource, boo
 	}
 }
 
-//! コンストラクタ
+//! @brief コンストラクタ
 weapon::weapon(class ParameterInfo *in_Param, float x, float y, float z, float rx, int id_param, int nbs, bool flag)
 {
 	Param = in_Param;
@@ -1677,11 +1677,11 @@ weapon::weapon(class ParameterInfo *in_Param, float x, float y, float z, float r
 	id_texture = -1;
 }
 
-//! ディストラクタ
+//! @brief ディストラクタ
 weapon::~weapon()
 {}
 
-//! 座標と角度を設定
+//! @brief 座標と角度を設定
 //! @param x X座標
 //! @param y Y座標
 //! @param z Z座標
@@ -1697,7 +1697,7 @@ void weapon::SetPosData(float x, float y, float z, float rx)
 	rotation_x = rx;
 }
 
-//! 設定値を設定
+//! @brief 設定値を設定
 //! @param id_param 武器の種類番号
 //! @param lnbs 装弾数
 //! @param nbs 合計弾数
@@ -1716,7 +1716,7 @@ void weapon::SetParamData(int id_param, int lnbs, int nbs, bool init)
 	}
 }
 
-//! 設定値を取得
+//! @brief 設定値を取得
 //! @param id_param 武器の種類番号を受け取るポインタ（NULL可）
 //! @param lnbs 装弾数を受け取るポインタ（NULL可）
 //! @param nbs 合計弾数を受け取るポインタ（NULL可）
@@ -1727,14 +1727,14 @@ void weapon::GetParamData(int *id_param, int *lnbs, int *nbs)
 	if( nbs != NULL ){ *nbs = bullets; }
 }
 
-//! 武器の使用状況の取得
+//! @brief 武器の使用状況の取得
 //! @return 使用中：true　未使用：false
 bool weapon::GetUsingFlag()
 {
 	return usingflag;
 }
 
-//! 武器を拾う
+//! @brief 武器を拾う
 //! @return 成功：0　失敗：1
 int weapon::Pickup()
 {
@@ -1743,7 +1743,7 @@ int weapon::Pickup()
 	return 0;
 }
 
-//! 武器を捨てる
+//! @brief 武器を捨てる
 //! @param x X座標
 //! @param y Y座標
 //! @param z Z座標
@@ -1765,7 +1765,7 @@ void weapon::Dropoff(float x, float y, float z, float rx, float speed)
 	motionflag = true;
 }
 
-//! 発砲
+//! @brief 発砲
 //! @return 成功：0　失敗：1
 //! @attention 連射間隔も考慮されます。
 //! @attention 関数が失敗するのは、いずれかの条件です。　「連射間隔に満たない」「リロード実行中」「弾がない」「無効な武器の種類が設定されている」
@@ -1812,7 +1812,7 @@ int weapon::Shot()
 	return 0;
 }
 
-//! リロードを開始
+//! @brief リロードを開始
 //! @return 成功：0　失敗：1
 //! @attention リロード時間も考慮されます。
 //! @attention 関数が失敗するのは、いずれかの条件です。　「リロード実行中」「弾がない」「無効な武器の種類が設定されている」
@@ -1834,7 +1834,7 @@ int weapon::StartReload()
 	return 0;
 }
 
-//! リロードを実行
+//! @brief リロードを実行
 //! @attention StartReload()関数と異なり、瞬時に弾を補充します。リロード時間は考慮されません。
 //! @attention リロード時間を考慮する場合、StartReload()関数を呼び出してください。この関数は自動的に実行されます。
 int weapon::RunReload()
@@ -1864,14 +1864,14 @@ int weapon::RunReload()
 	return 0;
 }
 
-//! リロードカウントを取得
+//! @brief リロードカウントを取得
 //! @return カウント数　（リロード中：1以上）
 int weapon::GetReloadCnt()
 {
 	return reloadcnt;
 }
 
-//! 武器の種類・装弾数の変更
+//! @brief 武器の種類・装弾数の変更
 //! @param Resource ResourceManagerのポインタ
 //! @param id_param 種類番号
 //! @param lnbs 装弾数
@@ -1906,7 +1906,7 @@ bool weapon::ResetWeaponParam(class ResourceManager *Resource, int id_param, int
 	return 1;
 }
 
-//! 計算を実行（自由落下）
+//! @brief 計算を実行（自由落下）
 //! @param CollD Collisionのポインタ
 int weapon::RunFrame(class Collision *CollD)
 {
@@ -1987,7 +1987,7 @@ int weapon::RunFrame(class Collision *CollD)
 	return 0;
 }
 
-//! 描画
+//! @brief 描画
 //! @param d3dg D3DGraphicsのポインタ
 void weapon::Render(class D3DGraphics *d3dg)
 {
@@ -2003,7 +2003,7 @@ void weapon::Render(class D3DGraphics *d3dg)
 	d3dg->RenderModel(id_model, id_texture);
 }
 
-//! コンストラクタ
+//! @brief コンストラクタ
 smallobject::smallobject(class ParameterInfo *in_Param, class MIFInterface *in_MIFdata, float x, float y, float z, float rx, int id_param, signed char p4, bool flag)
 {
 	Param = in_Param;
@@ -2036,18 +2036,18 @@ smallobject::smallobject(class ParameterInfo *in_Param, class MIFInterface *in_M
 	id_texture = -1;
 }
 
-//! ディストラクタ
+//! @brief ディストラクタ
 smallobject::~smallobject()
 {}
 
-//! MIFデータを管理するクラスを設定
+//! @brief MIFデータを管理するクラスを設定
 //! @param in_MIFdata MIFInterfaceクラスのポインタ
 void smallobject::SetMIFInterfaceClass(class MIFInterface *in_MIFdata)
 {
 	MIFdata = in_MIFdata;
 }
 
-//! 設定値を設定
+//! @brief 設定値を設定
 //! @param id_param 小物の種類番号
 //! @param p4 第4パラメータ
 //! @param init オブジェクトを初期化
@@ -2081,7 +2081,7 @@ void smallobject::SetParamData(int id_param, signed char p4, bool init)
 	}
 }
 
-//! 設定値を取得
+//! @brief 設定値を取得
 //! @param id_param 小物の種類番号を受け取るポインタ（NULL可）
 //! @param p4 第4パラメータを受け取るポインタ（NULL可）
 void smallobject::GetParamData(int *id_param, signed char *p4)
@@ -2090,14 +2090,14 @@ void smallobject::GetParamData(int *id_param, signed char *p4)
 	if( p4 != NULL ){ *p4 = point_p4; }
 }
 
-//! 体力を取得
-// @return 体力値
+//! @brief 体力を取得
+//! @return 体力値
 int smallobject::GetHP()
 {
 	return hp;
 }
 
-//! ブロックの上に移動
+//! @brief ブロックの上に移動
 //! @param CollD Collisionのポインタ
 //! @return 元の座標からの移動量（0で移動なし）
 float smallobject::CollisionMap(class Collision *CollD)
@@ -2131,7 +2131,7 @@ float smallobject::CollisionMap(class Collision *CollD)
 	return 0.0f;
 }
 
-//! 弾がヒットした
+//! @brief 弾がヒットした
 //! @param attacks 弾の攻撃力
 void smallobject::HitBullet(int attacks)
 {
@@ -2141,7 +2141,7 @@ void smallobject::HitBullet(int attacks)
 	}
 }
 
-//! 手榴弾の爆風がヒットした
+//! @brief 手榴弾の爆風がヒットした
 //! @param attacks 爆風の攻撃力
 //! @attention 距離による計算を事前に済ませてください。
 void smallobject::HitGrenadeExplosion(int attacks)
@@ -2152,7 +2152,7 @@ void smallobject::HitGrenadeExplosion(int attacks)
 	}
 }
 
-//! 小物を破壊する
+//! @brief 小物を破壊する
 //! @attention 通常は HitBullet()関数 および GrenadeExplosion()関数 から自動的に実行されるため、直接呼び出す必要はありません。
 void smallobject::Destruction()
 {
@@ -2174,7 +2174,7 @@ void smallobject::Destruction()
 	add_ry = (float)M_PI/180 * GetRand(20);
 }
 
-//! 計算を実行（破壊時の移動など）
+//! @brief 計算を実行（破壊時の移動など）
 int smallobject::RunFrame()
 {
 	//描画されていないか、体力が残っていなければ処理しない。
@@ -2205,7 +2205,7 @@ int smallobject::RunFrame()
 	return 1;
 }
 
-//! 描画
+//! @brief 描画
 //! @param d3dg D3DGraphicsのポインタ
 void smallobject::Render(D3DGraphics *d3dg)
 {
@@ -2220,7 +2220,7 @@ void smallobject::Render(D3DGraphics *d3dg)
 	d3dg->RenderModel(id_model, id_texture);
 }
 
-//! コンストラクタ
+//! @brief コンストラクタ
 bullet::bullet(int modelid, int textureid)
 {
 	model_size = 1.0f;
@@ -2229,11 +2229,11 @@ bullet::bullet(int modelid, int textureid)
 	RenderFlag = false;
 }
 
-//! ディストラクタ
+//! @brief ディストラクタ
 bullet::~bullet()
 {}
 
-//! 座標と角度を設定
+//! @brief 座標と角度を設定
 //! @param x X座標
 //! @param y Y座標
 //! @param z Z座標
@@ -2248,7 +2248,7 @@ void bullet::SetPosData(float x, float y, float z, float rx, float ry)
 	rotation_y = ry;
 }
 
-//! 設定値を設定
+//! @brief 設定値を設定
 //! @param _attacks 攻撃力
 //! @param _penetration 貫通力
 //! @param _speed 弾速
@@ -2268,7 +2268,7 @@ void bullet::SetParamData(int _attacks, int _penetration, int _speed, int _teami
 	}
 }
 
-//! 座標と角度を取得
+//! @brief 座標と角度を取得
 //! @param x X座標を受け取るポインタ（NULL可）
 //! @param y Y座標を受け取るポインタ（NULL可）
 //! @param z Z座標を受け取るポインタ（NULL可）
@@ -2283,7 +2283,7 @@ void bullet::GetPosData(float *x, float *y, float *z, float *rx, float *ry)
 	if( ry != NULL ){ *ry = rotation_y; }
 }
 
-//! 設定値を取得
+//! @brief 設定値を取得
 //! @param _attacks 攻撃力を受け取るポインタ（NULL可）
 //! @param _penetration 貫通力を受け取るポインタ（NULL可）
 //! @param _speed 弾速を受け取るポインタ（NULL可）
@@ -2298,7 +2298,7 @@ void bullet::GetParamData(int *_attacks, int *_penetration, int *_speed, int *_t
 	if( _humanid != NULL ){ *_humanid = humanid; }
 }
 
-//! 計算を実行（弾の進行・時間消滅）
+//! @brief 計算を実行（弾の進行・時間消滅）
 int bullet::RunFrame()
 {
 	//初期化されていなければ処理しない
@@ -2319,7 +2319,7 @@ int bullet::RunFrame()
 	return 0;
 }
 
-//! 描画
+//! @brief 描画
 //! @param d3dg D3DGraphicsのポインタ
 void bullet::Render(class D3DGraphics *d3dg)
 {
@@ -2338,7 +2338,7 @@ void bullet::Render(class D3DGraphics *d3dg)
 	d3dg->RenderModel(id_model, id_texture);
 }
 
-//! コンストラクタ
+//! @brief コンストラクタ
 grenade::grenade(int modelid, int textureid) : bullet(modelid, textureid)
 {
 	if( Param != NULL ){
@@ -2349,11 +2349,11 @@ grenade::grenade(int modelid, int textureid) : bullet(modelid, textureid)
 	}
 }
 
-//! ディストラクタ
+//! @brief ディストラクタ
 grenade::~grenade()
 {}
 
-//! 座標と情報を設定
+//! @brief 座標と情報を設定
 //! @param speed 初速
 //! @param _humanid 人のデータ番号
 //! @param init オブジェクトを初期化
@@ -2370,14 +2370,14 @@ void grenade::SetParamData(float speed, int _humanid, bool init)
 	}
 }
 
-//! 速度を取得
+//! @brief 速度を取得
 //! @return 速度
 float grenade::GetSpeed()
 {
 	return sqrt(move_x*move_x + move_y*move_y + move_z*move_z);
 }
 
-//! 計算を実行（手榴弾の進行・爆発）
+//! @brief 計算を実行（手榴弾の進行・爆発）
 //! @return 爆発：2　バウンド・跳ね返り：1　それ以外：0
 int grenade::RunFrame(class Collision *CollD, class BlockDataInterface *inblockdata)
 {
@@ -2443,7 +2443,7 @@ int grenade::RunFrame(class Collision *CollD, class BlockDataInterface *inblockd
 	return 0;
 }
 
-//! 描画
+//! @brief 描画
 //! @param d3dg D3DGraphicsのポインタ
 void grenade::Render(class D3DGraphics *d3dg)
 {
@@ -2458,7 +2458,7 @@ void grenade::Render(class D3DGraphics *d3dg)
 	d3dg->RenderModel(id_model, id_texture);
 }
 
-//! コンストラクタ
+//! @brief コンストラクタ
 effect::effect(float x, float y, float z, float size, float rotation, int count, int texture, int settype)
 {
 	pos_x = x;
@@ -2481,11 +2481,11 @@ effect::effect(float x, float y, float z, float size, float rotation, int count,
 	alpha = 1.0f;
 }
 
-//! ディストラクタ
+//! @brief ディストラクタ
 effect::~effect()
 {}
 
-//! 設定値を設定
+//! @brief 設定値を設定
 //! @param size 表示倍率
 //! @param rotation 回転角度
 //! @param count 表示フレーム数
@@ -2508,7 +2508,7 @@ void effect::SetParamData(float size, float rotation, int count, int texture, in
 	}
 }
 
-//! 計算を実行（ビルボード化）
+//! @brief 計算を実行（ビルボード化）
 //! @param in_camera_rx カメラの横軸角度
 //! @param in_camera_ry カメラの縦軸角度
 //! @return 処理実行：1　描画最終フレーム：2　処理なし：0
@@ -2554,7 +2554,7 @@ int effect::RunFrame(float in_camera_rx, float in_camera_ry)
 	return 1;
 }
 
-//! 描画
+//! @brief 描画
 //! @param d3dg D3DGraphicsのポインタ
 void effect::Render(class D3DGraphics *d3dg)
 {

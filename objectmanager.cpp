@@ -31,7 +31,7 @@
 
 #include "objectmanager.h"
 
-//! コンストラクタ
+//! @brief コンストラクタ
 ObjectManager::ObjectManager()
 {
 	HumanIndex = new human[MAX_HUMAN];
@@ -57,7 +57,7 @@ ObjectManager::ObjectManager()
 	CollD = NULL;
 }
 
-//! ディストラクタ
+//! @brief ディストラクタ
 ObjectManager::~ObjectManager()
 {
 	Cleanup();
@@ -75,7 +75,7 @@ ObjectManager::~ObjectManager()
 	if( Human_ShotFlag != NULL ){ delete [] Human_ShotFlag; }
 }
 
-//! 参照するクラスを設定
+//! @brief 参照するクラスを設定
 //! @param in_GameParamInfo ゲーム設定データ管理クラス
 //! @param in_d3dg 描画処理クラス
 //! @param in_Resource リソース管理クラス
@@ -134,7 +134,7 @@ void ObjectManager::SetClass(ParameterInfo *in_GameParamInfo, D3DGraphics *in_d3
 	}
 }
 
-//! 人追加
+//! @brief 人追加
 //! @param data 人のポイントデータ　（pointdata構造体）
 //! @param infodata 参照する人情報のポイントデータ　（〃）
 //! @return 成功：データ番号（0以上）　失敗：-1
@@ -225,7 +225,7 @@ int ObjectManager::AddHumanIndex(pointdata data, pointdata infodata)
 	return Humanindexid;
 }
 
-//! 人追加（ゲーム中用）
+//! @brief 人追加（ゲーム中用）
 //! @param px X座標
 //! @param py Y座標
 //! @param pz Z座標
@@ -309,7 +309,7 @@ int ObjectManager::AddHumanIndex(float px, float py, float pz, float rx, int par
 	return Humanindexid;
 }
 
-//! 武器追加
+//! @brief 武器追加
 //! @param data 武器のポイントデータ　（pointdata構造体）
 //! @return 成功：データ番号（0以上）　失敗：-1
 int ObjectManager::AddWeaponIndex(pointdata data)
@@ -361,7 +361,7 @@ int ObjectManager::AddWeaponIndex(pointdata data)
 	return -1;
 }
 
-//! 仮想武器追加
+//! @brief 仮想武器追加
 //! @param WeaponID 武器の種類番号
 //! @param loadbullet 弾をロードする
 //! @return 成功：データ番号（0以上）　失敗：-1
@@ -401,7 +401,7 @@ int ObjectManager::AddVisualWeaponIndex(int WeaponID, bool loadbullet)
 	return -1;
 }
 
-//! 小物追加
+//! @brief 小物追加
 //! @param data 小物のポイントデータ　（pointdata構造体）
 //! @return 成功：データ番号（0以上）　失敗：-1
 int ObjectManager::AddSmallObjectIndex(pointdata data)
@@ -431,7 +431,7 @@ int ObjectManager::AddSmallObjectIndex(pointdata data)
 	return -1;
 }
 
-//! 小物追加（ゲーム中用）
+//! @brief 小物追加（ゲーム中用）
 //! @param px X座標
 //! @param py Y座標
 //! @param pz Z座標
@@ -466,7 +466,7 @@ int ObjectManager::AddSmallObjectIndex(float px, float py, float pz, float rx, i
 	return -1;
 }
 
-//! 出血させる
+//! @brief 出血させる
 //! @param x X座標
 //! @param y Y座標
 //! @param z Z座標
@@ -492,7 +492,7 @@ void ObjectManager::SetHumanBlood(float x, float y, float z)
 	}
 }
 
-//! 人同士の当たり判定
+//! @brief 人同士の当たり判定
 //! @param in_humanA 対象の人オブジェクトA
 //! @param in_humanB 対象の人オブジェクトB
 //! @return 当たっている：true　当たっていない：false
@@ -526,7 +526,7 @@ bool ObjectManager::CollideHuman(human *in_humanA, human *in_humanB)
 	return false;
 }
 
-//! 弾の当たり判定と処理
+//! @brief 弾の当たり判定と処理
 //! @param in_bullet 対象の弾オブジェクト
 //! @return 当たった：true　当たっていない：false
 //! @attention 判定を行う対象は「マップ」「人（頭・上半身・下半身）」「小物」です。
@@ -768,7 +768,7 @@ bool ObjectManager::CollideBullet(bullet *in_bullet)
 	return CollideFlag;
 }
 
-//! 弾がマップに当たった処理
+//! @brief 弾がマップに当たった処理
 //! @param x 着弾X座標
 //! @param y 着弾Y座標
 //! @param z 着弾Z座標
@@ -788,7 +788,7 @@ void ObjectManager::HitBulletMap(float x, float y, float z)
 	GameSound->HitMap(x, y, z);
 }
 
-//! 弾が人に当たった処理
+//! @brief 弾が人に当たった処理
 //! @param HitHuman_id 人の番号
 //! @param Hit_id 被弾箇所（頭：0　胴体：1　足：2）
 //! @param x 被弾X座標
@@ -823,7 +823,7 @@ void ObjectManager::HitBulletHuman(int HitHuman_id, int Hit_id, float x, float y
 	}
 }
 
-//! 弾が小物に当たった処理
+//! @brief 弾が小物に当たった処理
 //! @param HitSmallObject_id 小物の番号
 //! @param x 着弾X座標
 //! @param y 着弾Y座標
@@ -859,7 +859,7 @@ void ObjectManager::HitBulletSmallObject(int HitSmallObject_id, float x, float y
 	GameSound->HitSmallObject(x, y, z, id);
 }
 
-//! 手榴弾のダメージ判定と処理
+//! @brief 手榴弾のダメージ判定と処理
 //! @param in_grenade 対象の手榴弾オブジェクト
 //! @return 当たった：true　当たっていない：false
 //! @attention 判定を行う対象は「人」と「小物」です。
@@ -1046,7 +1046,7 @@ bool ObjectManager::GrenadeExplosion(grenade *in_grenade)
 	return returnflag;
 }
 
-//! 武器を拾う
+//! @brief 武器を拾う
 //! @param in_human 対象の人オブジェクト
 //! @param in_weapon 対象の武器オブジェクト
 void ObjectManager::PickupWeapon(human *in_human, weapon *in_weapon)
@@ -1080,7 +1080,7 @@ void ObjectManager::PickupWeapon(human *in_human, weapon *in_weapon)
 	}
 }
 
-//! オブジェクトを解放
+//! @brief オブジェクトを解放
 void ObjectManager::CleanupPointDataToObject()
 {
 	for(int i=0; i<MAX_HUMAN; i++){
@@ -1113,7 +1113,7 @@ void ObjectManager::CleanupPointDataToObject()
 	}
 }
 
-//! ポイントデータを元にオブジェクトを配置
+//! @brief ポイントデータを元にオブジェクトを配置
 void ObjectManager::LoadPointData()
 {
 	Player_HumanID = 0;
@@ -1190,21 +1190,21 @@ void ObjectManager::LoadPointData()
 	}
 }
 
-//! プレイヤー番号を取得
+//! @brief プレイヤー番号を取得
 //! @return プレイヤーのデータ番号
 int ObjectManager::GetPlayerID()
 {
 	return Player_HumanID;
 }
 
-//! プレイヤー番号を設定
+//! @brief プレイヤー番号を設定
 //! @param id プレイヤーのデータ番号
 void ObjectManager::SetPlayerID(int id)
 {
 	Player_HumanID = id;
 }
 
-//! 指定したデータ番号のhumanクラスを取得
+//! @brief 指定したデータ番号のhumanクラスを取得
 //! @param id データ番号
 //! @return 人オブジェクトのポインタ　（無効なデータ番号で NULL）
 human* ObjectManager::GeHumanObject(int id)
@@ -1213,14 +1213,14 @@ human* ObjectManager::GeHumanObject(int id)
 	return &(HumanIndex[id]);
 }
 
-//! プレイヤーのhumanクラスを取得
+//! @brief プレイヤーのhumanクラスを取得
 //! @return 人オブジェクト（プレイヤー）のポインタ
 human* ObjectManager::GetPlayerHumanObject()
 {
 	return GeHumanObject(Player_HumanID);
 }
 
-//! 指定したデータ番号のweaponクラスを取得
+//! @brief 指定したデータ番号のweaponクラスを取得
 //! @param id データ番号
 //! @return 武器オブジェクトのポインタ　（無効なデータ番号で NULL）
 weapon* ObjectManager::GetWeaponObject(int id)
@@ -1229,7 +1229,7 @@ weapon* ObjectManager::GetWeaponObject(int id)
 	return &(WeaponIndex[id]);
 }
 
-//! 指定したデータ番号のsmallobjectクラスを取得
+//! @brief 指定したデータ番号のsmallobjectクラスを取得
 //! @param id データ番号
 //! @return 小物オブジェクトのポインタ　（無効なデータ番号で NULL）
 smallobject* ObjectManager::GetSmallObject(int id)
@@ -1238,7 +1238,7 @@ smallobject* ObjectManager::GetSmallObject(int id)
 	return &(SmallObjectIndex[id]);
 }
 
-//! 指定したデータ番号のbulletクラスを取得
+//! @brief 指定したデータ番号のbulletクラスを取得
 //! @param id データ番号
 //! @return 弾オブジェクトのポインタ　（無効なデータ番号で NULL）
 bullet* ObjectManager::GetBulletObject(int id)
@@ -1247,7 +1247,7 @@ bullet* ObjectManager::GetBulletObject(int id)
 	return &(BulletIndex[id]);
 }
 
-//! 使用されていないbulletクラスを取得
+//! @brief 使用されていないbulletクラスを取得
 //! @return 現在未使用の弾オブジェクトのポインタ　（失敗すると NULL）
 bullet* ObjectManager::GetNewBulletObject()
 {
@@ -1259,7 +1259,7 @@ bullet* ObjectManager::GetNewBulletObject()
 	return NULL;
 }
 
-//! 使用されていないgrenadeクラスを取得
+//! @brief 使用されていないgrenadeクラスを取得
 //! @return 現在未使用の手榴弾オブジェクトのポインタ　（失敗すると NULL）
 grenade* ObjectManager::GetNewGrenadeObject()
 {
@@ -1271,7 +1271,7 @@ grenade* ObjectManager::GetNewGrenadeObject()
 	return NULL;
 }
 
-//! 人を検索
+//! @brief 人を検索
 //! @param p4 検索対象の認識番号
 //! @return 該当したhumanクラスのポインタ　（見つからない場合はNULL）
 //! @attention 複数該当する場合、最初に該当したデータを返します。
@@ -1294,7 +1294,7 @@ human* ObjectManager::SearchHuman(signed char p4)
 	return NULL;
 }
 
-//! 小物を検索
+//! @brief 小物を検索
 //! @param p4 検索対象の認識番号
 //! @return 該当したsmallobjectクラスのポインタ　（見つからない場合はNULL）
 //! @attention 複数該当する場合、最初に該当したデータを返します。
@@ -1318,7 +1318,7 @@ smallobject* ObjectManager::SearchSmallobject(signed char p4)
 	return NULL;
 }
 
-//! 前進（走り）を実行
+//! @brief 前進（走り）を実行
 //! @param human_id 人の番号（0～MAX_HUMAN-1）
 void ObjectManager::MoveForward(int human_id)
 {
@@ -1336,7 +1336,7 @@ void ObjectManager::MoveForward(int human_id)
 	GameSound->SetFootsteps(posx, posy, posz, teamid);
 }
 
-//! 後退を実行
+//! @brief 後退を実行
 //! @param human_id 人の番号（0～MAX_HUMAN-1）
 void ObjectManager::MoveBack(int human_id)
 {
@@ -1354,7 +1354,7 @@ void ObjectManager::MoveBack(int human_id)
 	GameSound->SetFootsteps(posx, posy, posz, teamid);
 }
 
-//! 左走りを実行
+//! @brief 左走りを実行
 //! @param human_id 人の番号（0～MAX_HUMAN-1）
 void ObjectManager::MoveLeft(int human_id)
 {
@@ -1372,7 +1372,7 @@ void ObjectManager::MoveLeft(int human_id)
 	GameSound->SetFootsteps(posx, posy, posz, teamid);
 }
 
-//! 右走りを実行
+//! @brief 右走りを実行
 //! @param human_id 人の番号（0～MAX_HUMAN-1）
 void ObjectManager::MoveRight(int human_id)
 {
@@ -1390,7 +1390,7 @@ void ObjectManager::MoveRight(int human_id)
 	GameSound->SetFootsteps(posx, posy, posz, teamid);
 }
 
-//! 歩きを実行
+//! @brief 歩きを実行
 //! @param human_id 人の番号（0～MAX_HUMAN-1）
 void ObjectManager::MoveWalk(int human_id)
 {
@@ -1401,7 +1401,7 @@ void ObjectManager::MoveWalk(int human_id)
 	HumanIndex[human_id].SetMoveWalk();
 }
 
-//! ジャンプ
+//! @brief ジャンプ
 //! @param human_id 人の番号（0～MAX_HUMAN-1）
 void ObjectManager::MoveJump(int human_id)
 {
@@ -1411,7 +1411,7 @@ void ObjectManager::MoveJump(int human_id)
 	HumanIndex[human_id].Jump();
 }
 
-//! 発砲
+//! @brief 発砲
 //! @param human_id 発砲する人番号
 //! @return 通常弾発射：1　手榴弾発射：2　失敗：0
 int ObjectManager::ShotWeapon(int human_id)
@@ -1530,7 +1530,7 @@ int ObjectManager::ShotWeapon(int human_id)
 	return 1;
 }
 
-//! マズルフラッシュを設定
+//! @brief マズルフラッシュを設定
 //! @param humanid 人の番号
 //! @attention この関数の呼び出しタイミングを誤ると、銃口に対してマズルフラッシュが合いません。
 void ObjectManager::ShotWeaponEffect(int humanid)
@@ -1599,7 +1599,7 @@ void ObjectManager::ShotWeaponEffect(int humanid)
 	}
 }
 
-//! 武器をリロード
+//! @brief 武器をリロード
 //! @param human_id 対象の人番号
 void ObjectManager::ReloadWeapon(int human_id)
 {
@@ -1625,7 +1625,7 @@ void ObjectManager::ReloadWeapon(int human_id)
 	}
 }
 
-//! 武器を切り替える（持ち替える）
+//! @brief 武器を切り替える（持ち替える）
 //! @param human_id 人の番号（0～MAX_HUMAN-1）
 //! @param id 持ち替える武器　（-1 で次の武器）
 void ObjectManager::ChangeWeapon(int human_id, int id)
@@ -1636,7 +1636,7 @@ void ObjectManager::ChangeWeapon(int human_id, int id)
 	HumanIndex[human_id].ChangeWeapon(id);
 }
 
-//! 武器を捨てる
+//! @brief 武器を捨てる
 //! @param human_id 人の番号（0～MAX_HUMAN-1）
 //! @return 成功：true　失敗：false
 bool ObjectManager::DumpWeapon(int human_id)
@@ -1647,7 +1647,7 @@ bool ObjectManager::DumpWeapon(int human_id)
 	return HumanIndex[human_id].DumpWeapon();
 }
 
-//! スコープモードを切り替え
+//! @brief スコープモードを切り替え
 //! @param human_id 人の番号（0～MAX_HUMAN-1）
 void ObjectManager::ChangeScopeMode(int human_id)
 {
@@ -1662,7 +1662,7 @@ void ObjectManager::ChangeScopeMode(int human_id)
 	}
 }
 
-//! 武器のショットモード切り替え
+//! @brief 武器のショットモード切り替え
 //! @param human_id 人の番号（0～MAX_HUMAN-1）
 //! @return 成功：0　失敗：1
 int ObjectManager::ChangeShotMode(int human_id)
@@ -1673,7 +1673,7 @@ int ObjectManager::ChangeShotMode(int human_id)
 	return HumanIndex[human_id].ChangeShotMode();
 }
 
-//! 裏技・所持している武器の弾を追加
+//! @brief 裏技・所持している武器の弾を追加
 //! @param human_id 人の番号（0～MAX_HUMAN-1）
 //! @return 成功：true　失敗：false
 bool ObjectManager::CheatAddBullet(int human_id)
@@ -1707,7 +1707,7 @@ bool ObjectManager::CheatAddBullet(int human_id)
 	return false;
 }
 
-//! 裏技・所持している武器を変更
+//! @brief 裏技・所持している武器を変更
 //! @param human_id 人の番号（0～MAX_HUMAN-1）
 //! @param new_weaponID 新たに設定する武器の種類番号
 //! @return 成功：true　失敗：false
@@ -1769,7 +1769,7 @@ bool ObjectManager::CheatNewWeapon(int human_id, int new_weaponID)
 	return false;
 }
 
-//! ゾンビの攻撃を受けるか判定
+//! @brief ゾンビの攻撃を受けるか判定
 //! @param MyHuman 攻撃する人オブジェクト（ゾンビ側）のポインタ
 //! @param EnemyHuman 攻撃を受けた人オブジェクトのポインタ
 //! @return 成立：true　不成立：false
@@ -1818,7 +1818,7 @@ bool ObjectManager::CheckZombieAttack(human* MyHuman, human* EnemyHuman)
 	return false;
 }
 
-//! ゾンビの攻撃を受けた処理
+//! @brief ゾンビの攻撃を受けた処理
 //! @param EnemyHuman 攻撃を受けた人オブジェクトのポインタ
 void ObjectManager::HitZombieAttack(human* EnemyHuman)
 {
@@ -1843,7 +1843,7 @@ void ObjectManager::HitZombieAttack(human* EnemyHuman)
 	GameSound->HitHuman(tx, ty, tz);
 }
 
-//! 死者を蘇生する
+//! @brief 死者を蘇生する
 //! @param id 人の番号（0～MAX_HUMAN-1）
 //! @return true：成功　false：失敗
 //! @warning 手ぶらのまま蘇生します
@@ -1865,7 +1865,7 @@ bool ObjectManager::HumanResuscitation(int id)
 	return true;
 }
 
-//! ゲームクリアー・ゲームオーバーの判定
+//! @brief ゲームクリアー・ゲームオーバーの判定
 //! @return ゲームクリアー：1　ゲームオーバー：2　判定なし：0
 //! @attention ゲームクリア―とゲームオーバーが同時に成立する条件では、本家XOPSと同様に「ゲームクリアー」と判定されます。
 int ObjectManager::CheckGameOverorComplete()
@@ -1915,7 +1915,7 @@ int ObjectManager::CheckGameOverorComplete()
 	return 0;
 }
 
-//! オブジェクトの情報を取得
+//! @brief オブジェクトの情報を取得
 //! @param camera_x カメラのX座標
 //! @param camera_y カメラのY座標
 //! @param camera_z カメラのZ座標
@@ -2011,7 +2011,7 @@ bool ObjectManager::GetObjectInfoTag(float camera_x, float camera_y, float camer
 	return true;
 }
 
-//! オブジェクトの主計算処理
+//! @brief オブジェクトの主計算処理
 //! @param cmdF5id 上昇機能（F5裏技）させる人データ番号（-1で機能無効）
 //! @param camera_rx カメラの横軸角度
 //! @param camera_ry カメラの縦軸角度
@@ -2128,7 +2128,7 @@ int ObjectManager::Process(int cmdF5id, float camera_rx, float camera_ry)
 	return 0;
 }
 
-//! 現フレームの 命中率・倒した敵の数・ヘットショット数 の取得
+//! @brief 現フレームの 命中率・倒した敵の数・ヘットショット数 の取得
 //! @param id 取得する人のデータ番号
 //! @param ontarget 命中数を受け取るポインタ
 //! @param kill 倒した敵の数を受け取るポインタ
@@ -2143,7 +2143,7 @@ bool ObjectManager::GetHumanShotInfo(int id, int *ontarget, int *kill, int *head
 	return true;
 }
 
-//!エフェクトをソートする
+//! @brief エフェクトをソートする
 //! @param camera_x カメラのX座標
 //! @param camera_y カメラのY座標
 //! @param camera_z カメラのZ座標
@@ -2186,7 +2186,7 @@ int ObjectManager::SortEffect(float camera_x, float camera_y, float camera_z, ef
 	return cnt;
 }
 
-//! オブジェクトの描画処理
+//! @brief オブジェクトの描画処理
 //! @param camera_x カメラのX座標
 //! @param camera_y カメラのY座標
 //! @param camera_z カメラのZ座標
@@ -2258,7 +2258,7 @@ void ObjectManager::Render(float camera_x, float camera_y, float camera_z, int H
 	}
 }
 
-//! データの解放
+//! @brief データの解放
 void ObjectManager::Cleanup()
 {
 	//ポイントデータ解放

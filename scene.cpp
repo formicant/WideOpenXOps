@@ -31,7 +31,7 @@
 
 #include "scene.h"
 
-//! コンストラクタ
+//! @brief コンストラクタ
 scene::scene()
 {
 	d3dg = NULL;
@@ -39,11 +39,11 @@ scene::scene()
 	framecnt = 0;
 }
 
-//! ディストラクタ
+//! @brief ディストラクタ
 scene::~scene()
 {}
 
-//! クラスを設定
+//! @brief クラスを設定
 void scene::SetClass(StateMachine *in_GameState, D3DGraphics *in_d3dg, InputControl *in_inputCtrl)
 {
 	GameState = in_GameState;
@@ -51,7 +51,7 @@ void scene::SetClass(StateMachine *in_GameState, D3DGraphics *in_d3dg, InputCont
 	inputCtrl = in_inputCtrl;
 }
 
-//! シーン作成
+//! @brief シーン作成
 int scene::Create()
 {
 	inputCtrl->MoveMouseCenter();
@@ -61,7 +61,7 @@ int scene::Create()
 	return 0;
 }
 
-//! シーン入力処理
+//! @brief シーン入力処理
 void scene::Input()
 {
 	inputCtrl->GetInputState(false);
@@ -75,13 +75,13 @@ void scene::Input()
 	}
 }
 
-//! シーン計算処理
+//! @brief シーン計算処理
 void scene::Process()
 {
 	framecnt += 1;
 }
 
-//! シーン描画処理
+//! @brief シーン描画処理
 void scene::RenderMain()
 {
 	if( d3dg->StartRender() ){ return; }
@@ -94,13 +94,13 @@ void scene::RenderMain()
 	d3dg->EndRender();
 }
 
-//! シーン解放処理
+//! @brief シーン解放処理
 void scene::Destroy()
 {
 	GameState->NextState();
 }
 
-//! フレームカウントを元にアルファ値・透明度を設定（1回）
+//! @brief フレームカウントを元にアルファ値・透明度を設定（1回）
 //! @param tframecnt 対象とするカウント値
 //! @param MaxAlpha 最大アルファ値
 //! @param timingsec 間隔・秒数
@@ -126,7 +126,7 @@ float scene::GetEffectAlpha(unsigned int tframecnt, float MaxAlpha, float timing
 	return alpha;
 }
 
-//! フレームカウントを元にアルファ値・透明度を設定（ループ）
+//! @brief フレームカウントを元にアルファ値・透明度を設定（ループ）
 //! @param tframecnt 対象とするカウント値
 //! @param MaxAlpha 最大アルファ値
 //! @param timingsec 間隔・秒数
@@ -146,15 +146,15 @@ float scene::GetEffectAlphaLoop(unsigned int tframecnt, float MaxAlpha, float ti
 	return alpha;
 }
 
-//! コンストラクタ
+//! @brief コンストラクタ
 D2Dscene::D2Dscene()
 {}
 
-//! ディストラクタ
+//! @brief ディストラクタ
 D2Dscene::~D2Dscene()
 {}
 
-//! 2Dシーン初期化
+//! @brief 2Dシーン初期化
 int D2Dscene::Create()
 {
 	gametitle = d3dg->LoadTexture("data\\title.dds", false, false);
@@ -163,13 +163,13 @@ int D2Dscene::Create()
 	return 0;
 }
 
-//! 2Dシーン描画処理（2D）
+//! @brief 2Dシーン描画処理（2D）
 void D2Dscene::Render2D()
 {
 	d3dg->Draw2DTextureFontText(10, 10, "hello world !", D3DCOLOR_COLORVALUE(1.0f,1.0f,1.0f,1.0f), 20, 32);
 }
 
-//! 2Dシーン描画処理（メイン）
+//! @brief 2Dシーン描画処理（メイン）
 void D2Dscene::RenderMain()
 {
 	if( d3dg->StartRender() ){ return; }
@@ -184,7 +184,7 @@ void D2Dscene::RenderMain()
 	d3dg->EndRender();
 }
 
-//! 2Dシーン解放
+//! @brief 2Dシーン解放
 void D2Dscene::Destroy()
 {
 	d3dg->CleanupTexture(gametitle);
@@ -192,15 +192,15 @@ void D2Dscene::Destroy()
 }
 
 
-//! コンストラクタ
+//! @brief コンストラクタ
 D3Dscene::D3Dscene()
 {}
 
-//! ディストラクタ
+//! @brief ディストラクタ
 D3Dscene::~D3Dscene()
 {}
 
-//! 3Dシーンクラスを設定
+//! @brief 3Dシーンクラスを設定
 void D3Dscene::SetClass(StateMachine *in_GameState, D3DGraphics *in_d3dg, InputControl *in_inputCtrl, SoundManager *in_GameSound)
 {
 	GameState = in_GameState;
@@ -209,28 +209,28 @@ void D3Dscene::SetClass(StateMachine *in_GameState, D3DGraphics *in_d3dg, InputC
 	GameSound = in_GameSound;
 }
 
-//! 3Dシーン主計算処理
+//! @brief 3Dシーン主計算処理
 void D3Dscene::Process()
 {
 	GameSound->PlayWorldSound(camera_x, camera_y, camera_z, camera_rx);
 }
 
-//! 3Dシーンサウンド再生処理
+//! @brief 3Dシーンサウンド再生処理
 void D3Dscene::Sound()
 {
 	//サウンドを再生
 	GameSound->PlayWorldSound(camera_x, camera_y, camera_z, camera_rx);
 }
 
-//! 3Dシーン描画処理（3D）
+//! @brief 3Dシーン描画処理（3D）
 void D3Dscene::Render3D()
 {}
 
-//! 3Dシーン描画処理（2D）
+//! @brief 3Dシーン描画処理（2D）
 void D3Dscene::Render2D()
 {}
 
-//! 3Dシーン描画処理（メイン）
+//! @brief 3Dシーン描画処理（メイン）
 void D3Dscene::RenderMain()
 {
 	if( d3dg->StartRender() ){ return; }

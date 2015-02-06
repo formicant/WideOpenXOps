@@ -33,7 +33,7 @@
 
 #include "input.h"
 
-//! コンストラクタ
+//! @brief コンストラクタ
 InputControl::InputControl()
 {
 #ifdef INPUT_DIRECTINPUT
@@ -57,7 +57,7 @@ InputControl::InputControl()
 	mbr_lt = mbr;
 }
 
-//! ディストラクタ
+//! @brief ディストラクタ
 InputControl::~InputControl()
 {
 #ifdef INPUT_DIRECTINPUT
@@ -78,7 +78,7 @@ InputControl::~InputControl()
 #endif
 }
 
-//! 初期化@n
+//! @brief 初期化@n
 //! （DirectInput）
 //! @param in_hWnd ウィンドウハンドル
 //! @return 成功：0　失敗：1
@@ -115,7 +115,7 @@ int InputControl::InitD3Dinput(HWND in_hWnd)
 	return 0;
 }
 
-//! 入力デバイスの状態を更新
+//! @brief 入力デバイスの状態を更新
 //! @param mousemode マウスの座標取得　絶対値（座標）：false　相対値（移動量）：true
 void InputControl::GetInputState(bool mousemode)
 {
@@ -201,7 +201,7 @@ void InputControl::GetInputState(bool mousemode)
 #endif
 }
 
-//! マウスを中心に移動
+//! @brief マウスを中心に移動
 void InputControl::MoveMouseCenter()
 {
 	POINT point;
@@ -218,7 +218,7 @@ void InputControl::MoveMouseCenter()
 	SetCursorPos(point.x, point.y);
 }
 
-//! キーボードの入力をチェック（リアルタイム）
+//! @brief キーボードの入力をチェック（リアルタイム）
 //! @return 押されてない：false　押されている：true
 bool InputControl::CheckKeyNow(int id)
 {
@@ -227,7 +227,7 @@ bool InputControl::CheckKeyNow(int id)
 	return false;
 }
 
-//! キーボードの入力をチェック（押された瞬間）
+//! @brief キーボードの入力をチェック（押された瞬間）
 //! @return 押された瞬間でない：false　押された瞬間である：true
 bool InputControl::CheckKeyDown(int id)
 {
@@ -236,7 +236,7 @@ bool InputControl::CheckKeyDown(int id)
 	return false;
 }
 
-//! キーボードの入力をチェック（離された瞬間）
+//! @brief キーボードの入力をチェック（離された瞬間）
 //! @return 離された瞬間でない：false　離された瞬間である：true
 bool InputControl::CheckKeyUp(int id)
 {
@@ -245,7 +245,7 @@ bool InputControl::CheckKeyUp(int id)
 	return false;
 }
 
-//! マウスの入力をチェック
+//! @brief マウスの入力をチェック
 //! @param x x軸を受け取る整数値型ポインタ
 //! @param y y軸を受け取る整数値型ポインタ
 //! @attention 値は直前に実行した GetInputState() への引数に影響される。
@@ -256,7 +256,7 @@ void InputControl::GetMouseMovement(int *x, int *y)
 	*y = my;
 }
 
-//! マウス・左ボタンの入力をチェック（リアルタイム）
+//! @brief マウス・左ボタンの入力をチェック（リアルタイム）
 //! @return 押されてない：false　押されている：true
 bool InputControl::CheckMouseButtonNowL()
 {
@@ -264,7 +264,7 @@ bool InputControl::CheckMouseButtonNowL()
 	return mbl;
 }
 
-//! マウス・左ボタンの入力をチェック（押された瞬間）
+//! @brief マウス・左ボタンの入力をチェック（押された瞬間）
 //! @return 押された瞬間でない：false　押された瞬間である：true
 bool InputControl::CheckMouseButtonDownL()
 {
@@ -273,7 +273,7 @@ bool InputControl::CheckMouseButtonDownL()
 	return false;
 }
 
-//! マウス・左ボタンの入力をチェック（離された瞬間）
+//! @brief マウス・左ボタンの入力をチェック（離された瞬間）
 //! @return 離された瞬間でない：false　離された瞬間である：true
 bool InputControl::CheckMouseButtonUpL()
 {
@@ -282,7 +282,7 @@ bool InputControl::CheckMouseButtonUpL()
 	return false;
 }
 
-//! マウス・右ボタンの入力をチェック（リアルタイム）
+//! @brief マウス・右ボタンの入力をチェック（リアルタイム）
 //! @return 押されてない：false　押されている：true
 bool InputControl::CheckMouseButtonNowR()
 {
@@ -290,7 +290,7 @@ bool InputControl::CheckMouseButtonNowR()
 	return mbr;
 }
 
-//! マウス・右ボタンの入力をチェック（押された瞬間）
+//! @brief マウス・右ボタンの入力をチェック（押された瞬間）
 //! @return 押された瞬間でない：false　押された瞬間である：true
 bool InputControl::CheckMouseButtonDownR()
 {
@@ -299,7 +299,7 @@ bool InputControl::CheckMouseButtonDownR()
 	return false;
 }
 
-//! マウス・右ボタンの入力をチェック（離された瞬間）
+//! @brief マウス・右ボタンの入力をチェック（離された瞬間）
 //! @return 離された瞬間でない：false　離された瞬間である：true
 bool InputControl::CheckMouseButtonUpR()
 {
@@ -308,7 +308,7 @@ bool InputControl::CheckMouseButtonUpR()
 	return false;
 }
 
-//! オリジナルキーコードをDirectInputキーコードへ変換
+//! @brief オリジナルキーコードをDirectInputキーコードへ変換
 //! @param code オリジナルキーコード
 //! @return 1以上：DirectInputキーコード　-1以下：特殊　0：失敗
 //! @attention 以下、特殊な戻り値の場合―<br>-1：MOUSE L　　-2：MOUSE R　　-3：DIK_LSHIFT / DIK_RSHIFT　　-4：DIK_LCONTROL / DIK_RCONTROL
@@ -489,7 +489,7 @@ int OriginalkeycodeToDinputdef(int code)
 	return out;
 }
 
-//! 左右キーのキーコード取得
+//! @brief 左右キーのキーコード取得
 //! @param id Shiftキー：0　Ctrlキー：1
 //! @param *CodeL 左側キーのキーコードを受け取るポインタ
 //! @param *CodeR 右側キーのキーコードを受け取るポインタ
@@ -515,7 +515,7 @@ bool GetDoubleKeyCode(int id, int *CodeL, int *CodeR)
 	return false;
 }
 
-//! Escキーのキーコード取得
+//! @brief Escキーのキーコード取得
 //! @return キーコード
 int GetEscKeycode()
 {
@@ -526,7 +526,7 @@ int GetEscKeycode()
 #endif
 }
 
-//! Homeキーのキーコード取得
+//! @brief Homeキーのキーコード取得
 //! @return キーコード
 int GetHomeKeycode()
 {
@@ -537,7 +537,7 @@ int GetHomeKeycode()
 #endif
 }
 
-//! ファンクションキー（F1～F12）のキーコードを取得
+//! @brief ファンクションキー（F1～F12）のキーコードを取得
 //! @param key 番号（1～12）
 //! @return キーコード
 int GetFunctionKeycode(int key)

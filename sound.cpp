@@ -33,13 +33,13 @@
 
 #ifdef SOUND_DIRECTSOUND
 
-//! コンストラクタ
+//! @brief コンストラクタ
 SoundControl::SoundControl()
 {
 	pDSound = NULL;
 }
 
-//! ディストラクタ
+//! @brief ディストラクタ
 SoundControl::~SoundControl()
 {
 	for(int i=0;i<MAX_LOADSOUND; i++){
@@ -50,7 +50,7 @@ SoundControl::~SoundControl()
 	if( pDSound != NULL ){ pDSound->Release(); }
 }
 
-//! 初期化
+//! @brief 初期化
 //! @param hWnd ウィンドウハンドル
 //! @return 成功：0　失敗：1
 int SoundControl::InitSound(HWND hWnd)
@@ -85,14 +85,14 @@ int SoundControl::InitSound(HWND hWnd)
 	return 0;
 }
 
-//! 再生音量を設定
+//! @brief 再生音量を設定
 //! @param volume 再生音量　（0.0＝無音　1.0＝100%）
 void SoundControl::SetVolume(float volume)
 {
 	//
 }
 
-//! カメラの座標と角度を設定
+//! @brief カメラの座標と角度を設定
 //! @param x カメラのX座標
 //! @param y カメラのY座標
 //! @param z カメラのZ座標
@@ -104,7 +104,7 @@ void SoundControl::SetCamera(float x, float y, float z, float rx)
 	p3DListener->SetOrientation(cos(rx), 0.0f, sin(rx), 0.0f, 1.0f, 0.0f, DS3D_IMMEDIATE);
 }
 
-//! サウンドを読み込む
+//! @brief サウンドを読み込む
 //! @param filename ファイル名
 //! @return 成功：0以上の認識番号　失敗：-1
 //! @attention 2チャンネル（ステレオ）データが指定された場合、右側のデータだけ取得され、左側のデータは無視されます。
@@ -221,7 +221,7 @@ int SoundControl::LoadSound(char* filename)
 	return id;
 }
 
-//! サウンドを再生（非3D再生）
+//! @brief サウンドを再生（非3D再生）
 //! @param id 認識番号
 //! @param volume 再生ボリューム
 //! @param pan ＜無効＞
@@ -261,7 +261,7 @@ int SoundControl::PlaySound(int id, int volume, int pan)
 	return 0;
 }
 
-//! サウンドを再生（3D再生）
+//! @brief サウンドを再生（3D再生）
 //! @param id 認識番号
 //! @param x 音源のX座標
 //! @param y 音源のY座標
@@ -310,7 +310,7 @@ int SoundControl::Play3DSound(int id, float x, float y, float z, int volume)
 	return 0;
 }
 
-//! サウンドを解放
+//! @brief サウンドを解放
 //! @param id 認識番号
 void SoundControl::CleanupSound(int id)
 {
@@ -325,7 +325,7 @@ void SoundControl::CleanupSound(int id)
 	}
 }
 
-//! Waveファイルの情報を調べる
+//! @brief Waveファイルの情報を調べる
 //! @param filename ファイル名
 //! @param filesize ファイルサイズを受け取るポインタ
 //! @param fileoffset データオフセットを受け取るポインタ
@@ -397,7 +397,7 @@ bool SoundControl::CheckSoundFile(char* filename, int *filesize, int *fileoffset
 	return false;
 }
 
-//! SetVolume()用　1/100 dB (デシベル) を計算
+//! @brief SetVolume()用　1/100 dB (デシベル) を計算
 //! @param volume 音量（0～155）
 //! @return 1/100 dB (デシベル)
 int SoundControl::GetDSVolume(int volume)
@@ -411,7 +411,7 @@ int SoundControl::GetDSVolume(int volume)
 
 #else
 
-//! コンストラクタ
+//! @brief コンストラクタ
 SoundControl::SoundControl()
 {
 	lib = NULL;
@@ -422,7 +422,7 @@ SoundControl::SoundControl()
 	}
 }
 
-//! ディストラクタ
+//! @brief ディストラクタ
 SoundControl::~SoundControl()
 {
 	if( lib == NULL ){ return; }
@@ -441,7 +441,7 @@ SoundControl::~SoundControl()
 	FreeLibrary(lib);
 }
 
-//! 初期化@n
+//! @brief 初期化@n
 //! （DLLのロード、初期化関数の実行）
 //! @param hWnd ウィンドウハンドル
 //! @return 成功：0　失敗：1
@@ -476,14 +476,14 @@ int SoundControl::InitSound(HWND hWnd)
 	return 0;
 }
 
-//! 再生音量を設定
+//! @brief 再生音量を設定
 //! @param volume 再生音量　（0.0＝無音　1.0＝100%）
 void SoundControl::SetVolume(float volume)
 {
 	mastervolume = volume;
 }
 
-//! カメラの座標と角度を設定
+//! @brief カメラの座標と角度を設定
 //! @param x カメラのX座標
 //! @param y カメラのY座標
 //! @param z カメラのZ座標
@@ -497,7 +497,7 @@ void SoundControl::SetCamera(float x, float y, float z, float rx)
 	camera_rx = rx;
 }
 
-//! サウンドを読み込む
+//! @brief サウンドを読み込む
 //! @param filename ファイル名
 //! @return 成功：0以上の認識番号　失敗：-1
 int SoundControl::LoadSound(char* filename)
@@ -520,7 +520,7 @@ int SoundControl::LoadSound(char* filename)
 	return -1;
 }
 
-//! サウンドを再生（非3D再生DLL呼び出し）
+//! @brief サウンドを再生（非3D再生DLL呼び出し）
 //! @param id 認識番号
 //! @param volume 再生ボリューム
 //! @param pan パン（左右バランス）
@@ -536,7 +536,7 @@ int SoundControl::PlaySound(int id, int volume, int pan)
 	return DSplay(id, (int)(mastervolume * volume), pan);
 }
 
-//! サウンドを再生（3D再生）
+//! @brief サウンドを再生（3D再生）
 //! @param id 認識番号
 //! @param x 音源のX座標
 //! @param y 音源のY座標
@@ -573,7 +573,7 @@ int SoundControl::Play3DSound(int id, float x, float y, float z, int volume)
 	return PlaySound(id, playvolume, pan);
 }
 
-//! サウンドを解放
+//! @brief サウンドを解放
 //! @param id 認識番号
 void SoundControl::CleanupSound(int id)
 {
@@ -588,7 +588,7 @@ void SoundControl::CleanupSound(int id)
 	useflag[id] = false;
 }
 
-//! 音源との距離を調べる
+//! @brief 音源との距離を調べる
 //! @param x 音源のX座標
 //! @param y 音源のY座標
 //! @param z 音源のZ座標
@@ -620,7 +620,7 @@ bool SoundControl::CheckSourceDist(float x, float y, float z, bool snear, float 
 	return true;
 }
 
-//! 音量を計算
+//! @brief 音量を計算
 //! @param MaxVolume 音源の最大音量
 //! @param dist 音源との距離
 //! @param snear 近距離音源
