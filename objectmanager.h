@@ -98,6 +98,7 @@ class ObjectManager
 	void HitBulletHuman(int HitHuman_id, int Hit_id, float x, float y, float z, float brx, int attacks, int humanid);
 	void HitBulletSmallObject(int HitSmallObject_id, float x, float y, float z, int attacks);
 	bool GrenadeExplosion(grenade *in_grenade);
+	void DeadEffect(human *in_human);
 	void PickupWeapon(human *in_human, weapon *in_weapon);
 	void CleanupPointDataToObject();
 	int SortEffect(float camera_x, float camera_y, float camera_z, effectdata data[]);

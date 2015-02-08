@@ -1046,6 +1046,68 @@ bool ObjectManager::GrenadeExplosion(grenade *in_grenade)
 	return returnflag;
 }
 
+//! @brief 倒れた際のエフェクト設定
+//! @param in_human 対象の人オブジェクト
+void ObjectManager::DeadEffect(human *in_human)
+{
+	if( in_human == NULL ){ return; }
+
+	int paramid;
+	float hx, hy, hz, hrx, hry;
+	HumanParameter data;
+
+	//各種パラメーターを取得
+	in_human->GetParamData(&paramid, NULL, NULL, NULL);
+	in_human->GetPosData(&hx, &hy, &hz, &hrx);
+	hry = in_human->GetDeadRy();
+
+	//設定値を取得
+	if( GameParamInfo->GetHuman(paramid, &data) != 0 ){ return; }
+
+	//もしロボットならば
+	if( data.type == 1 ){
+
+		//腰辺りの座標を算出
+		hx += cos(hrx*-1 - (float)M_PI/2) * sin(hry) * HUMAN_HEIGTH/2;
+		hz += sin(hrx*-1 - (float)M_PI/2) * sin(hry) * HUMAN_HEIGTH/2;
+
+		//エフェクト（煙）の表示
+		float rnd = (float)M_PI/18*GetRand(18);
+		for(int i=0; i<MAX_EFFECT; i++){
+			if( EffectIndex[i].GetDrawFlag() == false ){
+				EffectIndex[i].SetPosData(hx+1.0f, hy+1.0f, hz+1.0f, 0.0f);
+				EffectIndex[i].SetParamData(10.0f, rnd, (int)GAMEFPS * 3, Resource->GetEffectSmokeTexture(), EFFECT_DISAPPEAR | EFFECT_MAGNIFY | EFFECT_ROTATION, true);
+				EffectIndex[i].SetDrawFlag(true);
+				break;
+			}
+		}
+		for(int i=0; i<MAX_EFFECT; i++){
+			if( EffectIndex[i].GetDrawFlag() == false ){
+				EffectIndex[i].SetPosData(hx-1.0f, hy-1.0f, hz-1.0f, 0.0f);
+				EffectIndex[i].SetParamData(10.0f, rnd*-1, (int)GAMEFPS * 3, Resource->GetEffectSmokeTexture(), EFFECT_DISAPPEAR | EFFECT_MAGNIFY | EFFECT_ROTATION, true);
+				EffectIndex[i].SetDrawFlag(true);
+				break;
+			}
+		}
+		for(int i=0; i<MAX_EFFECT; i++){
+			if( EffectIndex[i].GetDrawFlag() == false ){
+				EffectIndex[i].SetPosData(hx-1.0f, hy-1.0f, hz+1.0f, 0.0f);
+				EffectIndex[i].SetParamData(10.0f, rnd, (int)GAMEFPS * 3, Resource->GetEffectSmokeTexture(), EFFECT_DISAPPEAR | EFFECT_MAGNIFY | EFFECT_ROTATION, true);
+				EffectIndex[i].SetDrawFlag(true);
+				break;
+			}
+		}
+		for(int i=0; i<MAX_EFFECT; i++){
+			if( EffectIndex[i].GetDrawFlag() == false ){
+				EffectIndex[i].SetPosData(hx+1.0f, hy+1.0f, hz-1.0f, 0.0f);
+				EffectIndex[i].SetParamData(10.0f, rnd*-1, (int)GAMEFPS * 3, Resource->GetEffectSmokeTexture(), EFFECT_DISAPPEAR | EFFECT_MAGNIFY | EFFECT_ROTATION, true);
+				EffectIndex[i].SetDrawFlag(true);
+				break;
+			}
+		}
+	}
+}
+
 //! @brief 武器を拾う
 //! @param in_human 対象の人オブジェクト
 //! @param in_weapon 対象の武器オブジェクト
@@ -1550,9 +1612,11 @@ void ObjectManager::ShotWeaponEffect(int humanid)
 	if( GameParamInfo->GetWeapon(weapon_paramid, &ParamData) != 0 ){ return; }
 
 	//マズルフラッシュと煙のサイズを決定
-	float flashsize = 3.0f;
+	float flashsize = 0.06f * ParamData.attacks;
+	float smokesize = flashsize;
+	float yakkyousize = 0.02f * ParamData.attacks;
 	if( ParamData.silencer == true ){
-		flashsize = 1.0f;
+		flashsize /= 2;
 	}
 
 	//行列でエフェクト座標を計算
@@ -1571,12 +1635,17 @@ void ObjectManager::ShotWeaponEffect(int humanid)
 		}
 	}
 
+	//行列でエフェクト座標を計算
+	d3dg->SetWorldTransformHumanWeapon(pos_x, pos_y + 16.0f, pos_z, ParamData.flashx/10, ParamData.flashy/10, ParamData.flashz/10 - 0.1f, rotation_x, armrotation_y*-1, 1.0f);
+	d3dg->GetWorldTransformPos(&x, &y, &z);
+	d3dg->ResetWorldTransform();
+
 	//エフェクト（煙）の表示
 	for(int i=0; i<MAX_EFFECT; i++){
 		if( EffectIndex[i].GetDrawFlag() == false ){
 			//エフェクト設定
 			EffectIndex[i].SetPosData(x, y, z, 0.0f);
-			EffectIndex[i].SetParamData(flashsize, (float)M_PI/18*GetRand(18), (int)(GAMEFPS/3), Resource->GetEffectSmokeTexture(), EFFECT_DISAPPEAR | EFFECT_MAGNIFY | EFFECT_ROTATION, true);
+			EffectIndex[i].SetParamData(smokesize, (float)M_PI/18*GetRand(18), (int)(GAMEFPS/3), Resource->GetEffectSmokeTexture(), EFFECT_DISAPPEAR | EFFECT_MAGNIFY | EFFECT_ROTATION, true);
 			EffectIndex[i].SetDrawFlag(true);
 			break;
 		}
@@ -1592,7 +1661,7 @@ void ObjectManager::ShotWeaponEffect(int humanid)
 		if( EffectIndex[i].GetDrawFlag() == false ){
 			//エフェクト設定
 			EffectIndex[i].SetPosData(x, y, z, 0.0f);
-			EffectIndex[i].SetParamData(/*3.0f*/2.0f, (float)M_PI/18*GetRand(18), (int)(GAMEFPS/2), Resource->GetEffectYakkyouTexture(), EFFECT_ROTATION | EFFECT_FALL, true);
+			EffectIndex[i].SetParamData(yakkyousize, (float)M_PI/18*GetRand(18), (int)(GAMEFPS/2), Resource->GetEffectYakkyouTexture(), EFFECT_ROTATION | EFFECT_FALL, true);
 			EffectIndex[i].SetDrawFlag(true);
 			break;
 		}
@@ -2037,7 +2106,10 @@ int ObjectManager::Process(int cmdF5id, float camera_rx, float camera_ry)
 			cmdF5 = false;
 		}
 
-		HumanIndex[i].RunFrame(CollD, BlockData, cmdF5);
+		if( HumanIndex[i].RunFrame(CollD, BlockData, cmdF5) == 2 ){
+			//死亡時のエフェクト
+			DeadEffect(&(HumanIndex[i]));
+		}
 	}
 
 	//武器オブジェクトの処理

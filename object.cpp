@@ -287,7 +287,7 @@ bool human::SetHP(int in_hp)
 bool human::GetDeadFlag()
 {
 #ifdef HUMAN_DEADBODY_COLLISION
-	if( deadstate == 4 ){ return true; }
+	if( deadstate == 5 ){ return true; }
 	return false;
 #else
 	if( hp <= 0 ){ return true; }
@@ -753,6 +753,14 @@ void human::SetRxRy(float rx, float ry)
 	armrotation_y = ry;
 }
 
+//! @brief 全体の回転角度取得
+//! @return 縦軸を取得するポインタ
+//! @warning 死亡して倒れる際の角度です。GetRxRy()関数で受け取る値とは異なります。
+float human::GetDeadRy()
+{
+	return rotation_y;
+}
+
 //! @brief ジャンプ
 //! @return 成功：0　失敗：1
 //! @attention ゲーム上から直接呼び出すことは避け、ObjectManagerクラスから呼び出してください。
@@ -894,7 +902,7 @@ void human::GunsightErrorRange()
 }
 
 //! @brief 死亡判定と倒れる処理
-//! @return 倒れ終わった：3　倒れている最中：2　倒れ始める：1　何もしない：0
+//! @return 静止した死体：4　倒れ終わった直後：3　倒れている最中：2　倒れ始める：1　何もしない：0
 int human::CheckAndProcessDead(class Collision *CollD)
 {
 #ifdef HUMAN_DEADBODY_COLLISION
@@ -1065,22 +1073,33 @@ int human::CheckAndProcessDead(class Collision *CollD)
 
 	if( deadstate == 4 ){
 		//何もしない（固定）
+		deadstate = 5;
 		return 3;
+	}
+
+	if( deadstate == 5 ){
+		//何もしない（固定）
+		return 4;
 	}
 
 	return 0;
 #else
-	if( rotation_y > 0.0f ){		//倒れ始めていれば、そのまま倒れる。
+	if( abs(rotation_y) >= (float)M_PI/2 ){
+		return 4;
+	}
+	else if( rotation_y > 0.0f ){		//倒れ始めていれば、そのまま倒れる。
 		if( rotation_y < (float)M_PI/2 ){
 			rotation_y += (float)M_PI/180*6;
+			return 2;
 		}
-		return 2;
+		return 3;
 	}
 	else if( rotation_y < 0.0f ){	//倒れ始めていれば、そのまま倒れる。
 		if( rotation_y > (float)M_PI/2 * -1 ){
 			rotation_y -= (float)M_PI/180*6;
+			return 2;
 		}
-		return 2;
+		return 3;
 	}
 	else if( hp <= 0 ){		//HPが 0 以下になった（死亡した）瞬間なら、倒し始める
 		//体の角度・腕の角度
@@ -1439,18 +1458,20 @@ bool human::MapCollisionDetection(class Collision *CollD, class BlockDataInterfa
 //! @param CollD Collisionのポインタ
 //! @param inblockdata BlockDataInterfaceのポインタ
 //! @param F5mode 上昇機能（F5裏技）のフラグ　（有効：true　無効：false）
+//! @return 処理なし：0　通常処理：1　死亡して倒れ終わった直後：2　静止した死体：3
 int human::RunFrame(class Collision *CollD, class BlockDataInterface *inblockdata, bool F5mode)
 {
 	if( CollD == NULL ){ return 0; }
 	if( RenderFlag == false ){ return 0; }
 
 #ifdef HUMAN_DEADBODY_COLLISION
-	if( deadstate == 4 ){ return 0; }
+	if( deadstate == 5 ){ return 3; }
 #else
-	if( hp <= 0 ){ return 0; }
+	if( hp <= 0 ){ return 3; }
 #endif
 
 	float FallDistance;
+	int CheckDead;
 
 	//武器切り替えカウント
 	if( selectweaponcnt > 0 ){
@@ -1501,7 +1522,9 @@ int human::RunFrame(class Collision *CollD, class BlockDataInterface *inblockdat
 	GunsightErrorRange();
 
 	//死亡判定と倒れる処理
-	if( CheckAndProcessDead(CollD) != 0 ){ return 0; }
+	CheckDead = CheckAndProcessDead(CollD);
+	if( CheckDead == 3 ){ return 2; }
+	if( CheckDead != 0 ){ return 3; }
 
 	//進行方向と速度を決定
 	ControlProcess();
@@ -1538,7 +1561,7 @@ int human::RunFrame(class Collision *CollD, class BlockDataInterface *inblockdat
 		hp = 0;
 	}
 
-	return 0;
+	return 1;
 }
 
 //! @brief 標準誤差を取得

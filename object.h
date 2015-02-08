@@ -196,6 +196,7 @@ public:
 	virtual int GetScopeMode();
 	virtual void GetRxRy(float *rx, float *ry);
 	virtual void SetRxRy(float rx, float ry);
+	virtual float GetDeadRy();
 	virtual int Jump();
 	virtual void AddPosOrder(float rx, float ry, float speed);
 	virtual void HitBulletHead(int attacks);
