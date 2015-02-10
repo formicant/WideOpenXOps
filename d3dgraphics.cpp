@@ -137,6 +137,28 @@ int D3DGraphics::InitD3D(HWND hWnd, char *TextureFontFilename, bool fullscreen)
 	//マウスカーソルを消す
 	//ShowCursor(FALSE);
 
+
+	float aspecth, prx, pry, r;
+	aspecth = (float)SCREEN_WIDTH/SCREEN_HEIGHT;
+
+	//HUD_myweapon [奥行き, 縦, 横]
+
+	//HUD_A　現在持っている武器を表示する座標
+	prx = (float)M_PI/180*-39 * aspecth /2;
+	pry = (float)M_PI/180*-55 /2;
+	r = 7.5f;
+	HUD_myweapon_x[0] = cos(pry)*r;
+	HUD_myweapon_y[0] = sin(pry)*r;
+	HUD_myweapon_z[0] = sin(prx)*r;
+
+	//HUD_A　予備の武器を表示する座標
+	prx = (float)M_PI/180*-52 * aspecth /2;
+	pry = (float)M_PI/180*-60 /2;
+	r = 16.0f;
+	HUD_myweapon_x[1] = cos(pry)*r;
+	HUD_myweapon_y[1] = sin(pry)*r;
+	HUD_myweapon_z[1] = sin(prx)*r;
+
 	return 0;
 }
 
@@ -681,11 +703,11 @@ void D3DGraphics::SetWorldTransformPlayerWeapon(bool rotation, float camera_x, f
 	D3DXMatrixRotationZ(&matWorld3, camera_ry);
 	// matWorld4 = [奥行き, 縦, 横]
 	if( rotation == true ){
-		D3DXMatrixTranslation(&matWorld4, 6.0f, -3.2f, -2.8f);
+		D3DXMatrixTranslation(&matWorld4, HUD_myweapon_x[0], HUD_myweapon_y[0], HUD_myweapon_z[0]);
 		D3DXMatrixRotationY(&matWorld5, rx);
 	}
 	else{
-		D3DXMatrixTranslation(&matWorld4, 12.0f, -6.8f, -8.0f);
+		D3DXMatrixTranslation(&matWorld4, HUD_myweapon_x[1], HUD_myweapon_y[1], HUD_myweapon_z[1]);
 		D3DXMatrixRotationY(&matWorld5, D3DX_PI);
 	}
 	D3DXMatrixScaling(&matWorld6, size, size, size);

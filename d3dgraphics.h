@@ -96,6 +96,10 @@ class D3DGraphics
 	VERTEXTXTA g_pVertices[MAX_BLOCKS][6][4];	//!< 頂点情報（CPU管理）
 #endif
 
+	float HUD_myweapon_x[TOTAL_HAVEWEAPON];		//!< HUD_Aの武器表示 X座標
+	float HUD_myweapon_y[TOTAL_HAVEWEAPON];		//!< HUD_Aの武器表示 Y座標
+	float HUD_myweapon_z[TOTAL_HAVEWEAPON];		//!< HUD_Aの武器表示 Z座標
+
 	bool StartRenderFlag;			//!< StartRender()関数 実行中を表すフラグ
 
 	LPD3DXSPRITE ptextsprite;		//!< 2Dテクスチャスプライト
