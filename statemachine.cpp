@@ -54,7 +54,12 @@ void StateMachine::NextState()
 			NowState = STATE_DESTROY_OPENING;
 			break;
 		case STATE_DESTROY_OPENING:
-			NowState = STATE_CREATE_MENU;
+			if( f12 == true ){
+				NowState = STATE_CREATE_OPENING;
+			}
+			else{
+				NowState = STATE_CREATE_MENU;
+			}
 			break;
 		case STATE_CREATE_MENU:
 			NowState = STATE_NOW_MENU;
@@ -63,7 +68,10 @@ void StateMachine::NextState()
 			NowState = STATE_DESTROY_MENU;
 			break;
 		case STATE_DESTROY_MENU:
-			if( back == false ){
+			if( f12 == true ){
+				NowState = STATE_CREATE_MENU;
+			}
+			else if( back == false ){
 				NowState = STATE_CREATE_BRIEFING;
 			}
 			else{
@@ -77,7 +85,10 @@ void StateMachine::NextState()
 			NowState = STATE_DESTROY_BRIEFING;
 			break;
 		case STATE_DESTROY_BRIEFING:
-			if( back == false ){
+			if( f12 == true ){
+				NowState = STATE_CREATE_BRIEFING;
+			}
+			else if( back == false ){
 				NowState = STATE_CREATE_MAINGAME;
 			}
 			else{
@@ -108,7 +119,12 @@ void StateMachine::NextState()
 			NowState = STATE_DESTROY_RESULT;
 			break;
 		case STATE_DESTROY_RESULT:
-			NowState = STATE_CREATE_MENU;
+			if( f12 == true ){
+				NowState = STATE_CREATE_RESULT;
+			}
+			else{
+				NowState = STATE_CREATE_MENU;
+			}
 			break;
 		case STATE_EXIT:
 			NowState = STATE_EXIT;
@@ -137,7 +153,6 @@ void StateMachine::PushBackSpaceKey()
 //! @brief F12 ÉLÅ[ÇéÛÇØÇΩ
 void StateMachine::PushF12Key()
 {
-	if( NowState != STATE_NOW_MAINGAME ){ return; }
 	back = false;
 	f12 = true;
 	NextState();

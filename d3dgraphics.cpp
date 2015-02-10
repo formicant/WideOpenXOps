@@ -62,18 +62,8 @@ D3DGraphics::D3DGraphics()
 //! @brief ディストラクタ
 D3DGraphics::~D3DGraphics()
 {
-	if( TextureFont != -1 ){ CleanupTexture(TextureFont); }
-	if( pxmsfont != NULL ){ pxmsfont->Release(); }
-	//if( ptextsprite != NULL ){ ptextsprite->Release(); }
-
-	CleanupMapdata();
-
-	for(int i=0; i<MAX_MODEL; i++){
-		CleanupModel(i);
-	}
-	for(int i=0; i<MAX_TEXTURE; i++){
-		CleanupTexture(i);
-	}
+	//リソース解放
+	CleanupD3Dresource();
 
 	if( pd3dDevice != NULL ) pd3dDevice->Release();
 	if( pD3D != NULL ) pD3D->Release();
@@ -132,6 +122,85 @@ int D3DGraphics::InitD3D(HWND hWnd, char *TextureFontFilename, bool fullscreen)
 		}
 	}
 
+	//テクスチャフォント用画像のファイル名を設定
+	strcpy(TextureFontFname, TextureFontFilename);
+
+	//描画関係の詳細な設定
+	if( InitSubset() != 0){
+		return 1;
+	}
+	
+
+	//アスペクト比を設定
+	aspect = (float)rec.right / (float)rec.bottom;
+
+	//マウスカーソルを消す
+	//ShowCursor(FALSE);
+
+	return 0;
+}
+
+//! @brief リセット@n
+//! （ウィンドウ最小化からの復帰　など）
+//! @param hWnd ウィンドウハンドル
+//! @return 成功：0　待ち：1　失敗：2
+int D3DGraphics::ResetD3D(HWND hWnd)
+{
+	//フォーカスを失っているなら待たせる
+	if( pd3dDevice->TestCooperativeLevel() == D3DERR_DEVICELOST ){
+		return 1;
+	}
+
+	//リソース解放
+	CleanupD3Dresource();
+
+	D3DPRESENT_PARAMETERS d3dpp;
+	RECT rec;
+
+	GetClientRect( hWnd, &rec);
+
+	//D3Dデバイスの作成
+	ZeroMemory(&d3dpp, sizeof(d3dpp));
+	if( fullscreenflag == false ){
+		d3dpp.Windowed = TRUE;
+		d3dpp.BackBufferWidth = rec.right;
+		d3dpp.BackBufferHeight = rec.bottom;
+		d3dpp.BackBufferFormat = D3DFMT_UNKNOWN;
+		d3dpp.SwapEffect = D3DSWAPEFFECT_DISCARD;
+		d3dpp.EnableAutoDepthStencil = TRUE;
+		d3dpp.AutoDepthStencilFormat = D3DFMT_D24S8;
+		d3dpp.FullScreen_RefreshRateInHz = 0;
+	}
+	else{
+		D3DDISPLAYMODE dispmode;
+		pD3D->GetAdapterDisplayMode(D3DADAPTER_DEFAULT, &dispmode);
+
+		d3dpp.Windowed = FALSE;
+		d3dpp.BackBufferWidth = rec.right;
+		d3dpp.BackBufferHeight = rec.bottom;
+		d3dpp.BackBufferFormat = dispmode.Format;
+		d3dpp.SwapEffect = D3DSWAPEFFECT_DISCARD;
+		d3dpp.EnableAutoDepthStencil = TRUE;
+		d3dpp.AutoDepthStencilFormat = D3DFMT_D24S8;
+		d3dpp.FullScreen_RefreshRateInHz = dispmode.RefreshRate;
+	}
+
+	if( FAILED( pd3dDevice->Reset(&d3dpp) ) ){
+		return 2;
+	}
+
+	//描画関係の詳細な設定
+	if( InitSubset() != 0){
+		return 2;
+	}
+
+	return 0;
+}
+
+//! @brief 描画関係の細部設定
+//! @attention 初期化時に1度だけ実行してください。
+int D3DGraphics::InitSubset()
+{
 	//ライト
 	//pd3dDevice->SetRenderState(D3DRS_AMBIENT, D3DCOLOR_ARGB(0,255,255,255) );
 	pd3dDevice->LightEnable(0, FALSE);
@@ -192,65 +261,30 @@ int D3DGraphics::InitD3D(HWND hWnd, char *TextureFontFilename, bool fullscreen)
 	if( FAILED(hr) ) return 1;
 
 	//テクスチャフォント用画像を取得
-	TextureFont = LoadTexture(TextureFontFilename, true, false);
+	TextureFont = LoadTexture(TextureFontFname, true, false);
 	GetTextureSize(TextureFont, &TextureFont_width, &TextureFont_height);
-
-	//アスペクト比を設定
-	aspect = (float)rec.right / (float)rec.bottom;
-
-	//マウスカーソルを消す
-	//ShowCursor(FALSE);
-
 	return 0;
 }
 
-/*
-//! @brief リセット@n
-//! （ウィンドウ最小化からの復帰　など）
-//! @param hWnd ウィンドウハンドル
-//! @return 成功：0　失敗：1
-int D3DGraphics::ResetD3D(HWND hWnd)
+//! @brief デバイスのリソースを解放
+void D3DGraphics::CleanupD3Dresource()
 {
-	D3DPRESENT_PARAMETERS d3dpp;
-	RECT rec;
-
-	GetClientRect( hWnd, &rec);
-
-	//D3Dデバイスの作成
-	ZeroMemory(&d3dpp, sizeof(d3dpp));
-	if( fullscreenflag == false ){
-		d3dpp.Windowed = TRUE;
-		d3dpp.BackBufferWidth = rec.right;
-		d3dpp.BackBufferHeight = rec.bottom;
-		d3dpp.BackBufferFormat = D3DFMT_UNKNOWN;
-		d3dpp.SwapEffect = D3DSWAPEFFECT_DISCARD;
-		d3dpp.EnableAutoDepthStencil = TRUE;
-		d3dpp.AutoDepthStencilFormat = D3DFMT_D24S8;
-		d3dpp.FullScreen_RefreshRateInHz = 0;
+	if( TextureFont != -1 ){ CleanupTexture(TextureFont); }
+	if( pxmsfont != NULL ){
+		pxmsfont->Release();
+		pxmsfont = NULL;
 	}
-	else{
-		D3DDISPLAYMODE dispmode;
-		pD3D->GetAdapterDisplayMode(D3DADAPTER_DEFAULT, &dispmode);
+	if( ptextsprite != NULL ){ ptextsprite->Release(); }
 
-		d3dpp.Windowed = FALSE;
-		d3dpp.BackBufferWidth = rec.right;
-		d3dpp.BackBufferHeight = rec.bottom;
-		d3dpp.BackBufferFormat = dispmode.Format;
-		d3dpp.SwapEffect = D3DSWAPEFFECT_DISCARD;
-		d3dpp.EnableAutoDepthStencil = TRUE;
-		d3dpp.AutoDepthStencilFormat = D3DFMT_D24S8;
-		d3dpp.FullScreen_RefreshRateInHz = dispmode.RefreshRate;
+	CleanupMapdata();
+
+	for(int i=0; i<MAX_MODEL; i++){
+		CleanupModel(i);
 	}
-
-	if( FAILED( pd3dDevice->Reset(&d3dpp) ) ){
-		return 1;
+	for(int i=0; i<MAX_TEXTURE; i++){
+		CleanupTexture(i);
 	}
-
-	//ここに必要な処理を書く
-
-	return 0;
 }
-*/
 
 //! @brief モデルファイルを読み込む（.x）
 //! @param filename ファイル名
@@ -491,18 +525,24 @@ int D3DGraphics::StartRender()
 }
 
 //! @brief 全ての描画処理を終了
+//! @return 成功：false　失敗：true
 //! @attention 描画処理の最後に呼び出す必要があります。
-void D3DGraphics::EndRender()
+bool D3DGraphics::EndRender()
 {
 	//描画中なら終了
 	if( StartRenderFlag == true ){
 		pd3dDevice->EndScene();
 	}
 
-	pd3dDevice->Present(NULL, NULL, NULL, NULL);
+	HRESULT hr = pd3dDevice->Present(NULL, NULL, NULL, NULL);
 
 	//フラグを false に
 	StartRenderFlag = false;
+
+	if( hr == D3DERR_DEVICELOST ){
+		return true;
+	}
+	return false;
 }
 
 //! @brief Zバッファをリセット

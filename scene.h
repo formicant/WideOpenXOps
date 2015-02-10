@@ -52,7 +52,7 @@ public:
 	virtual int Create();
 	virtual void Input();
 	virtual void Process();
-	virtual void RenderMain();
+	virtual bool RenderMain();
 	virtual void Destroy();
 	float GetEffectAlpha(unsigned int tframecnt, float MaxAlpha, float timingsec, float offsetsec, bool reversal);
 	float GetEffectAlphaLoop(unsigned int tframecnt, float MaxAlpha, float timingsec, bool reversal);
@@ -70,7 +70,7 @@ public:
 	D2Dscene();
 	~D2Dscene();
 	virtual int Create();
-	virtual void RenderMain();
+	virtual bool RenderMain();
 	virtual void Destroy();
 };
 
@@ -94,7 +94,7 @@ public:
 	virtual void SetClass(StateMachine *in_GameState, D3DGraphics *in_d3dg, InputControl *in_inputCtrl, SoundManager *in_GameSound);
 	virtual void Process();
 	virtual void Sound();
-	virtual void RenderMain();
+	virtual bool RenderMain();
 };
 
 #ifndef H_LAYERLEVEL

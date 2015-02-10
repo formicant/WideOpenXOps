@@ -96,9 +96,6 @@ int InitGame(HWND hWnd)
 	Resource.LoadBulletSound();
 	Resource.LoadEffectTexture();
 
-	int bulletmodel, bullettexture;
-	Resource.GetBulletModelTexture(&bulletmodel, &bullettexture);
-
 	//効果音初期化
 	float volume;
 	if( GameConfig.GetSoundFlag() == false ){
@@ -118,6 +115,36 @@ int InitGame(HWND hWnd)
 
 	GameInfoData.selectaddon = false;
 
+	return 0;
+}
+
+//! @brief DirectXをリセットする
+//! @return 失敗：1　それ以外：0
+//! @attention 通常は、描画処理に失敗した場合に限り呼び出してください。
+int ResetGame(HWND hWnd)
+{
+	int rtn = d3dg.ResetD3D(hWnd);
+
+	if( rtn == 0 ){
+		//リソースを初期化
+		Resource.LoadHumanModel();
+		Resource.LoadWeaponModelTexture();
+		Resource.LoadSmallObjectModelTexture();
+		Resource.LoadScopeTexture();
+		Resource.LoadBulletModelTexture();
+		Resource.LoadEffectTexture();
+
+		//現在の画面を再スタートさせる
+		GameState.PushF12Key();
+	}
+	if( rtn == 1 ){
+		//
+	}
+	if( rtn == 2 ){
+		MessageBox(hWnd, "Resetに失敗しました", "ERROR", MB_OK);
+		PostMessage(hWnd, WM_CLOSE, 0L, 0L);
+		return 1;
+	}
 	return 0;
 }
 
@@ -198,7 +225,7 @@ void opening::Process()
 		camera_y -= 0.05f;
 	}
 	else {
-		GameState->NextState();
+		GameState->PushMouseButton();
 	}
 
 	framecnt += 1;
@@ -2717,7 +2744,9 @@ void ProcessScreen(HWND hWnd, opening *Opening, mainmenu *MainMenu, briefing *Br
 			Opening->Process();
 			Opening->Sound();
 			if( (GameConfig.GetFrameskipFlag() == false)||(framecnt%2 == 0) ){
-				Opening->RenderMain();
+				if( Opening->RenderMain() == true ){
+					ResetGame(hWnd);
+				}
 			}
 			break;
 
@@ -2745,7 +2774,9 @@ void ProcessScreen(HWND hWnd, opening *Opening, mainmenu *MainMenu, briefing *Br
 			MainMenu->Process();
 			MainMenu->Sound();
 			if( (GameConfig.GetFrameskipFlag() == false)||(framecnt%2 == 0) ){
-				MainMenu->RenderMain();
+				if( MainMenu->RenderMain() == true ){
+					ResetGame(hWnd);
+				}
 			}
 			break;
 
@@ -2768,7 +2799,9 @@ void ProcessScreen(HWND hWnd, opening *Opening, mainmenu *MainMenu, briefing *Br
 			Briefing->Input();
 			Briefing->Process();
 			if( (GameConfig.GetFrameskipFlag() == false)||(framecnt%2 == 0) ){
-				Briefing->RenderMain();
+				if( Briefing->RenderMain() == true ){
+					ResetGame(hWnd);
+				}
 			}
 			break;
 
@@ -2796,7 +2829,9 @@ void ProcessScreen(HWND hWnd, opening *Opening, mainmenu *MainMenu, briefing *Br
 			MainGame->Process();
 			MainGame->Sound();
 			if( (GameConfig.GetFrameskipFlag() == false)||(framecnt%2 == 0) ){
-				MainGame->RenderMain();
+				if( MainGame->RenderMain() == true ){
+					ResetGame(hWnd);
+				}
 			}
 			break;
 
@@ -2815,7 +2850,9 @@ void ProcessScreen(HWND hWnd, opening *Opening, mainmenu *MainMenu, briefing *Br
 			Result->Input();
 			Result->Process();
 			if( (GameConfig.GetFrameskipFlag() == false)||(framecnt%2 == 0) ){
-				Result->RenderMain();
+				if( Result->RenderMain() == true ){
+					ResetGame(hWnd);
+				}
 			}
 			break;
 

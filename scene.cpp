@@ -82,16 +82,18 @@ void scene::Process()
 }
 
 //! @brief シーン描画処理
-void scene::RenderMain()
+//! @return 成功：false　失敗：true
+//! @attention 失敗した場合、D3DGraphicsクラスのResetD3D()関数を呼び出してください。
+bool scene::RenderMain()
 {
-	if( d3dg->StartRender() ){ return; }
+	if( d3dg->StartRender() ){ return true; }
 
 	d3dg->Draw2DBox(0, 0, SCREEN_WIDTH, SCREEN_HEIGHT, D3DCOLOR_COLORVALUE(0.0f,0.0f,0.0f,1.0f));
 	d3dg->Draw2DTextureFontText(10, 10, "hello world !", D3DCOLOR_COLORVALUE(1.0f,1.0f,1.0f,1.0f), 20, 32);
 
 	d3dg->ScreenBrightness(SCREEN_WIDTH, SCREEN_HEIGHT, GameConfig.GetBrightness());
 
-	d3dg->EndRender();
+	return d3dg->EndRender();
 }
 
 //! @brief シーン解放処理
@@ -170,9 +172,11 @@ void D2Dscene::Render2D()
 }
 
 //! @brief 2Dシーン描画処理（メイン）
-void D2Dscene::RenderMain()
+//! @return 成功：false　失敗：true
+//! @attention 失敗した場合、D3DGraphicsクラスのResetD3D()関数を呼び出してください。
+bool D2Dscene::RenderMain()
 {
-	if( d3dg->StartRender() ){ return; }
+	if( d3dg->StartRender() ){ return true; }
 
 	d3dg->Draw2DTexture(0, 0, gametitle, SCREEN_WIDTH, SCREEN_HEIGHT, 0.4f);
 	d3dg->Draw2DBox(11, 11, SCREEN_WIDTH - 10, SCREEN_HEIGHT - 10, D3DCOLOR_COLORVALUE(0.0f,0.0f,0.0f,0.75f));
@@ -181,7 +185,7 @@ void D2Dscene::RenderMain()
 
 	d3dg->ScreenBrightness(SCREEN_WIDTH, SCREEN_HEIGHT, GameConfig.GetBrightness());
 
-	d3dg->EndRender();
+	return d3dg->EndRender();
 }
 
 //! @brief 2Dシーン解放
@@ -231,14 +235,16 @@ void D3Dscene::Render2D()
 {}
 
 //! @brief 3Dシーン描画処理（メイン）
-void D3Dscene::RenderMain()
+//! @return 成功：false　失敗：true
+//! @attention 失敗した場合、D3DGraphicsクラスのResetD3D()関数を呼び出してください。
+bool D3Dscene::RenderMain()
 {
-	if( d3dg->StartRender() ){ return; }
+	if( d3dg->StartRender() ){ return true; }
 
 	Render3D();
 	Render2D();
 
 	d3dg->ScreenBrightness(SCREEN_WIDTH, SCREEN_HEIGHT, GameConfig.GetBrightness());
 
-	d3dg->EndRender();
+	return d3dg->EndRender();
 }

@@ -100,10 +100,13 @@ class D3DGraphics
 
 	LPD3DXSPRITE ptextsprite;		//!< 2Dテクスチャスプライト
 	LPD3DXFONT pxmsfont;			//!< システムフォント
+	char TextureFontFname[_MAX_PATH];	//!< テクスチャフォントのファイル名
 	int TextureFont;				//!< テクスチャフォントのテクスチャID
 	int TextureFont_width;			//!< テクスチャフォントファイルの横幅
 	int TextureFont_height;			//!< テクスチャフォントファイルの高さ
 
+	int InitSubset();
+	void CleanupD3Dresource();
 	void Start2DMSFontTextRender();
 	void End2DMSFontTextRender();
 	void Start2DRender();
@@ -113,7 +116,7 @@ public:
 	D3DGraphics();
 	~D3DGraphics();
 	int InitD3D(HWND hWnd, char *TextureFontFilename, bool fullscreen);
-	//int ResetD3D(HWND hWnd);
+	int ResetD3D(HWND hWnd);
 	int LoadModel(char* filename);
 	int MorphingModel(int idA, int idB);
 	void CleanupModel(int id);
@@ -121,7 +124,7 @@ public:
 	int GetTextureSize(int id, int *width, int *height);
 	void CleanupTexture(int id);
 	int StartRender();
-	void EndRender();
+	bool EndRender();
 	void ResetZbuffer();
 	void ResetWorldTransform();
 	void SetWorldTransform(float x, float y, float z, float rx, float ry, float size);
