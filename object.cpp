@@ -1390,9 +1390,6 @@ bool human::MapCollisionDetection(class Collision *CollD, class BlockDataInterfa
 			if( CollD->CheckALLBlockIntersectDummyRay(pos_x, pos_y + offset, pos_z, vx, 0, vz, NULL, NULL, &Dist, speed) == true ){
 				CollD->CheckALLBlockIntersectRay(pos_x, pos_y + offset, pos_z, vx, 0, vz, &id, &face, &Dist, speed);
 
-				//地面と認めない　（ジャンプ対策）
-				move_y_flag = true;
-
 				struct blockdata bdata;
 				inblockdata->Getdata(&bdata, id);
 
@@ -1408,6 +1405,9 @@ bool human::MapCollisionDetection(class Collision *CollD, class BlockDataInterfa
 					CollD->ScratchVector(inblockdata, id, face, move_x, vy, move_z, &move_x, &vy, &move_z);
 				}
 				else{																	//水平～斜面なら
+					//地面と認めない　（ジャンプ対策）
+					move_y_flag = true;
+
 					//移動先の位置を計算
 					newpos_x = pos_x + move_x;
 					newpos_y = pos_y + FallDistance;
@@ -1418,15 +1418,15 @@ bool human::MapCollisionDetection(class Collision *CollD, class BlockDataInterfa
 						if( CollD->CheckALLBlockIntersectRay(newpos_x, newpos_y + HUMAN_HEIGTH, newpos_z, 0, -1, 0, NULL, NULL, &Dist, HUMAN_HEIGTH) == true ){
 							float height = HUMAN_HEIGTH - Dist;
 
-							if( height > 0.6f * speed ){
-								//人を上に持ち上げる
+							//人を上に持ち上げる
+							if( height > 0.9f ){
 								FallDistance = 0.4f;
-								move_y = 0.0f;
 							}
 							else{
 								FallDistance = height;
-								move_y = 0.0f;
 							}
+
+							move_y = 0.0f;
 						}
 					}
 				}
