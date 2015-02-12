@@ -466,6 +466,33 @@ int ObjectManager::AddSmallObjectIndex(float px, float py, float pz, float rx, i
 	return -1;
 }
 
+//! @brief エフェクト追加
+//! @param pos_x X座標
+//! @param pos_y Y座標
+//! @param pos_z Z座標
+//! @param move_x X軸移動量
+//! @param move_y Y軸移動量
+//! @param move_z Z軸移動量
+//! @param size 表示倍率
+//! @param rotation 回転角度
+//! @param count 表示フレーム数
+//! @param texture テクスチャの認識番号
+//! @param settype エフェクトの種類　（Effect_Type を組み合せる）
+//! @return 成功：データ番号（0以上）　失敗：-1
+int ObjectManager::AddEffect(float pos_x, float pos_y, float pos_z, float move_x, float move_y, float move_z, float size, float rotation, int count, int texture, int settype)
+{
+	for(int i=0; i<MAX_EFFECT; i++){
+		if( EffectIndex[i].GetDrawFlag() == false ){
+			EffectIndex[i].SetPosData(pos_x, pos_y, pos_z, 0.0f);
+			EffectIndex[i].SetParamData(move_x, move_y, move_z, size, rotation, count, texture, settype, true);
+			EffectIndex[i].SetDrawFlag(true);
+			return i;
+		}
+	}
+
+	return -1;
+}
+
 //! @brief 出血させる
 //! @param x X座標
 //! @param y Y座標
@@ -473,21 +500,9 @@ int ObjectManager::AddSmallObjectIndex(float px, float py, float pz, float rx, i
 void ObjectManager::SetHumanBlood(float x, float y, float z)
 {
 	if( GameConfig.GetBloodFlag() == true ){
-		for(int i=0; i<MAX_EFFECT; i++){
-			if( EffectIndex[i].GetDrawFlag() == false ){
-				EffectIndex[i].SetPosData(x+1.0f, y+1.0f, z+1.0f, 0.0f);
-				EffectIndex[i].SetParamData(10.0f, (float)M_PI/18*GetRand(18), (int)GAMEFPS * 1, Resource->GetEffectBloodTexture(), EFFECT_FALL, true);
-				EffectIndex[i].SetDrawFlag(true);
-				break;
-			}
-		}
-		for(int i=0; i<MAX_EFFECT; i++){
-			if( EffectIndex[i].GetDrawFlag() == false ){
-				EffectIndex[i].SetPosData(x-1.0f, y-1.0f, z-1.0f, 0.0f);
-				EffectIndex[i].SetParamData(10.0f, (float)M_PI/18*GetRand(18), (int)GAMEFPS * 1, Resource->GetEffectBloodTexture(), EFFECT_FALL, true);
-				EffectIndex[i].SetDrawFlag(true);
-				break;
-			}
+		for(int i=0; i<2; i++){
+			float rx = (float)M_PI/18*GetRand(36);
+			AddEffect(x + cos(rx)*1.0f, y + (float)(GetRand(20)-10)/10, z + sin(rx)*1.0f, cos(rx)*0.5f, 0.5f, sin(rx)*0.5f, 10.0f, (float)M_PI/18*GetRand(18), (int)GAMEFPS * 1, Resource->GetEffectBloodTexture(), EFFECT_FALL);
 		}
 	}
 }
@@ -775,14 +790,7 @@ bool ObjectManager::CollideBullet(bullet *in_bullet)
 void ObjectManager::HitBulletMap(float x, float y, float z)
 {
 	//エフェクト（煙）を表示
-	for(int i=0; i<MAX_EFFECT; i++){
-		if( EffectIndex[i].GetDrawFlag() == false ){
-			EffectIndex[i].SetPosData(x, y, z, 0.0f);
-			EffectIndex[i].SetParamData(5.0f, (float)M_PI/18*GetRand(18), (int)(GAMEFPS * 0.5f), Resource->GetEffectSmokeTexture(), EFFECT_DISAPPEAR | EFFECT_MAGNIFY, true);
-			EffectIndex[i].SetDrawFlag(true);
-			break;
-		}
-	}
+	AddEffect(x, y, z, 0.0f, 0.05f, 0.0f, 5.0f, (float)M_PI/18*GetRand(18), (int)(GAMEFPS * 0.5f), Resource->GetEffectSmokeTexture(), EFFECT_DISAPPEAR | EFFECT_MAGNIFY);
 
 	//効果音を再生
 	GameSound->HitMap(x, y, z);
@@ -844,14 +852,7 @@ void ObjectManager::HitBulletSmallObject(int HitSmallObject_id, float x, float y
 	SmallObjectIndex[HitSmallObject_id].HitBullet(attacks);
 
 	//エフェクト（煙）を表示
-	for(int i=0; i<MAX_EFFECT; i++){
-		if( EffectIndex[i].GetDrawFlag() == false ){
-			EffectIndex[i].SetPosData(x, y, z, 0.0f);
-			EffectIndex[i].SetParamData(5.0f, (float)M_PI/18*GetRand(18), (int)(GAMEFPS * 0.5f), Resource->GetEffectSmokeTexture(), EFFECT_DISAPPEAR | EFFECT_MAGNIFY, true);
-			EffectIndex[i].SetDrawFlag(true);
-			break;
-		}
-	}
+	AddEffect(x, y, z, 0.0f, 0.05f, 0.0f, 5.0f, (float)M_PI/18*GetRand(18), (int)(GAMEFPS * 0.5f), Resource->GetEffectSmokeTexture(), EFFECT_DISAPPEAR | EFFECT_MAGNIFY);
 
 	//効果音を再生
 	int id;
@@ -996,49 +997,14 @@ bool ObjectManager::GrenadeExplosion(grenade *in_grenade)
 	}
 
 	//エフェクト（フラッシュ）の表示
-	for(int i=0; i<MAX_EFFECT; i++){
-		if( EffectIndex[i].GetDrawFlag() == false ){
-			EffectIndex[i].SetPosData(gx, gy, gz, 0.0f);
-			EffectIndex[i].SetParamData(30.0f, 0.0f, 2, Resource->GetEffectMflashTexture(), EFFECT_NORMAL, true);
-			EffectIndex[i].SetDrawFlag(true);
-			break;
-		}
-	}
+	AddEffect(gx, gy, gz, 0.0f, 0.0f, 0.0f, 30.0f, 0.0f, 2, Resource->GetEffectMflashTexture(), EFFECT_NORMAL);
 
 	//エフェクト（煙）の表示
 	float rnd = (float)M_PI/18*GetRand(18);
-	for(int i=0; i<MAX_EFFECT; i++){
-		if( EffectIndex[i].GetDrawFlag() == false ){
-			EffectIndex[i].SetPosData(gx+1.0f, gy+1.0f, gz+1.0f, 0.0f);
-			EffectIndex[i].SetParamData(10.0f, rnd, (int)GAMEFPS * 3, Resource->GetEffectSmokeTexture(), EFFECT_DISAPPEAR | EFFECT_MAGNIFY | EFFECT_ROTATION, true);
-			EffectIndex[i].SetDrawFlag(true);
-			break;
-		}
-	}
-	for(int i=0; i<MAX_EFFECT; i++){
-		if( EffectIndex[i].GetDrawFlag() == false ){
-			EffectIndex[i].SetPosData(gx-1.0f, gy-1.0f, gz-1.0f, 0.0f);
-			EffectIndex[i].SetParamData(10.0f, rnd*-1, (int)GAMEFPS * 3, Resource->GetEffectSmokeTexture(), EFFECT_DISAPPEAR | EFFECT_MAGNIFY | EFFECT_ROTATION, true);
-			EffectIndex[i].SetDrawFlag(true);
-			break;
-		}
-	}
-	for(int i=0; i<MAX_EFFECT; i++){
-		if( EffectIndex[i].GetDrawFlag() == false ){
-			EffectIndex[i].SetPosData(gx-1.0f, gy-1.0f, gz+1.0f, 0.0f);
-			EffectIndex[i].SetParamData(10.0f, rnd, (int)GAMEFPS * 3, Resource->GetEffectSmokeTexture(), EFFECT_DISAPPEAR | EFFECT_MAGNIFY | EFFECT_ROTATION, true);
-			EffectIndex[i].SetDrawFlag(true);
-			break;
-		}
-	}
-	for(int i=0; i<MAX_EFFECT; i++){
-		if( EffectIndex[i].GetDrawFlag() == false ){
-			EffectIndex[i].SetPosData(gx+1.0f, gy+1.0f, gz-1.0f, 0.0f);
-			EffectIndex[i].SetParamData(10.0f, rnd*-1, (int)GAMEFPS * 3, Resource->GetEffectSmokeTexture(), EFFECT_DISAPPEAR | EFFECT_MAGNIFY | EFFECT_ROTATION, true);
-			EffectIndex[i].SetDrawFlag(true);
-			break;
-		}
-	}
+	AddEffect(gx+1.0f, gy+1.0f, gz+1.0f, 0.0f, 0.05f, 0.0f, 10.0f, rnd, (int)GAMEFPS * 3, Resource->GetEffectSmokeTexture(), EFFECT_DISAPPEAR | EFFECT_MAGNIFY | EFFECT_ROTATION);
+	AddEffect(gx-1.0f, gy-1.0f, gz-1.0f, 0.0f, 0.05f, 0.0f, 10.0f, rnd*-1, (int)GAMEFPS * 3, Resource->GetEffectSmokeTexture(), EFFECT_DISAPPEAR | EFFECT_MAGNIFY | EFFECT_ROTATION);
+	AddEffect(gx-1.0f, gy-1.0f, gz+1.0f, 0.0f, 0.05f, 0.0f, 10.0f, rnd, (int)GAMEFPS * 3, Resource->GetEffectSmokeTexture(), EFFECT_DISAPPEAR | EFFECT_MAGNIFY | EFFECT_ROTATION);
+	AddEffect(gx+1.0f, gy+1.0f, gz-1.0f, 0.0f, 0.05f, 0.0f, 10.0f, rnd*-1, (int)GAMEFPS * 3, Resource->GetEffectSmokeTexture(), EFFECT_DISAPPEAR | EFFECT_MAGNIFY | EFFECT_ROTATION);
 
 	//効果音を再生
 	GameSound->GrenadeExplosion(gx, gy, gz);
@@ -1073,38 +1039,10 @@ void ObjectManager::DeadEffect(human *in_human)
 
 		//エフェクト（煙）の表示
 		float rnd = (float)M_PI/18*GetRand(18);
-		for(int i=0; i<MAX_EFFECT; i++){
-			if( EffectIndex[i].GetDrawFlag() == false ){
-				EffectIndex[i].SetPosData(hx+1.0f, hy+1.0f, hz+1.0f, 0.0f);
-				EffectIndex[i].SetParamData(10.0f, rnd, (int)GAMEFPS * 3, Resource->GetEffectSmokeTexture(), EFFECT_DISAPPEAR | EFFECT_MAGNIFY | EFFECT_ROTATION, true);
-				EffectIndex[i].SetDrawFlag(true);
-				break;
-			}
-		}
-		for(int i=0; i<MAX_EFFECT; i++){
-			if( EffectIndex[i].GetDrawFlag() == false ){
-				EffectIndex[i].SetPosData(hx-1.0f, hy-1.0f, hz-1.0f, 0.0f);
-				EffectIndex[i].SetParamData(10.0f, rnd*-1, (int)GAMEFPS * 3, Resource->GetEffectSmokeTexture(), EFFECT_DISAPPEAR | EFFECT_MAGNIFY | EFFECT_ROTATION, true);
-				EffectIndex[i].SetDrawFlag(true);
-				break;
-			}
-		}
-		for(int i=0; i<MAX_EFFECT; i++){
-			if( EffectIndex[i].GetDrawFlag() == false ){
-				EffectIndex[i].SetPosData(hx-1.0f, hy-1.0f, hz+1.0f, 0.0f);
-				EffectIndex[i].SetParamData(10.0f, rnd, (int)GAMEFPS * 3, Resource->GetEffectSmokeTexture(), EFFECT_DISAPPEAR | EFFECT_MAGNIFY | EFFECT_ROTATION, true);
-				EffectIndex[i].SetDrawFlag(true);
-				break;
-			}
-		}
-		for(int i=0; i<MAX_EFFECT; i++){
-			if( EffectIndex[i].GetDrawFlag() == false ){
-				EffectIndex[i].SetPosData(hx+1.0f, hy+1.0f, hz-1.0f, 0.0f);
-				EffectIndex[i].SetParamData(10.0f, rnd*-1, (int)GAMEFPS * 3, Resource->GetEffectSmokeTexture(), EFFECT_DISAPPEAR | EFFECT_MAGNIFY | EFFECT_ROTATION, true);
-				EffectIndex[i].SetDrawFlag(true);
-				break;
-			}
-		}
+		AddEffect(hx+1.0f, hy+1.0f, hz+1.0f, 0.0f, 0.05f, 0.0f, 10.0f, rnd, (int)GAMEFPS * 3, Resource->GetEffectSmokeTexture(), EFFECT_DISAPPEAR | EFFECT_MAGNIFY | EFFECT_ROTATION);
+		AddEffect(hx-1.0f, hy-1.0f, hz-1.0f, 0.0f, 0.05f, 0.0f, 10.0f, rnd*-1, (int)GAMEFPS * 3, Resource->GetEffectSmokeTexture(), EFFECT_DISAPPEAR | EFFECT_MAGNIFY | EFFECT_ROTATION);
+		AddEffect(hx-1.0f, hy-1.0f, hz+1.0f, 0.0f, 0.05f, 0.0f, 10.0f, rnd, (int)GAMEFPS * 3, Resource->GetEffectSmokeTexture(), EFFECT_DISAPPEAR | EFFECT_MAGNIFY | EFFECT_ROTATION);
+		AddEffect(hx+1.0f, hy+1.0f, hz-1.0f, 0.0f, 0.05f, 0.0f, 10.0f, rnd*-1, (int)GAMEFPS * 3, Resource->GetEffectSmokeTexture(), EFFECT_DISAPPEAR | EFFECT_MAGNIFY | EFFECT_ROTATION);
 	}
 }
 
@@ -1602,6 +1540,8 @@ void ObjectManager::ShotWeaponEffect(int humanid)
 	int weapon_paramid;
 	WeaponParameter ParamData;
 	float x, y, z;
+	float flashsize, smokesize, yakkyousize;
+	float rx, mx, my, mz;
 
 	//人の座標と角度を取得
 	HumanIndex[humanid].GetPosData(&pos_x, &pos_y, &pos_z, NULL);
@@ -1612,12 +1552,18 @@ void ObjectManager::ShotWeaponEffect(int humanid)
 	if( GameParamInfo->GetWeapon(weapon_paramid, &ParamData) != 0 ){ return; }
 
 	//マズルフラッシュと煙のサイズを決定
-	float flashsize = 0.06f * ParamData.attacks;
-	float smokesize = flashsize;
-	float yakkyousize = 0.02f * ParamData.attacks;
+	flashsize = 0.06f * ParamData.attacks;
+	smokesize = flashsize;
+	yakkyousize = 0.01f * ParamData.attacks;
 	if( ParamData.silencer == true ){
 		flashsize /= 2;
 	}
+
+	//薬莢の移動量を決定
+	rx = rotation_x*-1 + (float)M_PI/2;
+	mx = cos(rx - (float)M_PI/2) * ParamData.yakkyou_sx /10;
+	my = (ParamData.yakkyou_sy + (GetRand(3)-1)) /10;
+	mz = sin(rx - (float)M_PI/2) * ParamData.yakkyou_sx /10;
 
 	//行列でエフェクト座標を計算
 	d3dg->SetWorldTransformHumanWeapon(pos_x, pos_y + 16.0f, pos_z, ParamData.flashx/10, ParamData.flashy/10, ParamData.flashz/10, rotation_x, armrotation_y*-1, 1.0f);
@@ -1625,15 +1571,7 @@ void ObjectManager::ShotWeaponEffect(int humanid)
 	d3dg->ResetWorldTransform();
 
 	//マズルフラッシュ描画
-	for(int i=0; i<MAX_EFFECT; i++){
-		if( EffectIndex[i].GetDrawFlag() == false ){
-			//エフェクト設定
-			EffectIndex[i].SetPosData(x, y, z, 0.0f);
-			EffectIndex[i].SetParamData(flashsize, (float)M_PI/18*GetRand(18), 1, Resource->GetEffectMflashTexture(), EFFECT_NORMAL, true);
-			EffectIndex[i].SetDrawFlag(true);
-			break;
-		}
-	}
+	AddEffect(x, y, z, 0.0f, 0.0f, 0.0f, flashsize, (float)M_PI/18*GetRand(18), 1, Resource->GetEffectMflashTexture(), EFFECT_NORMAL);
 
 	//行列でエフェクト座標を計算
 	d3dg->SetWorldTransformHumanWeapon(pos_x, pos_y + 16.0f, pos_z, ParamData.flashx/10, ParamData.flashy/10, ParamData.flashz/10 - 0.1f, rotation_x, armrotation_y*-1, 1.0f);
@@ -1641,15 +1579,7 @@ void ObjectManager::ShotWeaponEffect(int humanid)
 	d3dg->ResetWorldTransform();
 
 	//エフェクト（煙）の表示
-	for(int i=0; i<MAX_EFFECT; i++){
-		if( EffectIndex[i].GetDrawFlag() == false ){
-			//エフェクト設定
-			EffectIndex[i].SetPosData(x, y, z, 0.0f);
-			EffectIndex[i].SetParamData(smokesize, (float)M_PI/18*GetRand(18), (int)(GAMEFPS/3), Resource->GetEffectSmokeTexture(), EFFECT_DISAPPEAR | EFFECT_MAGNIFY | EFFECT_ROTATION, true);
-			EffectIndex[i].SetDrawFlag(true);
-			break;
-		}
-	}
+	AddEffect(x, y, z, 0.0f, 0.05f, 0.0f, smokesize, (float)M_PI/18*GetRand(18), (int)(GAMEFPS/3), Resource->GetEffectSmokeTexture(), EFFECT_DISAPPEAR | EFFECT_MAGNIFY | EFFECT_ROTATION);
 
 	//行列でエフェクト座標を計算
 	d3dg->SetWorldTransformHumanWeapon(pos_x, pos_y + 16.0f, pos_z, ParamData.yakkyou_px/10, ParamData.yakkyou_py/10, ParamData.yakkyou_pz/10, rotation_x, armrotation_y*-1, 1.0f);
@@ -1657,15 +1587,7 @@ void ObjectManager::ShotWeaponEffect(int humanid)
 	d3dg->ResetWorldTransform();
 
 	//薬莢描画
-	for(int i=0; i<MAX_EFFECT; i++){
-		if( EffectIndex[i].GetDrawFlag() == false ){
-			//エフェクト設定
-			EffectIndex[i].SetPosData(x, y, z, 0.0f);
-			EffectIndex[i].SetParamData(yakkyousize, (float)M_PI/18*GetRand(18), (int)(GAMEFPS/2), Resource->GetEffectYakkyouTexture(), EFFECT_ROTATION | EFFECT_FALL, true);
-			EffectIndex[i].SetDrawFlag(true);
-			break;
-		}
-	}
+	AddEffect(x, y, z, mx, my, mz, yakkyousize, (float)M_PI/18*GetRand(18), (int)(GAMEFPS/2), Resource->GetEffectYakkyouTexture(), EFFECT_ROTATION | EFFECT_FALL);
 }
 
 //! @brief 武器をリロード

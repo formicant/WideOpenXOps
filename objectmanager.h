@@ -111,6 +111,7 @@ public:
 	int AddHumanIndex(float px, float py, float pz, float rx, int CharacterID, int TeamID, int WeaponID[]);
 	int AddVisualWeaponIndex(int WeaponID, bool loadbullet);
 	int AddSmallObjectIndex(float px, float py, float pz, float rx, int paramID, bool MapColl);
+	int AddEffect(float pos_x, float pos_y, float pos_z, float move_x, float move_y, float move_z, float size, float rotation, int count, int texture, int settype);
 	void LoadPointData();
 	int GetPlayerID();
 	void SetPlayerID(int id);

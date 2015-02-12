@@ -318,6 +318,9 @@ protected:
 	int type;			//!< 種類
 	float camera_rx;	//!< カメラ角度
 	float camera_ry;	//!< カメラ角度
+	float move_x;		//!< X軸移動量
+	float move_y;		//!< Y軸移動量
+	float move_z;		//!< Z軸移動量
 	float rotation_texture;	//!< 回転角度
 	float alpha;			//!< 透明度
 	int cnt;			//!< カウント
@@ -326,7 +329,7 @@ protected:
 public:
 	effect(float x = 0.0f, float y = 0.0f, float z = 0.0f, float size = 1.0f, float rotation = 0.0f, int count = 0, int texture = 0, int settype = 0);
 	~effect();
-	virtual void SetParamData(float size, float rotation, int count, int texture, int settype, bool init);
+	virtual void SetParamData(float in_move_x, float in_move_y, float in_move_z, float size, float rotation, int count, int texture, int settype, bool init);
 	virtual int RunFrame(float in_camera_rx, float in_camera_ry);
 	virtual void Render(class D3DGraphics *d3dg);
 };

@@ -2509,14 +2509,20 @@ effect::~effect()
 {}
 
 //! @brief 設定値を設定
+//! @param in_move_x X軸移動量
+//! @param in_move_y Y軸移動量
+//! @param in_move_z Z軸移動量
 //! @param size 表示倍率
 //! @param rotation 回転角度
 //! @param count 表示フレーム数
 //! @param texture テクスチャの認識番号
 //! @param settype エフェクトの種類　（Effect_Type を組み合せる）
 //! @param init オブジェクトを初期化
-void effect::SetParamData(float size, float rotation, int count, int texture, int settype, bool init)
+void effect::SetParamData(float in_move_x, float in_move_y, float in_move_z, float size, float rotation, int count, int texture, int settype, bool init)
 {
+	move_x = in_move_x;
+	move_y = in_move_y;
+	move_z = in_move_z;
 	model_size = size;
 	rotation_texture = rotation;
 	cnt = count;
@@ -2550,6 +2556,11 @@ int effect::RunFrame(float in_camera_rx, float in_camera_ry)
 	camera_rx = in_camera_rx;
 	camera_ry = in_camera_ry;
 
+	//座標移動
+	pos_x += move_x;
+	pos_y += move_y;
+	pos_z += move_z;
+
 	//特殊処理を実行
 	if( type & EFFECT_DISAPPEAR ){	//消す
 		alpha -= 1.0f/setcnt;
@@ -2566,10 +2577,7 @@ int effect::RunFrame(float in_camera_rx, float in_camera_ry)
 		}
 	}
 	if( type & EFFECT_FALL ){		//落下
-		pos_y -= 1.0f;
-	}
-	else{
-		pos_y += 0.05f;
+		move_y = (move_y - 0.17f) * 0.98f;
 	}
 
 	//カウントを 1 引く
