@@ -1728,11 +1728,11 @@ void weapon::SetPosData(float x, float y, float z, float rx)
 void weapon::SetParamData(int id_param, int lnbs, int nbs, bool init)
 {
 	id_parameter = id_param;
-	usingflag = false;
 	bullets = nbs;
 	Loadbullets = lnbs;
 
 	if( init == true ){
+		usingflag = false;
 		shotcnt = 0;
 		reloadcnt = 0;
 		motionflag = true;
