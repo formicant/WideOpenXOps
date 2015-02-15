@@ -1810,20 +1810,15 @@ int weapon::Shot()
 	if( id_parameter == ID_WEAPON_GRENADE ){
 		//弾を減らし、連射カウントを設定
 		bullets -= 1;
+		Loadbullets -= 1;
 		shotcnt = ParamData.blazings;
 
-		//自動リロード
-		if( bullets > 0 ){
-			Loadbullets = 1;
-		}
-		else{
-			Loadbullets = 0;
-		}
-
-		//弾が無くなれば、武器ごと消滅させる。
-		if( bullets <= 0 ){
+		if( (bullets - Loadbullets) <= 0 ){		//（リロードしていない）弾が無くなれば、武器ごと消滅させる。
 			RenderFlag = false;
 			usingflag = false;
+		}
+		else if( Loadbullets <= 0 ){			//自動リロード
+			Loadbullets = 1;
 		}
 		return 0;
 	}
