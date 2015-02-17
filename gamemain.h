@@ -58,7 +58,7 @@
 
 #ifdef ENABLE_DEBUGCONSOLE
  #define MAX_CONSOLELEN 45		//!< デバック用コンソールの文字数（行）
- #define MAX_CONSOLELINES 8		//!< デバック用コンソールの行数
+ #define MAX_CONSOLELINES 9		//!< デバック用コンソールの行数
  #define CONSOLE_PROMPT ">"		//!< デバック用コンソールのプロンプト
 #endif
 
@@ -161,6 +161,7 @@ class maingame : public D3Dscene
 	bool ShowInfo_Debugmode;	//!< 座標などを表示するデバックモード
 	bool Camera_Debugmode;		//!< カメラデバックモード
 	bool tag;					//!< オブジェクトのタグを表示
+	bool radar;					//!< 簡易レーダー表示
 	bool wireframe;				//!< マップをワイヤーフレーム表示
 	bool CenterLine;			//!< 3D空間に中心線を表示
 	bool Camera_F1mode;			//!< カメラF1モード
@@ -187,6 +188,8 @@ class maingame : public D3Dscene
 	bool CheckInputControl(int CheckKey, int mode);
 	void Render3D();
 	void Render2D();
+	bool GetRadarPos(float in_x, float in_y, float in_z, int RadarPosX, int RadarPosY, int RadarSize, float RadarWorldR, int *out_x, int *out_y, float *local_y, bool check);
+	void RenderRadar();
 
 #ifdef ENABLE_DEBUGCONSOLE
 	bool Show_Console;			//!< デバック用コンソールを表示

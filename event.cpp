@@ -62,6 +62,13 @@ void EventControl::Reset(signed char EntryP4)
 	waitcnt = 0;
 }
 
+//! @brief 次に処理する認識番号
+//! @return P4：認識番号
+signed char EventControl::GetNextP4()
+{
+	return nextp4;
+}
+
 //! @brief 対象の人物がケースを持っているかチェック
 //! @param in_human 調べる対象のhumanのポインタ
 //! @return 持っている：true　持っていない：false
@@ -111,7 +118,7 @@ int EventControl::Execution(int *endcnt, bool *complete, int *MessageID, bool *S
 
 		//次のポイントを探す
 		if( Point->SearchPointdata(&data, 0x08, 0, 0, 0, nextp4, 0) == 0 ){ return cnt; }
-		if( (data.p1 < 10)&&(19 < data.p1) ){ return cnt; }
+		if( (data.p1 < 10)||(19 < data.p1) ){ return cnt; }
 
 		switch(data.p1){
 			case 10:	//任務達成

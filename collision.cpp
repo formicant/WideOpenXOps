@@ -963,6 +963,151 @@ float DistancePosRay(float Pos_x, float Pos_y, float Pos_z, float RayPos_x, floa
 	return sqrt(out.x*out.x + out.y*out.y + out.z*out.z) / maxDist;
 }
 
+//! @brief 線分と線分の当たり判定（2D）
+//! @param A1x 線分Aの始点 X座標
+//! @param A1y 線分Aの始点 Y座標
+//! @param A2x 線分Aの終点 X座標
+//! @param A2y 線分Aの終点 Y座標
+//! @param B1x 線分Bの始点 X座標
+//! @param B1y 線分Bの始点 Y座標
+//! @param B2x 線分Bの終点 X座標
+//! @param B2y 線分Bの終点 Y座標
+//! @param out_x 交点の X座標 を受け取るポインタ（NULL可）
+//! @param out_y 交点の Y座標 を受け取るポインタ（NULL可）
+//! @return 交差する：true　交差しない：false
+bool Collide2DLine(int A1x, int A1y, int A2x, int A2y, int B1x, int B1y, int B2x, int B2y, int *out_x, int *out_y)
+{
+	//線分のベクトルを求める
+	int Avx = A2x - A1x;
+	int Avy = A2y - A1y;
+	int Bvx = B2x - B1x;
+	int Bvy = B2y - B1y;
+
+	float v1_v2 = (float)(Avx * Bvy - Avy * Bvx);	//外積
+	if( v1_v2 == 0.0f ){
+		return false;	//平行
+	}
+
+	float vx = (float)(B1x - A1x);
+	float vy = (float)(B1y - A1y);
+	float v_v1 = vx * Avy - vy * Avx;	//外積
+	float v_v2 = vx * Bvy - vy * Bvx;	//外積
+	float t1 = v_v2 / v1_v2;
+	float t2 = v_v1 / v1_v2;
+
+	if( (t1 <= 0)||(1 <= t1)||(t2 <= 0)||(1 <= t2) ){
+		return false;	//交差してない
+	}
+
+	if( out_x != NULL ){ *out_x = (int)(A1x + Avx * t1); }
+	if( out_y != NULL ){ *out_y = (int)(A1y + Avy * t1); }
+
+	return true;
+}
+
+//! @brief 四角形に収まる線分を求める（2D）
+//! @param line_x1 線分の始点 X座標
+//! @param line_y1 線分の始点 Y座標
+//! @param line_x2 線分の終点 X座標
+//! @param line_y2 線分の終点 Y座標
+//! @param box_x1 四角形の左上 X座標
+//! @param box_y1 四角形の左上 Y座標
+//! @param box_x2 四角形の右下 X座標
+//! @param box_y2 四角形の右下 Y座標
+//! @param out_line_x1 四角形に収まる 線分の始点 X座標 を受け取るポインタ
+//! @param out_line_y1 四角形に収まる 線分の始点 Y座標 を受け取るポインタ
+//! @param out_line_x2 四角形に収まる 線分の終点 X座標 を受け取るポインタ
+//! @param out_line_y2 四角形に収まる 線分の終点 Y座標 を受け取るポインタ
+//! @return 有効（描画する）：true　無効（描画しない）：false
+//! @warning 引数は必ず「box_x1 < box_x2」かつ「box_x1 < box_x2」にすること
+//! @note 簡易レーダーのマップ表示用
+bool Get2DLineInBox(int line_x1, int line_y1, int line_x2, int line_y2, int box_x1, int box_y1, int box_x2, int box_y2, int *out_line_x1, int *out_line_y1, int *out_line_x2, int *out_line_y2)
+{
+	//四角形指定が異常
+	if( (box_x1 >= box_x2)||(box_x1 >= box_x2) ){ return false; }
+
+	//上下左右の空間にあるなら、的外れ
+	if( (line_x1 < box_x1)&&(line_x2 < box_x1) ){ return false; }
+	if( (line_y1 < box_y1)&&(line_y2 < box_y1) ){ return false; }
+	if( (box_x2 < line_x1)&&(box_x2 < line_x2) ){ return false; }
+	if( (box_y2 < line_x1)&&(box_y2 < line_x2) ){ return false; }
+
+	//既に四角形に収まる
+	if( (box_x1 <= line_x1)&&(line_x1 <= box_x2)&&(box_y1 <= line_y1)&&(line_y1 <= box_y2) ){
+		if( (box_x1 <= line_x2)&&(line_x2 <= box_x2)&&(box_y1 <= line_y2)&&(line_y2 <= box_y2) ){
+			*out_line_x1 = line_x1;
+			*out_line_y1 = line_y1;
+			*out_line_x2 = line_x2;
+			*out_line_y2 = line_y2;
+			return true;
+		}
+	}
+
+	int x, y;
+
+	//上辺
+	if( Collide2DLine(box_x1, box_y1, box_x2, box_y1, line_x1, line_y1, line_x2, line_y2, &x, &y) == true ){
+		//始点が四角形の内側なら終点を、違えば（＝終点が内側）始点を書き換える。
+		if( (box_x1 <= line_x1)&&(line_x1 <= box_x2)&&(box_y1 <= line_y1)&&(line_y1 <= box_y2) ){
+			line_x2 = x;
+			line_y2 = y;
+		}
+		else{
+			line_x1 = x;
+			line_y1 = y;
+		}
+	}
+	//右辺
+	if( Collide2DLine(box_x2, box_y1, box_x2, box_y2, line_x1, line_y1, line_x2, line_y2, &x, &y) == true ){
+		//始点が四角形の内側なら終点を、違えば（＝終点が内側）始点を書き換える。
+		if( (box_x1 <= line_x1)&&(line_x1 <= box_x2)&&(box_y1 <= line_y1)&&(line_y1 <= box_y2) ){
+			line_x2 = x;
+			line_y2 = y;
+		}
+		else{
+			line_x1 = x;
+			line_y1 = y;
+		}
+	}
+	//下辺
+	if( Collide2DLine(box_x2, box_y2, box_x1, box_y2, line_x1, line_y1, line_x2, line_y2, &x, &y) == true ){
+		//始点が四角形の内側なら終点を、違えば（＝終点が内側）始点を書き換える。
+		if( (box_x1 <= line_x1)&&(line_x1 <= box_x2)&&(box_y1 <= line_y1)&&(line_y1 <= box_y2) ){
+			line_x2 = x;
+			line_y2 = y;
+		}
+		else{
+			line_x1 = x;
+			line_y1 = y;
+		}
+	}
+	//左辺
+	if( Collide2DLine(box_x1, box_y2, box_x1, box_y1, line_x1, line_y1, line_x2, line_y2, &x, &y) == true ){
+		//始点が四角形の内側なら終点を、違えば（＝終点が内側）始点を書き換える。
+		if( (box_x1 <= line_x1)&&(line_x1 <= box_x2)&&(box_y1 <= line_y1)&&(line_y1 <= box_y2) ){
+			line_x2 = x;
+			line_y2 = y;
+		}
+		else{
+			line_x1 = x;
+			line_y1 = y;
+		}
+	}
+
+	//改めて四角形に収まるか確認
+	if( (box_x1 <= line_x1)&&(line_x1 <= box_x2)&&(box_y1 <= line_y1)&&(line_y1 <= box_y2) ){
+		if( (box_x1 <= line_x2)&&(line_x2 <= box_x2)&&(box_y1 <= line_y2)&&(line_y2 <= box_y2) ){
+			*out_line_x1 = line_x1;
+			*out_line_y1 = line_y1;
+			*out_line_x2 = line_x2;
+			*out_line_y2 = line_y2;
+			return true;
+		}
+	}
+
+	return false;
+}
+
 //! @brief 観測点から対象点への 距離判定・角度算出
 //! @param pos_x 観測点のX座標
 //! @param pos_y 観測点のY座標

@@ -1004,6 +1004,7 @@ int maingame::Create()
 	view_ry = 0.0f;
 	Camera_Debugmode = false;
 	tag = false;
+	radar = false;
 	wireframe = false;
 	CenterLine = false;
 	Camera_F1mode = false;
@@ -2021,6 +2022,11 @@ void maingame::Render2D()
 		d3dg->Draw2DTextureFontText(10, SCREEN_HEIGHT - 30, weaponname, D3DCOLOR_COLORVALUE(1.0f,1.0f,1.0f,1.0f), 16, 20);
 	}
 
+	//レーダー描画
+	if( radar == true ){
+		RenderRadar();
+	}
+
 	//イベントメッセージ表示
 	if( (message_id != -1)&&(message_cnt < (int)(TOTAL_EVENTENT_SHOWMESSEC*GAMEFPS)) ){
 		char messtr[MAX_POINTMESSAGEBYTE];
@@ -2045,30 +2051,34 @@ void maingame::Render2D()
 	}
 
 	//照準表示
-	if( (Camera_F1mode == false)&&(weapon[selectweapon] != NULL)&&(end_framecnt == 0)&&(myHuman->GetScopeMode() == 0)&&(param_scopemode != 2)&&(param_WeaponP != 2) ){
-		if( GameConfig.GetAnotherGunsightFlag() ){	//オプション型
-			//照準の透明度
-			float alpha = 1.0f - (float)ErrorRange/40.0f;
-			if( alpha < 0.0f ){ alpha = 0.0f; }
+	if( (Camera_F1mode == false)&&(param_WeaponP != 2) ){
+		if( (weapon[selectweapon] != NULL)&&(myHuman->GetScopeMode() == 0)&&(param_scopemode != 2) ){
+			if( (end_framecnt == 0)||(GameInfoData.missioncomplete == true) ){
+				if( GameConfig.GetAnotherGunsightFlag() ){	//オプション型
+					//照準の透明度
+					float alpha = 1.0f - (float)ErrorRange/40.0f;
+					if( alpha < 0.0f ){ alpha = 0.0f; }
 
-			d3dg->Draw2DLine(SCREEN_WIDTH/2, SCREEN_HEIGHT/2, SCREEN_WIDTH/2, SCREEN_HEIGHT/2+4, D3DCOLOR_COLORVALUE(1.0f,0.0f,0.0f,0.5f));
-			d3dg->Draw2DLine(SCREEN_WIDTH/2-15, SCREEN_HEIGHT/2+15, SCREEN_WIDTH/2-19, SCREEN_HEIGHT/2+19, D3DCOLOR_COLORVALUE(1.0f,0.0f,0.0f,0.5f));
-			d3dg->Draw2DLine(SCREEN_WIDTH/2+15, SCREEN_HEIGHT/2+15, SCREEN_WIDTH/2+19, SCREEN_HEIGHT/2+19, D3DCOLOR_COLORVALUE(1.0f,0.0f,0.0f,0.5f));
-			d3dg->Draw2DLine(SCREEN_WIDTH/2-4, SCREEN_HEIGHT/2+4, SCREEN_WIDTH/2+4, SCREEN_HEIGHT/2+4, D3DCOLOR_COLORVALUE(1.0f,0.0f,0.0f,1.0f));
+					d3dg->Draw2DLine(SCREEN_WIDTH/2, SCREEN_HEIGHT/2, SCREEN_WIDTH/2, SCREEN_HEIGHT/2+4, D3DCOLOR_COLORVALUE(1.0f,0.0f,0.0f,0.5f));
+					d3dg->Draw2DLine(SCREEN_WIDTH/2-15, SCREEN_HEIGHT/2+15, SCREEN_WIDTH/2-19, SCREEN_HEIGHT/2+19, D3DCOLOR_COLORVALUE(1.0f,0.0f,0.0f,0.5f));
+					d3dg->Draw2DLine(SCREEN_WIDTH/2+15, SCREEN_HEIGHT/2+15, SCREEN_WIDTH/2+19, SCREEN_HEIGHT/2+19, D3DCOLOR_COLORVALUE(1.0f,0.0f,0.0f,0.5f));
+					d3dg->Draw2DLine(SCREEN_WIDTH/2-4, SCREEN_HEIGHT/2+4, SCREEN_WIDTH/2+4, SCREEN_HEIGHT/2+4, D3DCOLOR_COLORVALUE(1.0f,0.0f,0.0f,1.0f));
 
-			d3dg->Draw2DLine(SCREEN_WIDTH/2-4 - ErrorRange, SCREEN_HEIGHT/2-4 - ErrorRange/2, SCREEN_WIDTH/2-4 - ErrorRange, SCREEN_HEIGHT/2+4 + ErrorRange/2, D3DCOLOR_COLORVALUE(1.0f,0.0f,0.0f,alpha));
-			d3dg->Draw2DLine(SCREEN_WIDTH/2+4 + ErrorRange, SCREEN_HEIGHT/2-4 - ErrorRange/2, SCREEN_WIDTH/2+4 + ErrorRange, SCREEN_HEIGHT/2+4 + ErrorRange/2, D3DCOLOR_COLORVALUE(1.0f,0.0f,0.0f,alpha));
-		}
-		else{										//標準型
-			d3dg->Draw2DLine(SCREEN_WIDTH/2-13, SCREEN_HEIGHT/2, SCREEN_WIDTH/2-3, SCREEN_HEIGHT/2, D3DCOLOR_COLORVALUE(1.0f,0.0f,0.0f,1.0f));
-			d3dg->Draw2DLine(SCREEN_WIDTH/2+13, SCREEN_HEIGHT/2, SCREEN_WIDTH/2+3, SCREEN_HEIGHT/2, D3DCOLOR_COLORVALUE(1.0f,0.0f,0.0f,1.0f));
-			d3dg->Draw2DLine(SCREEN_WIDTH/2, SCREEN_HEIGHT/2-13, SCREEN_WIDTH/2, SCREEN_HEIGHT/2-3, D3DCOLOR_COLORVALUE(1.0f,0.0f,0.0f,1.0f));
-			d3dg->Draw2DLine(SCREEN_WIDTH/2, SCREEN_HEIGHT/2+13, SCREEN_WIDTH/2, SCREEN_HEIGHT/2+3, D3DCOLOR_COLORVALUE(1.0f,0.0f,0.0f,1.0f));
+					d3dg->Draw2DLine(SCREEN_WIDTH/2-4 - ErrorRange, SCREEN_HEIGHT/2-4 - ErrorRange/2, SCREEN_WIDTH/2-4 - ErrorRange, SCREEN_HEIGHT/2+4 + ErrorRange/2, D3DCOLOR_COLORVALUE(1.0f,0.0f,0.0f,alpha));
+					d3dg->Draw2DLine(SCREEN_WIDTH/2+4 + ErrorRange, SCREEN_HEIGHT/2-4 - ErrorRange/2, SCREEN_WIDTH/2+4 + ErrorRange, SCREEN_HEIGHT/2+4 + ErrorRange/2, D3DCOLOR_COLORVALUE(1.0f,0.0f,0.0f,alpha));
+				}
+				else{										//標準型
+					d3dg->Draw2DLine(SCREEN_WIDTH/2-13, SCREEN_HEIGHT/2, SCREEN_WIDTH/2-3, SCREEN_HEIGHT/2, D3DCOLOR_COLORVALUE(1.0f,0.0f,0.0f,1.0f));
+					d3dg->Draw2DLine(SCREEN_WIDTH/2+13, SCREEN_HEIGHT/2, SCREEN_WIDTH/2+3, SCREEN_HEIGHT/2, D3DCOLOR_COLORVALUE(1.0f,0.0f,0.0f,1.0f));
+					d3dg->Draw2DLine(SCREEN_WIDTH/2, SCREEN_HEIGHT/2-13, SCREEN_WIDTH/2, SCREEN_HEIGHT/2-3, D3DCOLOR_COLORVALUE(1.0f,0.0f,0.0f,1.0f));
+					d3dg->Draw2DLine(SCREEN_WIDTH/2, SCREEN_HEIGHT/2+13, SCREEN_WIDTH/2, SCREEN_HEIGHT/2+3, D3DCOLOR_COLORVALUE(1.0f,0.0f,0.0f,1.0f));
 
-			stru[0] = 0xBD;		stru[1] = 0x00;	//"ｽ"
-			d3dg->Draw2DTextureFontText(SCREEN_WIDTH/2 - 16 - ErrorRange, SCREEN_HEIGHT/2 - 16, (char*)stru, D3DCOLOR_COLORVALUE(1.0f,0.0f,0.0f,0.5f), 32, 32);
-			stru[0] = 0xBE;		stru[1] = 0x00;	//"ｾ"
-			d3dg->Draw2DTextureFontText(SCREEN_WIDTH/2 - 16 + ErrorRange, SCREEN_HEIGHT/2 - 16, (char*)stru, D3DCOLOR_COLORVALUE(1.0f,0.0f,0.0f,0.5f), 32, 32);
+					stru[0] = 0xBD;		stru[1] = 0x00;	//"ｽ"
+					d3dg->Draw2DTextureFontText(SCREEN_WIDTH/2 - 16 - ErrorRange, SCREEN_HEIGHT/2 - 16, (char*)stru, D3DCOLOR_COLORVALUE(1.0f,0.0f,0.0f,0.5f), 32, 32);
+					stru[0] = 0xBE;		stru[1] = 0x00;	//"ｾ"
+					d3dg->Draw2DTextureFontText(SCREEN_WIDTH/2 - 16 + ErrorRange, SCREEN_HEIGHT/2 - 16, (char*)stru, D3DCOLOR_COLORVALUE(1.0f,0.0f,0.0f,0.5f), 32, 32);
+				}
+			}
 		}
 	}
 
@@ -2155,6 +2165,197 @@ void maingame::Render2D()
 
 
 	time_render = GetTimeMS() - time;
+}
+
+//! @brief レーダーに表示する座標に変換
+//! @param in_x 空間 X座標
+//! @param in_y 空間 Y座標
+//! @param in_z 空間 Z座標
+//! @param RadarPosX レーダーの描画 X座標（左上基準）
+//! @param RadarPosY レーダーの描画 Y座標（左上基準）
+//! @param RadarSize レーダーの描画サイズ
+//! @param RadarWorldR レーダーにポイントする距離
+//! @param out_x 2D X座標 を受け取るポインタ
+//! @param out_y 2D X座標 を受け取るポインタ
+//! @param local_y ローカル Y座標 を受け取るポインタ（NULL可）
+//! @param check 計算の省略
+//! @return 成功：true　失敗：false
+//! @attention checkフラグを有効にすると、レーダーから外れることが明らかになった時点で計算を終了し、falseを返します。
+bool maingame::GetRadarPos(float in_x, float in_y, float in_z, int RadarPosX, int RadarPosY, int RadarSize, float RadarWorldR, int *out_x, int *out_y, float *local_y, bool check)
+{
+	bool outf = false;
+	float x, y, z, r, rx;
+	float x2, z2, r2, rx2;
+
+	//カメラとの距離を計算
+	x = in_x - camera_x;
+	y = in_y - camera_y;
+	z = in_z - camera_z;
+
+	//近ければ処理する
+	if( (check == false) || ((abs(x) < RadarWorldR*2)&&(abs(z) < RadarWorldR*2)&&(abs(y) < 80.0f)) ){
+		//角度を距離を計算
+		rx = atan2(z, x);
+		r = sqrt(x*x + z*z);
+
+		//カメラ基準の座標を再計算
+		rx2 = (rx - camera_rx)*-1 - (float)M_PI/2;
+		x2 = cos(rx2) * r;
+		z2 = sin(rx2) * r;
+
+		//収まるか判定
+		if( (check == false) || ((abs(x2) < RadarWorldR)&&(abs(z2) < RadarWorldR)) ){
+			//描画座標を計算
+			r2 = r / RadarWorldR * (RadarSize/2);
+			*out_x = (int)(RadarPosX+RadarSize/2 + cos(rx2) * r2);
+			*out_y = (int)(RadarPosY+RadarSize/2 + sin(rx2) * r2);
+			if( local_y != NULL ){ *local_y = y; }
+			outf = true;
+		}
+	}
+
+	return outf;
+}
+
+//! @brief 簡易レーダー表示
+void maingame::RenderRadar()
+{
+	int RadarPosX = 10;				//レーダーの描画 X座標（左上基準）
+	int RadarPosY = 130;			//レーダーの描画 Y座標（左上基準）
+	int RadarSize = 200;			//レーダーの描画サイズ
+	float RadarWorldR = 300.0f;		//レーダーにポイントする距離
+
+	float ecr = DISTANCE_CHECKPOINT / RadarWorldR * (RadarSize/2);
+
+	//下地と囲い
+	d3dg->Draw2DBox(RadarPosX, RadarPosY, RadarPosX+RadarSize, RadarPosY+RadarSize, D3DCOLOR_COLORVALUE(0.0f,0.0f,0.0f,0.6f));
+	d3dg->Draw2DLine(RadarPosX, RadarPosY, RadarPosX+RadarSize, RadarPosY, D3DCOLOR_COLORVALUE(0.0f,0.8f,0.0f,1.0f));
+	d3dg->Draw2DLine(RadarPosX+RadarSize, RadarPosY, RadarPosX+RadarSize, RadarPosY+RadarSize, D3DCOLOR_COLORVALUE(0.0f,0.8f,0.0f,1.0f));
+	d3dg->Draw2DLine(RadarPosX+RadarSize, RadarPosY+RadarSize, RadarPosX, RadarPosY+RadarSize, D3DCOLOR_COLORVALUE(0.0f,0.8f,0.0f,1.0f));
+	d3dg->Draw2DLine(RadarPosX, RadarPosY+RadarSize, RadarPosX, RadarPosY, D3DCOLOR_COLORVALUE(0.0f,0.8f,0.0f,1.0f));
+
+	//マップを描画
+	int bs = BlockData.GetTotaldatas();
+	for(int i=0; i< bs; i++){
+		blockdata bdata;
+		float x_min, y_min, z_min, x_max, y_max, z_max;
+		int vid[4];
+		int bvx[4], bvy[4];
+
+		//ブロックのデータを取得
+		BlockData.Getdata(&bdata, i);
+
+		//表示候補のブロックを検出（荒削り）
+		CollD.GetBlockPosMINMAX(bdata, &x_min, &y_min, &z_min, &x_max, &y_max, &z_max);
+		if( CollideBoxAABB(x_min, y_min, z_min, x_max, y_max, z_max, camera_x-RadarWorldR*2, camera_y-1.0f, camera_z-RadarWorldR*2, camera_x+RadarWorldR*2, camera_y+1.0f, camera_z+RadarWorldR*2) == true ){
+
+			//各面ごとに処理する
+			for(int j=0; j<6; j++){
+				//登れない斜面か判定　※地面や階段などの傾斜を除外する
+				float angle = acos(bdata.material[j].vy);
+				if( (HUMAN_MAPCOLLISION_SLOPEANGLE < angle)&&(angle < (float)M_PI/18*12) ){
+
+					//ブロック頂点データの関連付けを取得
+					blockdataface(j, &(vid[0]), NULL);
+					
+					//4頂点を計算
+					for(int k=0; k<4; k++){
+						GetRadarPos(bdata.x[ vid[k] ], bdata.y[ vid[k] ], bdata.z[ vid[k] ], RadarPosX, RadarPosY, RadarSize, RadarWorldR, &(bvx[k]), &(bvy[k]), NULL, false);
+					}
+
+					int line_x1, line_y1, line_x2, line_y2;
+
+					//レーダーの四角形に収まるように描画する
+					if( Get2DLineInBox(bvx[0], bvy[0], bvx[1], bvy[1], RadarPosX, RadarPosY, RadarPosX+RadarSize, RadarPosY+RadarSize, &line_x1, &line_y1, &line_x2, &line_y2) == true ){
+						d3dg->Draw2DLine(line_x1, line_y1, line_x2, line_y2, D3DCOLOR_COLORVALUE(0.8f,0.8f,0.8f,1.0f));
+					}
+					if( Get2DLineInBox(bvx[1], bvy[1], bvx[2], bvy[2], RadarPosX, RadarPosY, RadarPosX+RadarSize, RadarPosY+RadarSize, &line_x1, &line_y1, &line_x2, &line_y2) == true ){
+						d3dg->Draw2DLine(line_x1, line_y1, line_x2, line_y2, D3DCOLOR_COLORVALUE(0.8f,0.8f,0.8f,1.0f));
+					}
+					if( Get2DLineInBox(bvx[2], bvy[2], bvx[3], bvy[3], RadarPosX, RadarPosY, RadarPosX+RadarSize, RadarPosY+RadarSize, &line_x1, &line_y1, &line_x2, &line_y2) == true ){
+						d3dg->Draw2DLine(line_x1, line_y1, line_x2, line_y2, D3DCOLOR_COLORVALUE(0.8f,0.8f,0.8f,1.0f));
+					}
+					if( Get2DLineInBox(bvx[3], bvy[3], bvx[0], bvy[0], RadarPosX, RadarPosY, RadarPosX+RadarSize, RadarPosY+RadarSize, &line_x1, &line_y1, &line_x2, &line_y2) == true ){
+						d3dg->Draw2DLine(line_x1, line_y1, line_x2, line_y2, D3DCOLOR_COLORVALUE(0.8f,0.8f,0.8f,1.0f));
+					}
+				}
+			}
+		}
+	}
+
+	//イベントの到着ポイントを描画
+	for(int i=0; i<TOTAL_EVENTLINE; i++){
+		signed char p4 = Event[i].GetNextP4();
+		pointdata data;
+		if( PointData.SearchPointdata(&data, 0x08, 0, 0, 0, p4, 0) != 0 ){
+			float y;
+			int x_2d, y_2d;
+			float alpha;
+
+			if( (data.p1 == 13)||(data.p1 == 16) ){
+				data.y += VIEW_HEIGHT;
+
+				if( GetRadarPos(data.x, data.y, data.z, RadarPosX, RadarPosY, RadarSize, RadarWorldR, &x_2d, &y_2d, &y, true) == true ){
+					//高さによる透明度
+					if( (abs(y) < 40.0f) ){
+						alpha = 1.0f;
+					}
+					else{
+						alpha = 0.5f;
+					}
+
+					//マーカー描画
+					d3dg->Draw2DCycle(x_2d, y_2d, (int)ecr, D3DCOLOR_COLORVALUE(1.0f,0.5f,0.0f,alpha));
+				}
+			}
+		}
+	}
+
+	//プレイヤーの情報を取得
+	int PlayerID = ObjMgr.GetPlayerID();
+	int myteamid;
+	ObjMgr.GeHumanObject(PlayerID)->GetParamData(NULL, NULL, NULL, &myteamid);
+
+	//人を描画
+	for(int i=0; i<MAX_HUMAN; i++){
+		human* thuman;
+		float tx, ty, tz;
+		int tteamid;
+		float y;
+		int x_2d, y_2d;
+		float alpha;
+		int color;
+
+		//人のオブジェクトを取得
+		thuman = ObjMgr.GeHumanObject(i);
+
+		//使われていない人や死体は無視する
+		if( thuman->GetDrawFlag() == false ){ continue; }
+		if( thuman->GetDeadFlag() == true ){ continue; }
+
+		//人の情報を取得
+		thuman->GetPosData(&tx, &ty, &tz, NULL);
+		thuman->GetParamData(NULL, NULL, NULL, &tteamid);
+		ty += VIEW_HEIGHT;
+
+		if( GetRadarPos(tx, ty, tz, RadarPosX, RadarPosY, RadarSize, RadarWorldR, &x_2d, &y_2d, &y, true) == true ){
+			//高さによる透明度
+			if( (abs(y) < 40.0f) ){
+				alpha = 1.0f;
+			}
+			else{
+				alpha = 0.5f;
+			}
+
+			//マーカーの色を決定
+			if( PlayerID == i ){ color = D3DCOLOR_COLORVALUE(1.0f,1.0f,0.0f,alpha); }				//プレイヤー自身
+			else if( tteamid == myteamid ){ color = D3DCOLOR_COLORVALUE(0.0f,0.5f,1.0f,alpha); }	//味方
+			else{ color = D3DCOLOR_COLORVALUE(1.0f,0.0f,0.5f,alpha); }								//敵
+
+			//マーカー描画
+			d3dg->Draw2DBox(x_2d-3, y_2d-3, x_2d+3, y_2d+3, color);
+		}
+	}
 }
 
 #ifdef ENABLE_DEBUGCONSOLE
@@ -2279,13 +2480,14 @@ void maingame::ProcessConsole()
 
 	//コマンドリスト
 	if( strcmp(NewCommand, "help") == 0 ){
-		AddInfoConsole(D3DCOLOR_COLORVALUE(1.0f,1.0f,1.0f,1.0f), "help        human        result");
+		AddInfoConsole(D3DCOLOR_COLORVALUE(1.0f,1.0f,1.0f,1.0f), "help        human        result      event");
+		AddInfoConsole(D3DCOLOR_COLORVALUE(1.0f,1.0f,1.0f,1.0f), "ver");
 		AddInfoConsole(D3DCOLOR_COLORVALUE(1.0f,1.0f,1.0f,1.0f), "info        view         center      map");
-		AddInfoConsole(D3DCOLOR_COLORVALUE(1.0f,1.0f,1.0f,1.0f), "tag");
+		AddInfoConsole(D3DCOLOR_COLORVALUE(1.0f,1.0f,1.0f,1.0f), "tag         radar");
 		AddInfoConsole(D3DCOLOR_COLORVALUE(1.0f,1.0f,1.0f,1.0f), "revive      treat <NUM>  nodamage <NUM>");
 		AddInfoConsole(D3DCOLOR_COLORVALUE(1.0f,1.0f,1.0f,1.0f), "kill <NUM>  break <NUM>  newobj <NUM>");
 		AddInfoConsole(D3DCOLOR_COLORVALUE(1.0f,1.0f,1.0f,1.0f), "bot         nofight      caution     stop");
-		AddInfoConsole(D3DCOLOR_COLORVALUE(1.0f,1.0f,1.0f,1.0f), "ver         ss           clear");
+		AddInfoConsole(D3DCOLOR_COLORVALUE(1.0f,1.0f,1.0f,1.0f), "ss          clear");
 	}
 
 	//人の統計情報
@@ -2339,6 +2541,21 @@ void maingame::ProcessConsole()
 		AddInfoConsole(D3DCOLOR_COLORVALUE(1.0f,1.0f,1.0f,1.0f), str);
 		sprintf(str, "AR rate %.1f%%  /  Kill %d  /  HS %d", rate, MainGameInfo.kill, MainGameInfo.headshot);
 		AddInfoConsole(D3DCOLOR_COLORVALUE(1.0f,1.0f,1.0f,1.0f), str);
+	}
+
+	//イベントタスク表示
+	if( strcmp(NewCommand, "event") == 0 ){
+		for(int i=0; i<TOTAL_EVENTLINE; i++){
+			signed char p4 = Event[i].GetNextP4();
+			pointdata data;
+			if( PointData.SearchPointdata(&data, 0x08, 0, 0, 0, p4, 0) == 0 ){
+				sprintf(str, "Event %d   No task.", i);
+			}
+			else{
+				sprintf(str, "Event %d   [%d][%d][%d][%d]", i, data.p1, data.p2, data.p3, data.p4);
+			}
+			AddInfoConsole(D3DCOLOR_COLORVALUE(1.0f,1.0f,1.0f,1.0f), str);
+		}
 	}
 
 	//デバック用文字の表示
@@ -2407,6 +2624,17 @@ void maingame::ProcessConsole()
 		else{
 			tag = false;
 			AddInfoConsole(D3DCOLOR_COLORVALUE(1.0f,1.0f,1.0f,1.0f), "Hide object information.");
+		}
+	}
+
+	if( strcmp(NewCommand, "radar") == 0 ){
+		if( radar == false ){
+			radar = true;
+			AddInfoConsole(D3DCOLOR_COLORVALUE(1.0f,1.0f,1.0f,1.0f), "Show Radar.");
+		}
+		else{
+			radar = false;
+			AddInfoConsole(D3DCOLOR_COLORVALUE(1.0f,1.0f,1.0f,1.0f), "Hide Radar.");
 		}
 	}
 

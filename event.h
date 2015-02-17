@@ -47,7 +47,7 @@ class EventControl
 {
 	class PointDataInterface *Point;		//!< PointDataInterfaceクラスのポインタ
 	class ObjectManager *ObjMgr;			//!< ObjectManagerクラスのポインタ
-	signed char nextp4;				//!< 次に処理するのP4：認識番号
+	signed char nextp4;				//!< 次に処理するP4：認識番号
 	int waitcnt;					//!< 時間待ち用カウント
 
 	bool CheckHaveCase(human *in_human);
@@ -57,6 +57,7 @@ public:
 	~EventControl();
 	void SetClass(PointDataInterface *in_Point, ObjectManager *in_ObjMgr);
 	void Reset(signed char EntryP4);
+	signed char GetNextP4();
 	int Execution(int *endcnt, bool *complete, int *MessageID, bool *SetMessageID);
 };
 

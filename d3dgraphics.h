@@ -152,6 +152,7 @@ public:
 	void Draw2DMSFontTextCenter(int x, int y, int w, int h, char *str, int color);
 	void Draw2DTextureFontText(int x, int y, char *str, int color, int fontwidth, int fontheight);
 	void Draw2DLine(int x1, int y1, int x2, int y2, int color);
+	void Draw2DCycle(int x, int y, int r, int color);
 	void Draw2DBox(int x1, int y1, int x2, int y2, int color);
 	void Draw2DTexture(int x, int y, int id, int width, int height, float alpha);
 	bool SaveScreenShot(char *fname);

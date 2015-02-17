@@ -1334,6 +1334,43 @@ void D3DGraphics::Draw2DLine(int x1, int y1, int x2, int y2, int color)
 	End2DRender();
 }
 
+//! @brief 円（16角形）を描画
+//! @param x 中心の x座標
+//! @param y 中心の y座標
+//! @param r 半径
+//! @param color 色
+void D3DGraphics::Draw2DCycle(int x, int y, int r, int color)
+{
+	TLVERTX pLineVertices[16+1];
+
+	//2D描画用設定を適用
+	Start2DRender();
+
+	//ワールド座標を原点に戻す
+	ResetWorldTransform();
+
+	//頂点座標と色などを設定
+	for(int i=0; i<16+1; i++){
+		pLineVertices[i].x = (float)x + cos((float)M_PI*2/16 * i) * r;
+		pLineVertices[i].y = (float)y + sin((float)M_PI*2/16 * i) * r;
+
+		pLineVertices[i].z = 0.0f;
+		pLineVertices[i].rhw = 1.0f;
+		pLineVertices[i].color = color;
+		pLineVertices[i].tu = 0.0f;
+		pLineVertices[i].tv = 0.0f;
+	}
+
+	pd3dDevice->SetTexture(0, NULL);
+
+	//データ形式を設定し、描画。
+	pd3dDevice->SetFVF(D3DFVF_XYZRHW | D3DFVF_DIFFUSE | D3DFVF_TEX1);
+	pd3dDevice->DrawPrimitiveUP(D3DPT_LINESTRIP, 16+1, pLineVertices, sizeof(TLVERTX));
+
+	//2D描画用設定を解除
+	End2DRender();
+}
+
 //! @brief 四角形を描画
 //! @param x1 左上の x座標
 //! @param y1 左上の y座標
