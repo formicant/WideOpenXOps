@@ -1945,11 +1945,11 @@ bool ObjectManager::GetObjectInfoTag(float camera_x, float camera_y, float camer
 				if( abs(rx) < (float)M_PI/18 ){
 					HumanIndex[i].GetParamData(NULL, NULL, NULL, &team);
 					if( team == Player_teamID ){
-						*color = D3DCOLOR_COLORVALUE(0.0f,0.0f,1.0f,1.0f);
+						*color = d3dg->GetColorCode(0.0f,0.0f,1.0f,1.0f);
 						sprintf(infostr, "Human[%d]  HP %d : Friend", i, HumanIndex[i].GetHP());
 					}
 					else{
-						*color = D3DCOLOR_COLORVALUE(1.0f,0.0f,0.0f,1.0f);
+						*color = d3dg->GetColorCode(1.0f,0.0f,0.0f,1.0f);
 						sprintf(infostr, "Human[%d]  HP %d : Enemy", i, HumanIndex[i].GetHP());
 					}
 					dist = sqrt(r);
@@ -1970,7 +1970,7 @@ bool ObjectManager::GetObjectInfoTag(float camera_x, float camera_y, float camer
 			if( CheckTargetAngle(camera_x, camera_y, camera_z, camera_rx, camera_ry, px, py, pz, dist, &rx, &ry, &r) == true ){
 				//äpìxè„ÅAéãäEÇ…ì¸Ç¡ÇƒÇ¢ÇÍÇŒ
 				if( (abs(rx) < (float)M_PI/18)&&(abs(ry) < (float)M_PI/18) ){
-					*color = D3DCOLOR_COLORVALUE(0.0f,1.0f,0.0f,1.0f);
+					*color = d3dg->GetColorCode(0.0f,1.0f,0.0f,1.0f);
 					sprintf(infostr, "Weapon[%d]  %d:%d", i, lnbs, (nbs - lnbs));
 					dist = sqrt(r);
 				}
@@ -1987,7 +1987,7 @@ bool ObjectManager::GetObjectInfoTag(float camera_x, float camera_y, float camer
 			if( CheckTargetAngle(camera_x, camera_y, camera_z, camera_rx, camera_ry, px, py, pz, dist, &rx, &ry, &r) == true ){
 				//äpìxè„ÅAéãäEÇ…ì¸Ç¡ÇƒÇ¢ÇÍÇŒ
 				if( (abs(rx) < (float)M_PI/18)&&(abs(ry) < (float)M_PI/18) ){
-					*color = D3DCOLOR_COLORVALUE(1.0f,1.0f,0.0f,1.0f);
+					*color = d3dg->GetColorCode(1.0f,1.0f,0.0f,1.0f);
 					sprintf(infostr, "SmallObject[%d]  HP %d", i, SmallObjectIndex[i].GetHP());
 					dist = sqrt(r);
 				}

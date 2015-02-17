@@ -1498,3 +1498,14 @@ bool D3DGraphics::SaveScreenShot(char* filename)
 	}
 	return false;
 }
+
+//! @brief カラーコードを取得
+//! @param red 赤（0.0f～1.0f）
+//! @param green 緑（0.0f～1.0f）
+//! @param blue 青（0.0f～1.0f）
+//! @param alpha 透明度（0.0f～1.0f）
+//! @return カラーコード
+int D3DGraphics::GetColorCode(float red, float green, float blue, float alpha)
+{
+	return D3DCOLOR_COLORVALUE(red, green, blue, alpha);
+}

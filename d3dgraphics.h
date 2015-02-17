@@ -156,6 +156,7 @@ public:
 	void Draw2DBox(int x1, int y1, int x2, int y2, int color);
 	void Draw2DTexture(int x, int y, int id, int width, int height, float alpha);
 	bool SaveScreenShot(char *fname);
+	int GetColorCode(float red, float green, float blue, float alpha);
 };
 
 #endif

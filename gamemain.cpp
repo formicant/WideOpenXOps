@@ -272,11 +272,11 @@ void opening::Render2D()
 	if( (int)(15.0f*GAMEFPS) <= framecnt ){
 		effect = 1.0f;
 	}
-	d3dg->Draw2DBox(0, 0, SCREEN_WIDTH, SCREEN_HEIGHT, D3DCOLOR_COLORVALUE(0.0f,0.0f,0.0f,effect));
+	d3dg->Draw2DBox(0, 0, SCREEN_WIDTH, SCREEN_HEIGHT, d3dg->GetColorCode(0.0f,0.0f,0.0f,effect));
 
 	//上下の黒縁描画
-	d3dg->Draw2DBox(0, 0, SCREEN_WIDTH, 40, D3DCOLOR_COLORVALUE(0.0f,0.0f,0.0f,1.0f));
-	d3dg->Draw2DBox(0, SCREEN_HEIGHT - 40, SCREEN_WIDTH, SCREEN_HEIGHT, D3DCOLOR_COLORVALUE(0.0f,0.0f,0.0f,1.0f));
+	d3dg->Draw2DBox(0, 0, SCREEN_WIDTH, 40, d3dg->GetColorCode(0.0f,0.0f,0.0f,1.0f));
+	d3dg->Draw2DBox(0, SCREEN_HEIGHT - 40, SCREEN_WIDTH, SCREEN_HEIGHT, d3dg->GetColorCode(0.0f,0.0f,0.0f,1.0f));
 
 	//プロジェクト名
 	if( ((int)(0.5f*GAMEFPS) < framecnt)&&(framecnt < (int)(4.0f*GAMEFPS)) ){
@@ -285,7 +285,7 @@ void opening::Render2D()
 		sprintf(str, GAMENAME" project", 0, 0);
 		if( framecnt < (int)(1.5f*GAMEFPS) ){ effectA = GetEffectAlpha(framecnt, 1.0f, 1.0f, 0.5f, false); }
 		if( framecnt > (int)(3.0f*GAMEFPS) ){ effectA = GetEffectAlpha(framecnt, 1.0f, 1.0f, 3.0f, true); }
-		d3dg->Draw2DTextureFontText(SCREEN_WIDTH/2 - strlen(str)*22/2, SCREEN_HEIGHT - 140, str, D3DCOLOR_COLORVALUE(1.0f,1.0f,1.0f,effectA), 22, 22);
+		d3dg->Draw2DTextureFontText(SCREEN_WIDTH/2 - strlen(str)*22/2, SCREEN_HEIGHT - 140, str, d3dg->GetColorCode(1.0f,1.0f,1.0f,effectA), 22, 22);
 	}
 
 	//スタッフ名・その１
@@ -293,14 +293,14 @@ void opening::Render2D()
 		float effectA = 1.0f;
 		if( framecnt < (int)(5.0f*GAMEFPS) ){ effectA = GetEffectAlpha(framecnt, 1.0f, 1.0f, 4.0f, false); }
 		if( framecnt > (int)(7.0f*GAMEFPS) ){ effectA = GetEffectAlpha(framecnt, 1.0f, 1.0f, 7.0f, true); }
-		d3dg->Draw2DTextureFontText(60, 150, "ORIGINAL", D3DCOLOR_COLORVALUE(1.0f,1.0f,1.0f,effectA), 20, 20);
+		d3dg->Draw2DTextureFontText(60, 150, "ORIGINAL", d3dg->GetColorCode(1.0f,1.0f,1.0f,effectA), 20, 20);
 	}
 	if( ((int)(4.5f*GAMEFPS) < framecnt)&&(framecnt < (int)(8.5f*GAMEFPS)) ){
 		float effectA = 1.0f;
 		if( framecnt < (int)(5.5f*GAMEFPS) ){ effectA = GetEffectAlpha(framecnt, 1.0f, 1.0f, 4.5f, false); }
 		if( framecnt > (int)(7.5f*GAMEFPS) ){ effectA = GetEffectAlpha(framecnt, 1.0f, 1.0f, 7.5f, true); }
-		d3dg->Draw2DTextureFontText(100, 180, "nine-two", D3DCOLOR_COLORVALUE(1.0f,1.0f,1.0f,effectA), 20, 20);
-		d3dg->Draw2DTextureFontText(100, 210, "TENNKUU", D3DCOLOR_COLORVALUE(1.0f,1.0f,1.0f,effectA), 20, 20);
+		d3dg->Draw2DTextureFontText(100, 180, "nine-two", d3dg->GetColorCode(1.0f,1.0f,1.0f,effectA), 20, 20);
+		d3dg->Draw2DTextureFontText(100, 210, "TENNKUU", d3dg->GetColorCode(1.0f,1.0f,1.0f,effectA), 20, 20);
 	}
 
 	//スタッフ名・その２
@@ -308,13 +308,13 @@ void opening::Render2D()
 		float effectA = 1.0f;
 		if( framecnt < (int)(8.0f*GAMEFPS) ){ effectA = GetEffectAlpha(framecnt, 1.0f, 1.0f, 7.0f, false); }
 		if( framecnt > (int)(10.0f*GAMEFPS) ){ effectA = GetEffectAlpha(framecnt, 1.0f, 1.0f, 10.0f, true); }
-		d3dg->Draw2DTextureFontText(330, 300, "REMAKE", D3DCOLOR_COLORVALUE(1.0f,1.0f,1.0f,effectA), 20, 20);
+		d3dg->Draw2DTextureFontText(330, 300, "REMAKE", d3dg->GetColorCode(1.0f,1.0f,1.0f,effectA), 20, 20);
 	}
 	if( ((int)(7.5f*GAMEFPS) < framecnt)&&(framecnt < (int)(11.5f*GAMEFPS)) ){
 		float effectA = 1.0f;
 		if( framecnt < (int)(8.5f*GAMEFPS) ){ effectA = GetEffectAlpha(framecnt, 1.0f, 1.0f, 7.5f, false); }
 		if( framecnt > (int)(10.5f*GAMEFPS) ){ effectA = GetEffectAlpha(framecnt, 1.0f, 1.0f, 10.5f, true); }
-		d3dg->Draw2DTextureFontText(370, 330, "[-_-;](mikan)", D3DCOLOR_COLORVALUE(1.0f,1.0f,1.0f,effectA), 20, 20);
+		d3dg->Draw2DTextureFontText(370, 330, "[-_-;](mikan)", d3dg->GetColorCode(1.0f,1.0f,1.0f,effectA), 20, 20);
 		//d3dg->Draw2DTexture(410, 360, opening_banner, 200, 40, effectA);
 	}
 
@@ -326,7 +326,7 @@ void opening::Render2D()
 		if( framecnt < (int)(13.0f*GAMEFPS) ){ effectA = GetEffectAlpha(framecnt, 1.0f, 1.0f, 12.0f, false); }
 		if( ((int)(16.0f*GAMEFPS) < framecnt)&&(framecnt < (int)(17.0f*GAMEFPS)) ){ effectA = GetEffectAlpha(framecnt, 1.0f, 1.0f, 16.0f, true); }
 		if( framecnt >= (int)(17.0f*GAMEFPS) ){ effectA = 0.0f; }
-		d3dg->Draw2DTextureFontText(SCREEN_WIDTH/2 - strlen(str)*22/2, (SCREEN_HEIGHT-11)/2, str, D3DCOLOR_COLORVALUE(1.0f,0.0f,0.0f,effectA), 22, 22);
+		d3dg->Draw2DTextureFontText(SCREEN_WIDTH/2 - strlen(str)*22/2, (SCREEN_HEIGHT-11)/2, str, d3dg->GetColorCode(1.0f,0.0f,0.0f,effectA), 22, 22);
 	}
 }
 
@@ -632,32 +632,32 @@ void mainmenu::Render2D()
 	}
 
 	//ゲームのバージョン情報描画
-	d3dg->Draw2DTextureFontText(522+1, 75+1, GAMEVERSION, D3DCOLOR_COLORVALUE(0.0f,0.0f,0.0f,1.0f), 18, 22);
-	d3dg->Draw2DTextureFontText(522, 75, GAMEVERSION, D3DCOLOR_COLORVALUE(1.0f,1.0f,1.0f,1.0f), 18, 22);
+	d3dg->Draw2DTextureFontText(522+1, 75+1, GAMEVERSION, d3dg->GetColorCode(0.0f,0.0f,0.0f,1.0f), 18, 22);
+	d3dg->Draw2DTextureFontText(522, 75, GAMEVERSION, d3dg->GetColorCode(1.0f,1.0f,1.0f,1.0f), 18, 22);
 
 	//メニューエリア描画
 	if( GameAddon.GetTotaldatas() > 0 ){	//addonがあれば
-		d3dg->Draw2DBox(MAINMENU_X-1, MAINMENU_Y, MAINMENU_X+360, MAINMENU_Y+MAINMENU_H+1, D3DCOLOR_COLORVALUE(0.0f,0.0f,0.0f,0.5f));
+		d3dg->Draw2DBox(MAINMENU_X-1, MAINMENU_Y, MAINMENU_X+360, MAINMENU_Y+MAINMENU_H+1, d3dg->GetColorCode(0.0f,0.0f,0.0f,0.5f));
 	}
 	else{
-		d3dg->Draw2DBox(MAINMENU_X-1, MAINMENU_Y, MAINMENU_X+360, MAINMENU_Y+MAINMENU_H-24, D3DCOLOR_COLORVALUE(0.0f,0.0f,0.0f,0.5f));
+		d3dg->Draw2DBox(MAINMENU_X-1, MAINMENU_Y, MAINMENU_X+360, MAINMENU_Y+MAINMENU_H-24, d3dg->GetColorCode(0.0f,0.0f,0.0f,0.5f));
 	}
-	d3dg->Draw2DBox(MAINMENU_X+341, MAINMENU_Y+1, MAINMENU_X+360, MAINMENU_Y+MAINMENU_H-24, D3DCOLOR_COLORVALUE(0.5f,0.5f,0.5f,0.5f));
+	d3dg->Draw2DBox(MAINMENU_X+341, MAINMENU_Y+1, MAINMENU_X+360, MAINMENU_Y+MAINMENU_H-24, d3dg->GetColorCode(0.5f,0.5f,0.5f,0.5f));
 
 	//スクロールバー描画
 	if( totalmission > TOTAL_MENUITEMS ){
 		//色を設定
 		if( mainmenu_scrollbar_flag == true ){
-			color = D3DCOLOR_COLORVALUE(0.6f,0.3f,0.25f,1.0f);
-			color2 = D3DCOLOR_COLORVALUE(0.8f,0.3f,0.25f,1.0f);
+			color = d3dg->GetColorCode(0.6f,0.3f,0.25f,1.0f);
+			color2 = d3dg->GetColorCode(0.8f,0.3f,0.25f,1.0f);
 		}
 		else if( ((MAINMENU_X+341) < mainmenu_mouseX)&&(mainmenu_mouseX < (MAINMENU_X+360))&&(scrollbar_y < mainmenu_mouseY)&&(mainmenu_mouseY < scrollbar_y + (int)scrollbar_height) ){
-			color = D3DCOLOR_COLORVALUE(0.4f,0.67f,0.57f,1.0f);
-			color2 = D3DCOLOR_COLORVALUE(0.38f,0.77f,0.64f,1.0f);
+			color = d3dg->GetColorCode(0.4f,0.67f,0.57f,1.0f);
+			color2 = d3dg->GetColorCode(0.38f,0.77f,0.64f,1.0f);
 		}
 		else{
-			color = D3DCOLOR_COLORVALUE(0.6f,0.6f,0.25f,1.0f);
-			color2 = D3DCOLOR_COLORVALUE(0.8f,0.8f,0.25f,1.0f);
+			color = d3dg->GetColorCode(0.6f,0.6f,0.25f,1.0f);
+			color2 = d3dg->GetColorCode(0.8f,0.8f,0.25f,1.0f);
 		}
 
 		//描画
@@ -667,40 +667,40 @@ void mainmenu::Render2D()
 
 	//'< UP >'描画
 	if( scrollitems > 0 ){
-		d3dg->Draw2DTextureFontText(MAINMENU_X+1, MAINMENU_Y+1, "<  UP  >", D3DCOLOR_COLORVALUE(0.0f,0.0f,0.0f,1.0f), 25, 26);
+		d3dg->Draw2DTextureFontText(MAINMENU_X+1, MAINMENU_Y+1, "<  UP  >", d3dg->GetColorCode(0.0f,0.0f,0.0f,1.0f), 25, 26);
 
 		//文字の色を設定
 		if( (MAINMENU_X < mainmenu_mouseX)&&(mainmenu_mouseX < (MAINMENU_X+340))&&(MAINMENU_Y < mainmenu_mouseY)&&(mainmenu_mouseY < MAINMENU_Y+30) ){
-			color = D3DCOLOR_COLORVALUE(0.0f,1.0f,1.0f,1.0f);
+			color = d3dg->GetColorCode(0.0f,1.0f,1.0f,1.0f);
 		}
 		else{
-			color = D3DCOLOR_COLORVALUE(1.0f,1.0f,1.0f,1.0f);
+			color = d3dg->GetColorCode(1.0f,1.0f,1.0f,1.0f);
 		}
 
 		//文字を描画
 		d3dg->Draw2DTextureFontText(MAINMENU_X, MAINMENU_Y, "<  UP  >", color, 25, 26);
 	}
 	else{
-		d3dg->Draw2DTextureFontText(MAINMENU_X+1, MAINMENU_Y+1, "<  UP  >", D3DCOLOR_COLORVALUE(0.6f,0.6f,0.6f,1.0f), 25, 26);
+		d3dg->Draw2DTextureFontText(MAINMENU_X+1, MAINMENU_Y+1, "<  UP  >", d3dg->GetColorCode(0.6f,0.6f,0.6f,1.0f), 25, 26);
 	}
 
 	//'< DOWN >'描画
 	if( scrollitems < (totalmission - TOTAL_MENUITEMS) ){
-		d3dg->Draw2DTextureFontText(MAINMENU_X+1, MAINMENU_Y+MAINMENU_H-55+1, "< DOWN >", D3DCOLOR_COLORVALUE(0.0f,0.0f,0.0f,1.0f), 25, 26);
+		d3dg->Draw2DTextureFontText(MAINMENU_X+1, MAINMENU_Y+MAINMENU_H-55+1, "< DOWN >", d3dg->GetColorCode(0.0f,0.0f,0.0f,1.0f), 25, 26);
 
 		//文字の色を設定
 		if( (MAINMENU_X < mainmenu_mouseX)&&(mainmenu_mouseX < (MAINMENU_X+340))&&((MAINMENU_Y+MAINMENU_H-55) < mainmenu_mouseY)&&(mainmenu_mouseY < (MAINMENU_Y+MAINMENU_H-55+30)) ){
-			color = D3DCOLOR_COLORVALUE(0.0f,1.0f,1.0f,1.0f);
+			color = d3dg->GetColorCode(0.0f,1.0f,1.0f,1.0f);
 		}
 		else{
-			color = D3DCOLOR_COLORVALUE(1.0f,1.0f,1.0f,1.0f);
+			color = d3dg->GetColorCode(1.0f,1.0f,1.0f,1.0f);
 		}
 
 		//文字を描画
 		d3dg->Draw2DTextureFontText(MAINMENU_X, MAINMENU_Y+MAINMENU_H-55, "< DOWN >", color, 25, 26);
 	}
 	else{
-		d3dg->Draw2DTextureFontText(MAINMENU_X+1, MAINMENU_Y+MAINMENU_H-55+1, "< DOWN >", D3DCOLOR_COLORVALUE(0.6f,0.6f,0.6f,1.0f), 25, 26);
+		d3dg->Draw2DTextureFontText(MAINMENU_X+1, MAINMENU_Y+MAINMENU_H-55+1, "< DOWN >", d3dg->GetColorCode(0.6f,0.6f,0.6f,1.0f), 25, 26);
 	}
 
 	//標準ミッションとaddon切り替え
@@ -709,14 +709,14 @@ void mainmenu::Render2D()
 		if( GameAddon.GetTotaldatas() > 0 ){
 			//文字の色を設定
 			if( (MAINMENU_X < mainmenu_mouseX)&&(mainmenu_mouseX < (MAINMENU_X+340))&&((MAINMENU_Y+MAINMENU_H-25) < mainmenu_mouseY)&&(mainmenu_mouseY < (MAINMENU_Y+MAINMENU_H-2)) ){
-				color = D3DCOLOR_COLORVALUE(0.0f,1.0f,1.0f,1.0f);
+				color = d3dg->GetColorCode(0.0f,1.0f,1.0f,1.0f);
 			}
 			else{
-				color = D3DCOLOR_COLORVALUE(1.0f,1.0f,1.0f,1.0f);
+				color = d3dg->GetColorCode(1.0f,1.0f,1.0f,1.0f);
 			}
 
 			//文字を描画
-			d3dg->Draw2DTextureFontText(MAINMENU_X+1, MAINMENU_Y+MAINMENU_H-25+1, "ADD-ON MISSIONS >>", D3DCOLOR_COLORVALUE(0.0f,0.0f,0.0f,1.0f), 17, 22);
+			d3dg->Draw2DTextureFontText(MAINMENU_X+1, MAINMENU_Y+MAINMENU_H-25+1, "ADD-ON MISSIONS >>", d3dg->GetColorCode(0.0f,0.0f,0.0f,1.0f), 17, 22);
 			d3dg->Draw2DTextureFontText(MAINMENU_X, MAINMENU_Y+MAINMENU_H-25, "ADD-ON MISSIONS >>", color, 17, 22);
 		}
 	}
@@ -725,14 +725,14 @@ void mainmenu::Render2D()
 		//if( GameAddon.GetTotaldatas() > 0 ){
 			//文字の色を設定
 			if( (MAINMENU_X < mainmenu_mouseX)&&(mainmenu_mouseX < (MAINMENU_X+340))&&((MAINMENU_Y+MAINMENU_H-25) < mainmenu_mouseY)&&(mainmenu_mouseY < (MAINMENU_Y+MAINMENU_H-2)) ){
-				color = D3DCOLOR_COLORVALUE(0.0f,1.0f,1.0f,1.0f);
+				color = d3dg->GetColorCode(0.0f,1.0f,1.0f,1.0f);
 			}
 			else{
-				color = D3DCOLOR_COLORVALUE(1.0f,1.0f,1.0f,1.0f);
+				color = d3dg->GetColorCode(1.0f,1.0f,1.0f,1.0f);
 			}
 
 			//文字を描画
-			d3dg->Draw2DTextureFontText(MAINMENU_X+1, MAINMENU_Y+MAINMENU_H-25+1, "<< STANDARD MISSIONS", D3DCOLOR_COLORVALUE(0.0f,0.0f,0.0f,1.0f), 17, 22);
+			d3dg->Draw2DTextureFontText(MAINMENU_X+1, MAINMENU_Y+MAINMENU_H-25+1, "<< STANDARD MISSIONS", d3dg->GetColorCode(0.0f,0.0f,0.0f,1.0f), 17, 22);
 			d3dg->Draw2DTextureFontText(MAINMENU_X, MAINMENU_Y+MAINMENU_H-25, "<< STANDARD MISSIONS", color, 17, 22);
 		//}
 	}
@@ -752,22 +752,22 @@ void mainmenu::Render2D()
 
 		//文字の色を設定
 		if( (MAINMENU_X < mainmenu_mouseX)&&(mainmenu_mouseX < (MAINMENU_X+(signed)strlen(name)*20))&&(MAINMENU_Y+30 + i*30 < mainmenu_mouseY)&&(mainmenu_mouseY < MAINMENU_Y+30 + i*30 + 26) ){
-			color = D3DCOLOR_COLORVALUE(1.0f,0.6f,0.6f,1.0f);
+			color = d3dg->GetColorCode(1.0f,0.6f,0.6f,1.0f);
 		}
 		else{
-			color = D3DCOLOR_COLORVALUE(0.6f,0.6f,1.0f,1.0f);
+			color = d3dg->GetColorCode(0.6f,0.6f,1.0f,1.0f);
 		}
 
 		//文字を描画
-		d3dg->Draw2DTextureFontText(MAINMENU_X+1, MAINMENU_Y+30+1 + i*30, name, D3DCOLOR_COLORVALUE(0.0f,0.0f,0.0f,1.0f), 20, 26);
+		d3dg->Draw2DTextureFontText(MAINMENU_X+1, MAINMENU_Y+30+1 + i*30, name, d3dg->GetColorCode(0.0f,0.0f,0.0f,1.0f), 20, 26);
 		d3dg->Draw2DTextureFontText(MAINMENU_X, MAINMENU_Y+30 + i*30, name, color, 20, 26);
 	}
 
 	//マウスカーソル描画（赤線）
-	d3dg->Draw2DBox(0, mainmenu_mouseY-1, SCREEN_WIDTH, mainmenu_mouseY+1, D3DCOLOR_COLORVALUE(1.0f,0.0f,0.0f,0.5f));
-	d3dg->Draw2DBox(mainmenu_mouseX-1, 0, mainmenu_mouseX+1, SCREEN_HEIGHT, D3DCOLOR_COLORVALUE(1.0f,0.0f,0.0f,0.5f));
-	d3dg->Draw2DLine(0, mainmenu_mouseY, SCREEN_WIDTH, mainmenu_mouseY, D3DCOLOR_COLORVALUE(1.0f,0.0f,0.0f,1.0f));
-	d3dg->Draw2DLine(mainmenu_mouseX, 0, mainmenu_mouseX, SCREEN_HEIGHT, D3DCOLOR_COLORVALUE(1.0f,0.0f,0.0f,1.0f));
+	d3dg->Draw2DBox(0, mainmenu_mouseY-1, SCREEN_WIDTH, mainmenu_mouseY+1, d3dg->GetColorCode(1.0f,0.0f,0.0f,0.5f));
+	d3dg->Draw2DBox(mainmenu_mouseX-1, 0, mainmenu_mouseX+1, SCREEN_HEIGHT, d3dg->GetColorCode(1.0f,0.0f,0.0f,0.5f));
+	d3dg->Draw2DLine(0, mainmenu_mouseY, SCREEN_WIDTH, mainmenu_mouseY, d3dg->GetColorCode(1.0f,0.0f,0.0f,1.0f));
+	d3dg->Draw2DLine(mainmenu_mouseX, 0, mainmenu_mouseX, SCREEN_HEIGHT, d3dg->GetColorCode(1.0f,0.0f,0.0f,1.0f));
 
 	//ゲームのロゴマーク描画
 	d3dg->Draw2DTexture(20, 25, gametitle, 480, 80, 1.0f);
@@ -779,7 +779,7 @@ void mainmenu::Render2D()
 	else{
 		effect = 0.0f;
 	}
-	d3dg->Draw2DBox(0, 0, SCREEN_WIDTH, SCREEN_HEIGHT, D3DCOLOR_COLORVALUE(0.0f,0.0f,0.0f,effect));
+	d3dg->Draw2DBox(0, 0, SCREEN_WIDTH, SCREEN_HEIGHT, d3dg->GetColorCode(0.0f,0.0f,0.0f,effect));
 }
 
 void mainmenu::Destroy()
@@ -866,21 +866,21 @@ void briefing::Render2D()
 	//メモ：背景画像の描画は、自動的に行われる。
 
 	//固定文字描画
-	d3dg->Draw2DTextureFontText(SCREEN_WIDTH/2 - 60*4, 30, "BRIEFING", D3DCOLOR_COLORVALUE(1.0f,1.0f,0.0f,effectA), 60, 42);
+	d3dg->Draw2DTextureFontText(SCREEN_WIDTH/2 - 60*4, 30, "BRIEFING", d3dg->GetColorCode(1.0f,1.0f,0.0f,effectA), 60, 42);
 	d3dg->Draw2DTextureFontText(SCREEN_WIDTH - 210 - effectB_sizeW*20/2, SCREEN_HEIGHT - 37 - effectB_sizeH/2,
-								"LEFT CLICK TO BEGIN", D3DCOLOR_COLORVALUE(1.0f,1.0f,1.0f,effectB), effectB_sizeW, effectB_sizeH);
-	d3dg->Draw2DTextureFontText(SCREEN_WIDTH - 210 - 18*20/2, SCREEN_HEIGHT - 37 - 26/2, "LEFT CLICK TO BEGIN", D3DCOLOR_COLORVALUE(1.0f,1.0f,1.0f,1.0f), 18, 26);
+								"LEFT CLICK TO BEGIN", d3dg->GetColorCode(1.0f,1.0f,1.0f,effectB), effectB_sizeW, effectB_sizeH);
+	d3dg->Draw2DTextureFontText(SCREEN_WIDTH - 210 - 18*20/2, SCREEN_HEIGHT - 37 - 26/2, "LEFT CLICK TO BEGIN", d3dg->GetColorCode(1.0f,1.0f,1.0f,1.0f), 18, 26);
 
 	//ブリーフィング画像描画
 	if( TwoTexture == false ){
-		d3dg->Draw2DBox(40, 180, 40+160, 180+150, D3DCOLOR_COLORVALUE(1.0f,1.0f,1.0f,1.0f));
+		d3dg->Draw2DBox(40, 180, 40+160, 180+150, d3dg->GetColorCode(1.0f,1.0f,1.0f,1.0f));
 		d3dg->Draw2DTexture(40, 180, TextureA, 160, 150, 1.0f);
 	}
 	else{
-		d3dg->Draw2DBox(40, 130, 40+160, 130+150, D3DCOLOR_COLORVALUE(1.0f,1.0f,1.0f,1.0f));
+		d3dg->Draw2DBox(40, 130, 40+160, 130+150, d3dg->GetColorCode(1.0f,1.0f,1.0f,1.0f));
 		d3dg->Draw2DTexture(40, 130, TextureA, 160, 150, 1.0f);
 
-		d3dg->Draw2DBox(40, 300, 40+160, 300+150, D3DCOLOR_COLORVALUE(1.0f,1.0f,1.0f,1.0f));
+		d3dg->Draw2DBox(40, 300, 40+160, 300+150, d3dg->GetColorCode(1.0f,1.0f,1.0f,1.0f));
 		d3dg->Draw2DTexture(40, 300, TextureB, 160, 150, 1.0f);
 	}
 
@@ -892,10 +892,10 @@ void briefing::Render2D()
 	else{
 		strcpy(mname, MIFdata.GetMissionFullname());
 	}
-	d3dg->Draw2DTextureFontText(SCREEN_WIDTH/2 - strlen(mname)*18/2, 90, mname, D3DCOLOR_COLORVALUE(1.0f,0.5f,0.0f,1.0f), 18, 25);
+	d3dg->Draw2DTextureFontText(SCREEN_WIDTH/2 - strlen(mname)*18/2, 90, mname, d3dg->GetColorCode(1.0f,0.5f,0.0f,1.0f), 18, 25);
 
 	//ミッション説明を描画
-	d3dg->Draw2DMSFontText(230, 180, MIFdata.GetBriefingText(), D3DCOLOR_COLORVALUE(1.0f,1.0f,1.0f,1.0f));
+	d3dg->Draw2DMSFontText(230, 180, MIFdata.GetBriefingText(), d3dg->GetColorCode(1.0f,1.0f,1.0f,1.0f));
 }
 
 void briefing::Destroy(){
@@ -1031,13 +1031,13 @@ int maingame::Create()
 	InfoConsoleData = new ConsoleData [MAX_CONSOLELINES];
 	InputConsoleData = new ConsoleData;
 	for(int i=0; i<MAX_CONSOLELINES; i++){
-		InfoConsoleData[i].color = D3DCOLOR_COLORVALUE(1.0f,1.0f,1.0f,1.0f);
+		InfoConsoleData[i].color = d3dg->GetColorCode(1.0f,1.0f,1.0f,1.0f);
 		InfoConsoleData[i].textdata[0] = NULL;
 	}
-	InputConsoleData->color = D3DCOLOR_COLORVALUE(1.0f,1.0f,0.0f,1.0f);
+	InputConsoleData->color = d3dg->GetColorCode(1.0f,1.0f,0.0f,1.0f);
 	InputConsoleData->textdata[0] = NULL;
-	AddInfoConsole(D3DCOLOR_COLORVALUE(1.0f,1.0f,1.0f,1.0f), "Game Debug Console.");
-	AddInfoConsole(D3DCOLOR_COLORVALUE(1.0f,1.0f,1.0f,1.0f), "        Command list >help");
+	AddInfoConsole(d3dg->GetColorCode(1.0f,1.0f,1.0f,1.0f), "Game Debug Console.");
+	AddInfoConsole(d3dg->GetColorCode(1.0f,1.0f,1.0f,1.0f), "        Command list >help");
 #endif
 
 	GameState->NextState();
@@ -1831,26 +1831,26 @@ void maingame::Render2D()
 
 	//レッドフラッシュ描画
 	if( redflash_flag == true ){
-		d3dg->Draw2DBox(0, 0, SCREEN_WIDTH, SCREEN_HEIGHT, D3DCOLOR_COLORVALUE(1.0f,0.0f,0.0f,0.5f));
+		d3dg->Draw2DBox(0, 0, SCREEN_WIDTH, SCREEN_HEIGHT, d3dg->GetColorCode(1.0f,0.0f,0.0f,0.5f));
 		redflash_flag = false;
 	}
 
 	//スコープ表示
 	if( (Camera_F1mode == false)&&(myHuman->GetScopeMode() == 1) ){
 		d3dg->Draw2DTexture(0, 0, Resource.GetScopeTexture(), SCREEN_WIDTH, SCREEN_HEIGHT, 1.0f);
-		d3dg->Draw2DLine(SCREEN_WIDTH/2-49, SCREEN_HEIGHT/2, SCREEN_WIDTH/2-4, SCREEN_HEIGHT/2, D3DCOLOR_COLORVALUE(0.0f,0.0f,0.0f,1.0f));
-		d3dg->Draw2DLine(SCREEN_WIDTH/2+4, SCREEN_HEIGHT/2, SCREEN_WIDTH/2+49, SCREEN_HEIGHT/2, D3DCOLOR_COLORVALUE(0.0f,0.0f,0.0f,1.0f));
-		d3dg->Draw2DLine(SCREEN_WIDTH/2, SCREEN_HEIGHT/2-49, SCREEN_WIDTH/2, SCREEN_HEIGHT/2-4, D3DCOLOR_COLORVALUE(0.0f,0.0f,0.0f,1.0f));
-		d3dg->Draw2DLine(SCREEN_WIDTH/2, SCREEN_HEIGHT/2+4, SCREEN_WIDTH/2, SCREEN_HEIGHT/2+49, D3DCOLOR_COLORVALUE(0.0f,0.0f,0.0f,1.0f));
-		d3dg->Draw2DBox(SCREEN_WIDTH/2-50, SCREEN_HEIGHT/2-1, SCREEN_WIDTH/20+50, SCREEN_HEIGHT/2+1, D3DCOLOR_COLORVALUE(0.0f,0.0f,0.0f,0.5f));
-		d3dg->Draw2DBox(SCREEN_WIDTH/2-1, SCREEN_HEIGHT/2-50, SCREEN_WIDTH/2+1, SCREEN_HEIGHT/2+50, D3DCOLOR_COLORVALUE(0.0f,0.0f,0.0f,0.5f));
+		d3dg->Draw2DLine(SCREEN_WIDTH/2-49, SCREEN_HEIGHT/2, SCREEN_WIDTH/2-4, SCREEN_HEIGHT/2, d3dg->GetColorCode(0.0f,0.0f,0.0f,1.0f));
+		d3dg->Draw2DLine(SCREEN_WIDTH/2+4, SCREEN_HEIGHT/2, SCREEN_WIDTH/2+49, SCREEN_HEIGHT/2, d3dg->GetColorCode(0.0f,0.0f,0.0f,1.0f));
+		d3dg->Draw2DLine(SCREEN_WIDTH/2, SCREEN_HEIGHT/2-49, SCREEN_WIDTH/2, SCREEN_HEIGHT/2-4, d3dg->GetColorCode(0.0f,0.0f,0.0f,1.0f));
+		d3dg->Draw2DLine(SCREEN_WIDTH/2, SCREEN_HEIGHT/2+4, SCREEN_WIDTH/2, SCREEN_HEIGHT/2+49, d3dg->GetColorCode(0.0f,0.0f,0.0f,1.0f));
+		d3dg->Draw2DBox(SCREEN_WIDTH/2-50, SCREEN_HEIGHT/2-1, SCREEN_WIDTH/20+50, SCREEN_HEIGHT/2+1, d3dg->GetColorCode(0.0f,0.0f,0.0f,0.5f));
+		d3dg->Draw2DBox(SCREEN_WIDTH/2-1, SCREEN_HEIGHT/2-50, SCREEN_WIDTH/2+1, SCREEN_HEIGHT/2+50, d3dg->GetColorCode(0.0f,0.0f,0.0f,0.5f));
 	}
 	if( (Camera_F1mode == false)&&(myHuman->GetScopeMode() == 2) ){
 		d3dg->Draw2DTexture(0, 0, Resource.GetScopeTexture(), SCREEN_WIDTH, SCREEN_HEIGHT, 1.0f);
-		d3dg->Draw2DLine(0, SCREEN_HEIGHT/2, SCREEN_WIDTH, SCREEN_HEIGHT/2, D3DCOLOR_COLORVALUE(0.0f,0.0f,0.0f,1.0f));
-		d3dg->Draw2DLine(SCREEN_WIDTH/2, 0, SCREEN_WIDTH/2, SCREEN_HEIGHT, D3DCOLOR_COLORVALUE(0.0f,0.0f,0.0f,1.0f));
-		d3dg->Draw2DBox(0, SCREEN_HEIGHT/2-1, SCREEN_WIDTH, SCREEN_HEIGHT/2+1, D3DCOLOR_COLORVALUE(0.0f,0.0f,0.0f,0.5f));
-		d3dg->Draw2DBox(SCREEN_WIDTH/2-1, 0, SCREEN_WIDTH/2+1, SCREEN_HEIGHT, D3DCOLOR_COLORVALUE(0.0f,0.0f,0.0f,0.5f));
+		d3dg->Draw2DLine(0, SCREEN_HEIGHT/2, SCREEN_WIDTH, SCREEN_HEIGHT/2, d3dg->GetColorCode(0.0f,0.0f,0.0f,1.0f));
+		d3dg->Draw2DLine(SCREEN_WIDTH/2, 0, SCREEN_WIDTH/2, SCREEN_HEIGHT, d3dg->GetColorCode(0.0f,0.0f,0.0f,1.0f));
+		d3dg->Draw2DBox(0, SCREEN_HEIGHT/2-1, SCREEN_WIDTH, SCREEN_HEIGHT/2+1, d3dg->GetColorCode(0.0f,0.0f,0.0f,0.5f));
+		d3dg->Draw2DBox(SCREEN_WIDTH/2-1, 0, SCREEN_WIDTH/2+1, SCREEN_HEIGHT, d3dg->GetColorCode(0.0f,0.0f,0.0f,0.5f));
 	}
 
 	//目隠し表示
@@ -1867,22 +1867,22 @@ void maingame::Render2D()
 
 		//上
 		if( CollD.CheckALLBlockInside(camera_x + cos(camera_rx)*cos(camera_ry + addang) * adddist, camera_y + sin(camera_ry + addang) * adddist, camera_z + sin(camera_rx)*cos(camera_ry + addang) * adddist) == true ){
-			d3dg->Draw2DBox(0, 0, SCREEN_WIDTH, SCREEN_HEIGHT/2, D3DCOLOR_COLORVALUE(0.0f,0.0f,0.0f,1.0f));
+			d3dg->Draw2DBox(0, 0, SCREEN_WIDTH, SCREEN_HEIGHT/2, d3dg->GetColorCode(0.0f,0.0f,0.0f,1.0f));
 		}
 
 		//下
 		if( CollD.CheckALLBlockInside(camera_x + cos(camera_rx)*cos(camera_ry - addang) * adddist, camera_y + sin(camera_ry - addang) * adddist, camera_z + sin(camera_rx)*cos(camera_ry - addang) * adddist) == true ){
-			d3dg->Draw2DBox(0, SCREEN_HEIGHT/2, SCREEN_WIDTH, SCREEN_HEIGHT, D3DCOLOR_COLORVALUE(0.0f,0.0f,0.0f,1.0f));
+			d3dg->Draw2DBox(0, SCREEN_HEIGHT/2, SCREEN_WIDTH, SCREEN_HEIGHT, d3dg->GetColorCode(0.0f,0.0f,0.0f,1.0f));
 		}
 
 		//左
 		if( CollD.CheckALLBlockInside(camera_x + cos(camera_rx + addang)*cos(camera_ry) * adddist, camera_y + sin(camera_ry) * adddist, camera_z + sin(camera_rx + addang)*cos(camera_ry) * adddist) == true ){
-			d3dg->Draw2DBox(0, 0, SCREEN_WIDTH/2, SCREEN_HEIGHT, D3DCOLOR_COLORVALUE(0.0f,0.0f,0.0f,1.0f));
+			d3dg->Draw2DBox(0, 0, SCREEN_WIDTH/2, SCREEN_HEIGHT, d3dg->GetColorCode(0.0f,0.0f,0.0f,1.0f));
 		}
 
 		//右
 		if( CollD.CheckALLBlockInside(camera_x + cos(camera_rx - addang)*cos(camera_ry) * adddist, camera_y + sin(camera_ry) * adddist, camera_z + sin(camera_rx - addang)*cos(camera_ry) * adddist) == true ){
-			d3dg->Draw2DBox(SCREEN_WIDTH/2, 0, SCREEN_WIDTH, SCREEN_HEIGHT, D3DCOLOR_COLORVALUE(0.0f,0.0f,0.0f,1.0f));
+			d3dg->Draw2DBox(SCREEN_WIDTH/2, 0, SCREEN_WIDTH, SCREEN_HEIGHT, d3dg->GetColorCode(0.0f,0.0f,0.0f,1.0f));
 		}
 	}
 
@@ -1896,26 +1896,26 @@ void maingame::Render2D()
 			camera_x, camera_y, camera_z, camera_rx, camera_ry,
 			ObjMgr.GetPlayerID(), human_x, human_y, human_z, human_rx,
 			time_input, time_process_object, time_process_ai, time_process_event, time_render);
-		d3dg->Draw2DMSFontText(10+1, 10+1, str, D3DCOLOR_COLORVALUE(0.1f,0.1f,0.1f,1.0f));
-		d3dg->Draw2DMSFontText(10, 10, str, D3DCOLOR_COLORVALUE(1.0f,1.0f,1.0f,1.0f));
+		d3dg->Draw2DMSFontText(10+1, 10+1, str, d3dg->GetColorCode(0.1f,0.1f,0.1f,1.0f));
+		d3dg->Draw2DMSFontText(10, 10, str, d3dg->GetColorCode(1.0f,1.0f,1.0f,1.0f));
 		*/
 
 		//テクスチャフォントによる表示　軽い・見にくい
 		sprintf(str, "frame:%d   time %02d:%02d", framecnt, framecnt/(int)GAMEFPS/60, framecnt/(int)GAMEFPS%60);
-		d3dg->Draw2DTextureFontText(10+1, 10+1, str, D3DCOLOR_COLORVALUE(0.1f,0.1f,0.1f,1.0f), 10, 14);
-		d3dg->Draw2DTextureFontText(10, 10, str, D3DCOLOR_COLORVALUE(1.0f,1.0f,1.0f,1.0f), 10, 14);
+		d3dg->Draw2DTextureFontText(10+1, 10+1, str, d3dg->GetColorCode(0.1f,0.1f,0.1f,1.0f), 10, 14);
+		d3dg->Draw2DTextureFontText(10, 10, str, d3dg->GetColorCode(1.0f,1.0f,1.0f,1.0f), 10, 14);
 		sprintf(str, "camera x:%.2f y:%.2f z:%.2f rx:%.2f ry:%.2f", camera_x, camera_y, camera_z, camera_rx, camera_ry);
-		d3dg->Draw2DTextureFontText(10+1, 30+1, str, D3DCOLOR_COLORVALUE(0.1f,0.1f,0.1f,1.0f), 10, 14);
-		d3dg->Draw2DTextureFontText(10, 30, str, D3DCOLOR_COLORVALUE(1.0f,1.0f,1.0f,1.0f), 10, 14);
+		d3dg->Draw2DTextureFontText(10+1, 30+1, str, d3dg->GetColorCode(0.1f,0.1f,0.1f,1.0f), 10, 14);
+		d3dg->Draw2DTextureFontText(10, 30, str, d3dg->GetColorCode(1.0f,1.0f,1.0f,1.0f), 10, 14);
 		sprintf(str, "human[%d] x:%.2f y:%.2f z:%.2f rx:%.2f HP:%d", ObjMgr.GetPlayerID(), human_x, human_y, human_z, human_rx, hp);
-		d3dg->Draw2DTextureFontText(10+1, 50+1, str, D3DCOLOR_COLORVALUE(0.1f,0.1f,0.1f,1.0f), 10, 14);
-		d3dg->Draw2DTextureFontText(10, 50, str, D3DCOLOR_COLORVALUE(1.0f,1.0f,1.0f,1.0f), 10, 14);
+		d3dg->Draw2DTextureFontText(10+1, 50+1, str, d3dg->GetColorCode(0.1f,0.1f,0.1f,1.0f), 10, 14);
+		d3dg->Draw2DTextureFontText(10, 50, str, d3dg->GetColorCode(1.0f,1.0f,1.0f,1.0f), 10, 14);
 		sprintf(str, "Input:%02dms Object:%02dms AI:%02dms Event:%02dms Sound:%02dms", time_input, time_process_object, time_process_ai, time_process_event, time_sound);
-		d3dg->Draw2DTextureFontText(10+1, 70+1, str, D3DCOLOR_COLORVALUE(0.1f,0.1f,0.1f,1.0f), 10, 14);
-		d3dg->Draw2DTextureFontText(10, 70, str, D3DCOLOR_COLORVALUE(1.0f,1.0f,1.0f,1.0f), 10, 14);
+		d3dg->Draw2DTextureFontText(10+1, 70+1, str, d3dg->GetColorCode(0.1f,0.1f,0.1f,1.0f), 10, 14);
+		d3dg->Draw2DTextureFontText(10, 70, str, d3dg->GetColorCode(1.0f,1.0f,1.0f,1.0f), 10, 14);
 		sprintf(str, "Render:%02dms", time_render);
-		d3dg->Draw2DTextureFontText(10+1, 90+1, str, D3DCOLOR_COLORVALUE(0.1f,0.1f,0.1f,1.0f), 10, 14);
-		d3dg->Draw2DTextureFontText(10, 90, str, D3DCOLOR_COLORVALUE(1.0f,1.0f,1.0f,1.0f), 10, 14);
+		d3dg->Draw2DTextureFontText(10+1, 90+1, str, d3dg->GetColorCode(0.1f,0.1f,0.1f,1.0f), 10, 14);
+		d3dg->Draw2DTextureFontText(10, 90, str, d3dg->GetColorCode(1.0f,1.0f,1.0f,1.0f), 10, 14);
 	}
 
 	//ゲーム実行速度の表示
@@ -1926,8 +1926,8 @@ void maingame::Render2D()
 		int speed = (int)(fps / (1000.0f/GAMEFRAMEMS) * 100);
 		sprintf(str, "PROCESSING SPEED %d%%", speed);
 	}
-	d3dg->Draw2DTextureFontText(SCREEN_WIDTH - strlen(str)*14 - 14 +1, 10+1, str, D3DCOLOR_COLORVALUE(0.0f,0.0f,0.0f,1.0f), 14, 18);
-	d3dg->Draw2DTextureFontText(SCREEN_WIDTH - strlen(str)*14 - 14, 10, str, D3DCOLOR_COLORVALUE(1.0f,0.5f,0.0f,1.0f), 14, 18);
+	d3dg->Draw2DTextureFontText(SCREEN_WIDTH - strlen(str)*14 - 14 +1, 10+1, str, d3dg->GetColorCode(0.0f,0.0f,0.0f,1.0f), 14, 18);
+	d3dg->Draw2DTextureFontText(SCREEN_WIDTH - strlen(str)*14 - 14, 10, str, d3dg->GetColorCode(1.0f,0.5f,0.0f,1.0f), 14, 18);
 
 	//HUD表示・モードA
 	if( Camera_F2mode == 0 ){
@@ -1935,17 +1935,17 @@ void maingame::Render2D()
 		//"ｳｴｴｴｴｴｴｵ"
 		stru[0] = 0xB3;		stru[1] = 0xB4;		stru[2] = 0xB4;		stru[3] = 0xB4;		stru[4] = 0xB4;
 		stru[5] = 0xB4;		stru[6] = 0xB4;		stru[7] = 0xB5;		stru[8] = 0x00;
-		d3dg->Draw2DTextureFontText(15, SCREEN_HEIGHT - 105, (char*)stru, D3DCOLOR_COLORVALUE(1.0f,1.0f,1.0f,0.5f), 32, 32);
+		d3dg->Draw2DTextureFontText(15, SCREEN_HEIGHT - 105, (char*)stru, d3dg->GetColorCode(1.0f,1.0f,1.0f,0.5f), 32, 32);
 		//"ﾃﾄﾄﾄﾄﾄﾄﾅ"
 		for(int i=0; stru[i] != 0x00; i++){ stru[i] += 0x10; }
-		d3dg->Draw2DTextureFontText(15, SCREEN_HEIGHT - 105 +32, (char*)stru, D3DCOLOR_COLORVALUE(1.0f,1.0f,1.0f,0.5f), 32, 32);
+		d3dg->Draw2DTextureFontText(15, SCREEN_HEIGHT - 105 +32, (char*)stru, d3dg->GetColorCode(1.0f,1.0f,1.0f,0.5f), 32, 32);
 		//"ｳｴｴｶｷｷｷｸｹ"
 		stru[0] = 0xB3;		stru[1] = 0xB4;		stru[2] = 0xB4;		stru[3] = 0xB6;		stru[4] = 0xB7;
 		stru[5] = 0xB7;		stru[6] = 0xB7;		stru[7] = 0xB8;		stru[8] = 0xB9;		stru[9] = 0x00;
-		d3dg->Draw2DTextureFontText(15, SCREEN_HEIGHT - 55, (char*)stru, D3DCOLOR_COLORVALUE(1.0f,1.0f,1.0f,0.5f), 32, 32);
+		d3dg->Draw2DTextureFontText(15, SCREEN_HEIGHT - 55, (char*)stru, d3dg->GetColorCode(1.0f,1.0f,1.0f,0.5f), 32, 32);
 		//"ﾃﾄﾄﾆﾇﾇﾇﾈﾉ"
 		for(int i=0; stru[i] != 0x00; i++){ stru[i] += 0x10; }
-		d3dg->Draw2DTextureFontText(15, SCREEN_HEIGHT - 55 +32, (char*)stru, D3DCOLOR_COLORVALUE(1.0f,1.0f,1.0f,0.5f), 32, 32);
+		d3dg->Draw2DTextureFontText(15, SCREEN_HEIGHT - 55 +32, (char*)stru, d3dg->GetColorCode(1.0f,1.0f,1.0f,0.5f), 32, 32);
 
 		//右下エリア用文字コード設定
 		stru[0] = 0xB0;//'ｰ';
@@ -1956,13 +1956,13 @@ void maingame::Render2D()
 		stru[HUDA_WEAPON_SIZEW] = 0x00;
 
 		//右下エリア描画
-		d3dg->Draw2DTextureFontText(HUDA_WEAPON_POSX, HUDA_WEAPON_POSY, (char*)stru, D3DCOLOR_COLORVALUE(1.0f,1.0f,1.0f,0.5f), 32, 32);
+		d3dg->Draw2DTextureFontText(HUDA_WEAPON_POSX, HUDA_WEAPON_POSY, (char*)stru, d3dg->GetColorCode(1.0f,1.0f,1.0f,0.5f), 32, 32);
 		for(int i=0; i<HUDA_WEAPON_SIZEW; i++){ stru[i] += 0x10; }
 		for(int i=1; i<HUDA_WEAPON_SIZEH-1; i++){
-			d3dg->Draw2DTextureFontText(HUDA_WEAPON_POSX, HUDA_WEAPON_POSY + 32*i, (char*)stru, D3DCOLOR_COLORVALUE(1.0f,1.0f,1.0f,0.5f), 32, 32);
+			d3dg->Draw2DTextureFontText(HUDA_WEAPON_POSX, HUDA_WEAPON_POSY + 32*i, (char*)stru, d3dg->GetColorCode(1.0f,1.0f,1.0f,0.5f), 32, 32);
 		}
 		for(int i=0; i<HUDA_WEAPON_SIZEW; i++){ stru[i] += 0x10; }
-		d3dg->Draw2DTextureFontText(HUDA_WEAPON_POSX, HUDA_WEAPON_POSY + 32*(HUDA_WEAPON_SIZEH-1), (char*)stru, D3DCOLOR_COLORVALUE(1.0f,1.0f,1.0f,0.5f), 32, 32);
+		d3dg->Draw2DTextureFontText(HUDA_WEAPON_POSX, HUDA_WEAPON_POSY + 32*(HUDA_WEAPON_SIZEH-1), (char*)stru, d3dg->GetColorCode(1.0f,1.0f,1.0f,0.5f), 32, 32);
 
 		//武器の弾数表示
 		sprintf((char*)stru, "A%d B%d", lnbs, (nbs - lnbs));
@@ -1970,21 +1970,21 @@ void maingame::Render2D()
 			if( stru[i] == 'A' ){ stru[i] = 0xBB; }	//'ｻ'
 			if( stru[i] == 'B' ){ stru[i] = 0xBA; }	//'ｺ'
 		}
-		d3dg->Draw2DTextureFontText(25, SCREEN_HEIGHT - 96, (char*)stru, D3DCOLOR_COLORVALUE(1.0f,1.0f,1.0f,1.0f), 23, 24);
+		d3dg->Draw2DTextureFontText(25, SCREEN_HEIGHT - 96, (char*)stru, d3dg->GetColorCode(1.0f,1.0f,1.0f,1.0f), 23, 24);
 
 		//HPによる色の決定
 		int statecolor;
 		if( hp >= 100 ){
-			statecolor = D3DCOLOR_COLORVALUE(0.0f,1.0f,0.0f,1.0f);
+			statecolor = d3dg->GetColorCode(0.0f,1.0f,0.0f,1.0f);
 		}
 		else if( hp >= 50 ){
-			statecolor = D3DCOLOR_COLORVALUE(1.0f/50*(100-hp),1.0f,0.0f,1.0f);
+			statecolor = d3dg->GetColorCode(1.0f/50*(100-hp),1.0f,0.0f,1.0f);
 		}
 		else if( hp > 0 ){
-			statecolor = D3DCOLOR_COLORVALUE(1.0f,1.0f/50*hp,0.0f,1.0f);
+			statecolor = d3dg->GetColorCode(1.0f,1.0f/50*hp,0.0f,1.0f);
 		}
 		else{
-			statecolor = D3DCOLOR_COLORVALUE(1.0f,0.0f,0.0f,1.0f);
+			statecolor = d3dg->GetColorCode(1.0f,0.0f,0.0f,1.0f);
 		}
 
 		//HP表示
@@ -2006,20 +2006,20 @@ void maingame::Render2D()
 		}
 
 		//武器名表示
-		d3dg->Draw2DTextureFontText(HUDA_WEAPON_POSX + 9, HUDA_WEAPON_POSY + 4, weaponname, D3DCOLOR_COLORVALUE(1.0f,1.0f,1.0f,1.0f), 16, 20);
+		d3dg->Draw2DTextureFontText(HUDA_WEAPON_POSX + 9, HUDA_WEAPON_POSY + 4, weaponname, d3dg->GetColorCode(1.0f,1.0f,1.0f,1.0f), 16, 20);
 	}
 
 	//HUD表示・モードB
 	if( Camera_F2mode == 1 ){
 		//画面周りの線
-		d3dg->Draw2DLine(0, 0, SCREEN_WIDTH-1, 0, D3DCOLOR_COLORVALUE(0.0f,1.0f,0.0f,1.0f));
-		d3dg->Draw2DLine(SCREEN_WIDTH-1, 0, SCREEN_WIDTH-1, SCREEN_HEIGHT-1, D3DCOLOR_COLORVALUE(0.0f,1.0f,0.0f,1.0f));
-		d3dg->Draw2DLine(0, 0, 0, SCREEN_HEIGHT-1, D3DCOLOR_COLORVALUE(0.0f,1.0f,0.0f,1.0f));
-		d3dg->Draw2DLine(0, SCREEN_HEIGHT-1, SCREEN_WIDTH-1, SCREEN_HEIGHT-1, D3DCOLOR_COLORVALUE(0.0f,1.0f,0.0f,1.0f));
+		d3dg->Draw2DLine(0, 0, SCREEN_WIDTH-1, 0, d3dg->GetColorCode(0.0f,1.0f,0.0f,1.0f));
+		d3dg->Draw2DLine(SCREEN_WIDTH-1, 0, SCREEN_WIDTH-1, SCREEN_HEIGHT-1, d3dg->GetColorCode(0.0f,1.0f,0.0f,1.0f));
+		d3dg->Draw2DLine(0, 0, 0, SCREEN_HEIGHT-1, d3dg->GetColorCode(0.0f,1.0f,0.0f,1.0f));
+		d3dg->Draw2DLine(0, SCREEN_HEIGHT-1, SCREEN_WIDTH-1, SCREEN_HEIGHT-1, d3dg->GetColorCode(0.0f,1.0f,0.0f,1.0f));
 
 		//武器名表示
-		d3dg->Draw2DBox(8, SCREEN_HEIGHT - 32, 227, SCREEN_HEIGHT - 7, D3DCOLOR_COLORVALUE(0.0f,0.0f,0.0f,0.3f));
-		d3dg->Draw2DTextureFontText(10, SCREEN_HEIGHT - 30, weaponname, D3DCOLOR_COLORVALUE(1.0f,1.0f,1.0f,1.0f), 16, 20);
+		d3dg->Draw2DBox(8, SCREEN_HEIGHT - 32, 227, SCREEN_HEIGHT - 7, d3dg->GetColorCode(0.0f,0.0f,0.0f,0.3f));
+		d3dg->Draw2DTextureFontText(10, SCREEN_HEIGHT - 30, weaponname, d3dg->GetColorCode(1.0f,1.0f,1.0f,1.0f), 16, 20);
 	}
 
 	//レーダー描画
@@ -2034,20 +2034,20 @@ void maingame::Render2D()
 		float effectA = 1.0f;
 		if( message_cnt < (int)(0.2f*GAMEFPS) ){ effectA = GetEffectAlpha(message_cnt, 1.0f, 0.2f, 0.0f, false); }
 		if( (int)((TOTAL_EVENTENT_SHOWMESSEC-0.2f)*GAMEFPS) < message_cnt ){ effectA = GetEffectAlpha(message_cnt, 1.0f, 0.2f, (TOTAL_EVENTENT_SHOWMESSEC - 0.2f), true); }
-		d3dg->Draw2DMSFontTextCenter(0 +1, SCREEN_HEIGHT - 140 +1, SCREEN_WIDTH, 140, messtr, D3DCOLOR_COLORVALUE(0.1f,0.1f,0.1f,effectA));
-		d3dg->Draw2DMSFontTextCenter(0, SCREEN_HEIGHT - 140, SCREEN_WIDTH, 140, messtr, D3DCOLOR_COLORVALUE(1.0f,1.0f,1.0f,effectA));
+		d3dg->Draw2DMSFontTextCenter(0 +1, SCREEN_HEIGHT - 140 +1, SCREEN_WIDTH, 140, messtr, d3dg->GetColorCode(0.1f,0.1f,0.1f,effectA));
+		d3dg->Draw2DMSFontTextCenter(0, SCREEN_HEIGHT - 140, SCREEN_WIDTH, 140, messtr, d3dg->GetColorCode(1.0f,1.0f,1.0f,effectA));
 	}
 
 	//リロード表示
 	if( reloadcnt > 0 ){
-		d3dg->Draw2DTextureFontText(SCREEN_WIDTH/2 - 145 +3, SCREEN_HEIGHT - 180+3, "RELOADING", D3DCOLOR_COLORVALUE(0.2f,0.2f,0.2f,1.0f), 32, 34);
-		d3dg->Draw2DTextureFontText(SCREEN_WIDTH/2 - 145, SCREEN_HEIGHT - 180, "RELOADING", D3DCOLOR_COLORVALUE(1.0f,1.0f,1.0f,1.0f), 32, 34);
+		d3dg->Draw2DTextureFontText(SCREEN_WIDTH/2 - 145 +3, SCREEN_HEIGHT - 180+3, "RELOADING", d3dg->GetColorCode(0.2f,0.2f,0.2f,1.0f), 32, 34);
+		d3dg->Draw2DTextureFontText(SCREEN_WIDTH/2 - 145, SCREEN_HEIGHT - 180, "RELOADING", d3dg->GetColorCode(1.0f,1.0f,1.0f,1.0f), 32, 34);
 	}
 
 	//武器切り替え表示
 	if( selectweaponcnt > 0 ){
-		d3dg->Draw2DTextureFontText(SCREEN_WIDTH/2 - 130 +3, SCREEN_HEIGHT - 180+3, "CHANGING", D3DCOLOR_COLORVALUE(0.2f,0.2f,0.2f,1.0f), 32, 34);
-		d3dg->Draw2DTextureFontText(SCREEN_WIDTH/2 - 130, SCREEN_HEIGHT - 180, "CHANGING", D3DCOLOR_COLORVALUE(1.0f,1.0f,1.0f,1.0f), 32, 34);
+		d3dg->Draw2DTextureFontText(SCREEN_WIDTH/2 - 130 +3, SCREEN_HEIGHT - 180+3, "CHANGING", d3dg->GetColorCode(0.2f,0.2f,0.2f,1.0f), 32, 34);
+		d3dg->Draw2DTextureFontText(SCREEN_WIDTH/2 - 130, SCREEN_HEIGHT - 180, "CHANGING", d3dg->GetColorCode(1.0f,1.0f,1.0f,1.0f), 32, 34);
 	}
 
 	//照準表示
@@ -2059,24 +2059,24 @@ void maingame::Render2D()
 					float alpha = 1.0f - (float)ErrorRange/40.0f;
 					if( alpha < 0.0f ){ alpha = 0.0f; }
 
-					d3dg->Draw2DLine(SCREEN_WIDTH/2, SCREEN_HEIGHT/2, SCREEN_WIDTH/2, SCREEN_HEIGHT/2+4, D3DCOLOR_COLORVALUE(1.0f,0.0f,0.0f,0.5f));
-					d3dg->Draw2DLine(SCREEN_WIDTH/2-15, SCREEN_HEIGHT/2+15, SCREEN_WIDTH/2-19, SCREEN_HEIGHT/2+19, D3DCOLOR_COLORVALUE(1.0f,0.0f,0.0f,0.5f));
-					d3dg->Draw2DLine(SCREEN_WIDTH/2+15, SCREEN_HEIGHT/2+15, SCREEN_WIDTH/2+19, SCREEN_HEIGHT/2+19, D3DCOLOR_COLORVALUE(1.0f,0.0f,0.0f,0.5f));
-					d3dg->Draw2DLine(SCREEN_WIDTH/2-4, SCREEN_HEIGHT/2+4, SCREEN_WIDTH/2+4, SCREEN_HEIGHT/2+4, D3DCOLOR_COLORVALUE(1.0f,0.0f,0.0f,1.0f));
+					d3dg->Draw2DLine(SCREEN_WIDTH/2, SCREEN_HEIGHT/2, SCREEN_WIDTH/2, SCREEN_HEIGHT/2+4, d3dg->GetColorCode(1.0f,0.0f,0.0f,0.5f));
+					d3dg->Draw2DLine(SCREEN_WIDTH/2-15, SCREEN_HEIGHT/2+15, SCREEN_WIDTH/2-19, SCREEN_HEIGHT/2+19, d3dg->GetColorCode(1.0f,0.0f,0.0f,0.5f));
+					d3dg->Draw2DLine(SCREEN_WIDTH/2+15, SCREEN_HEIGHT/2+15, SCREEN_WIDTH/2+19, SCREEN_HEIGHT/2+19, d3dg->GetColorCode(1.0f,0.0f,0.0f,0.5f));
+					d3dg->Draw2DLine(SCREEN_WIDTH/2-4, SCREEN_HEIGHT/2+4, SCREEN_WIDTH/2+4, SCREEN_HEIGHT/2+4, d3dg->GetColorCode(1.0f,0.0f,0.0f,1.0f));
 
-					d3dg->Draw2DLine(SCREEN_WIDTH/2-4 - ErrorRange, SCREEN_HEIGHT/2-4 - ErrorRange/2, SCREEN_WIDTH/2-4 - ErrorRange, SCREEN_HEIGHT/2+4 + ErrorRange/2, D3DCOLOR_COLORVALUE(1.0f,0.0f,0.0f,alpha));
-					d3dg->Draw2DLine(SCREEN_WIDTH/2+4 + ErrorRange, SCREEN_HEIGHT/2-4 - ErrorRange/2, SCREEN_WIDTH/2+4 + ErrorRange, SCREEN_HEIGHT/2+4 + ErrorRange/2, D3DCOLOR_COLORVALUE(1.0f,0.0f,0.0f,alpha));
+					d3dg->Draw2DLine(SCREEN_WIDTH/2-4 - ErrorRange, SCREEN_HEIGHT/2-4 - ErrorRange/2, SCREEN_WIDTH/2-4 - ErrorRange, SCREEN_HEIGHT/2+4 + ErrorRange/2, d3dg->GetColorCode(1.0f,0.0f,0.0f,alpha));
+					d3dg->Draw2DLine(SCREEN_WIDTH/2+4 + ErrorRange, SCREEN_HEIGHT/2-4 - ErrorRange/2, SCREEN_WIDTH/2+4 + ErrorRange, SCREEN_HEIGHT/2+4 + ErrorRange/2, d3dg->GetColorCode(1.0f,0.0f,0.0f,alpha));
 				}
 				else{										//標準型
-					d3dg->Draw2DLine(SCREEN_WIDTH/2-13, SCREEN_HEIGHT/2, SCREEN_WIDTH/2-3, SCREEN_HEIGHT/2, D3DCOLOR_COLORVALUE(1.0f,0.0f,0.0f,1.0f));
-					d3dg->Draw2DLine(SCREEN_WIDTH/2+13, SCREEN_HEIGHT/2, SCREEN_WIDTH/2+3, SCREEN_HEIGHT/2, D3DCOLOR_COLORVALUE(1.0f,0.0f,0.0f,1.0f));
-					d3dg->Draw2DLine(SCREEN_WIDTH/2, SCREEN_HEIGHT/2-13, SCREEN_WIDTH/2, SCREEN_HEIGHT/2-3, D3DCOLOR_COLORVALUE(1.0f,0.0f,0.0f,1.0f));
-					d3dg->Draw2DLine(SCREEN_WIDTH/2, SCREEN_HEIGHT/2+13, SCREEN_WIDTH/2, SCREEN_HEIGHT/2+3, D3DCOLOR_COLORVALUE(1.0f,0.0f,0.0f,1.0f));
+					d3dg->Draw2DLine(SCREEN_WIDTH/2-13, SCREEN_HEIGHT/2, SCREEN_WIDTH/2-3, SCREEN_HEIGHT/2, d3dg->GetColorCode(1.0f,0.0f,0.0f,1.0f));
+					d3dg->Draw2DLine(SCREEN_WIDTH/2+13, SCREEN_HEIGHT/2, SCREEN_WIDTH/2+3, SCREEN_HEIGHT/2, d3dg->GetColorCode(1.0f,0.0f,0.0f,1.0f));
+					d3dg->Draw2DLine(SCREEN_WIDTH/2, SCREEN_HEIGHT/2-13, SCREEN_WIDTH/2, SCREEN_HEIGHT/2-3, d3dg->GetColorCode(1.0f,0.0f,0.0f,1.0f));
+					d3dg->Draw2DLine(SCREEN_WIDTH/2, SCREEN_HEIGHT/2+13, SCREEN_WIDTH/2, SCREEN_HEIGHT/2+3, d3dg->GetColorCode(1.0f,0.0f,0.0f,1.0f));
 
 					stru[0] = 0xBD;		stru[1] = 0x00;	//"ｽ"
-					d3dg->Draw2DTextureFontText(SCREEN_WIDTH/2 - 16 - ErrorRange, SCREEN_HEIGHT/2 - 16, (char*)stru, D3DCOLOR_COLORVALUE(1.0f,0.0f,0.0f,0.5f), 32, 32);
+					d3dg->Draw2DTextureFontText(SCREEN_WIDTH/2 - 16 - ErrorRange, SCREEN_HEIGHT/2 - 16, (char*)stru, d3dg->GetColorCode(1.0f,0.0f,0.0f,0.5f), 32, 32);
 					stru[0] = 0xBE;		stru[1] = 0x00;	//"ｾ"
-					d3dg->Draw2DTextureFontText(SCREEN_WIDTH/2 - 16 + ErrorRange, SCREEN_HEIGHT/2 - 16, (char*)stru, D3DCOLOR_COLORVALUE(1.0f,0.0f,0.0f,0.5f), 32, 32);
+					d3dg->Draw2DTextureFontText(SCREEN_WIDTH/2 - 16 + ErrorRange, SCREEN_HEIGHT/2 - 16, (char*)stru, d3dg->GetColorCode(1.0f,0.0f,0.0f,0.5f), 32, 32);
 				}
 			}
 		}
@@ -2085,7 +2085,7 @@ void maingame::Render2D()
 	if( tag == true ){
 		int color;
 		if( ObjMgr.GetObjectInfoTag(camera_x, camera_y, camera_z, camera_rx, camera_ry, &color, str) == true ){
-			d3dg->Draw2DTextureFontText(SCREEN_WIDTH/2 - strlen(str)*14/2 + 1, SCREEN_HEIGHT/2 + 30 +1 , str, D3DCOLOR_COLORVALUE(0.0f,0.0f,0.0f,1.0f), 14, 18);
+			d3dg->Draw2DTextureFontText(SCREEN_WIDTH/2 - strlen(str)*14/2 + 1, SCREEN_HEIGHT/2 + 30 +1 , str, d3dg->GetColorCode(0.0f,0.0f,0.0f,1.0f), 14, 18);
 			d3dg->Draw2DTextureFontText(SCREEN_WIDTH/2 - strlen(str)*14/2, SCREEN_HEIGHT/2 + 30, str, color, 14, 18);
 		}
 	}
@@ -2141,7 +2141,7 @@ void maingame::Render2D()
 	else{
 		effect = 0.0f;
 	}
-	d3dg->Draw2DBox(0, 0, SCREEN_WIDTH, SCREEN_HEIGHT, D3DCOLOR_COLORVALUE(0.0f,0.0f,0.0f,effect));
+	d3dg->Draw2DBox(0, 0, SCREEN_WIDTH, SCREEN_HEIGHT, d3dg->GetColorCode(0.0f,0.0f,0.0f,effect));
 
 	//終了時の文字表示
 	if( end_framecnt > 0 ){
@@ -2156,10 +2156,10 @@ void maingame::Render2D()
 		}
 
 		if( GameInfoData.missioncomplete == true ){
-			d3dg->Draw2DTextureFontText(SCREEN_WIDTH/2 - 252, SCREEN_HEIGHT/2 + 10, "objective complete", D3DCOLOR_COLORVALUE(1.0f,0.5f,0.0f,effect), 28, 32);
+			d3dg->Draw2DTextureFontText(SCREEN_WIDTH/2 - 252, SCREEN_HEIGHT/2 + 10, "objective complete", d3dg->GetColorCode(1.0f,0.5f,0.0f,effect), 28, 32);
 		}
 		else{
-			d3dg->Draw2DTextureFontText(SCREEN_WIDTH/2 - 210, SCREEN_HEIGHT/2 + 10, "mission failure", D3DCOLOR_COLORVALUE(1.0f,0.0f,0.0f,effect), 28, 32);
+			d3dg->Draw2DTextureFontText(SCREEN_WIDTH/2 - 210, SCREEN_HEIGHT/2 + 10, "mission failure", d3dg->GetColorCode(1.0f,0.0f,0.0f,effect), 28, 32);
 		}
 	}
 
@@ -2228,11 +2228,11 @@ void maingame::RenderRadar()
 	float ecr = DISTANCE_CHECKPOINT / RadarWorldR * (RadarSize/2);
 
 	//下地と囲い
-	d3dg->Draw2DBox(RadarPosX, RadarPosY, RadarPosX+RadarSize, RadarPosY+RadarSize, D3DCOLOR_COLORVALUE(0.0f,0.0f,0.0f,0.6f));
-	d3dg->Draw2DLine(RadarPosX, RadarPosY, RadarPosX+RadarSize, RadarPosY, D3DCOLOR_COLORVALUE(0.0f,0.8f,0.0f,1.0f));
-	d3dg->Draw2DLine(RadarPosX+RadarSize, RadarPosY, RadarPosX+RadarSize, RadarPosY+RadarSize, D3DCOLOR_COLORVALUE(0.0f,0.8f,0.0f,1.0f));
-	d3dg->Draw2DLine(RadarPosX+RadarSize, RadarPosY+RadarSize, RadarPosX, RadarPosY+RadarSize, D3DCOLOR_COLORVALUE(0.0f,0.8f,0.0f,1.0f));
-	d3dg->Draw2DLine(RadarPosX, RadarPosY+RadarSize, RadarPosX, RadarPosY, D3DCOLOR_COLORVALUE(0.0f,0.8f,0.0f,1.0f));
+	d3dg->Draw2DBox(RadarPosX, RadarPosY, RadarPosX+RadarSize, RadarPosY+RadarSize, d3dg->GetColorCode(0.0f,0.0f,0.0f,0.6f));
+	d3dg->Draw2DLine(RadarPosX, RadarPosY, RadarPosX+RadarSize, RadarPosY, d3dg->GetColorCode(0.0f,0.8f,0.0f,1.0f));
+	d3dg->Draw2DLine(RadarPosX+RadarSize, RadarPosY, RadarPosX+RadarSize, RadarPosY+RadarSize, d3dg->GetColorCode(0.0f,0.8f,0.0f,1.0f));
+	d3dg->Draw2DLine(RadarPosX+RadarSize, RadarPosY+RadarSize, RadarPosX, RadarPosY+RadarSize, d3dg->GetColorCode(0.0f,0.8f,0.0f,1.0f));
+	d3dg->Draw2DLine(RadarPosX, RadarPosY+RadarSize, RadarPosX, RadarPosY, d3dg->GetColorCode(0.0f,0.8f,0.0f,1.0f));
 
 	//マップを描画
 	int bs = BlockData.GetTotaldatas();
@@ -2267,16 +2267,16 @@ void maingame::RenderRadar()
 
 					//レーダーの四角形に収まるように描画する
 					if( Get2DLineInBox(bvx[0], bvy[0], bvx[1], bvy[1], RadarPosX, RadarPosY, RadarPosX+RadarSize, RadarPosY+RadarSize, &line_x1, &line_y1, &line_x2, &line_y2) == true ){
-						d3dg->Draw2DLine(line_x1, line_y1, line_x2, line_y2, D3DCOLOR_COLORVALUE(0.8f,0.8f,0.8f,1.0f));
+						d3dg->Draw2DLine(line_x1, line_y1, line_x2, line_y2, d3dg->GetColorCode(0.8f,0.8f,0.8f,1.0f));
 					}
 					if( Get2DLineInBox(bvx[1], bvy[1], bvx[2], bvy[2], RadarPosX, RadarPosY, RadarPosX+RadarSize, RadarPosY+RadarSize, &line_x1, &line_y1, &line_x2, &line_y2) == true ){
-						d3dg->Draw2DLine(line_x1, line_y1, line_x2, line_y2, D3DCOLOR_COLORVALUE(0.8f,0.8f,0.8f,1.0f));
+						d3dg->Draw2DLine(line_x1, line_y1, line_x2, line_y2, d3dg->GetColorCode(0.8f,0.8f,0.8f,1.0f));
 					}
 					if( Get2DLineInBox(bvx[2], bvy[2], bvx[3], bvy[3], RadarPosX, RadarPosY, RadarPosX+RadarSize, RadarPosY+RadarSize, &line_x1, &line_y1, &line_x2, &line_y2) == true ){
-						d3dg->Draw2DLine(line_x1, line_y1, line_x2, line_y2, D3DCOLOR_COLORVALUE(0.8f,0.8f,0.8f,1.0f));
+						d3dg->Draw2DLine(line_x1, line_y1, line_x2, line_y2, d3dg->GetColorCode(0.8f,0.8f,0.8f,1.0f));
 					}
 					if( Get2DLineInBox(bvx[3], bvy[3], bvx[0], bvy[0], RadarPosX, RadarPosY, RadarPosX+RadarSize, RadarPosY+RadarSize, &line_x1, &line_y1, &line_x2, &line_y2) == true ){
-						d3dg->Draw2DLine(line_x1, line_y1, line_x2, line_y2, D3DCOLOR_COLORVALUE(0.8f,0.8f,0.8f,1.0f));
+						d3dg->Draw2DLine(line_x1, line_y1, line_x2, line_y2, d3dg->GetColorCode(0.8f,0.8f,0.8f,1.0f));
 					}
 				}
 			}
@@ -2305,7 +2305,7 @@ void maingame::RenderRadar()
 					}
 
 					//マーカー描画
-					d3dg->Draw2DCycle(x_2d, y_2d, (int)ecr, D3DCOLOR_COLORVALUE(1.0f,0.5f,0.0f,alpha));
+					d3dg->Draw2DCycle(x_2d, y_2d, (int)ecr, d3dg->GetColorCode(1.0f,0.5f,0.0f,alpha));
 				}
 			}
 		}
@@ -2348,9 +2348,9 @@ void maingame::RenderRadar()
 			}
 
 			//マーカーの色を決定
-			if( PlayerID == i ){ color = D3DCOLOR_COLORVALUE(1.0f,1.0f,0.0f,alpha); }				//プレイヤー自身
-			else if( tteamid == myteamid ){ color = D3DCOLOR_COLORVALUE(0.0f,0.5f,1.0f,alpha); }	//味方
-			else{ color = D3DCOLOR_COLORVALUE(1.0f,0.0f,0.5f,alpha); }								//敵
+			if( PlayerID == i ){ color = d3dg->GetColorCode(1.0f,1.0f,0.0f,alpha); }				//プレイヤー自身
+			else if( tteamid == myteamid ){ color = d3dg->GetColorCode(0.0f,0.5f,1.0f,alpha); }	//味方
+			else{ color = d3dg->GetColorCode(1.0f,0.0f,0.5f,alpha); }								//敵
 
 			//マーカー描画
 			d3dg->Draw2DBox(x_2d-3, y_2d-3, x_2d+3, y_2d+3, color);
@@ -2433,7 +2433,7 @@ void maingame::InputConsole()
 		//何か入力されていれば～
 		if( strcmp(InputConsoleData->textdata, CONSOLE_PROMPT) != 0 ){
 			//コンソールに追加し、未処理コマンドとして登録
-			AddInfoConsole(D3DCOLOR_COLORVALUE(1.0f,1.0f,1.0f,1.0f), InputConsoleData->textdata);
+			AddInfoConsole(d3dg->GetColorCode(1.0f,1.0f,1.0f,1.0f), InputConsoleData->textdata);
 			strcpy(NewCommand, &(InputConsoleData->textdata[strlen(CONSOLE_PROMPT)]));
 		}
 
@@ -2480,14 +2480,14 @@ void maingame::ProcessConsole()
 
 	//コマンドリスト
 	if( strcmp(NewCommand, "help") == 0 ){
-		AddInfoConsole(D3DCOLOR_COLORVALUE(1.0f,1.0f,1.0f,1.0f), "help        human        result      event");
-		AddInfoConsole(D3DCOLOR_COLORVALUE(1.0f,1.0f,1.0f,1.0f), "ver");
-		AddInfoConsole(D3DCOLOR_COLORVALUE(1.0f,1.0f,1.0f,1.0f), "info        view         center      map");
-		AddInfoConsole(D3DCOLOR_COLORVALUE(1.0f,1.0f,1.0f,1.0f), "tag         radar");
-		AddInfoConsole(D3DCOLOR_COLORVALUE(1.0f,1.0f,1.0f,1.0f), "revive      treat <NUM>  nodamage <NUM>");
-		AddInfoConsole(D3DCOLOR_COLORVALUE(1.0f,1.0f,1.0f,1.0f), "kill <NUM>  break <NUM>  newobj <NUM>");
-		AddInfoConsole(D3DCOLOR_COLORVALUE(1.0f,1.0f,1.0f,1.0f), "bot         nofight      caution     stop");
-		AddInfoConsole(D3DCOLOR_COLORVALUE(1.0f,1.0f,1.0f,1.0f), "ss          clear");
+		AddInfoConsole(d3dg->GetColorCode(1.0f,1.0f,1.0f,1.0f), "help        human        result      event");
+		AddInfoConsole(d3dg->GetColorCode(1.0f,1.0f,1.0f,1.0f), "ver");
+		AddInfoConsole(d3dg->GetColorCode(1.0f,1.0f,1.0f,1.0f), "info        view         center      map");
+		AddInfoConsole(d3dg->GetColorCode(1.0f,1.0f,1.0f,1.0f), "tag         radar");
+		AddInfoConsole(d3dg->GetColorCode(1.0f,1.0f,1.0f,1.0f), "revive      treat <NUM>  nodamage <NUM>");
+		AddInfoConsole(d3dg->GetColorCode(1.0f,1.0f,1.0f,1.0f), "kill <NUM>  break <NUM>  newobj <NUM>");
+		AddInfoConsole(d3dg->GetColorCode(1.0f,1.0f,1.0f,1.0f), "bot         nofight      caution     stop");
+		AddInfoConsole(d3dg->GetColorCode(1.0f,1.0f,1.0f,1.0f), "ss          clear");
 	}
 
 	//人の統計情報
@@ -2524,7 +2524,7 @@ void maingame::ProcessConsole()
 
 		sprintf(str, "Friend:%d/%d  Enemy:%d/%d  Total:%d/%d",
 			alivemyfriend, myfriend, aliveenemy, enemy, alivemyfriend + aliveenemy, myfriend + enemy);
-		AddInfoConsole(D3DCOLOR_COLORVALUE(1.0f,1.0f,1.0f,1.0f), str);
+		AddInfoConsole(d3dg->GetColorCode(1.0f,1.0f,1.0f,1.0f), str);
 	}
 
 	//暫定リザルト表示
@@ -2538,9 +2538,9 @@ void maingame::ProcessConsole()
 		}
 
 		sprintf(str, "Time %02d:%02d  /  Fired %d  /  On target %d", framecnt/(int)GAMEFPS/60, framecnt/(int)GAMEFPS%60, MainGameInfo.fire, MainGameInfo.ontarget);
-		AddInfoConsole(D3DCOLOR_COLORVALUE(1.0f,1.0f,1.0f,1.0f), str);
+		AddInfoConsole(d3dg->GetColorCode(1.0f,1.0f,1.0f,1.0f), str);
 		sprintf(str, "AR rate %.1f%%  /  Kill %d  /  HS %d", rate, MainGameInfo.kill, MainGameInfo.headshot);
-		AddInfoConsole(D3DCOLOR_COLORVALUE(1.0f,1.0f,1.0f,1.0f), str);
+		AddInfoConsole(d3dg->GetColorCode(1.0f,1.0f,1.0f,1.0f), str);
 	}
 
 	//イベントタスク表示
@@ -2554,7 +2554,7 @@ void maingame::ProcessConsole()
 			else{
 				sprintf(str, "Event %d   [%d][%d][%d][%d]", i, data.p1, data.p2, data.p3, data.p4);
 			}
-			AddInfoConsole(D3DCOLOR_COLORVALUE(1.0f,1.0f,1.0f,1.0f), str);
+			AddInfoConsole(d3dg->GetColorCode(1.0f,1.0f,1.0f,1.0f), str);
 		}
 	}
 
@@ -2562,11 +2562,11 @@ void maingame::ProcessConsole()
 	if( strcmp(NewCommand, "info") == 0 ){
 		if( ShowInfo_Debugmode == false ){
 			ShowInfo_Debugmode = true;
-			AddInfoConsole(D3DCOLOR_COLORVALUE(1.0f,1.0f,1.0f,1.0f), "Show Debug information.");
+			AddInfoConsole(d3dg->GetColorCode(1.0f,1.0f,1.0f,1.0f), "Show Debug information.");
 		}
 		else{
 			ShowInfo_Debugmode = false;
-			AddInfoConsole(D3DCOLOR_COLORVALUE(1.0f,1.0f,1.0f,1.0f), "Hide Debug information.");
+			AddInfoConsole(d3dg->GetColorCode(1.0f,1.0f,1.0f,1.0f), "Hide Debug information.");
 		}
 	}
 
@@ -2574,11 +2574,11 @@ void maingame::ProcessConsole()
 	if( strcmp(NewCommand, "view") == 0 ){
 		if( Camera_Debugmode == false ){
 			Camera_Debugmode = true;
-			AddInfoConsole(D3DCOLOR_COLORVALUE(1.0f,1.0f,1.0f,1.0f), "Change FreeView mode.");
+			AddInfoConsole(d3dg->GetColorCode(1.0f,1.0f,1.0f,1.0f), "Change FreeView mode.");
 		}
 		else{
 			Camera_Debugmode = false;
-			AddInfoConsole(D3DCOLOR_COLORVALUE(1.0f,1.0f,1.0f,1.0f), "Change PlayerView mode.");
+			AddInfoConsole(d3dg->GetColorCode(1.0f,1.0f,1.0f,1.0f), "Change PlayerView mode.");
 		}
 
 		//デバックモード開始時のカメラ設定
@@ -2595,11 +2595,11 @@ void maingame::ProcessConsole()
 	if( strcmp(NewCommand, "center") == 0 ){
 		if( CenterLine == false ){
 			CenterLine = true;
-			AddInfoConsole(D3DCOLOR_COLORVALUE(1.0f,1.0f,1.0f,1.0f), "Show World center position.");
+			AddInfoConsole(d3dg->GetColorCode(1.0f,1.0f,1.0f,1.0f), "Show World center position.");
 		}
 		else{
 			CenterLine = false;
-			AddInfoConsole(D3DCOLOR_COLORVALUE(1.0f,1.0f,1.0f,1.0f), "Hide World center position.");
+			AddInfoConsole(d3dg->GetColorCode(1.0f,1.0f,1.0f,1.0f), "Hide World center position.");
 		}
 	}
 
@@ -2607,11 +2607,11 @@ void maingame::ProcessConsole()
 	if( strcmp(NewCommand, "map") == 0 ){
 		if( wireframe == false ){
 			wireframe = true;
-			AddInfoConsole(D3DCOLOR_COLORVALUE(1.0f,1.0f,1.0f,1.0f), "Draw map on the Wire frame.");
+			AddInfoConsole(d3dg->GetColorCode(1.0f,1.0f,1.0f,1.0f), "Draw map on the Wire frame.");
 		}
 		else{
 			wireframe = false;
-			AddInfoConsole(D3DCOLOR_COLORVALUE(1.0f,1.0f,1.0f,1.0f), "Draw map on the Normal.");
+			AddInfoConsole(d3dg->GetColorCode(1.0f,1.0f,1.0f,1.0f), "Draw map on the Normal.");
 		}
 	}
 
@@ -2619,22 +2619,22 @@ void maingame::ProcessConsole()
 	if( strcmp(NewCommand, "tag") == 0 ){
 		if( tag == false ){
 			tag = true;
-			AddInfoConsole(D3DCOLOR_COLORVALUE(1.0f,1.0f,1.0f,1.0f), "Show object information.");
+			AddInfoConsole(d3dg->GetColorCode(1.0f,1.0f,1.0f,1.0f), "Show object information.");
 		}
 		else{
 			tag = false;
-			AddInfoConsole(D3DCOLOR_COLORVALUE(1.0f,1.0f,1.0f,1.0f), "Hide object information.");
+			AddInfoConsole(d3dg->GetColorCode(1.0f,1.0f,1.0f,1.0f), "Hide object information.");
 		}
 	}
 
 	if( strcmp(NewCommand, "radar") == 0 ){
 		if( radar == false ){
 			radar = true;
-			AddInfoConsole(D3DCOLOR_COLORVALUE(1.0f,1.0f,1.0f,1.0f), "Show Radar.");
+			AddInfoConsole(d3dg->GetColorCode(1.0f,1.0f,1.0f,1.0f), "Show Radar.");
 		}
 		else{
 			radar = false;
-			AddInfoConsole(D3DCOLOR_COLORVALUE(1.0f,1.0f,1.0f,1.0f), "Hide Radar.");
+			AddInfoConsole(d3dg->GetColorCode(1.0f,1.0f,1.0f,1.0f), "Hide Radar.");
 		}
 	}
 
@@ -2643,7 +2643,7 @@ void maingame::ProcessConsole()
 		for(int i=0; i<MAX_HUMAN; i++){
 			ObjMgr.HumanResuscitation(i);
 		}
-		AddInfoConsole(D3DCOLOR_COLORVALUE(1.0f,1.0f,1.0f,1.0f), "All human has resuscitation.");
+		AddInfoConsole(d3dg->GetColorCode(1.0f,1.0f,1.0f,1.0f), "All human has resuscitation.");
 	}
 
 	//回復する
@@ -2661,7 +2661,7 @@ void maingame::ProcessConsole()
 			//回復
 			if( thuman->SetHP(hp) == true ){
 				sprintf(str, "Set the HP:%d to Human[%d].", data.hp, id);
-				AddInfoConsole(D3DCOLOR_COLORVALUE(1.0f,1.0f,1.0f,1.0f), str);
+				AddInfoConsole(d3dg->GetColorCode(1.0f,1.0f,1.0f,1.0f), str);
 			}
 		}
 	}
@@ -2674,21 +2674,21 @@ void maingame::ProcessConsole()
 				InvincibleID = -1;
 				ObjMgr.GeHumanObject(id)->SetInvincibleFlag(false);
 				sprintf(str, "Not invincible Human[%d].", id);
-				AddInfoConsole(D3DCOLOR_COLORVALUE(1.0f,1.0f,1.0f,1.0f), str);
+				AddInfoConsole(d3dg->GetColorCode(1.0f,1.0f,1.0f,1.0f), str);
 			}
 			else{
 				//既に誰かが指定されていたら、既に指定されている人を無効化
 				if( InvincibleID != -1 ){
 					ObjMgr.GeHumanObject(InvincibleID)->SetInvincibleFlag(false);
 					sprintf(str, "Not invincible Human[%d].", InvincibleID);
-					AddInfoConsole(D3DCOLOR_COLORVALUE(1.0f,1.0f,1.0f,1.0f), str);
+					AddInfoConsole(d3dg->GetColorCode(1.0f,1.0f,1.0f,1.0f), str);
 				}
 
 				//新たに無敵状態の人を指定
 				InvincibleID = id;
 				ObjMgr.GeHumanObject(id)->SetInvincibleFlag(true);
 				sprintf(str, "Invincible Human[%d].", id);
-				AddInfoConsole(D3DCOLOR_COLORVALUE(1.0f,1.0f,1.0f,1.0f), str);
+				AddInfoConsole(d3dg->GetColorCode(1.0f,1.0f,1.0f,1.0f), str);
 			}
 		}
 	}
@@ -2700,7 +2700,7 @@ void maingame::ProcessConsole()
 			if( thuman->GetDrawFlag() == true ){
 				if( thuman->SetHP(0) == true ){
 					sprintf(str, "Killed Human[%d].", id);
-					AddInfoConsole(D3DCOLOR_COLORVALUE(1.0f,1.0f,1.0f,1.0f), str);
+					AddInfoConsole(d3dg->GetColorCode(1.0f,1.0f,1.0f,1.0f), str);
 				}
 			}
 		}
@@ -2713,7 +2713,7 @@ void maingame::ProcessConsole()
 			if( tsmallobject->GetDrawFlag() == true ){
 				tsmallobject->Destruction();
 				sprintf(str, "Broke SmallObject[%d].", id);
-				AddInfoConsole(D3DCOLOR_COLORVALUE(1.0f,1.0f,1.0f,1.0f), str);
+				AddInfoConsole(d3dg->GetColorCode(1.0f,1.0f,1.0f,1.0f), str);
 			}
 		}
 	}
@@ -2724,7 +2724,7 @@ void maingame::ProcessConsole()
 			int dataid = ObjMgr.AddSmallObjectIndex(camera_x + cos(camera_rx)*20.0f, camera_y, camera_z + sin(camera_rx)*20.0f, camera_rx*-1, id, true);
 			if( dataid != -1 ){
 				sprintf(str, "Add SmallObject[%d].", dataid);
-				AddInfoConsole(D3DCOLOR_COLORVALUE(1.0f,1.0f,1.0f,1.0f), str);
+				AddInfoConsole(d3dg->GetColorCode(1.0f,1.0f,1.0f,1.0f), str);
 			}
 		}
 	}
@@ -2733,11 +2733,11 @@ void maingame::ProcessConsole()
 	if( strcmp(NewCommand, "bot") == 0 ){
 		if( PlayerAI == false ){
 			PlayerAI = true;
-			AddInfoConsole(D3DCOLOR_COLORVALUE(1.0f,1.0f,1.0f,1.0f), "Player is AI control. (bot)");
+			AddInfoConsole(d3dg->GetColorCode(1.0f,1.0f,1.0f,1.0f), "Player is AI control. (bot)");
 		}
 		else{
 			PlayerAI = false;
-			AddInfoConsole(D3DCOLOR_COLORVALUE(1.0f,1.0f,1.0f,1.0f), "Player is User control.");
+			AddInfoConsole(d3dg->GetColorCode(1.0f,1.0f,1.0f,1.0f), "Player is User control.");
 		}
 	}
 
@@ -2748,14 +2748,14 @@ void maingame::ProcessConsole()
 			for(int i=0; i<MAX_HUMAN; i++){
 				HumanAI[i].SetNoFightFlag(true);
 			}
-			AddInfoConsole(D3DCOLOR_COLORVALUE(1.0f,1.0f,1.0f,1.0f), "AI had no Fight.");
+			AddInfoConsole(d3dg->GetColorCode(1.0f,1.0f,1.0f,1.0f), "AI had no Fight.");
 		}
 		else{
 			AINoFight = false;
 			for(int i=0; i<MAX_HUMAN; i++){
 				HumanAI[i].SetNoFightFlag(false);
 			}
-			AddInfoConsole(D3DCOLOR_COLORVALUE(1.0f,1.0f,1.0f,1.0f), "AI had Fight.");
+			AddInfoConsole(d3dg->GetColorCode(1.0f,1.0f,1.0f,1.0f), "AI had Fight.");
 		}
 	}
 
@@ -2764,18 +2764,18 @@ void maingame::ProcessConsole()
 		for(int i=0; i<MAX_HUMAN; i++){
 			HumanAI[i].SetCautionMode();
 		}
-		AddInfoConsole(D3DCOLOR_COLORVALUE(1.0f,1.0f,1.0f,1.0f), "Set cautious AI.");
+		AddInfoConsole(d3dg->GetColorCode(1.0f,1.0f,1.0f,1.0f), "Set cautious AI.");
 	}
 
 	//AIの処理を停止
 	if( strcmp(NewCommand, "stop") == 0 ){
 		if( AIstop == false ){
 			AIstop = true;
-			AddInfoConsole(D3DCOLOR_COLORVALUE(1.0f,1.0f,1.0f,1.0f), "Stopped AI control.");
+			AddInfoConsole(d3dg->GetColorCode(1.0f,1.0f,1.0f,1.0f), "Stopped AI control.");
 		}
 		else{
 			AIstop = false;
-			AddInfoConsole(D3DCOLOR_COLORVALUE(1.0f,1.0f,1.0f,1.0f), "Started AI control.");
+			AddInfoConsole(d3dg->GetColorCode(1.0f,1.0f,1.0f,1.0f), "Started AI control.");
 		}
 	}
 
@@ -2784,21 +2784,21 @@ void maingame::ProcessConsole()
 	if( strcmp(NewCommand, "comp") == 0 ){
 		end_framecnt += 1;
 		MainGameInfo.missioncomplete = true;
-		AddInfoConsole(D3DCOLOR_COLORVALUE(1.0f,1.0f,1.0f,1.0f), "Mission complete.");
+		AddInfoConsole(d3dg->GetColorCode(1.0f,1.0f,1.0f,1.0f), "Mission complete.");
 	}
 
 	//ミッション失敗
 	if( strcmp(NewCommand, "fail") == 0 ){
 		end_framecnt += 1;
 		MainGameInfo.missioncomplete = false;
-		AddInfoConsole(D3DCOLOR_COLORVALUE(1.0f,1.0f,1.0f,1.0f), "Mission fail.");
+		AddInfoConsole(d3dg->GetColorCode(1.0f,1.0f,1.0f,1.0f), "Mission fail.");
 	}
 	*/
 
 	//バージョン情報取得
 	if( strcmp(NewCommand, "ver") == 0 ){
 		sprintf(str, "%s   Version:%s", GAMENAME, GAMEVERSION);
-		AddInfoConsole(D3DCOLOR_COLORVALUE(1.0f,1.0f,1.0f,1.0f), str);
+		AddInfoConsole(d3dg->GetColorCode(1.0f,1.0f,1.0f,1.0f), str);
 	}
 
 	//スクリーンショットを撮影
@@ -2813,10 +2813,10 @@ void maingame::ProcessConsole()
 		//撮影・保存
 		if( d3dg->SaveScreenShot(fname) == true ){
 			sprintf(str, "Saved Screenshot  (File:%s)", fname);
-			AddInfoConsole(D3DCOLOR_COLORVALUE(1.0f,1.0f,1.0f,1.0f), str);
+			AddInfoConsole(d3dg->GetColorCode(1.0f,1.0f,1.0f,1.0f), str);
 		}
 		else{
-			AddInfoConsole(D3DCOLOR_COLORVALUE(1.0f,1.0f,1.0f,1.0f), "[Error] Save failed.");
+			AddInfoConsole(d3dg->GetColorCode(1.0f,1.0f,1.0f,1.0f), "[Error] Save failed.");
 		}
 	}
 	if( strcmp(NewCommand, "ss") == 0 ){
@@ -2829,7 +2829,7 @@ void maingame::ProcessConsole()
 	//コンソールをクリア
 	if( strcmp(NewCommand, "clear") == 0 ){
 		for(int i=0; i<MAX_CONSOLELINES; i++){
-			InfoConsoleData[i].color = D3DCOLOR_COLORVALUE(1.0f,1.0f,1.0f,1.0f);
+			InfoConsoleData[i].color = d3dg->GetColorCode(1.0f,1.0f,1.0f,1.0f);
 			InfoConsoleData[i].textdata[0] = NULL;
 		}
 	}
@@ -2839,12 +2839,12 @@ void maingame::ProcessConsole()
 void maingame::RenderConsole()
 {
 	//下地
-	d3dg->Draw2DBox(0, 0, SCREEN_WIDTH, (MAX_CONSOLELINES+1)*18 + 5 + 5, D3DCOLOR_COLORVALUE(0.0f,0.0f,0.0f,0.75f));
+	d3dg->Draw2DBox(0, 0, SCREEN_WIDTH, (MAX_CONSOLELINES+1)*18 + 5 + 5, d3dg->GetColorCode(0.0f,0.0f,0.0f,0.75f));
 
 	//表示中の文字
 	for(int i=0; i<MAX_CONSOLELINES; i++){
 		if( InfoConsoleData[i].textdata[0] != NULL ){
-			d3dg->Draw2DTextureFontText(5+1, i*18+5+1, InfoConsoleData[i].textdata, D3DCOLOR_COLORVALUE(0.0f,0.0f,0.0f,1.0f), 14, 17);
+			d3dg->Draw2DTextureFontText(5+1, i*18+5+1, InfoConsoleData[i].textdata, d3dg->GetColorCode(0.0f,0.0f,0.0f,1.0f), 14, 17);
 			d3dg->Draw2DTextureFontText(5, i*18+5, InfoConsoleData[i].textdata, InfoConsoleData[i].color, 14, 17);
 		}
 	}
@@ -2854,7 +2854,7 @@ void maingame::RenderConsole()
 	for(cnt=0; cnt<MAX_CONSOLELINES; cnt++){
 		if( InfoConsoleData[cnt].textdata[0] == NULL ){ break; }
 	}
-	d3dg->Draw2DTextureFontText(5+1, cnt*18+5+1, InputConsoleData->textdata, D3DCOLOR_COLORVALUE(0.0f,0.0f,0.0f,1.0f), 14, 17);
+	d3dg->Draw2DTextureFontText(5+1, cnt*18+5+1, InputConsoleData->textdata, d3dg->GetColorCode(0.0f,0.0f,0.0f,1.0f), 14, 17);
 	d3dg->Draw2DTextureFontText(5, cnt*18+5, InputConsoleData->textdata, InputConsoleData->color, 14, 17);
 }
 
@@ -2905,7 +2905,7 @@ void result::Render2D()
 	//メモ：背景画像の描画は、自動的に行われる。
 
 	//固定文字描画
-	d3dg->Draw2DTextureFontText(SCREEN_WIDTH/2 - 50*3, 40, "RESULT", D3DCOLOR_COLORVALUE(1.0f,0.0f,1.0f,effectA), 50, 42);
+	d3dg->Draw2DTextureFontText(SCREEN_WIDTH/2 - 50*3, 40, "RESULT", d3dg->GetColorCode(1.0f,0.0f,1.0f,effectA), 50, 42);
 
 	//ミッション名を取得し描画
 	if( MIFdata.GetFiletype() == false ){
@@ -2914,27 +2914,27 @@ void result::Render2D()
 	else{
 		strcpy(mname, MIFdata.GetMissionFullname());
 	}
-	d3dg->Draw2DTextureFontText(SCREEN_WIDTH/2 - strlen(mname)*18/2, 100, mname, D3DCOLOR_COLORVALUE(0.5f,0.5f,1.0f,1.0f), 18, 25);
+	d3dg->Draw2DTextureFontText(SCREEN_WIDTH/2 - strlen(mname)*18/2, 100, mname, d3dg->GetColorCode(0.5f,0.5f,1.0f,1.0f), 18, 25);
 
 	//ミッションクリアーの有無
 	if( GameInfoData.missioncomplete == true ){
-		d3dg->Draw2DTextureFontText(SCREEN_WIDTH/2 - 216, 150, "mission successful", D3DCOLOR_COLORVALUE(0.0f,1.0f,0.0f,1.0f), 24, 32);
+		d3dg->Draw2DTextureFontText(SCREEN_WIDTH/2 - 216, 150, "mission successful", d3dg->GetColorCode(0.0f,1.0f,0.0f,1.0f), 24, 32);
 	}
 	else{
-		d3dg->Draw2DTextureFontText(SCREEN_WIDTH/2 - 180, 150, "mission failure", D3DCOLOR_COLORVALUE(1.0f,0.0f,0.0f,1.0f), 24, 32);
+		d3dg->Draw2DTextureFontText(SCREEN_WIDTH/2 - 180, 150, "mission failure", d3dg->GetColorCode(1.0f,0.0f,0.0f,1.0f), 24, 32);
 	}
 
 	//結果表示
 	sprintf(str, "Time  %dmin %dsec", GameInfoData.framecnt/(int)GAMEFPS/60, GameInfoData.framecnt/(int)GAMEFPS%60);
-	d3dg->Draw2DTextureFontText(SCREEN_WIDTH/2-strlen(str)*20/2, 210, str, D3DCOLOR_COLORVALUE(1.0f,1.0f,1.0f,1.0f), 20, 32);
+	d3dg->Draw2DTextureFontText(SCREEN_WIDTH/2-strlen(str)*20/2, 210, str, d3dg->GetColorCode(1.0f,1.0f,1.0f,1.0f), 20, 32);
 	sprintf(str, "Rounds fired  %d", GameInfoData.fire);
-	d3dg->Draw2DTextureFontText(SCREEN_WIDTH/2-strlen(str)*20/2, 260, str, D3DCOLOR_COLORVALUE(1.0f,1.0f,1.0f,1.0f), 20, 32);
+	d3dg->Draw2DTextureFontText(SCREEN_WIDTH/2-strlen(str)*20/2, 260, str, d3dg->GetColorCode(1.0f,1.0f,1.0f,1.0f), 20, 32);
 	sprintf(str, "Rounds on target  %d", GameInfoData.ontarget);
-	d3dg->Draw2DTextureFontText(SCREEN_WIDTH/2-strlen(str)*20/2, 310, str, D3DCOLOR_COLORVALUE(1.0f,1.0f,1.0f,1.0f), 20, 32);
+	d3dg->Draw2DTextureFontText(SCREEN_WIDTH/2-strlen(str)*20/2, 310, str, d3dg->GetColorCode(1.0f,1.0f,1.0f,1.0f), 20, 32);
 	sprintf(str, "Accuracy rate  %.1f%%", rate);
-	d3dg->Draw2DTextureFontText(SCREEN_WIDTH/2-strlen(str)*20/2, 360, str, D3DCOLOR_COLORVALUE(1.0f,1.0f,1.0f,1.0f), 20, 32);
+	d3dg->Draw2DTextureFontText(SCREEN_WIDTH/2-strlen(str)*20/2, 360, str, d3dg->GetColorCode(1.0f,1.0f,1.0f,1.0f), 20, 32);
 	sprintf(str, "Kill  %d / HeadShot  %d", GameInfoData.kill, GameInfoData.headshot);
-	d3dg->Draw2DTextureFontText(SCREEN_WIDTH/2-strlen(str)*20/2, 410, str, D3DCOLOR_COLORVALUE(1.0f,1.0f,1.0f,1.0f), 20, 32);
+	d3dg->Draw2DTextureFontText(SCREEN_WIDTH/2-strlen(str)*20/2, 410, str, d3dg->GetColorCode(1.0f,1.0f,1.0f,1.0f), 20, 32);
 }
 
 //! @brief screen派生クラスの初期化（クラスの設定）
