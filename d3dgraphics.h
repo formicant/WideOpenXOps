@@ -106,8 +106,6 @@ class D3DGraphics
 	LPD3DXFONT pxmsfont;			//!< システムフォント
 	char TextureFontFname[_MAX_PATH];	//!< テクスチャフォントのファイル名
 	int TextureFont;				//!< テクスチャフォントのテクスチャID
-	int TextureFont_width;			//!< テクスチャフォントファイルの横幅
-	int TextureFont_height;			//!< テクスチャフォントファイルの高さ
 
 	int InitSubset();
 	void CleanupD3Dresource();

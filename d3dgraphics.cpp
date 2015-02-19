@@ -55,8 +55,6 @@ D3DGraphics::D3DGraphics()
 	//ptextsprite = NULL;
 	pxmsfont = NULL;
 	TextureFont = -1;
-	TextureFont_width = 0;
-	TextureFont_height = 0;
 }
 
 //! @brief ディストラクタ
@@ -284,7 +282,6 @@ int D3DGraphics::InitSubset()
 
 	//テクスチャフォント用画像を取得
 	TextureFont = LoadTexture(TextureFontFname, true, false);
-	GetTextureSize(TextureFont, &TextureFont_width, &TextureFont_height);
 	return 0;
 }
 
@@ -1365,7 +1362,7 @@ void D3DGraphics::Draw2DCycle(int x, int y, int r, int color)
 
 	//データ形式を設定し、描画。
 	pd3dDevice->SetFVF(D3DFVF_XYZRHW | D3DFVF_DIFFUSE | D3DFVF_TEX1);
-	pd3dDevice->DrawPrimitiveUP(D3DPT_LINESTRIP, 16+1, pLineVertices, sizeof(TLVERTX));
+	pd3dDevice->DrawPrimitiveUP(D3DPT_LINESTRIP, 16, pLineVertices, sizeof(TLVERTX));
 
 	//2D描画用設定を解除
 	End2DRender();
