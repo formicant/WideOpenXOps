@@ -815,7 +815,7 @@ void ObjectManager::HitBulletHuman(int HitHuman_id, int Hit_id, float x, float y
 	if( Hit_id == 0 ){ HumanIndex[HitHuman_id].HitBulletHead(attacks); }
 	if( Hit_id == 1 ){ HumanIndex[HitHuman_id].HitBulletUp(attacks); }
 	if( Hit_id == 2 ){ HumanIndex[HitHuman_id].HitBulletLeg(attacks); }
-	HumanIndex[HitHuman_id].AddPosOrder(brx, 0.0f, 2.0f);
+	HumanIndex[HitHuman_id].AddPosOrder(brx, 0.0f, 1.0f);
 
 	//エフェクト（血）を表示
 	SetHumanBlood(x, y, z);
