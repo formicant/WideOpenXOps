@@ -35,10 +35,8 @@
 #define MAINICON 101		//!< Icon
 
 //BorlandC++ Compiler‚©”»’è
-#ifndef _DEBUG
- #ifndef NDEBUG
-  #define COMPILER_BCC		//!< Use BorlandC++ Compiler.
- #endif
+#ifndef _MSC_VER
+ #define COMPILER_BCC		//!< Use BorlandC++ Compiler.
 #endif
 
 #ifdef _DEBUG
