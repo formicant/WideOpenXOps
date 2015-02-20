@@ -2177,17 +2177,25 @@ void smallobject::Destruction()
 	//RenderFlag = false;
 	//return;
 
-	//小物の設定値を取得
-	SmallObjectParameter paramdata;
-	Param->GetSmallObject(id_parameter, &paramdata);
+	int jump;
+
+	//飛び具合を取得
+	if( id_parameter == TOTAL_PARAMETERINFO_SMALLOBJECT+1 -1 ){
+		jump = MIFdata->GetAddSmallobjectJump();
+	}
+	else{
+		SmallObjectParameter paramdata;
+		Param->GetSmallObject(id_parameter, &paramdata);
+		jump = paramdata.jump;
+	}
 
 	//飛ばす
 	hp = 0;
-	jump_cnt = paramdata.jump;
+	jump_cnt = jump;
 
 	//姿勢設定
 	jump_rx = (float)M_PI/18 * GetRand(36);
-	move_rx = (float)paramdata.jump * 0.04243f;
+	move_rx = (float)jump * 0.04243f;
 	add_rx = (float)M_PI/180 * GetRand(20);
 	add_ry = (float)M_PI/180 * GetRand(20);
 }
@@ -2200,10 +2208,20 @@ int smallobject::RunFrame()
 	if( hp > 0 ){ return 0; }
 
 	int cnt;
-	SmallObjectParameter paramdata;
+	int jump;
+
+	//飛び具合を取得
+	if( id_parameter == TOTAL_PARAMETERINFO_SMALLOBJECT+1 -1 ){
+		jump = MIFdata->GetAddSmallobjectJump();
+	}
+	else{
+		SmallObjectParameter paramdata;
+		Param->GetSmallObject(id_parameter, &paramdata);
+		jump = paramdata.jump;
+	}
 	
 	//吹き飛んでいるカウント数を計算
-	cnt = Param->GetSmallObject(id_parameter, &paramdata) - jump_cnt;
+	cnt = jump - jump_cnt;
 
 	//姿勢から座標・角度を計算
 	pos_x += cos(jump_rx) * move_rx;

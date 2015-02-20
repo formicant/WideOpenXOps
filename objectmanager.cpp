@@ -763,10 +763,15 @@ bool ObjectManager::CollideBullet(bullet *in_bullet)
 			int decide;
 			SmallObjectIndex[SmallObject_id].GetParamData(&id, NULL);
 
-			//¬•¨‚ÌÝ’è’l‚ðŽæ“¾
-			SmallObjectParameter Param;
-			GameParamInfo->GetSmallObject(id, &Param);
-			decide = (int)( (float)Param.decide*SMALLOBJECT_SCALE );
+			//“–‚½‚è”»’è‚Ì‘å‚«‚³‚ðŽæ“¾
+			if( id == TOTAL_PARAMETERINFO_SMALLOBJECT+1 -1 ){
+				decide = (int)( (float)MIFdata->GetAddSmallobjectDecide()*SMALLOBJECT_SCALE );
+			}
+			else{
+				SmallObjectParameter Param;
+				GameParamInfo->GetSmallObject(id, &Param);
+				decide = (int)( (float)Param.decide*SMALLOBJECT_SCALE );
+			}	
 
 			//ŠÑ’Ê—Í‚ðŒvŽZ
 			for(int i=0; i<decide; i++){

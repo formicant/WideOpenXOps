@@ -1574,6 +1574,7 @@ int ParameterInfo::GetWeapon(int id, WeaponParameter *out_data)
 //! @param id 番号
 //! @param out_data 受け取るSmallObjectParameter型ポインタ
 //! @return 成功：0　失敗：1
+//! @warning 追加小物の情報は取得できません。追加小物の情報は MIFInterfaceクラス から取得してください。
 int ParameterInfo::GetSmallObject(int id, SmallObjectParameter *out_data)
 {
 	if( (id < 0)||((TOTAL_PARAMETERINFO_SMALLOBJECT -1) < id ) ){ return 1; }
