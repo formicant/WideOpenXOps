@@ -194,9 +194,9 @@ int EventControl::Execution(int *endcnt, bool *complete, int *MessageID, bool *S
 					*MessageID = data.p2;
 				}
 				nextp4 = data.p3;
-				//break;
 				*SetMessageID = true;
-				return cnt;
+				break;
+				//return cnt;
 
 			case 19:	//ƒ`[ƒ€•ÏX
 				thuman = ObjMgr->SearchHuman(data.p2);
