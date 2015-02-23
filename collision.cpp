@@ -632,16 +632,12 @@ void Collision::ScratchVector(BlockDataInterface* in_blockdata, int id, int face
 	struct blockdata bdata;
 	in_blockdata->Getdata(&bdata, id);
 
-	D3DXVECTOR3 out;
-	D3DXVECTOR3 front(in_vx, in_vy, in_vz);
-	D3DXVECTOR3 normal(bdata.material[face].vx, bdata.material[face].vy, bdata.material[face].vz);
+	//内積
+	float Dot = in_vx * bdata.material[face].vx + in_vy * bdata.material[face].vy + in_vz * bdata.material[face].vz;
 
-	//D3DXVec3Normalize(&out, &(front - D3DXVec3Dot(&front, &normal) * normal));
-	out = (front - D3DXVec3Dot(&front, &normal) * normal);
-
-	*out_vx = out.x;
-	*out_vy = out.y;
-	*out_vz = out.z;
+	*out_vx = in_vx - Dot * bdata.material[face].vx;
+	*out_vy = in_vy - Dot * bdata.material[face].vy;
+	*out_vz = in_vz - Dot * bdata.material[face].vz;
 }
 
 //! @brief ブロックに反射するベクトルを求める
@@ -650,16 +646,12 @@ void Collision::ReflectVector(BlockDataInterface* in_blockdata, int id, int face
 	struct blockdata bdata;
 	in_blockdata->Getdata(&bdata, id);
 
-	D3DXVECTOR3 out;
-	D3DXVECTOR3 front(in_vx, in_vy, in_vz);
-	D3DXVECTOR3 normal(bdata.material[face].vx, bdata.material[face].vy, bdata.material[face].vz);
+	//内積
+	float Dot = in_vx * bdata.material[face].vx + in_vy * bdata.material[face].vy + in_vz * bdata.material[face].vz;
 
-	//D3DXVec3Normalize(&out, &(front - 2.0f * D3DXVec3Dot(&front, &normal) * normal));
-	out = (front - 2.0f * D3DXVec3Dot(&front, &normal) * normal);
-
-	*out_vx = out.x;
-	*out_vy = out.y;
-	*out_vz = out.z;
+	*out_vx = in_vx - 2.0f * Dot * bdata.material[face].vx;
+	*out_vy = in_vy - 2.0f * Dot * bdata.material[face].vy;
+	*out_vz = in_vz - 2.0f * Dot * bdata.material[face].vz;
 }
 
 
@@ -774,37 +766,29 @@ bool CollideSphereRay(float s_x, float s_y, float s_z, float s_r, float RayPos_x
 		}
 	}
 
-	D3DXVECTOR3 pCenter(s_x, s_y, s_z);
-	D3DXVECTOR3 pRayPos(RayPos_x, RayPos_y, RayPos_z);
-	D3DXVECTOR3 pRayDir(RayDir_x, RayDir_y, RayDir_z);
+	float x, y, z, d;
+	float MinDist, RayDist, RDist;
 
-	//球体とレイの判定
-	if( D3DXSphereBoundProbe(&pCenter, s_r, &pRayPos, &pRayDir) == TRUE ){
-		if( Dist != NULL ){
-			if( maxDist < 0.0f ){ maxDist = s_r * 2; }
+	//点とレイ始点の距離
+	x = s_x - RayPos_x;
+	y = s_y - RayPos_y;
+	z = s_z - RayPos_z;
+	d = sqrt(x*x + y*y + z*z);
 
-			//点とレイ始点の距離
-			float x, y, z, d;
-			x = s_x - RayPos_x;
-			y = s_y - RayPos_y;
-			z = s_z - RayPos_z;
-			d = sqrt(x*x + y*y + z*z);
+	//レイ始点が半径より近い（＝めり込んでいる）
+	if( d < s_r ){
+		*Dist = 0.0f;
+		return true;
+	}
 
-			//レイ始点が半径より近い（＝めり込んでいる）
-			if( d < s_r ){
-				*Dist = 0.0f;
-				return true;
-			}
+	//点（球体の中心）とレイの最短距離を求める
+	MinDist = DistancePosRay(s_x, s_y, s_z, RayPos_x, RayPos_y, RayPos_z, RayDir_x, RayDir_y, RayDir_z, maxDist);
 
-			//点（球体の中心）とレイの最短距離を求める
-			float MinDist, RayDist, RDist;
-				//点とレイの最短距離
-			MinDist = DistancePosRay(s_x, s_y, s_z, RayPos_x, RayPos_y, RayPos_z, RayDir_x, RayDir_y, RayDir_z, maxDist);
-			RayDist = sqrt(d*d - MinDist*MinDist);		//（レイ始点から）点に最も近づく距離
-			RDist = sqrt(s_r*s_r - MinDist*MinDist);	//（点半径から）点に最も近づく距離
+	if( MinDist <= s_r ){
+		RayDist = sqrt(d*d - MinDist*MinDist);		//（レイ始点から）点に最も近づく距離
+		RDist = sqrt(s_r*s_r - MinDist*MinDist);	//（点半径から）点に最も近づく距離
 
-			*Dist = RayDist - RDist;	//レイ視点最短 - 半径最短 = レイ視点から半径までの最短
-		}
+		*Dist = RayDist - RDist;	//レイ視点最短 - 半径最短 = レイ視点から半径までの最短
 		return true;
 	}
 
@@ -829,12 +813,17 @@ bool CollideSphereRay(float s_x, float s_y, float s_z, float s_r, float RayPos_x
 //! @return 当たっている：true　当たっていない：false
 //! @warning RayPos（始点）と RayDir（ベクトル）を間違えないこと。
 //! @warning 判定を行う最大距離を指定しないと、パフォーマンスが大幅に低下します。
-//! @todo 当たった距離として近似値を返すので、正確な値を求める。
 bool CollideAABBRay(float box_min_x, float box_min_y, float box_min_z, float box_max_x, float box_max_y, float box_max_z, float RayPos_x, float RayPos_y, float RayPos_z, float RayDir_x, float RayDir_y, float RayDir_z, float *Dist, float maxDist)
 {
 	if( box_min_x > box_max_x ){ return false; }
 	if( box_min_y > box_max_y ){ return false; }
 	if( box_min_z > box_max_z ){ return false; }
+
+	//レイの始点がAABBの内側に入っていれば、既に当たっている
+	if( (box_min_x <= RayPos_x)&&(RayPos_x <= box_max_x)&&(box_min_y <= RayPos_y)&&(RayPos_y <= box_max_y)&&(box_min_z <= RayPos_z)&&(RayPos_z <= box_max_z) ){
+		if( Dist != NULL ){ *Dist = 0.0f; }
+		return true;
+	}
 
 	if( maxDist > 0.0f ){
 		float pmin_x, pmin_y, pmin_z, pmax_x, pmax_y, pmax_z;
@@ -859,70 +848,83 @@ bool CollideAABBRay(float box_min_x, float box_min_y, float box_min_z, float box
 		}
 	}
 
-	D3DXVECTOR3 pMin(box_min_x, box_min_y, box_min_z);
-	D3DXVECTOR3 pMax(box_max_x, box_max_y, box_max_z);
-	D3DXVECTOR3 pRayPos(RayPos_x, RayPos_y, RayPos_z);
-	D3DXVECTOR3 pRayDir(RayDir_x, RayDir_y, RayDir_z);
+	//ベクトルを正規化
+	float r = sqrt(RayDir_x*RayDir_x + RayDir_y*RayDir_y +  RayDir_z*RayDir_z);
+	if( r > 1.0f ){
+		RayDir_x /= r;
+		RayDir_y /= r;
+		RayDir_z /= r;
+	}
 
-	//AABBとレイ（光線）の判定
-	if( D3DXBoxBoundProbe(&pMin, &pMax, &pRayPos, &pRayDir) == TRUE ){
-		if( Dist != NULL ){
-			float x, y, z;
-			float d, mind;
+	//各座標を配列に格納
+	float box_min[] = {box_min_x, box_min_y, box_min_z};
+	float box_max[] = {box_max_x, box_max_y, box_max_z};
+	float RayPos[] = {RayPos_x, RayPos_y, RayPos_z};
+	float RayDir[] = {RayDir_x, RayDir_y, RayDir_z};
+	float Ray_min[3];
+	float Ray_max[3];
+	float Ray_tmin, Ray_tmax;
 
-			//AABBの各頂点から距離を算出して、一番近い距離を「当たった距離」とする。
-			//　　ちゃんと計算しろよ　＞＜
-
-			x = box_min_x - RayPos_x;
-			y = box_min_y - RayPos_y;
-			z = box_min_z - RayPos_z;
-			d = sqrt(x*x + y*y + z*z);
-			mind = d;
-
-			x = box_max_x - RayPos_x;
-			y = box_min_y - RayPos_y;
-			z = box_min_z - RayPos_z;
-			d = sqrt(x*x + y*y + z*z);
-			if( d < mind ){ mind = d; }
-
-			x = box_min_x - RayPos_x;
-			y = box_max_y - RayPos_y;
-			z = box_min_z - RayPos_z;
-			d = sqrt(x*x + y*y + z*z);
-			if( d < mind ){ mind = d; }
-
-			x = box_max_x - RayPos_x;
-			y = box_max_y - RayPos_y;
-			z = box_min_z - RayPos_z;
-			d = sqrt(x*x + y*y + z*z);
-			if( d < mind ){ mind = d; }
-
-			x = box_min_x - RayPos_x;
-			y = box_min_y - RayPos_y;
-			z = box_max_z - RayPos_z;
-			d = sqrt(x*x + y*y + z*z);
-			if( d < mind ){ mind = d; }
-
-			x = box_max_x - RayPos_x;
-			y = box_min_y - RayPos_y;
-			z = box_max_z - RayPos_z;
-			d = sqrt(x*x + y*y + z*z);
-			if( d < mind ){ mind = d; }
-
-			x = box_min_x - RayPos_x;
-			y = box_max_y - RayPos_y;
-			z = box_max_z - RayPos_z;
-			d = sqrt(x*x + y*y + z*z);
-			if( d < mind ){ mind = d; }
-
-			x = box_max_x - RayPos_x;
-			y = box_max_y - RayPos_y;
-			z = box_max_z - RayPos_z;
-			d = sqrt(x*x + y*y + z*z);
-			if( d < mind ){ mind = d; }
-
-			*Dist = mind;
+	//X・Y・Zの3軸分の処理
+	for(int axis=0; axis<3; axis++){
+		if( (box_min[axis] <= RayPos[axis])&&(RayPos[axis] <= box_max[axis]) ){
+			//内側に入っていれば、そのまま軸の情報として記録
+			Ray_min[axis] = RayPos[axis];
+			Ray_max[axis] = RayPos[axis];
 		}
+		else if( RayDir[axis] == 0.0f ){
+			//（内側に入っていないのに）ベクトルの方向が 0 なら、既にAABBの外
+			return false;
+		}
+		else{
+			//内側に入っていないが、ベクトルが方向を持つなら～
+			float t1, t2;
+
+			//AABBをベクトルが突き抜ける交点までの距離を取得
+			t1 = (box_min[axis] - RayPos[axis]) / RayDir[axis];
+			t2 = (box_max[axis] - RayPos[axis]) / RayDir[axis];
+
+			//距離がマイナス（＝ベクトル逆方向）ならAABBとは あたらない
+			if( t1 < 0.0f ){ return false; }
+			if( t2 < 0.0f ){ return false; }
+
+			//交点までの距離が最小・最大で逆なら、入れ替える。
+			if( t1 > t2 ){
+				float temp = t1; t1 = t2; t2 = temp;
+			}
+
+			//軸の情報として記録
+			Ray_min[axis] = t1;
+			Ray_max[axis] = t2;
+		}
+	}
+
+	//各軸で、最も遠い‘最小距離’と最も近い‘最大距離’を算出
+	Ray_tmin = Ray_min[0];
+	Ray_tmax = Ray_max[0];
+	if( Ray_tmin > Ray_min[1] ){ Ray_tmin = Ray_min[1]; }
+	if( Ray_tmax < Ray_max[1] ){ Ray_tmax = Ray_max[1]; }
+	if( Ray_tmin > Ray_min[2] ){ Ray_tmin = Ray_min[2]; }
+	if( Ray_tmax < Ray_max[2] ){ Ray_tmax = Ray_max[2]; }
+
+	//最小距離と最大距離の関係が正しければ～
+	if( (Ray_tmax - Ray_tmin) > 0 ){
+		float x, y, z;
+		float d;
+
+		//レイの始点から最小距離を算出
+		x = Ray_min[0] * RayDir[0];
+		y = Ray_min[1] * RayDir[1];
+		z = Ray_min[2] * RayDir[2];
+		d = sqrt(x*x + y*y + z*z);
+
+		//判定を行う最大距離より遠ければ、判定無効。
+		if( maxDist > 0.0f ){
+			if( d > maxDist ){ return false; }
+		}
+
+		//距離を代入し返す
+		if( Dist != NULL ){ *Dist = d; }
 		return true;
 	}
 
@@ -946,7 +948,7 @@ float DistancePosRay(float Pos_x, float Pos_y, float Pos_z, float RayPos_x, floa
 {
 	float x1, y1, z1;
 	float x2, y2, z2;
-	D3DXVECTOR3 in1, in2, out;
+	float x3, y3, z3;
 
 	x1 = Pos_x - RayPos_x;
 	y1 = Pos_y - RayPos_y;
@@ -955,12 +957,12 @@ float DistancePosRay(float Pos_x, float Pos_y, float Pos_z, float RayPos_x, floa
 	y2 = RayDir_y * maxDist;
 	z2 = RayDir_z * maxDist;
 
-	in1 = D3DXVECTOR3(x1, y1, z1);
-	in2 = D3DXVECTOR3(x2, y2, z2);
+	//外積
+	x3 = y1 * z2 - z1 * y2;
+	y3 = z1 * x2 - x1 * z2;
+	z3 = x1 * y2 - y1 * x2;
 
-	D3DXVec3Cross(&out, &in1, &in2);
-
-	return sqrt(out.x*out.x + out.y*out.y + out.z*out.z) / maxDist;
+	return sqrt(x3*x3 + y3*y3 + z3*z3) / maxDist;
 }
 
 //! @brief 線分と線分の当たり判定（2D）
