@@ -445,6 +445,7 @@ void D3DGraphics::CleanupModel(int id)
 int D3DGraphics::LoadTexture(char* filename, bool texturefont, bool BlackTransparent)
 {
 	int id = -1;
+	D3DXIMAGE_INFO info;
 	int MipLevels;
 
 	//空いている認識番号を探す
@@ -456,6 +457,9 @@ int D3DGraphics::LoadTexture(char* filename, bool texturefont, bool BlackTranspa
 	}
 	if( id == -1 ){ return -1; }
 
+	//ファイル情報を取得
+	if( D3DXGetImageInfoFromFile(filename, &info) != D3D_OK ){ return -1; }
+
 	//ミップマップレベルを設定
 	if( texturefont == true ){
 		MipLevels = 1;
@@ -466,12 +470,12 @@ int D3DGraphics::LoadTexture(char* filename, bool texturefont, bool BlackTranspa
 
 	//テクスチャを読み込む
 	if( BlackTransparent == false ){
-		if( FAILED( D3DXCreateTextureFromFileEx(pd3dDevice, filename, D3DX_DEFAULT, D3DX_DEFAULT, MipLevels, 0, D3DFMT_UNKNOWN, D3DPOOL_MANAGED, D3DX_DEFAULT, D3DX_DEFAULT, 0x00000000, NULL, NULL, &ptextures[id]) ) ) {
+		if( FAILED( D3DXCreateTextureFromFileEx(pd3dDevice, filename, info.Width, info.Height, MipLevels, 0, D3DFMT_UNKNOWN, D3DPOOL_MANAGED, D3DX_DEFAULT, D3DX_DEFAULT, 0x00000000, NULL, NULL, &ptextures[id]) ) ) {
 			return -1;
 		}
 	}
 	else{
-		if( FAILED( D3DXCreateTextureFromFileEx(pd3dDevice, filename, D3DX_DEFAULT, D3DX_DEFAULT, MipLevels, 0, D3DFMT_A1R5G5B5, D3DPOOL_MANAGED, D3DX_DEFAULT, D3DX_DEFAULT, D3DCOLOR_ARGB(255, 0, 0, 0), NULL, NULL, &ptextures[id]) ) ) {
+		if( FAILED( D3DXCreateTextureFromFileEx(pd3dDevice, filename, info.Width, info.Height, MipLevels, 0, D3DFMT_A1R5G5B5, D3DPOOL_MANAGED, D3DX_DEFAULT, D3DX_DEFAULT, D3DCOLOR_ARGB(255, 0, 0, 0), NULL, NULL, &ptextures[id]) ) ) {
 			return -1;
 		}
 	}
