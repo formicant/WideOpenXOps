@@ -174,6 +174,7 @@ class maingame : public D3Dscene
 	bool AINoFight;				//!< AIが非戦闘化する（戦わない）
 	int start_framecnt;			//!< メインゲーム開始時のカウント
 	int end_framecnt;			//!< メインゲーム終了のカウント
+	bool EventStop;				//!< イベント処理を停止する
 	int message_id;				//!< 表示中のイベントメッセージ番号
 	int message_cnt;			//!< 表示中のイベントメッセージカウント
 	bool redflash_flag;		//!< レッドフラッシュ描画フラグ

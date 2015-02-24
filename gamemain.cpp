@@ -1015,6 +1015,7 @@ int maingame::Create()
 	framecnt = 0;
 	start_framecnt = 0;
 	end_framecnt = 0;
+	EventStop = false;
 	message_id = -1;
 	message_cnt = 0;
 	redflash_flag = false;
@@ -1246,14 +1247,18 @@ void maingame::Input()
 			if( CheckInputControl(KEY_MOVEFORWARD, 0) ){
 				ObjMgr.MoveForward(PlayerID);
 			}
-			if( CheckInputControl(KEY_MOVEBACKWARD, 0) ){
-				ObjMgr.MoveBack(PlayerID);
+			else{
+				if( CheckInputControl(KEY_MOVEBACKWARD, 0) ){
+					ObjMgr.MoveBack(PlayerID);
+				}
 			}
 			if( CheckInputControl(KEY_MOVELEFT, 0) ){
 				ObjMgr.MoveLeft(PlayerID);
 			}
-			if( CheckInputControl(KEY_MOVERIGHT, 0) ){
-				ObjMgr.MoveRight(PlayerID);
+			else{
+				if( CheckInputControl(KEY_MOVERIGHT, 0) ){
+					ObjMgr.MoveRight(PlayerID);
+				}
 			}
 
 			//歩き操作かチェック
@@ -1608,14 +1613,16 @@ void maingame::Process()
 	time = GetTimeMS();
 	bool SetMessageID;
 	if( end_framecnt == 0 ){
-		//イベント実行
-		for(int i=0; i<TOTAL_EVENTLINE; i++){
-			SetMessageID = false;
-			Event[i].Execution(&end_framecnt, &MainGameInfo.missioncomplete, &message_id, &SetMessageID);
+		if( EventStop == false ){
+			//イベント実行
+			for(int i=0; i<TOTAL_EVENTLINE; i++){
+				SetMessageID = false;
+				Event[i].Execution(&end_framecnt, &MainGameInfo.missioncomplete, &message_id, &SetMessageID);
 
-			//イベントメッセージが再セットされていたら、カウントを戻す。
-			if( SetMessageID == true ){
-				message_cnt = 0;
+				//イベントメッセージが再セットされていたら、カウントを戻す。
+				if( SetMessageID == true ){
+					message_cnt = 0;
+				}
 			}
 		}
 	}
@@ -1698,7 +1705,7 @@ void maingame::Process()
 	}
 	if( end_framecnt == 1 ){					//ミッション終了直後ならば
 		MainGameInfo.framecnt = framecnt;
-		GameInfoData = MainGameInfo;
+		GameInfoData = MainGameInfo;	//全てコピー
 		end_framecnt += 1;
 	}
 	else if( end_framecnt > 0 ){				//ミッション終了中ならば
@@ -1706,6 +1713,11 @@ void maingame::Process()
 			end_framecnt += 1;
 		}
 		else{
+			GameInfoData.fire = MainGameInfo.fire;			//射撃回数
+			GameInfoData.ontarget = MainGameInfo.ontarget;	//命中数
+			GameInfoData.kill = MainGameInfo.kill;			//倒した敵の数
+			GameInfoData.headshot = MainGameInfo.headshot;	//敵の頭部に命中した数
+
 			GameState->PushMouseButton();
 		}
 	}
@@ -2284,28 +2296,30 @@ void maingame::RenderRadar()
 	}
 
 	//イベントの到着ポイントを描画
-	for(int i=0; i<TOTAL_EVENTLINE; i++){
-		signed char p4 = Event[i].GetNextP4();
-		pointdata data;
-		if( PointData.SearchPointdata(&data, 0x08, 0, 0, 0, p4, 0) != 0 ){
-			float y;
-			int x_2d, y_2d;
-			float alpha;
+	if( EventStop == false ){
+		for(int i=0; i<TOTAL_EVENTLINE; i++){
+			signed char p4 = Event[i].GetNextP4();
+			pointdata data;
+			if( PointData.SearchPointdata(&data, 0x08, 0, 0, 0, p4, 0) != 0 ){
+				float y;
+				int x_2d, y_2d;
+				float alpha;
 
-			if( (data.p1 == 13)||(data.p1 == 16) ){
-				data.y += VIEW_HEIGHT;
+				if( (data.p1 == 13)||(data.p1 == 16) ){
+					data.y += VIEW_HEIGHT;
 
-				if( GetRadarPos(data.x, data.y, data.z, RadarPosX, RadarPosY, RadarSize, RadarWorldR, &x_2d, &y_2d, &y, true) == true ){
-					//高さによる透明度
-					if( (abs(y) < 40.0f) ){
-						alpha = 1.0f;
+					if( GetRadarPos(data.x, data.y, data.z, RadarPosX, RadarPosY, RadarSize, RadarWorldR, &x_2d, &y_2d, &y, true) == true ){
+						//高さによる透明度
+						if( (abs(y) < 40.0f) ){
+							alpha = 1.0f;
+						}
+						else{
+							alpha = 0.5f;
+						}
+
+						//マーカー描画
+						d3dg->Draw2DCycle(x_2d, y_2d, (int)ecr, d3dg->GetColorCode(1.0f,0.5f,0.0f,alpha));
 					}
-					else{
-						alpha = 0.5f;
-					}
-
-					//マーカー描画
-					d3dg->Draw2DCycle(x_2d, y_2d, (int)ecr, d3dg->GetColorCode(1.0f,0.5f,0.0f,alpha));
 				}
 			}
 		}
@@ -2487,7 +2501,7 @@ void maingame::ProcessConsole()
 		AddInfoConsole(d3dg->GetColorCode(1.0f,1.0f,1.0f,1.0f), "revive      treat <NUM>  nodamage <NUM>");
 		AddInfoConsole(d3dg->GetColorCode(1.0f,1.0f,1.0f,1.0f), "kill <NUM>  break <NUM>  newobj <NUM>");
 		AddInfoConsole(d3dg->GetColorCode(1.0f,1.0f,1.0f,1.0f), "bot         nofight      caution     stop");
-		AddInfoConsole(d3dg->GetColorCode(1.0f,1.0f,1.0f,1.0f), "ss          clear");
+		AddInfoConsole(d3dg->GetColorCode(1.0f,1.0f,1.0f,1.0f), "estop       ss          clear");
 	}
 
 	//人の統計情報
@@ -2794,6 +2808,18 @@ void maingame::ProcessConsole()
 		AddInfoConsole(d3dg->GetColorCode(1.0f,1.0f,1.0f,1.0f), "Mission fail.");
 	}
 	*/
+
+	//イベントポイントの処理を停止
+	if( strcmp(NewCommand, "estop") == 0 ){
+		if( EventStop == false ){
+			EventStop = true;
+			AddInfoConsole(d3dg->GetColorCode(1.0f,1.0f,1.0f,1.0f), "Stopped Event chains.");
+		}
+		else{
+			EventStop = false;
+			AddInfoConsole(d3dg->GetColorCode(1.0f,1.0f,1.0f,1.0f), "Started Event chains.");
+		}
+	}
 
 	//バージョン情報取得
 	if( strcmp(NewCommand, "ver") == 0 ){
