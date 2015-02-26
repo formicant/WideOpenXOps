@@ -197,6 +197,24 @@ int opening::Create()
 	return 0;
 }
 
+void opening::Input()
+{
+	inputCtrl->GetInputState(false);
+
+	if( inputCtrl->CheckKeyDown(GetEscKeycode()) ){
+		GameState->PushBackSpaceKey();
+	}
+
+	if( inputCtrl->CheckMouseButtonUpL() ){
+		GameState->PushMouseButton();
+	}
+
+	if( inputCtrl->CheckKeyDown(OriginalkeycodeToDinputdef(0x0F)) ){		// [ENTER]
+		//[ENTER]を押しても、マウスをクリックしたことにする。
+		GameState->PushMouseButton();
+	}
+}
+
 //! @todo カメラの移動を滑らかにする
 void opening::Process()
 {
@@ -1007,6 +1025,7 @@ int maingame::Create()
 	radar = false;
 	wireframe = false;
 	CenterLine = false;
+	Camera_Blind = true;
 	Camera_F1mode = false;
 	InvincibleID = -1;
 	PlayerAI = false;
@@ -1866,7 +1885,7 @@ void maingame::Render2D()
 	}
 
 	//目隠し表示
-	if( (Camera_Debugmode == false)&&(hp > 0) ){
+	if( (Camera_Blind == true)&&(Camera_Debugmode == false)&&(hp > 0) ){
 
 		int scopemode = myHuman->GetScopeMode();
 		float addang;
@@ -2497,11 +2516,11 @@ void maingame::ProcessConsole()
 		AddInfoConsole(d3dg->GetColorCode(1.0f,1.0f,1.0f,1.0f), "help        human        result      event");
 		AddInfoConsole(d3dg->GetColorCode(1.0f,1.0f,1.0f,1.0f), "ver");
 		AddInfoConsole(d3dg->GetColorCode(1.0f,1.0f,1.0f,1.0f), "info        view         center      map");
-		AddInfoConsole(d3dg->GetColorCode(1.0f,1.0f,1.0f,1.0f), "tag         radar");
+		AddInfoConsole(d3dg->GetColorCode(1.0f,1.0f,1.0f,1.0f), "tag         radar        inmap");
 		AddInfoConsole(d3dg->GetColorCode(1.0f,1.0f,1.0f,1.0f), "revive      treat <NUM>  nodamage <NUM>");
 		AddInfoConsole(d3dg->GetColorCode(1.0f,1.0f,1.0f,1.0f), "kill <NUM>  break <NUM>  newobj <NUM>");
 		AddInfoConsole(d3dg->GetColorCode(1.0f,1.0f,1.0f,1.0f), "bot         nofight      caution     stop");
-		AddInfoConsole(d3dg->GetColorCode(1.0f,1.0f,1.0f,1.0f), "estop       ss          clear");
+		AddInfoConsole(d3dg->GetColorCode(1.0f,1.0f,1.0f,1.0f), "estop       ss           clear");
 	}
 
 	//人の統計情報
@@ -2641,6 +2660,7 @@ void maingame::ProcessConsole()
 		}
 	}
 
+	//レーダーを表示
 	if( strcmp(NewCommand, "radar") == 0 ){
 		if( radar == false ){
 			radar = true;
@@ -2649,6 +2669,18 @@ void maingame::ProcessConsole()
 		else{
 			radar = false;
 			AddInfoConsole(d3dg->GetColorCode(1.0f,1.0f,1.0f,1.0f), "Hide Radar.");
+		}
+	}
+
+	//目隠しを表示
+	if( strcmp(NewCommand, "inmap") == 0 ){
+		if( Camera_Blind == false ){
+			Camera_Blind = true;
+			AddInfoConsole(d3dg->GetColorCode(1.0f,1.0f,1.0f,1.0f), "Blindfold in map.");
+		}
+		else{
+			Camera_Blind = false;
+			AddInfoConsole(d3dg->GetColorCode(1.0f,1.0f,1.0f,1.0f), "Not blindfold in map.");
 		}
 	}
 

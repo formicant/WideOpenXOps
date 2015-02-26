@@ -101,6 +101,7 @@ public:
 	opening();
 	~opening();
 	int Create();
+	void Input();
 	void Process();
 	void Destroy();
 };
@@ -164,6 +165,7 @@ class maingame : public D3Dscene
 	bool radar;					//!< 簡易レーダー表示
 	bool wireframe;				//!< マップをワイヤーフレーム表示
 	bool CenterLine;			//!< 3D空間に中心線を表示
+	bool Camera_Blind;			//!< 目隠し表示
 	bool Camera_F1mode;			//!< カメラF1モード
 	int Camera_F2mode;			//!< カメラF2モード
 	bool Camera_HOMEmode;		//!< カメラHOMEモード
