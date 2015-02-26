@@ -795,6 +795,7 @@ void human::HitBulletHead(int attacks)
 		hp -= (int)((float)attacks * HUMAN_DAMAGE_HEAD);
 	}
 	HitFlag = true;
+	ReactionGunsightErrorRange = 15;
 }
 
 //! @brief 弾が 上半身 にヒット
@@ -805,6 +806,7 @@ void human::HitBulletUp(int attacks)
 		hp -= (int)((float)attacks * HUMAN_DAMAGE_UP);
 	}
 	HitFlag = true;
+	ReactionGunsightErrorRange = 12;
 }
 
 //! @brief 弾が 下半身 にヒット
@@ -815,6 +817,7 @@ void human::HitBulletLeg(int attacks)
 		hp -= (int)((float)attacks * HUMAN_DAMAGE_LEG);
 	}
 	HitFlag = true;
+	ReactionGunsightErrorRange = 8;
 }
 
 //! @brief ゾンビの攻撃がヒット
@@ -824,6 +827,7 @@ void human::HitZombieAttack()
 		hp -= HUMAN_DAMAGE_ZOMBIEU + GetRand(HUMAN_DAMAGE_ZOMBIEA);
 	}
 	HitFlag = true;
+	ReactionGunsightErrorRange = 10;
 }
 
 //! @brief 手榴弾の爆風がヒット
@@ -835,6 +839,7 @@ void human::HitGrenadeExplosion(int attacks)
 		hp -= attacks;
 	}
 	HitFlag = true;
+	ReactionGunsightErrorRange = 10;
 }
 
 //! @brief 被弾したかチェックする
@@ -906,6 +911,29 @@ void human::GunsightErrorRange()
 int human::CheckAndProcessDead(class Collision *CollD)
 {
 #ifdef HUMAN_DEADBODY_COLLISION
+
+	//メモ：
+	//
+	//状態：0
+	//［何もしない］
+	//　HPが0以下で、頭が付かぬなら　状態：1
+	//　HPが0以下で、壁に頭が付くなら　状態：4
+	//
+	//状態：1
+	//［傾き始める］
+	//　135度行ったら　状態：2
+	//　壁に頭を打ったら　状態：3
+	//
+	//状態：2
+	//［落下］
+	//　足が地面に付いたら　状態：4
+	//
+	//状態：3
+	//［足を滑らせる］
+	//　　
+	//状態：4
+	//［固定］
+
 	float add_ry = 0.0f;
 	float check_posx, check_posy, check_posz;
 
@@ -2459,7 +2487,7 @@ int grenade::RunFrame(class Collision *CollD, class BlockDataInterface *inblockd
 		pos_z += move_z/maxDist * (Dist - 0.1f);
 
 		//反射するベクトルを求める
-		CollD->ReflectVector(inblockdata, id, face, move_x, move_y, move_z, &vx, &vy, &vz);
+		CollD->ReflectVector(id, face, move_x, move_y, move_z, &vx, &vy, &vz);
 
 		//減速
 		move_x = vx * GRENADE_BOUND_ACCELERATION;
