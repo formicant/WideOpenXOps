@@ -37,6 +37,8 @@
 #endif
 #include "main.h"
 
+#include <float.h>
+
 //! @brief 当たり判定を行うクラス
 //! @details マップとして使用されるブロックデータへの当たり判定（追突検出）を行います。
 class Collision

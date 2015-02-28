@@ -48,6 +48,8 @@
 #endif
 #include "main.h"
 
+#include <ctype.h>
+
 //! ブロックデータ用構造体　（blockdata構造体で使用）
 struct b_material{
 	int textureID;				//!< textureID
