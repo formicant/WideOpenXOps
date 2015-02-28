@@ -2087,7 +2087,7 @@ int ObjectManager::Process(int cmdF5id, float camera_rx, float camera_ry)
 		float speed = GrenadeIndex[i].GetSpeed();
 
 		//主計算
-		int rcr = GrenadeIndex[i].RunFrame(CollD, BlockData);
+		int rcr = GrenadeIndex[i].RunFrame(CollD);
 
 		//バウンド・跳ね返ったならば
 		if( rcr == 1 ){

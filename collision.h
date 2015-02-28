@@ -37,19 +37,14 @@
 #endif
 #include "main.h"
 
-#pragma warning(disable:4819)		//VC++警告防止
-#include <d3dx9math.h>
-#pragma warning(default:4819)
-
-#pragma comment(lib, "d3dx9.lib")
-
 //! @brief 当たり判定を行うクラス
 //! @details マップとして使用されるブロックデータへの当たり判定（追突検出）を行います。
-//! @details 内部ではDirectX 9を使用しています。
 class Collision
 {
 	class BlockDataInterface* blockdata;		//!< 読み込んだブロックデータが格納されたクラスへのポインタ
-	D3DXPLANE bdata_plane[MAX_BLOCKS][6][2];	//!< 各ブロックの面情報
+	float *bdata_polygon_center_x;		//!< 各ブロックの面の中心 X座標
+	float *bdata_polygon_center_y;		//!< 各ブロックの面の中心 Y座標
+	float *bdata_polygon_center_z;		//!< 各ブロックの面の中心 Z座標
 	float *bmin_x;		//!< 各ブロック X座標の最大値
 	float *bmin_y;		//!< 各ブロック Y座標の最大値
 	float *bmin_z;		//!< 各ブロック Z座標の最大値
@@ -59,19 +54,23 @@ class Collision
 	bool *BoardBlock;	//!< 各ブロック が厚さ0で板状になっているか
 	int *bdata_worldgroup;	//!< 空間分割のグループ
 
+	bool CheckIntersectTri(int blockid, int face, float RayPos_x, float RayPos_y, float RayPos_z, float RayDir_x, float RayDir_y, float RayDir_z, float *out_Dist);
+
 public:
 	Collision();
 	~Collision();
 	int InitCollision(BlockDataInterface* in_blockdata);
 	void GetBlockPosMINMAX(struct blockdata data, float *min_x, float *min_y, float *min_z, float *max_x, float *max_y, float *max_z);
 	int GetWorldGroup(float x, float z);
+	bool CheckPolygonFront(int id, int face, float x, float y, float z);
+	bool CheckPolygonFrontRx(int id, int face, float rx);
 	bool CheckBlockInside(int blockid, float x, float y, float z, bool worldgroup, int *planeid);
 	bool CheckALLBlockInside(float x, float y, float z);
 	bool CheckBlockIntersectRay(int blockid, float RayPos_x, float RayPos_y, float RayPos_z, float RayDir_x, float RayDir_y, float RayDir_z, int *face, float *Dist, float maxDist);
 	bool CheckALLBlockIntersectRay(float RayPos_x, float RayPos_y, float RayPos_z, float RayDir_x, float RayDir_y, float RayDir_z, int *id, int *face, float *Dist, float maxDist);
 	bool CheckALLBlockIntersectDummyRay(float RayPos_x, float RayPos_y, float RayPos_z, float RayDir_x, float RayDir_y, float RayDir_z, int *id, int *face, float *Dist, float maxDist);
-	void ScratchVector(BlockDataInterface* in_blockdata, int id, int face, float in_vx, float in_vy, float in_vz, float *out_vx, float *out_vy, float *out_vz);
-	void ReflectVector(BlockDataInterface* in_blockdata, int id, int face, float in_vx, float in_vy, float in_vz, float *out_vx, float *out_vy, float *out_vz);
+	void ScratchVector(int id, int face, float in_vx, float in_vy, float in_vz, float *out_vx, float *out_vy, float *out_vz);
+	void ReflectVector(int id, int face, float in_vx, float in_vy, float in_vz, float *out_vx, float *out_vy, float *out_vz);
 };
 
 bool CollideBoxAABB(float box1_min_x, float box1_min_y, float box1_min_z, float box1_max_x, float box1_max_y, float box1_max_z, float box2_min_x, float box2_min_y, float box2_min_z, float box2_max_x, float box2_max_y, float box2_max_z);

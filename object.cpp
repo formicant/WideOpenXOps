@@ -1243,29 +1243,6 @@ void human::ControlProcess()
 	MoveFlag = 0x00;
 }
 
-//! @brief 特定の方向（ベクトル）に対して、ブロックの面が表面か裏面か調べる
-//! @param inblockdata BlockDataInterfaceクラスのポインタ
-//! @param bid 判定するブロック番号
-//! @param fid 判定する面番号
-//! @param vx X軸ベクトルのポインタ
-//! @param vz Z軸ベクトルのポインタ
-//! @return 表向き：true　裏向き：false
-bool human::CheckBlockAngle(class BlockDataInterface *inblockdata, int bid, int fid, float vx, float vz)
-{
-	if( inblockdata == NULL ){ return false; }
-	if( (bid < 0)||(inblockdata->GetTotaldatas() <= bid) ){ return false; }
-
-	float costheta;
-	struct blockdata bdata;
-
-	inblockdata->Getdata(&bdata, bid);
-	costheta = (vx * bdata.material[fid].vx + vz * bdata.material[fid].vz) / (sqrt(vx * vx + vz * vz) * sqrt(bdata.material[fid].vx * bdata.material[fid].vx + bdata.material[fid].vz * bdata.material[fid].vz));
-	if( acos(costheta) > (float)M_PI/2 ){
-		return true;
-	}
-	return false;
-}
-
 //! @brief マップとの当たり判定
 //! @param CollD Collisionクラスのポインタ
 //! @param inblockdata BlockDataInterfaceクラスのポインタ
@@ -1370,18 +1347,18 @@ bool human::MapCollisionDetection(class Collision *CollD, class BlockDataInterfa
 			if( surface != -1 ){
 				//HUMAN_MAPCOLLISION_R 分の先を調べる
 				if( CollD->CheckBlockInside(i, pos_x + cos(ang)*HUMAN_MAPCOLLISION_R, pos_y + HUMAN_MAPCOLLISION_HEIGTH, pos_z + sin(ang)*HUMAN_MAPCOLLISION_R, true, NULL) == true ){
-					CollD->ScratchVector(inblockdata, i, surface, move_x, vy, move_z, &move_x, &vy, &move_z);
+					CollD->ScratchVector(i, surface, move_x, vy, move_z, &move_x, &vy, &move_z);
 				}
 
 				//左右90度づつを調べる
 				if( CollD->CheckBlockInside(i, pos_x + cos(ang + (float)M_PI/2)*HUMAN_MAPCOLLISION_R, pos_y + HUMAN_MAPCOLLISION_HEIGTH, pos_z + sin(ang + (float)M_PI/2)*HUMAN_MAPCOLLISION_R, true, NULL) == true ){
-					if( CheckBlockAngle(inblockdata, i, surface, cos(ang), sin(ang)) == true ){		//進行方向に対して表向きなら～
-						CollD->ScratchVector(inblockdata, i, surface, move_x, vy, move_z, &move_x, &vy, &move_z);
+					if( CollD->CheckPolygonFrontRx(i, surface, ang) == true ){		//進行方向に対して表向きなら～
+						CollD->ScratchVector(i, surface, move_x, vy, move_z, &move_x, &vy, &move_z);
 					}
 				}
 				if( CollD->CheckBlockInside(i, pos_x + cos(ang - (float)M_PI/2)*HUMAN_MAPCOLLISION_R, pos_y + HUMAN_MAPCOLLISION_HEIGTH, pos_z + sin(ang - (float)M_PI/2)*HUMAN_MAPCOLLISION_R, true, NULL) == true ){
-					if( CheckBlockAngle(inblockdata, i, surface, cos(ang), sin(ang)) == true ){		//進行方向に対して表向きなら～
-						CollD->ScratchVector(inblockdata, i, surface, move_x, vy, move_z, &move_x, &vy, &move_z);
+					if( CollD->CheckPolygonFrontRx(i, surface, ang) == true ){		//進行方向に対して表向きなら～
+						CollD->ScratchVector(i, surface, move_x, vy, move_z, &move_x, &vy, &move_z);
 					}
 				}
 			}
@@ -1399,7 +1376,7 @@ bool human::MapCollisionDetection(class Collision *CollD, class BlockDataInterfa
 		//頭を当たり判定
 		if( CollD->CheckALLBlockIntersectDummyRay(pos_x, pos_y + HUMAN_HEIGTH, pos_z, vx, 0, vz, NULL, NULL, &Dist, speed) == true ){
 			CollD->CheckALLBlockIntersectRay(pos_x, pos_y + FallDistance + HUMAN_HEIGTH, pos_z, vx, 0, vz, &id, &face, &Dist, speed);
-			CollD->ScratchVector(inblockdata, id, face, move_x, vy, move_z, &move_x, &vy, &move_z);
+			CollD->ScratchVector(id, face, move_x, vy, move_z, &move_x, &vy, &move_z);
 		}
 
 		//足元がブロックに埋まっていなければ
@@ -1430,7 +1407,7 @@ bool human::MapCollisionDetection(class Collision *CollD, class BlockDataInterfa
 					}
 
 					//足元を当たり判定
-					CollD->ScratchVector(inblockdata, id, face, move_x, vy, move_z, &move_x, &vy, &move_z);
+					CollD->ScratchVector(id, face, move_x, vy, move_z, &move_x, &vy, &move_z);
 				}
 				else{																	//水平～斜面なら
 					//地面と認めない　（ジャンプ対策）
@@ -2443,7 +2420,7 @@ float grenade::GetSpeed()
 
 //! @brief 計算を実行（手榴弾の進行・爆発）
 //! @return 爆発：2　バウンド・跳ね返り：1　それ以外：0
-int grenade::RunFrame(class Collision *CollD, class BlockDataInterface *inblockdata)
+int grenade::RunFrame(class Collision *CollD)
 {
 	//初期化されていなければ処理しない
 	if( RenderFlag == false ){ return 0; }

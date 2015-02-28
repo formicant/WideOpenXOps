@@ -35,6 +35,9 @@
 Collision::Collision()
 {
 	blockdata = NULL;
+	bdata_polygon_center_x = new float[MAX_BLOCKS * 6];
+	bdata_polygon_center_y = new float[MAX_BLOCKS * 6];
+	bdata_polygon_center_z = new float[MAX_BLOCKS * 6];
 	bmin_x = new float[MAX_BLOCKS];
 	bmin_y = new float[MAX_BLOCKS];
 	bmin_z = new float[MAX_BLOCKS];
@@ -58,6 +61,9 @@ Collision::Collision()
 //! @brief ディストラクタ
 Collision::~Collision()
 {
+	if( bdata_polygon_center_x != NULL ){ delete [] bdata_polygon_center_x; }
+	if( bdata_polygon_center_y != NULL ){ delete [] bdata_polygon_center_y; }
+	if( bdata_polygon_center_z != NULL ){ delete [] bdata_polygon_center_z; }
 	if( bmin_x != NULL ){ delete [] bmin_x; }
 	if( bmin_y != NULL ){ delete [] bmin_y; }
 	if( bmin_z != NULL ){ delete [] bmin_z; }
@@ -75,8 +81,6 @@ int Collision::InitCollision(BlockDataInterface* in_blockdata)
 	int bs;
 	struct blockdata data;
 	int vID[4];
-	float g0, g1, costheta;
-	D3DXVECTOR3 dv1, dv2, dv3;
 
 	if( in_blockdata == NULL ){ return 1; }
 	blockdata = in_blockdata;
@@ -87,38 +91,25 @@ int Collision::InitCollision(BlockDataInterface* in_blockdata)
 		BoardBlock[i] = false;
 	}
 
-	//判定用平面作成
+	//判定用平面の中心点算出
 	for(int i=0; i<bs; i++){
 		blockdata->Getdata(&data, i);
 		for(int j=0; j<6; j++){
 			blockdataface(j, &vID[0], NULL);
 
-			dv1 = D3DXVECTOR3( data.x[ vID[1] ], data.y[ vID[1] ], data.z[ vID[1] ] );
-			dv2 = D3DXVECTOR3( data.x[ vID[2] ], data.y[ vID[2] ], data.z[ vID[2] ] );
-			dv3 = D3DXVECTOR3( data.x[ vID[0] ], data.y[ vID[0] ], data.z[ vID[0] ] );
-			D3DXPlaneFromPoints(&bdata_plane[i][j][0], &dv1, &dv2, &dv3);
-			dv1 = D3DXVECTOR3( data.x[ vID[0] ], data.y[ vID[0] ], data.z[ vID[0] ] );
-			dv2 = D3DXVECTOR3( data.x[ vID[2] ], data.y[ vID[2] ], data.z[ vID[2] ] );
-			dv3 = D3DXVECTOR3( data.x[ vID[3] ], data.y[ vID[3] ], data.z[ vID[3] ] );
-			D3DXPlaneFromPoints(&bdata_plane[i][j][1], &dv1, &dv2, &dv3);
+			bdata_polygon_center_x[i*6 + j] = 0.0f;
+			bdata_polygon_center_y[i*6 + j] = 0.0f;
+			bdata_polygon_center_z[i*6 + j] = 0.0f;
 
-			//2つの三角形が持つ法線のなす角を求める
-			g0 = sqrt(bdata_plane[i][j][0].a * bdata_plane[i][j][0].a + bdata_plane[i][j][0].b * bdata_plane[i][j][0].b + bdata_plane[i][j][0].c * bdata_plane[i][j][0].c);
-			g1 = sqrt(bdata_plane[i][j][1].a * bdata_plane[i][j][1].a + bdata_plane[i][j][1].b * bdata_plane[i][j][1].b + bdata_plane[i][j][1].c * bdata_plane[i][j][1].c);
-			costheta = (bdata_plane[i][j][0].a * bdata_plane[i][j][1].a + bdata_plane[i][j][0].b * bdata_plane[i][j][1].b + bdata_plane[i][j][0].c * bdata_plane[i][j][1].c) / (g0 * g1);
-
-			//1つの面で法線が90度以上違う（＝異常）なら～
-			if( acos(costheta) > (float)M_PI/2 ){
-				//違う三角形で作る
-				dv1 = D3DXVECTOR3( data.x[ vID[2] ], data.y[ vID[2] ], data.z[ vID[2] ] );
-				dv2 = D3DXVECTOR3( data.x[ vID[3] ], data.y[ vID[3] ], data.z[ vID[3] ] );
-				dv3 = D3DXVECTOR3( data.x[ vID[1] ], data.y[ vID[1] ], data.z[ vID[1] ] );
-				D3DXPlaneFromPoints(&bdata_plane[i][j][0], &dv1, &dv2, &dv3);
-				dv1 = D3DXVECTOR3( data.x[ vID[1] ], data.y[ vID[1] ], data.z[ vID[1] ] );
-				dv2 = D3DXVECTOR3( data.x[ vID[3] ], data.y[ vID[3] ], data.z[ vID[3] ] );
-				dv3 = D3DXVECTOR3( data.x[ vID[0] ], data.y[ vID[0] ], data.z[ vID[0] ] );
-				D3DXPlaneFromPoints(&bdata_plane[i][j][1], &dv1, &dv2, &dv3);
+			//4頂点の中心点を算出
+			for(int k=0; k<4; k++){
+				bdata_polygon_center_x[i*6 + j] += data.x[ vID[k] ];
+				bdata_polygon_center_y[i*6 + j] += data.y[ vID[k] ];
+				bdata_polygon_center_z[i*6 + j] += data.z[ vID[k] ];
 			}
+			bdata_polygon_center_x[i*6 + j] /= 4;
+			bdata_polygon_center_y[i*6 + j] /= 4;
+			bdata_polygon_center_z[i*6 + j] /= 4;
 		}
 	}
 
@@ -186,6 +177,14 @@ void Collision::GetBlockPosMINMAX(struct blockdata data, float *min_x, float *mi
 		if( *max_y < data.y[i] ){ *max_y = data.y[i]; }
 		if( *max_z < data.z[i] ){ *max_z = data.z[i]; }
 	}
+
+	//計算誤差対策のため、わずかに大きめにする。
+	*min_x -= 0.1f;
+	*min_y -= 0.1f;
+	*min_z -= 0.1f;
+	*max_x += 0.1f;
+	*max_y += 0.1f;
+	*max_z += 0.1f;
 }
 
 //! @brief 空間分割のグループを算出
@@ -202,19 +201,196 @@ int Collision::GetWorldGroup(float x, float z)
 	return 0;
 }
 
+//! @brief 特定の座標が、ブロックの面の表側か調べる
+//! @param id 判定するブロック番号
+//! @param face 判定する面番号
+//! @param x X座標
+//! @param y Y座標
+//! @param z Z座標
+//! @return 表向き：true　裏向き：false
+//! @warning 絶対座標を指定する必要があります。ベクトルではありません。
+//! @attention 各当たり判定の関数から自動的に呼ばれます。
+bool Collision::CheckPolygonFront(int id, int face, float x, float y, float z)
+{
+	if( blockdata == NULL ){ return false; }
+	if( (id < 0)||(blockdata->GetTotaldatas() <= id) ){ return false; }
+	if( (face < 0)||(6 < face) ){ return false; }
+
+	struct blockdata bdata;
+	float vx, vy, vz;
+	float d;
+
+	blockdata->Getdata(&bdata, id);
+
+	//面の中心を基準点に、座標のベクトルを求める
+	vx = bdata_polygon_center_x[id*6 + face] - x;
+	vy = bdata_polygon_center_y[id*6 + face] - y;
+	vz = bdata_polygon_center_z[id*6 + face] - z;
+
+	//内積
+	d = bdata.material[face].vx*vx + bdata.material[face].vy*vy + bdata.material[face].vz*vz;
+
+	if( d < 0.0f ){
+		return true;
+	}
+	return false;
+}
+
+//! @brief 特定の方向に対して、ブロックの面の表側か調べる
+//! @param id 判定するブロック番号
+//! @param face 判定する面番号
+//! @param rx 横方向の角度
+//! @return 表向き：true　裏向き：false
+bool Collision::CheckPolygonFrontRx(int id, int face, float rx)
+{
+	if( blockdata == NULL ){ return false; }
+	if( (id < 0)||(blockdata->GetTotaldatas() <= id) ){ return false; }
+	if( (face < 0)||(6 < face) ){ return false; }
+
+	struct blockdata bdata;
+	float vx, vz;
+	float d;
+
+	blockdata->Getdata(&bdata, id);
+
+	//ベクトル算出
+	vx = cos(rx);
+	vz = sin(rx);
+
+	//内積
+	d = bdata.material[face].vx*vx + bdata.material[face].vz*vz;
+
+	if( d < 0.0f ){
+		return true;
+	}
+	return false;
+}
+
+//! @brief ブロックの面とレイ（光線）のあたり判定
+//! @param blockid 判定するブロック番号
+//! @param face 判定する面番号
+//! @param RayPos_x レイの位置（始点）を指定する X座標
+//! @param RayPos_y レイの位置（始点）を指定する Y座標
+//! @param RayPos_z レイの位置（始点）を指定する Z座標
+//! @param RayDir_x レイのベクトルを指定する X成分
+//! @param RayDir_y レイのベクトルを指定する Y成分
+//! @param RayDir_z レイのベクトルを指定する Z成分
+//! @param out_Dist 当たったブロックとの距離を受け取るポインタ
+//! @return 当たっている：true　当たっていない：false
+//! @warning RayPos（始点）と RayDir（ベクトル）を間違えないこと。
+//! @attention 各当たり判定の関数から自動的に呼ばれます。
+bool Collision::CheckIntersectTri(int blockid, int face, float RayPos_x, float RayPos_y, float RayPos_z, float RayDir_x, float RayDir_y, float RayDir_z, float *out_Dist)
+{
+	struct blockdata data;
+	int vID[4];
+	float d1, d2;
+	float vx1, vy1, vz1;
+	float dist;
+	float x, y, z;
+	float vx2, vy2, vz2;
+
+	blockdata->Getdata(&data, blockid);
+	blockdataface(face, vID, NULL);
+
+	//内積
+	d1 = data.material[face].vx*RayDir_x + data.material[face].vy*RayDir_y + data.material[face].vz*RayDir_z;
+
+	if( d1 >= 0.0f ){
+		return false;		//面とレイが平行か、面に対してレイが逆向き
+	}
+
+	//面の中心を基準点に、座標のベクトルを求める
+	vx1 = RayPos_x - bdata_polygon_center_x[blockid*6 + face];
+	vy1 = RayPos_y - bdata_polygon_center_y[blockid*6 + face];
+	vz1 = RayPos_z - bdata_polygon_center_z[blockid*6 + face];
+
+	//内積
+	d2 = data.material[face].vx*vx1 + data.material[face].vy*vy1 + data.material[face].vz*vz1;		//面までの最短距離が求まる
+
+	//交点までの距離と座標
+	dist = 1.0f / (d1*-1) * d2;
+	x = RayPos_x + RayDir_x * dist;
+	y = RayPos_y + RayDir_y * dist;
+	z = RayPos_z + RayDir_z * dist;
+
+
+	//ブロック全体のAABBに入らなければ除外
+	if( (x < bmin_x[blockid])||(bmax_x[blockid] < x) ){ return false; }
+	if( (y < bmin_y[blockid])||(bmax_y[blockid] < y) ){ return false; }
+	if( (z < bmin_z[blockid])||(bmax_z[blockid] < z) ){ return false; }
+
+
+	//以下、ブロック面の内側に交点があるかチェック
+	//　　面を形成する各4辺との位置関係を算出し、面の法線と比較する。
+
+	//外積
+	vx2 = ((data.y[ vID[1] ] - data.y[ vID[0] ]) * (z - data.z[ vID[0] ])) - ((y - data.y[ vID[0] ]) * (data.z[ vID[1] ] - data.z[ vID[0] ]));
+	vy2 = ((data.z[ vID[1] ] - data.z[ vID[0] ]) * (x - data.x[ vID[0] ])) - ((z - data.z[ vID[0] ]) * (data.x[ vID[1] ] - data.x[ vID[0] ]));
+	vz2 = ((data.x[ vID[1] ] - data.x[ vID[0] ]) * (y - data.y[ vID[0] ])) - ((x - data.x[ vID[0] ]) * (data.y[ vID[1] ] - data.y[ vID[0] ]));
+
+	//内積
+	d1 = data.material[face].vx*vx2 + data.material[face].vy*vy2 + data.material[face].vz*vz2;		//ブロック面の法線との関係を算出
+
+	if( d1 < 0.0f ){	//外側にあれば除外
+		return false;
+	}
+
+
+	//外積
+	vx2 = ((data.y[ vID[2] ] - data.y[ vID[1] ]) * (z - data.z[ vID[1] ])) - ((y - data.y[ vID[1] ]) * (data.z[ vID[2] ] - data.z[ vID[0] ]));
+	vy2 = ((data.z[ vID[2] ] - data.z[ vID[1] ]) * (x - data.x[ vID[1] ])) - ((z - data.z[ vID[1] ]) * (data.x[ vID[2] ] - data.x[ vID[0] ]));
+	vz2 = ((data.x[ vID[2] ] - data.x[ vID[1] ]) * (y - data.y[ vID[1] ])) - ((x - data.x[ vID[1] ]) * (data.y[ vID[2] ] - data.y[ vID[0] ]));
+
+	//内積
+	d1 = data.material[face].vx*vx2 + data.material[face].vy*vy2 + data.material[face].vz*vz2;		//ブロック面の法線との関係を算出
+
+	if( d1 < 0.0f ){	//外側にあれば除外
+		return false;
+	}
+
+
+	//外積
+	vx2 = ((data.y[ vID[3] ] - data.y[ vID[2] ]) * (z - data.z[ vID[2] ])) - ((y - data.y[ vID[2] ]) * (data.z[ vID[3] ] - data.z[ vID[2] ]));
+	vy2 = ((data.z[ vID[3] ] - data.z[ vID[2] ]) * (x - data.x[ vID[2] ])) - ((z - data.z[ vID[2] ]) * (data.x[ vID[3] ] - data.x[ vID[2] ]));
+	vz2 = ((data.x[ vID[3] ] - data.x[ vID[2] ]) * (y - data.y[ vID[2] ])) - ((x - data.x[ vID[2] ]) * (data.y[ vID[3] ] - data.y[ vID[2] ]));
+
+	//内積
+	d1 = data.material[face].vx*vx2 + data.material[face].vy*vy2 + data.material[face].vz*vz2;		//ブロック面の法線との関係を算出
+
+	if( d1 < 0.0f ){	//外側にあれば除外
+		return false;
+	}
+
+
+	//外積
+	vx2 = ((data.y[ vID[0] ] - data.y[ vID[3] ]) * (z - data.z[ vID[3] ])) - ((y - data.y[ vID[3] ]) * (data.z[ vID[0] ] - data.z[ vID[3] ]));
+	vy2 = ((data.z[ vID[0] ] - data.z[ vID[3] ]) * (x - data.x[ vID[3] ])) - ((z - data.z[ vID[3] ]) * (data.x[ vID[0] ] - data.x[ vID[3] ]));
+	vz2 = ((data.x[ vID[0] ] - data.x[ vID[3] ]) * (y - data.y[ vID[3] ])) - ((x - data.x[ vID[3] ]) * (data.y[ vID[0] ] - data.y[ vID[3] ]));
+
+	//内積
+	d1 = data.material[face].vx*vx2 + data.material[face].vy*vy2 + data.material[face].vz*vz2;		//ブロック面の法線との関係を算出
+
+	if( d1 < 0.0f ){	//外側にあれば除外
+		return false;
+	}
+
+
+	*out_Dist = dist;
+
+	return true;
+}
+
 //! @brief ブロックに埋まっていないか調べる
 //! @param blockid 判定するブロック番号
 //! @param x X座標
-//! @param y X座標
-//! @param z X座標
+//! @param y Y座標
+//! @param z Z座標
 //! @param worldgroup 空間のグループを利用して計算省略を試みる（true：有効・計算省略　false：無効・完全検索）
 //! @param *planeid 表にある面番号（NULL可）
 //! @return 埋っている：true　埋っていない：false
 //! @warning *planeid が返す表面（0～5）は、複数の面が該当する場合でも、最初に見つけた1面のみ返します。
 bool Collision::CheckBlockInside(int blockid, float x, float y, float z, bool worldgroup, int *planeid)
 {
-	D3DXVECTOR3 dv;
-
 	if( blockdata == NULL ){ return false; }
 	if( (blockid < 0)||(blockdata->GetTotaldatas() <= blockid) ){ return false; }
 
@@ -247,8 +423,7 @@ bool Collision::CheckBlockInside(int blockid, float x, float y, float z, bool wo
 
 	//6面から見て全て裏面かどうか
 	for(int i=0; i<6; i++){
-		dv = D3DXVECTOR3( x, y, z );
-		if( (D3DXPlaneDotCoord(&bdata_plane[blockid][i][0], &dv) > 0)||(D3DXPlaneDotCoord(&bdata_plane[blockid][i][1], &dv) > 0) ){
+		if( CheckPolygonFront(blockid, i, x, y, z) == true ){
 			if( planeid != NULL ){ *planeid = i; }
 			return false;	//表面ならば終了
 		}
@@ -259,8 +434,8 @@ bool Collision::CheckBlockInside(int blockid, float x, float y, float z, bool wo
 
 //! @brief 全てのブロックに埋まっていないか調べる
 //! @param x X座標
-//! @param y X座標
-//! @param z X座標
+//! @param y Y座標
+//! @param z Z座標
 //! @return 埋っている：true　埋っていない：false
 bool Collision::CheckALLBlockInside(float x, float y, float z)
 {
@@ -294,9 +469,8 @@ bool Collision::CheckALLBlockInside(float x, float y, float z)
 bool Collision::CheckBlockIntersectRay(int blockid, float RayPos_x, float RayPos_y, float RayPos_z, float RayDir_x, float RayDir_y, float RayDir_z, int *face, float *Dist, float maxDist)
 {
 	if( blockdata == NULL ){ return false; }
+	if( (blockid < 0)||(blockdata->GetTotaldatas() <= blockid) ){ return false; }
 
-	struct blockdata data;
-	int vID[4];
 	float pDist;
 	float min_pDist = FLT_MAX;
 	int min_blockface = -1;
@@ -332,16 +506,11 @@ bool Collision::CheckBlockIntersectRay(int blockid, float RayPos_x, float RayPos
 		if( rmax_z < RayPos_z ){ rmax_z = RayPos_z; }
 	}
 
-	D3DXVECTOR3 pRayPos(RayPos_x, RayPos_y, RayPos_z);
-	D3DXVECTOR3 pRayDir(RayDir_x, RayDir_y, RayDir_z);
-
 	if( maxDist > 0.0f ){
 		//始点と終点の空間グループを取得
 		worldgroupA = GetWorldGroup(RayPos_x, RayPos_z);
 		worldgroupB = GetWorldGroup(RayPos_x + RayDir_x * maxDist, RayPos_z + RayDir_z * maxDist);
 	}
-
-	blockdata->Getdata(&data, blockid);
 
 	if( maxDist > 0.0f ){
 		if( bdata_worldgroup[blockid] != 0 ){
@@ -372,22 +541,8 @@ bool Collision::CheckBlockIntersectRay(int blockid, float RayPos_x, float RayPos
 
 	//各ポリゴン単位で判定
 	for(int i=0; i<6; i++){
-		blockdataface(i, vID, NULL);
-		if( (D3DXPlaneDotCoord(&bdata_plane[blockid][i][0], &pRayPos) >= 0)||(D3DXPlaneDotCoord(&bdata_plane[blockid][i][1], &pRayPos) >= 0) ){
-			D3DXVECTOR3 dv11, dv12, dv13;
-			D3DXVECTOR3 dv21, dv22, dv23;
-
-			dv11 = D3DXVECTOR3( data.x[vID[0]], data.y[vID[0]], data.z[vID[0]]);
-			dv12 = D3DXVECTOR3( data.x[vID[1]], data.y[vID[1]], data.z[vID[1]]);
-			dv13 = D3DXVECTOR3( data.x[vID[2]], data.y[vID[2]], data.z[vID[2]]);
-
-			dv21 = D3DXVECTOR3( data.x[vID[2]], data.y[vID[2]], data.z[vID[2]]);
-			dv22 = D3DXVECTOR3( data.x[vID[3]], data.y[vID[3]], data.z[vID[3]]);
-			dv23 = D3DXVECTOR3( data.x[vID[0]], data.y[vID[0]], data.z[vID[0]]);
-
-			if( (D3DXIntersectTri(&dv11, &dv12, &dv13, &pRayPos, &pRayDir, NULL,  NULL, &pDist) == TRUE)||
-				(D3DXIntersectTri(&dv21, &dv22, &dv23, &pRayPos, &pRayDir, NULL,  NULL, &pDist) == TRUE)
-			){
+		if( CheckPolygonFront(blockid, i, RayPos_x, RayPos_y, RayPos_z) == true ){
+			if( CheckIntersectTri(blockid, i, RayPos_x, RayPos_y, RayPos_z, RayDir_x, RayDir_y, RayDir_z, &pDist) == true ){
 				if( min_pDist > pDist ){
 					min_pDist = pDist;
 					min_blockface = i;
@@ -431,8 +586,6 @@ bool Collision::CheckALLBlockIntersectRay(float RayPos_x, float RayPos_y, float 
 	if( blockdata == NULL ){ return false; }
 
 	int bs = blockdata->GetTotaldatas();
-	struct blockdata data;
-	int vID[4];
 	float pDist;
 	float min_pDist = FLT_MAX;
 	int min_blockid = -1;
@@ -462,9 +615,6 @@ bool Collision::CheckALLBlockIntersectRay(float RayPos_x, float RayPos_y, float 
 		if( rmax_z < RayPos_z ){ rmax_z = RayPos_z; }
 	}
 
-	D3DXVECTOR3 pRayPos(RayPos_x, RayPos_y, RayPos_z);
-	D3DXVECTOR3 pRayDir(RayDir_x, RayDir_y, RayDir_z);
-
 	if( maxDist > 0.0f ){
 		//始点と終点の空間グループを取得
 		worldgroupA = GetWorldGroup(RayPos_x, RayPos_z);
@@ -474,8 +624,6 @@ bool Collision::CheckALLBlockIntersectRay(float RayPos_x, float RayPos_y, float 
 	for(int i=0; i<bs; i++){
 		//板状のブロックは計算外
 		if( BoardBlock[i] == true ){ continue; }
-
-		blockdata->Getdata(&data, i);
 
 		if( maxDist > 0.0f ){
 			if( bdata_worldgroup[i] != 0 ){
@@ -502,22 +650,8 @@ bool Collision::CheckALLBlockIntersectRay(float RayPos_x, float RayPos_y, float 
 
 		//各ポリゴン単位で判定
 		for(int j=0; j<6; j++){
-			blockdataface(j, vID, NULL);
-			if( (D3DXPlaneDotCoord(&bdata_plane[i][j][0], &pRayPos) >= 0)||(D3DXPlaneDotCoord(&bdata_plane[i][j][1], &pRayPos) >= 0) ){
-				D3DXVECTOR3 dv11, dv12, dv13;
-				D3DXVECTOR3 dv21, dv22, dv23;
-
-				dv11 = D3DXVECTOR3( data.x[vID[0]], data.y[vID[0]], data.z[vID[0]]);
-				dv12 = D3DXVECTOR3( data.x[vID[1]], data.y[vID[1]], data.z[vID[1]]);
-				dv13 = D3DXVECTOR3( data.x[vID[2]], data.y[vID[2]], data.z[vID[2]]);
-
-				dv21 = D3DXVECTOR3( data.x[vID[2]], data.y[vID[2]], data.z[vID[2]]);
-				dv22 = D3DXVECTOR3( data.x[vID[3]], data.y[vID[3]], data.z[vID[3]]);
-				dv23 = D3DXVECTOR3( data.x[vID[0]], data.y[vID[0]], data.z[vID[0]]);
-
-				if( (D3DXIntersectTri(&dv11, &dv12, &dv13, &pRayPos, &pRayDir, NULL,  NULL, &pDist) == TRUE)||
-					(D3DXIntersectTri(&dv21, &dv22, &dv23, &pRayPos, &pRayDir, NULL,  NULL, &pDist) == TRUE)
-				){
+			if( CheckPolygonFront(i, j, RayPos_x, RayPos_y, RayPos_z) == true ){
+				if( CheckIntersectTri(i, j, RayPos_x, RayPos_y, RayPos_z, RayDir_x, RayDir_y, RayDir_z, &pDist) == true ){
 					if( min_pDist > pDist ){
 						min_pDist = pDist;
 						min_blockid = i;
@@ -627,10 +761,14 @@ bool Collision::CheckALLBlockIntersectDummyRay(float RayPos_x, float RayPos_y, f
 }
 
 //! @brief ブロックに沿って移動するベクトルを求める
-void Collision::ScratchVector(BlockDataInterface* in_blockdata, int id, int face, float in_vx, float in_vy, float in_vz, float *out_vx, float *out_vy, float *out_vz)
+void Collision::ScratchVector(int id, int face, float in_vx, float in_vy, float in_vz, float *out_vx, float *out_vy, float *out_vz)
 {
+	if( blockdata == NULL ){ return; }
+	if( (id < 0)||(blockdata->GetTotaldatas() <= id) ){ return; }
+	if( (face < 0)||(6 < face) ){ return; }
+
 	struct blockdata bdata;
-	in_blockdata->Getdata(&bdata, id);
+	blockdata->Getdata(&bdata, id);
 
 	//内積
 	float Dot = in_vx * bdata.material[face].vx + in_vy * bdata.material[face].vy + in_vz * bdata.material[face].vz;
@@ -641,10 +779,14 @@ void Collision::ScratchVector(BlockDataInterface* in_blockdata, int id, int face
 }
 
 //! @brief ブロックに反射するベクトルを求める
-void Collision::ReflectVector(BlockDataInterface* in_blockdata, int id, int face, float in_vx, float in_vy, float in_vz, float *out_vx, float *out_vy, float *out_vz)
+void Collision::ReflectVector(int id, int face, float in_vx, float in_vy, float in_vz, float *out_vx, float *out_vy, float *out_vz)
 {
+	if( blockdata == NULL ){ return; }
+	if( (id < 0)||(blockdata->GetTotaldatas() <= id) ){ return; }
+	if( (face < 0)||(6 < face) ){ return; }
+
 	struct blockdata bdata;
-	in_blockdata->Getdata(&bdata, id);
+	blockdata->Getdata(&bdata, id);
 
 	//内積
 	float Dot = in_vx * bdata.material[face].vx + in_vy * bdata.material[face].vy + in_vz * bdata.material[face].vz;

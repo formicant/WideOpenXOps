@@ -158,7 +158,6 @@ protected:
 	void GunsightErrorRange();
 	int CheckAndProcessDead(class Collision *CollD);
 	void ControlProcess();
-	bool CheckBlockAngle(class BlockDataInterface *inblockdata, int bid, int fid, float vx, float vz);
 	bool MapCollisionDetection(class Collision *CollD, class BlockDataInterface *inblockdata, float *FallDist);
 
 public:
@@ -307,7 +306,7 @@ public:
 	~grenade();
 	void SetParamData(float speed, int _humanid, bool init);
 	float GetSpeed();
-	int RunFrame(class Collision *CollD, class BlockDataInterface *inblockdata);
+	int RunFrame(class Collision *CollD);
 	virtual void Render(D3DGraphics *d3dg);
 };
 
