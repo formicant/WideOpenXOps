@@ -3141,7 +3141,7 @@ void ProcessScreen(HWND hWnd, opening *Opening, mainmenu *MainMenu, briefing *Br
 
 		//ƒQ[ƒ€I—¹
 		case STATE_EXIT:
-			PostMessage(hWnd, WM_CLOSE, 0L, 0L);
+			GameEnd(hWnd);
 			break;
 
 		default:

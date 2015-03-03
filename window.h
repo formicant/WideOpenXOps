@@ -45,6 +45,7 @@
 
 HWND InitWindow(HINSTANCE hInstance, char* title, int width, int height, int nCmdShow, bool fullscreen);
 void ErrorInfo(HWND hWnd, char *str, bool exit);
+void GameEnd(HWND hWnd);
 float GetFps(int getcnt);
 bool ControlFps();
 unsigned int GetTimeMS();

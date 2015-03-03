@@ -270,7 +270,7 @@ bool blockdataface(int faceID, int* vID, int* uvID)
 		if( uvID != NULL ){
 			uvID[0] = 2;	uvID[1] = 3;	uvID[2] = 0;	uvID[3] = 1;
 		}
-		return TRUE;
+		return true;
 	}
 	if( faceID == 1 ){
 		if( vID != NULL ){
@@ -279,7 +279,7 @@ bool blockdataface(int faceID, int* vID, int* uvID)
 		if( uvID != NULL ){
 			uvID[0] = 2;	uvID[1] = 3;	uvID[2] = 0;	uvID[3] = 1;
 		}
-		return TRUE;
+		return true;
 	}
 	if( faceID == 2 ){
 		if( vID != NULL ){
@@ -288,7 +288,7 @@ bool blockdataface(int faceID, int* vID, int* uvID)
 		if( uvID != NULL ){
 			uvID[0] = 2;	uvID[1] = 3;	uvID[2] = 0;	uvID[3] = 1;
 		}
-		return TRUE;
+		return true;
 	}
 	if( faceID == 3 ){
 		if( vID != NULL ){
@@ -297,7 +297,7 @@ bool blockdataface(int faceID, int* vID, int* uvID)
 		if( uvID != NULL ){
 			uvID[0] = 2;	uvID[1] = 3;	uvID[2] = 0;	uvID[3] = 1;
 		}
-		return TRUE;
+		return true;
 	}
 	if( faceID == 4 ){
 		if( vID != NULL ){
@@ -306,7 +306,7 @@ bool blockdataface(int faceID, int* vID, int* uvID)
 		if( uvID != NULL ){
 			uvID[0] = 2;	uvID[1] = 3;	uvID[2] = 0;	uvID[3] = 1;
 		}
-		return TRUE;
+		return true;
 	}
 	if( faceID == 5 ){
 		if( vID != NULL ){
@@ -315,9 +315,9 @@ bool blockdataface(int faceID, int* vID, int* uvID)
 		if( uvID != NULL ){
 			uvID[0] = 2;	uvID[1] = 3;	uvID[2] = 0;	uvID[3] = 1;
 		}
-		return TRUE;
+		return true;
 	}
-	return FALSE;
+	return false;
 }
 
 //! @brief コンストラクタ

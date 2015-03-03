@@ -129,6 +129,12 @@ void ErrorInfo(HWND hWnd, char *str, bool exit)
 	}
 }
 
+//! @brief ゲーム終了を要求
+void GameEnd(HWND hWnd)
+{
+	PostMessage(hWnd, WM_CLOSE, 0L, 0L);
+}
+
 //! @brief fps（Frames Per Second：フレームレート）計算
 //! @param getcnt fpsを取得する周期（フレーム単位）
 //! @return fps数

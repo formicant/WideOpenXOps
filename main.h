@@ -34,11 +34,6 @@
 
 #define MAINICON 101		//!< Icon
 
-//BorlandC++ Compiler‚©”»’è
-#ifndef _MSC_VER
- #define COMPILER_BCC		//!< Use BorlandC++ Compiler.
-#endif
-
 #ifdef _DEBUG
  #include <crtdbg.h>
 #endif
@@ -66,9 +61,17 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <math.h>
+#include <string.h>
+
+//windows.h‚ğg—p‚µ‚È‚¢‚È‚ç‚Î
+/*
+#define HWND int
+#define _MAX_PATH 260
+#define MAX_PATH 260
+*/
 
 //BorlandC++ Compiler—p‚Ìˆ—
-#ifdef COMPILER_BCC
+#ifdef __BORLANDC__
  #define sqrtf(df) sqrt(df)
  int _matherr(struct _exception  *__e) { return 1; }
 #endif

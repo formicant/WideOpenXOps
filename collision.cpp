@@ -903,7 +903,7 @@ bool CollideSphereRay(float s_x, float s_y, float s_z, float s_r, float RayPos_x
 		if( pmax_z < RayPos_z ){ pmax_z = RayPos_z; }
 
 		//‹«ŠEƒ{ƒbƒNƒX“¯Žm‚Å”»’è
-		if( CollideBoxAABB(s_x - s_r, s_y - s_r, s_z - s_r, s_x + s_r, s_y + s_r, s_z + s_r, pmin_x, pmin_y, pmin_z, pmax_x, pmax_y, pmax_z) == FALSE ){
+		if( CollideBoxAABB(s_x - s_r, s_y - s_r, s_z - s_r, s_x + s_r, s_y + s_r, s_z + s_r, pmin_x, pmin_y, pmin_z, pmax_x, pmax_y, pmax_z) == false ){
 			return false;
 		}
 	}
@@ -985,7 +985,7 @@ bool CollideAABBRay(float box_min_x, float box_min_y, float box_min_z, float box
 		if( pmax_z < RayPos_z ){ pmax_z = RayPos_z; }
 
 		//‹«ŠEƒ{ƒbƒNƒX“¯Žm‚Å”»’è
-		if( CollideBoxAABB(box_min_x, box_min_y, box_min_z, box_max_x, box_max_y, box_max_z, pmin_x, pmin_y, pmin_z, pmax_x, pmax_y, pmax_z) == FALSE ){
+		if( CollideBoxAABB(box_min_x, box_min_y, box_min_z, box_max_x, box_max_y, box_max_z, pmin_x, pmin_y, pmin_z, pmax_x, pmax_y, pmax_z) == false ){
 			return false;
 		}
 	}
