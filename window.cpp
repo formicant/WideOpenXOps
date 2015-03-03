@@ -117,6 +117,18 @@ LRESULT WINAPI WindowProc(HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam)
 	return DefWindowProc(hWnd, msg, wParam, lParam);
 }
 
+//! @brief エラーメッセージ表示
+//! @param hWnd ウィンドウハンドル
+//! @param *str メッセージ
+//! @param exit プログラムを終了：true　メッセージを表示するだけ：false
+void ErrorInfo(HWND hWnd, char *str, bool exit)
+{
+	MessageBox(hWnd, str, "ERROR", MB_OK);
+	if( exit == true ){
+		PostMessage(hWnd, WM_CLOSE, 0L, 0L);
+	}
+}
+
 //! @brief fps（Frames Per Second：フレームレート）計算
 //! @param getcnt fpsを取得する周期（フレーム単位）
 //! @return fps数

@@ -44,6 +44,7 @@
 #pragma comment(lib, "winmm.lib")
 
 HWND InitWindow(HINSTANCE hInstance, char* title, int width, int height, int nCmdShow, bool fullscreen);
+void ErrorInfo(HWND hWnd, char *str, bool exit);
 float GetFps(int getcnt);
 bool ControlFps();
 unsigned int GetTimeMS();

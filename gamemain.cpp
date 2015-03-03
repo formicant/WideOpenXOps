@@ -61,19 +61,19 @@ int InitGame(HWND hWnd)
 {
 	//DirectX初期化
 	if( d3dg.InitD3D(hWnd, "data\\char.dds", GameConfig.GetFullscreenFlag()) ){
-		MessageBox(hWnd, "Direct3Dの作成に失敗しました", "error", MB_OK);
+		ErrorInfo(hWnd, "Direct3Dの作成に失敗しました", false);
 		return 1;
 	}
 
 	//Directinputの初期化
 	if( inputCtrl.InitD3Dinput(hWnd) ){
-		MessageBox(hWnd, "Input initialization error", "error", MB_OK);
+		ErrorInfo(hWnd, "Input initialization error", false);
 		return 1;
 	}
 
 	//EASY DIRECT SOUND 初期化
 	if( SoundCtrl.InitSound(hWnd) ){
-		MessageBox(hWnd, "DLL open failed", "error", MB_OK);
+		ErrorInfo(hWnd, "DLL open failed", false);
 		return 1;
 	}
 
@@ -141,8 +141,7 @@ int ResetGame(HWND hWnd)
 		//
 	}
 	if( rtn == 2 ){
-		MessageBox(hWnd, "Resetに失敗しました", "ERROR", MB_OK);
-		PostMessage(hWnd, WM_CLOSE, 0L, 0L);
+		ErrorInfo(hWnd, "Resetに失敗しました", true);
 		return 1;
 	}
 	return 0;
@@ -170,7 +169,7 @@ int opening::Create()
 	//ポイントデータ読み込み
 	if( PointData.LoadFiledata("data\\map10\\op.pd1") ){
 		//point data open failed
-		return 1;
+		return 2;
 	}
 	ObjMgr.LoadPointData();
 	ObjMgr.SetPlayerID(MAX_HUMAN-1);	//実在しない人をプレイヤーに（銃声のサウンド再生対策）
@@ -419,7 +418,7 @@ int mainmenu::Create()
 	//ポイントデータ読み込み
 	if( PointData.LoadFiledata(pdata) ){
 		//point data open failed
-		return 1;
+		return 2;
 	}
 	ObjMgr.LoadPointData();
 
@@ -990,7 +989,7 @@ int maingame::Create()
 	//ポイントデータ読み込み
 	if( PointData.LoadFiledata(pdata) ){
 		//point data open failed
-		return 1;
+		return 2;
 	}
 	ObjMgr.LoadPointData();
 
@@ -3015,12 +3014,10 @@ void ProcessScreen(HWND hWnd, opening *Opening, mainmenu *MainMenu, briefing *Br
 		case STATE_CREATE_OPENING:
 			error = Opening->Create();
 			if( error == 1 ){
-				MessageBox(hWnd, "block data open failed",  "error", MB_OK);
-				PostMessage(hWnd, WM_CLOSE, 0L, 0L);
+				ErrorInfo(hWnd, "block data open failed", true);
 			}
 			if( error == 2 ){
-				MessageBox(hWnd, "point data open failed",  "error", MB_OK);
-				PostMessage(hWnd, WM_CLOSE, 0L, 0L);
+				ErrorInfo(hWnd, "point data open failed", true);
 			}
 			break;
 
@@ -3045,12 +3042,10 @@ void ProcessScreen(HWND hWnd, opening *Opening, mainmenu *MainMenu, briefing *Br
 		case STATE_CREATE_MENU:
 			error = MainMenu->Create();
 			if( error == 1 ){
-				MessageBox(hWnd, "block data open failed",  "error", MB_OK);
-				PostMessage(hWnd, WM_CLOSE, 0L, 0L);
+				ErrorInfo(hWnd, "block data open failed", true);
 			}
 			if( error == 2 ){
-				MessageBox(hWnd, "point data open failed",  "error", MB_OK);
-				PostMessage(hWnd, WM_CLOSE, 0L, 0L);
+				ErrorInfo(hWnd, "point data open failed", true);
 			}
 			break;
 
@@ -3075,8 +3070,7 @@ void ProcessScreen(HWND hWnd, opening *Opening, mainmenu *MainMenu, briefing *Br
 		case STATE_CREATE_BRIEFING:
 			error = Briefing->Create();
 			if( error == 1 ){
-				MessageBox(hWnd, "briefing data open failed",  "error", MB_OK);
-				PostMessage(hWnd, WM_CLOSE, 0L, 0L);
+				ErrorInfo(hWnd, "briefing data open failed", true);
 			}
 			break;
 
@@ -3100,12 +3094,10 @@ void ProcessScreen(HWND hWnd, opening *Opening, mainmenu *MainMenu, briefing *Br
 		case STATE_CREATE_MAINGAME:
 			error = MainGame->Create();
 			if( error == 1 ){
-				MessageBox(hWnd, "block data open failed",  "error", MB_OK);
-				PostMessage(hWnd, WM_CLOSE, 0L, 0L);
+				ErrorInfo(hWnd, "block data open failed", true);
 			}
 			if( error == 2 ){
-				MessageBox(hWnd, "point data open failed",  "error", MB_OK);
-				PostMessage(hWnd, WM_CLOSE, 0L, 0L);
+				ErrorInfo(hWnd, "point data open failed", true);
 			}
 			break;
 

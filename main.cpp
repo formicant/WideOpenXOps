@@ -62,7 +62,7 @@ int WINAPI WinMain(HINSTANCE hInstance,	HINSTANCE hPrevInstance, LPTSTR lpCmdLin
 
 	//İ’èƒtƒ@ƒCƒ‹“Ç‚İ‚İ
 	if( GameConfig.LoadFile("config.dat") == 1 ){
-		MessageBox(NULL, "config data open failed", "error", MB_OK);
+		ErrorInfo(NULL, "config data open failed", false);
 		return 1;
 	}
 
