@@ -323,6 +323,11 @@ int D3DGraphics::LoadModel(char* filename)
 
 	LPD3DXBUFFER pD3DXMtrlBuffer;
 
+#ifdef PATH_DELIMITER_SLASH
+	//パス区切り文字を変換
+	filename = ChangePathDelimiter(filename);
+#endif
+
 	//.xファイルをバッファーに読み込む
 	if( FAILED( D3DXLoadMeshFromX( filename, D3DXMESH_SYSTEMMEM, pd3dDevice, NULL, 
 				&pD3DXMtrlBuffer, NULL, &nummaterials[id], &pmesh[id] ) ) ) {
@@ -456,6 +461,11 @@ int D3DGraphics::LoadTexture(char* filename, bool texturefont, bool BlackTranspa
 		}
 	}
 	if( id == -1 ){ return -1; }
+
+#ifdef PATH_DELIMITER_SLASH
+	//パス区切り文字を変換
+	filename = ChangePathDelimiter(filename);
+#endif
 
 	//ファイル情報を取得
 	if( D3DXGetImageInfoFromFile(filename, &info) != D3D_OK ){ return -1; }

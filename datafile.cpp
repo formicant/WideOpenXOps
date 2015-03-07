@@ -94,6 +94,11 @@ int BlockDataInterface::LoadFiledata(char *fname)
 	float bdata_main[80];
 	char bdata_mainb[30];
 
+#ifdef PATH_DELIMITER_SLASH
+	//パス区切り文字を変換
+	fname = ChangePathDelimiter(fname);
+#endif
+
 	//ファイルを読み込む
 	fp = fopen(fname, "rb");
 	if( fp == NULL ){
@@ -355,6 +360,11 @@ int PointDataInterface::LoadFiledata(char *fname)
 	char pdata_mainc[200][4];
 	char fname2[MAX_PATH];
 
+#ifdef PATH_DELIMITER_SLASH
+	//パス区切り文字を変換
+	fname = ChangePathDelimiter(fname);
+#endif
+
 	//ファイルを読み込む
 	fp = fopen( fname, "rb" );
 	if( fp == NULL ){
@@ -401,6 +411,11 @@ int PointDataInterface::LoadFiledata(char *fname)
 		}
 	}
 	strcat(fname2, ".msg");
+
+#ifdef PATH_DELIMITER_SLASH
+	//パス区切り文字を変換
+	strcpy(fname2, ChangePathDelimiter(fname2));
+#endif
 
 	//ファイルを読み込み
 	fp = fopen( fname2, "r" );
@@ -585,24 +600,29 @@ int MIFInterface::LoadFiledata(char *fname)
 {
 	char str[64];
 
-	mif = false;
+	mif = true;
 
-	//拡張子が.mifならば
-	//if( strcmp(PathFindExtension(fname), ".mif") == 0 ){
-	//	//MIFフラグを有効に
-	//	mif = true;
+	//拡張子が.txtならば
+	//if( strcmp(PathFindExtension(fname), ".txt") == 0 ){
+	//	//MIFフラグを無効に
+	//	mif = false;
 	//}
 	for(int i=strlen(fname)-1; i>0; i--){
 		if( fname[i] == '.' ){
-			if( strcmp(&(fname[i]), ".mif") == 0 ){
-				//MIFフラグを有効に
-				mif = true;
+			if( strcmp(&(fname[i]), ".txt") == 0 ){
+				//MIFフラグを無効に
+				mif = false;
 			}
 			break;
 		}
 	}
 
 	FILE *fp;
+
+#ifdef PATH_DELIMITER_SLASH
+	//パス区切り文字を変換
+	fname = ChangePathDelimiter(fname);
+#endif
 
 	//ファイルを開く
 	fp = fopen( fname, "r" );
@@ -729,6 +749,12 @@ int MIFInterface::LoadFiledata(char *fname)
 
 	//何かしらの追加小物情報ファイルが指定されていれば
 	if( (strcmp(addsmallobject_path, "") != 0)&&(strcmp(addsmallobject_path, "!") != 0) ){
+
+#ifdef PATH_DELIMITER_SLASH
+		//パス区切り文字を変換
+		strcpy(addsmallobject_path, ChangePathDelimiter(addsmallobject_path));
+#endif
+
 		//ファイルを開く
 		fp = fopen( addsmallobject_path, "r" );
 		if( fp != NULL ){

@@ -49,7 +49,6 @@
 
 //! @brief 入力デバイスを管理するクラス
 //! @details マウスやキーボードなどの入力デバイスを管理しています。
-//! @details 内部ではDirectInputを使用しています。
 class InputControl
 {
 	HWND hWnd;				//!< ウインドウハンドル

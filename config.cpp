@@ -61,6 +61,11 @@ int Config::LoadFile(char *fname)
 	FILE *fp;
 	char buf;
 
+#ifdef PATH_DELIMITER_SLASH
+	//パス区切り文字を変換
+	fname = ChangePathDelimiter(fname);
+#endif
+
 	//ファイルを開く
 	fp = fopen(fname, "rb");
 	if( fp == NULL ){

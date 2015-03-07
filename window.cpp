@@ -229,3 +229,23 @@ int GetRand(int num)
 	//x = x & 0x00007FFF;
 	//return x%num;
 }
+
+#ifdef PATH_DELIMITER_SLASH
+//! @brief パス区切り文字を変換
+//! @param *str ファイルパスのポインタ
+//! @return 新しいファイルパスのポインタ
+//! @note '\'を'/'へ置き換えます。
+char* ChangePathDelimiter(char *str)
+{
+	static char newstr[MAX_PATH];
+	strcpy(newstr, str);
+
+	for(int i=0; i<strlen(newstr); i++){
+		if( newstr[i] == '\\' ){
+			newstr[i] = '/';
+		}
+	}
+
+	return newstr;
+}
+#endif

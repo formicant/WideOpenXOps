@@ -70,6 +70,8 @@
 #define MAX_PATH 260
 */
 
+//#define PATH_DELIMITER_SLASH	//!< パス区切り文字を、'\'から‘/’へ変換する。
+
 //BorlandC++ Compiler用の処理
 #ifdef __BORLANDC__
  #define sqrtf(df) sqrt(df)

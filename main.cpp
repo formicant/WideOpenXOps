@@ -34,8 +34,10 @@
 
 #include "main.h"
 
-#include <shlwapi.h>
-#pragma comment(lib, "Shlwapi.lib")
+#ifdef _DEBUG
+ #include <shlwapi.h>
+ #pragma comment(lib, "Shlwapi.lib")
+#endif
 
 //! ステートマシン
 StateMachine GameState;

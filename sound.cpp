@@ -173,6 +173,11 @@ int SoundControl::LoadSound(char* filename)
 		return -1;
 	}
 
+#ifdef PATH_DELIMITER_SLASH
+	//パス区切り文字を変換
+	filename = ChangePathDelimiter(filename);
+#endif
+
 	//波形データを取り込む
 	FILE* fp;
 	fp = fopen(filename,"rb");
@@ -507,6 +512,11 @@ int SoundControl::LoadSound(char* filename)
 	//使用していないデータ番号を探す
 	for(int i=0; i<MAX_LOADSOUND; i++){
 		if( useflag[i] == false ){
+
+#ifdef PATH_DELIMITER_SLASH
+			//パス区切り文字を変換
+			filename = ChangePathDelimiter(filename);
+#endif
 
 			//読み込みを試みる
 			if( DSload(filename, i) == 0 ){ return -1; }
