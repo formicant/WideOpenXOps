@@ -1523,15 +1523,15 @@ void ParameterInfo::InitInfo()
 	AIlevel[3].aiming = 3;
 	AIlevel[3].attack = 14;
 	AIlevel[3].search = 4;
-	AIlevel[3].limitserror = 255;
+	AIlevel[3].limitserror = -1;
 	AIlevel[4].aiming = 4;
 	AIlevel[4].attack = 12;
 	AIlevel[4].search = 5;
-	AIlevel[4].limitserror = 254;
+	AIlevel[4].limitserror = -2;
 	AIlevel[5].aiming = 5;
 	AIlevel[5].attack = 10;
 	AIlevel[5].search = 6;
-	AIlevel[5].limitserror = 253;
+	AIlevel[5].limitserror = -3;
 }
 
 //! @brief l‚Ìİ’è‚ğæ“¾
