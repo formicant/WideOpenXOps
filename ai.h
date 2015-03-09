@@ -32,7 +32,9 @@
 #ifndef AI_H
 #define AI_H
 
-#define AI_TURNRAD (float)M_PI/36		//!< AI‚Ìù‰ñi‰ñ“]”\—Íj
+#define AI_TOTALHUMAN_SCALE (MAX_HUMAN/24)		//!< 24l‚ ‚½‚è‚ÌÅ‘ål”‚Ì”{—¦
+
+#define AI_ADDTURNRAD (float)M_PI/180*0.8f		//!< AI‚Ìù‰ñi‰ñ“]”\—Íj
 #define AI_WEAPON_ARMRAD (float)M_PI/5*-1						//!< •ŠíŠ—L‚Ì˜r‚Ì•\Ž¦Šp“x
 #define AI_SEARCH_RX (float)M_PI/18*11	//!< “G‚ð”­Œ©‚·‚é‰¡Ž²Šp“x
 #define AI_SEARCH_RY (float)M_PI/18*6	//!< “G‚ð”­Œ©‚·‚écŽ²Šp“x
@@ -71,6 +73,8 @@ class AIcontrol
 	float posz;		//!< ZÀ•W
 	float rx;		//!< XŽ²‰ñ“]Šp“x
 	float ry;		//!< YŽ²‰ñ“]Šp“x
+	float addrx;	//!< XŽ²‰ñ“]Šp‰Á‘¬“x
+	float addry;	//!< YŽ²‰ñ“]Šp‰Á‘¬“x
 	int target_pointid;		//!< ƒpƒXŒn@ƒ^[ƒQƒbƒg‚Ìƒf[ƒ^”Ô†
 	float target_posx;		//!< ƒpƒXŒn@ƒ^[ƒQƒbƒg‚ÌXÀ•W
 	float target_posz;		//!< ƒpƒXŒn@ƒ^[ƒQƒbƒg‚ÌZÀ•W
@@ -85,7 +89,6 @@ class AIcontrol
 	bool longattack;	//!< ‹ß‹——£E‰“‹——£ƒtƒ‰ƒO
 	AIParameter *LevelParam;	//!< AI‚Ì«”\’l
 
-	int random(int num);
 	int SearchHumanPos(signed char in_p4, float *out_x, float *out_z);
 	bool CheckTargetPos();
 	bool SearchTarget(bool next);

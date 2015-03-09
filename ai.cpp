@@ -45,6 +45,8 @@ AIcontrol::AIcontrol(class ObjectManager *in_ObjMgr, int in_ctrlid, class BlockD
 
 	battlemode = AI_NORMAL;
 	movemode = AI_WAIT;
+	addrx = 0.0f;
+	addry = 0.0f;
 	target_pointid = -1;
 	target_posx = 0.0f;
 	target_posz = 0.0f;
@@ -73,14 +75,6 @@ void AIcontrol::SetClass(class ObjectManager *in_ObjMgr, int in_ctrlid, class Bl
 	Param = in_Param;
 	CollD = in_CollD;
 	GameSound = in_GameSound;
-}
-
-//! @brief ランダムな整数値を返す
-//! @param num 範囲
-//! @return 0～num-1
-int AIcontrol::random(int num)
-{
-	return GetRand(num);
 }
 
 //! @brief 人を検索
@@ -147,7 +141,7 @@ bool AIcontrol::SearchTarget(bool next)
 
 		//ランダムパス処理
 		if( pdata.p1 == 8 ){
-			if( random(2) == 0 ){
+			if( GetRand(2) == 0 ){
 				nextpointp4 = pdata.p2;
 			}
 			else{
@@ -235,9 +229,20 @@ void AIcontrol::MoveTarget()
 		zombie = false;
 	}
 
+	//一度全ての動きを止める
+	moveturn_mode = 0;
+
 	//目標地点への角度を求める
 	CheckTargetAngle(posx, 0.0f, posz, rx*-1 + (float)M_PI/2, 0.0f, target_posx, 0.0f, target_posz, 0.0f, &atan, NULL, &r);
 
+	if( atan > (float)M_PI/180*0.5f ){
+		SetFlag(moveturn_mode, AI_CTRL_TURNLEFT);
+	}
+	if( atan < (float)M_PI/180*0.5f * -1 ){
+		SetFlag(moveturn_mode, AI_CTRL_TURNRIGHT);
+	}
+
+	/*
 	//大きな差があれば少しづつ旋回するだけ
 	if( atan > AI_TURNRAD ){
 		SetFlag(moveturn_mode, AI_CTRL_TURNLEFT);
@@ -252,6 +257,7 @@ void AIcontrol::MoveTarget()
 		DelFlag(moveturn_mode, AI_CTRL_TURNLEFT);
 		rx -= atan;
 	}
+	*/
 
 	//前進する
 	if( zombie == true ){
@@ -291,15 +297,15 @@ void AIcontrol::MoveTarget()
 	}
 
 	//ジャンプ
-	if( random(16) == 0 ){
+	if( GetRand(16) == 0 ){
 		MoveJump();
 	}
 
 	//引っ掛かっていたら、左右への回転をランダムに行う
-	if( random(28) == 0 ){
+	if( GetRand(28) == 0 ){
 		if( ctrlhuman->GetMovemode(true) != 0 ){
 			if( ctrlhuman->GetTotalMove() - total_move < 0.1f ){
-				if( random(2) == 0 ){ SetFlag(moveturn_mode, AI_CTRL_TURNRIGHT); }
+				if( GetRand(2) == 0 ){ SetFlag(moveturn_mode, AI_CTRL_TURNRIGHT); }
 				else{ SetFlag(moveturn_mode, AI_CTRL_TURNLEFT); }
 			}
 		}
@@ -332,15 +338,15 @@ void AIcontrol::MoveTarget2()
 	}
 
 	//ジャンプ
-	if( random(16) == 0 ){
+	if( GetRand(16) == 0 ){
 		MoveJump();
 	}
 
 	//引っ掛かっていたら、左右への回転をランダムに行う
-	if( random(28) == 0 ){
+	if( GetRand(28) == 0 ){
 		if( ctrlhuman->GetMovemode(true) != 0 ){
 			if( ctrlhuman->GetTotalMove() - total_move < 0.1f ){
-				if( random(2) == 0 ){ SetFlag(moveturn_mode, AI_CTRL_TURNRIGHT); }
+				if( GetRand(2) == 0 ){ SetFlag(moveturn_mode, AI_CTRL_TURNRIGHT); }
 				else{ SetFlag(moveturn_mode, AI_CTRL_TURNLEFT); }
 			}
 		}
@@ -365,31 +371,31 @@ void AIcontrol::MoveRandom()
 	}
 
 	//ランダムに移動を始める
-	if( random(forwardstart) == 0 ){
+	if( GetRand(forwardstart) == 0 ){
 		SetFlag(moveturn_mode, AI_CTRL_MOVEFORWARD);
 	}
-	if( random(backstart) == 0 ){
+	if( GetRand(backstart) == 0 ){
 		SetFlag(moveturn_mode, AI_CTRL_MOVEBACKWARD);
 	}
-	if( random(sidestart) == 0 ){
+	if( GetRand(sidestart) == 0 ){
 		SetFlag(moveturn_mode, AI_CTRL_MOVELEFT);
 	}
-	if( random(sidestart) == 0 ){
+	if( GetRand(sidestart) == 0 ){
 		SetFlag(moveturn_mode, AI_CTRL_MOVERIGHT);
 	}
 
 	// 1/3の確率か、移動フラグが設定されていたら
-	if( (random(3) == 0)||(GetFlag(moveturn_mode, (AI_CTRL_MOVEFORWARD | AI_CTRL_MOVEBACKWARD | AI_CTRL_MOVELEFT | AI_CTRL_MOVERIGHT))) ){
+	if( (GetRand(3) == 0)||(GetFlag(moveturn_mode, (AI_CTRL_MOVEFORWARD | AI_CTRL_MOVEBACKWARD | AI_CTRL_MOVELEFT | AI_CTRL_MOVERIGHT))) ){
 		float vx, vz;
 		float Dist;
 
-		if( random(2) == 0 ){
+		if( GetRand(2) == 0 ){
 			//前方向のベクトルを計算
 			vx = cos(rx*-1 + (float)M_PI/2);
 			vz = sin(rx*-1 + (float)M_PI/2);
 			if(
 				(CollD->CheckALLBlockIntersectDummyRay(posx, posy + HUMAN_MAPCOLLISION_HEIGTH, posz, vx, 0, vz, NULL, NULL, &Dist, HUMAN_MAPCOLLISION_R) == true)||		//腰の高さにブロックがある（ぶつかる）
-				(CollD->CheckALLBlockIntersectDummyRay(posx, posy - 5.0f, posz, vx, 0, vz, NULL, NULL, &Dist, HUMAN_MAPCOLLISION_R) == false)							//足元にブロックがない（落ちる）
+				(CollD->CheckALLBlockIntersectDummyRay(posx, posy - 1.0f, posz, vx, 0, vz, NULL, NULL, &Dist, HUMAN_MAPCOLLISION_R) == false)							//足元にブロックがない（落ちる）
 			){
 				//前進フラグを削除し、後退フラグを設定
 				DelFlag(moveturn_mode, AI_CTRL_MOVEFORWARD);
@@ -401,7 +407,7 @@ void AIcontrol::MoveRandom()
 			vz = sin(rx*-1 + (float)M_PI/2 + (float)M_PI);
 			if(
 				(CollD->CheckALLBlockIntersectDummyRay(posx, posy + HUMAN_MAPCOLLISION_HEIGTH, posz, vx, 0, vz, NULL, NULL, &Dist, HUMAN_MAPCOLLISION_R) == true)||		//腰の高さにブロックがある（ぶつかる）
-				(CollD->CheckALLBlockIntersectDummyRay(posx, posy - 5.0f, posz, vx, 0, vz, NULL, NULL, &Dist, HUMAN_MAPCOLLISION_R) == false)							//足元にブロックがない（落ちる）
+				(CollD->CheckALLBlockIntersectDummyRay(posx, posy - 1.0f, posz, vx, 0, vz, NULL, NULL, &Dist, HUMAN_MAPCOLLISION_R) == false)							//足元にブロックがない（落ちる）
 			){
 				//後退フラグを削除し、前進フラグを設定
 				DelFlag(moveturn_mode, AI_CTRL_MOVEBACKWARD);
@@ -414,7 +420,7 @@ void AIcontrol::MoveRandom()
 			vz = sin(rx*-1);
 			if(
 				(CollD->CheckALLBlockIntersectDummyRay(posx, posy + HUMAN_MAPCOLLISION_HEIGTH, posz, vx, 0, vz, NULL, NULL, &Dist, HUMAN_MAPCOLLISION_R) == true)||		//腰の高さにブロックがある（ぶつかる）
-				(CollD->CheckALLBlockIntersectDummyRay(posx, posy - 5.0f, posz, vx, 0, vz, NULL, NULL, &Dist, HUMAN_MAPCOLLISION_R) == false)							//足元にブロックがない（落ちる）
+				(CollD->CheckALLBlockIntersectDummyRay(posx, posy - 1.0f, posz, vx, 0, vz, NULL, NULL, &Dist, HUMAN_MAPCOLLISION_R) == false)							//足元にブロックがない（落ちる）
 			){
 				//右移動フラグを削除し、左移動フラグを設定
 				DelFlag(moveturn_mode, AI_CTRL_MOVERIGHT);
@@ -425,7 +431,7 @@ void AIcontrol::MoveRandom()
 			vz = sin(rx*-1 + (float)M_PI);
 			if(
 				(CollD->CheckALLBlockIntersectDummyRay(posx, posy + HUMAN_MAPCOLLISION_HEIGTH, posz, vx, 0, vz, NULL, NULL, &Dist, HUMAN_MAPCOLLISION_R) == true)||		//腰の高さにブロックがある（ぶつかる）
-				(CollD->CheckALLBlockIntersectDummyRay(posx, posy - 5.0f, posz, vx, 0, vz, NULL, NULL, &Dist, HUMAN_MAPCOLLISION_R) == false)							//足元にブロックがない（落ちる）
+				(CollD->CheckALLBlockIntersectDummyRay(posx, posy - 1.0f, posz, vx, 0, vz, NULL, NULL, &Dist, HUMAN_MAPCOLLISION_R) == false)							//足元にブロックがない（落ちる）
 			){
 				//左移動フラグを削除し、右移動フラグを設定
 				DelFlag(moveturn_mode, AI_CTRL_MOVELEFT);
@@ -448,7 +454,7 @@ void AIcontrol::MoveRandom()
 		//敵に近づきすぎたなら後退する
 		if( r < 20.0f * 20.0f ){
 			DelFlag(moveturn_mode, AI_CTRL_MOVEFORWARD);
-			if( random(70) == 0 ){
+			if( GetRand(70) == 0 ){
 				SetFlag(moveturn_mode, AI_CTRL_MOVEBACKWARD);
 			}
 		}
@@ -475,17 +481,17 @@ void AIcontrol::TurnSeen()
 	}
 
 	//ランダムに回転を始める
-	if( random(turnstart) == 0 ){
+	if( GetRand(turnstart) == 0 ){
 		SetFlag(moveturn_mode, AI_CTRL_TURNRIGHT);
 	}
-	if( random(turnstart) == 0 ){
+	if( GetRand(turnstart) == 0 ){
 		SetFlag(moveturn_mode, AI_CTRL_TURNLEFT);
 	}
 
 	if( (battlemode == AI_NORMAL)&&(movemode == AI_WAIT) ){
 		//ランダムにポイントの方を向こうとする
 		//「ポイントの方向を少し重視する」の再現 
-		if( random(80) == 0 ){
+		if( GetRand(80) == 0 ){
 			float tr;
 			tr = target_rx - rx;
 			for(; tr > (float)M_PI; tr -= (float)M_PI*2){}
@@ -501,10 +507,10 @@ void AIcontrol::TurnSeen()
 	}
 
 	//回転をランダムに止める
-	if( random(turnstop) == 0 ){
+	if( GetRand(turnstop) == 0 ){
 		DelFlag(moveturn_mode, AI_CTRL_TURNRIGHT);
 	}
-	if( random(turnstop) == 0 ){
+	if( GetRand(turnstop) == 0 ){
 		DelFlag(moveturn_mode, AI_CTRL_TURNLEFT);
 	}
 }
@@ -519,21 +525,21 @@ bool AIcontrol::StopSeen()
 	for(; tr > (float)M_PI; tr -= (float)M_PI*2){}
 	for(; tr < (float)M_PI*-1; tr += (float)M_PI*2){}
 
-	//大きな差があれば少しづつ旋回するだけ
-	if( tr > AI_TURNRAD ){
+	DelFlag(moveturn_mode, AI_CTRL_TURNRIGHT);
+	DelFlag(moveturn_mode, AI_CTRL_TURNLEFT);
+
+	//旋回
+	if( tr > (float)M_PI/180*2.5f ){
 		SetFlag(moveturn_mode, AI_CTRL_TURNRIGHT);
 		returnflag = false;
 	}
-	if( tr < AI_TURNRAD*-1 ){
+	if( tr < (float)M_PI/180*2.5f * -1 ){
 		SetFlag(moveturn_mode, AI_CTRL_TURNLEFT);
 		returnflag = false;
 	}
 
-	//微々たる差なら一気に向ける。
-	if( abs(tr) <= AI_TURNRAD ){
-		DelFlag(moveturn_mode, AI_CTRL_TURNRIGHT);
-		DelFlag(moveturn_mode, AI_CTRL_TURNLEFT);
-		rx += tr;
+	//特定方向に向けているか判定
+	if( abs(tr) < (float)M_PI/180 ){
 		returnflag = true;
 	}
 
@@ -627,7 +633,13 @@ void AIcontrol::Action()
 		float scale;
 		EnemyHuman->GetMovePos(&mx, NULL, &mz);
 		if( longattack == false ){ scale = 1.5f; }
-		else{ scale = 0.12f; }
+		else{
+			float x = posx - tx;
+			float z = posz - tz;
+			float r = x * x + z * z;
+
+			scale = sqrt(r) * 0.12f;
+		}
 
 		//敵の移動を見超す
 		tx += mx * scale;
@@ -637,71 +649,61 @@ void AIcontrol::Action()
 	//目標地点への角度を求める
 	CheckTargetAngle(posx, posy2, posz, rx*-1 + (float)M_PI/2, ry, tx, ty, tz, 0.0f, &atanx, &atany, &r);
 
-	//大きな差があれば少しづつ旋回するだけ
-	if( atanx > AI_TURNRAD ){
-		SetFlag(moveturn_mode, AI_CTRL_TURNLEFT);
-	}
-	if( atanx < AI_TURNRAD*-1 ){
-		SetFlag(moveturn_mode, AI_CTRL_TURNRIGHT);
-	}
+	//向きを変えるタイミングか決定
+	int randr = LevelParam->aiming;
+	if( longattack == false ){ randr += 1; }
+	else{ randr += 2; }
 
-	//微々たる差なら一気に向ける
-	if( abs(atanx) <= AI_TURNRAD ){
-		DelFlag(moveturn_mode, AI_CTRL_TURNRIGHT);
-		DelFlag(moveturn_mode, AI_CTRL_TURNLEFT);
-		rx -= atanx;
-		rx += (float)M_PI/180 * (random(5) - 2);
-	}
-
-	//腕の角度
-	if( zombie == true ){
-		//ry = 0.0f;
-
-		//大きな差があれば少しづつ旋回するだけ
-		if( ry < AI_TURNRAD*-1 ){
-			SetFlag(moveturn_mode, AI_CTRL_TURNUP);
+	if( randr != 0 ){
+		//旋回
+		if( atanx > 0.0f ){
+			SetFlag(moveturn_mode, AI_CTRL_TURNLEFT);
+			DelFlag(moveturn_mode, AI_CTRL_TURNRIGHT);
 		}
-		if( ry > AI_TURNRAD ){
-			SetFlag(moveturn_mode, AI_CTRL_TURNDOWN);
+		if( atanx < 0.0f ){
+			SetFlag(moveturn_mode, AI_CTRL_TURNRIGHT);
+			DelFlag(moveturn_mode, AI_CTRL_TURNLEFT);
 		}
 
-		//微々たる差なら一気に向ける
-		if( abs(ry) <= AI_TURNRAD ){
-			DelFlag(moveturn_mode, AI_CTRL_TURNUP);
-			DelFlag(moveturn_mode, AI_CTRL_TURNDOWN);
-			ry = 0.0f;
-		}
-	}
-	else{
-		float addry;
+		//腕の角度
+		if( zombie == true ){
+			//ry = 0.0f;
 
-		//自分が手ぶらならば～
-		if( weaponid == ID_WEAPON_NONE ){
-			if( EnemyHuman->GetMainWeaponTypeNO() == ID_WEAPON_NONE ){	//敵も手ぶらならば～
-				addry = ARMRAD_NOWEAPON - ry;
+			//旋回
+			if( ry < 0.0f ){
+				SetFlag(moveturn_mode, AI_CTRL_TURNUP);
+				DelFlag(moveturn_mode, AI_CTRL_TURNDOWN);
 			}
-			else{														//敵が武器を持っていれば～
-				addry = (float)M_PI/18*8 - ry;
+			if( ry > 0.0f ){
+				SetFlag(moveturn_mode, AI_CTRL_TURNDOWN);
+				DelFlag(moveturn_mode, AI_CTRL_TURNUP);
 			}
 		}
 		else{
-			addry = atany;
-		}
+			float addry2;
 
-		//大きな差があれば少しづつ旋回するだけ
-		if( addry > AI_TURNRAD ){
-			SetFlag(moveturn_mode, AI_CTRL_TURNUP);
-		}
-		if( addry < AI_TURNRAD*-1 ){
-			SetFlag(moveturn_mode, AI_CTRL_TURNDOWN);
-		}
+			//自分が手ぶらならば～
+			if( weaponid == ID_WEAPON_NONE ){
+				if( EnemyHuman->GetMainWeaponTypeNO() == ID_WEAPON_NONE ){	//敵も手ぶらならば～
+					addry2 = ARMRAD_NOWEAPON - ry;
+				}
+				else{														//敵が武器を持っていれば～
+					addry2 = (float)M_PI/18*8 - ry;
+				}
+			}
+			else{
+				addry2 = atany;
+			}
 
-		//微々たる差なら一気に向ける
-		if( abs(addry) <= AI_TURNRAD ){
-			DelFlag(moveturn_mode, AI_CTRL_TURNUP);
-			DelFlag(moveturn_mode, AI_CTRL_TURNDOWN);
-			ry += addry;
-			ry += (float)M_PI/180 * (random(5) - 2);
+			//旋回
+			if( addry2 > 0.0f ){
+				SetFlag(moveturn_mode, AI_CTRL_TURNUP);
+				DelFlag(moveturn_mode, AI_CTRL_TURNDOWN);
+			}
+			if( addry2 < 0.0f ){
+				SetFlag(moveturn_mode, AI_CTRL_TURNDOWN);
+				DelFlag(moveturn_mode, AI_CTRL_TURNUP);
+			}
 		}
 	}
 
@@ -709,7 +711,7 @@ void AIcontrol::Action()
 	if( zombie == false ){
 		if( weaponid == ID_WEAPON_NONE ){
 			//一定の確率で後退する
-			if( random(80) == 0 ){
+			if( GetRand(80) == 0 ){
 				SetFlag(moveturn_mode, AI_CTRL_MOVEBACKWARD);
 			}
 		}
@@ -739,7 +741,7 @@ void AIcontrol::Action()
 
 		/*
 		//ジャンプ
-		if( random(16) == 0 ){
+		if( GetRand(16) == 0 ){
 			MoveJump();
 		}
 		*/
@@ -754,12 +756,12 @@ void AIcontrol::Action()
 			//敵の視点をランダムに動かす
 			float erx, ery;
 			EnemyHuman->GetRxRy(&erx, &ery);
-			switch(random(3)){
+			switch(GetRand(3)){
 				case 0: erx -= (float)M_PI/180*2; break;
 				case 1: erx += (float)M_PI/180*2; break;
 				default: break;
 			}
-			switch(random(3)){
+			switch(GetRand(3)){
 				case 0: ery -= (float)M_PI/180*2; break;
 				case 1: ery += (float)M_PI/180*2; break;
 				default: break;
@@ -815,13 +817,13 @@ void AIcontrol::Action()
 		}
 
 		//敵を捉えていれば
-		float atanxy = atanx + atany;
+		float atanxy = abs(atanx) + abs(atany);
 		if( atanxy < ShotAngle ){
 			int rand = LevelParam->attack;
 			if( longattack == true ){ rand += 1; }
 
 			//発砲
-			if( random(rand) == 0 ){
+			if( GetRand(rand) == 0 ){
 				ObjMgr->ShotWeapon(ctrlid);
 			}
 		}
@@ -872,7 +874,7 @@ bool AIcontrol::ActionCancel()
 
 	if( longattack == false ){
 		//適当なタイミングで敵が見えるか確認
-		if( random(40) == 0 ){
+		if( GetRand(40) == 0 ){
 			//ブロックが遮っていた（＝見えない）ならば終了
 			if( CheckLookEnemy(enemyhuman, AI_SEARCH_RX, AI_SEARCH_RY, 620.0f, NULL) == false ){
 				return true;
@@ -880,13 +882,13 @@ bool AIcontrol::ActionCancel()
 		}
 
 		//強制的に終了
-		if( random(550) == 0 ){
+		if( GetRand(550) == 0 ){
 			return true;
 		}
 	}
 	else{
 		//適当なタイミングで敵が見えるか確認
-		if( random(30) == 0 ){
+		if( GetRand(30) == 0 ){
 			//ブロックが遮っていた（＝見えない）ならば終了
 			if( CheckLookEnemy(enemyhuman, AI_SEARCH_RX, AI_SEARCH_RY, 620.0f, NULL) == false ){
 				return true;
@@ -894,7 +896,7 @@ bool AIcontrol::ActionCancel()
 		}
 
 		//強制的に終了
-		if( random(450) == 0 ){
+		if( GetRand(450) == 0 ){
 			return true;
 		}
 	}
@@ -952,7 +954,7 @@ void AIcontrol::CancelMoveTurn()
 			DelFlag(moveturn_mode, AI_CTRL_TURNDOWN);
 			DelFlag(moveturn_mode, AI_CTRL_TURNLEFT);
 			DelFlag(moveturn_mode, AI_CTRL_TURNRIGHT);
-			if( random(3) == 0 ){
+			if( GetRand(3) == 0 ){
 				DelFlag(moveturn_mode, AI_CTRL_MOVEWALK);
 			}
 			return;
@@ -990,33 +992,33 @@ void AIcontrol::CancelMoveTurn()
 	}
 
 	//移動をランダムに止める
-	if( random(forward) == 0 ){
+	if( GetRand(forward) == 0 ){
 		DelFlag(moveturn_mode, AI_CTRL_MOVEFORWARD);
 	}
-	if( random(back) == 0 ){
+	if( GetRand(back) == 0 ){
 		DelFlag(moveturn_mode, AI_CTRL_MOVEBACKWARD);
 	}
-	if( random(side) == 0 ){
+	if( GetRand(side) == 0 ){
 		DelFlag(moveturn_mode, AI_CTRL_MOVELEFT);
 	}
-	if( random(side) == 0 ){
+	if( GetRand(side) == 0 ){
 		DelFlag(moveturn_mode, AI_CTRL_MOVERIGHT);
 	}
-	if( random(3) == 0 ){
+	if( GetRand(3) == 0 ){
 		DelFlag(moveturn_mode, AI_CTRL_MOVEWALK);
 	}
 
 	//回転をランダムに止める
-	if( random(updown) == 0 ){
+	if( GetRand(updown) == 0 ){
 		DelFlag(moveturn_mode, AI_CTRL_TURNUP);
 	}
-	if( random(updown) == 0 ){
+	if( GetRand(updown) == 0 ){
 		DelFlag(moveturn_mode, AI_CTRL_TURNDOWN);
 	}
-	if( random(rightleft) == 0 ){
+	if( GetRand(rightleft) == 0 ){
 		DelFlag(moveturn_mode, AI_CTRL_TURNLEFT);
 	}
-	if( random(rightleft) == 0 ){
+	if( GetRand(rightleft) == 0 ){
 		DelFlag(moveturn_mode, AI_CTRL_TURNRIGHT);
 	}
 }
@@ -1041,19 +1043,35 @@ void AIcontrol::ControlMoveTurn()
 		ObjMgr->MoveWalk(ctrlid);
 	}
 
-	//方向転換の実行
+	//方向転換の実行（回転速度の加算）
 	if( GetFlag(moveturn_mode, AI_CTRL_TURNUP) ){
-		ry += AI_TURNRAD;
+		addry += AI_ADDTURNRAD;
 	}
 	if( GetFlag(moveturn_mode, AI_CTRL_TURNDOWN) ){
-		ry -= AI_TURNRAD;
+		addry -= AI_ADDTURNRAD;
 	}
 	if( GetFlag(moveturn_mode, AI_CTRL_TURNLEFT) ){
-		rx -= AI_TURNRAD;
+		addrx -= AI_ADDTURNRAD;
 	}
 	if( GetFlag(moveturn_mode, AI_CTRL_TURNRIGHT) ){
-		rx += AI_TURNRAD;
+		addrx += AI_ADDTURNRAD;
 	}
+
+	//角度に加算
+	rx += addrx;
+	ry += addry;
+
+	//回転速度の減衰
+	addrx *= 0.8f;
+	addry *= 0.8f;
+
+	//0.0fへ補正
+	if( abs(addrx) < (float)M_PI/180*0.2f ){ addrx = 0.0f; }
+	if( abs(addry) < (float)M_PI/180*0.2f ){ addry = 0.0f; }
+
+	//縦の回転範囲を収める
+	if( ry > (float)M_PI/180*70 ){ ry = (float)M_PI/180*70; }
+	if( ry < (float)M_PI/180*70 * -1 ){ ry = (float)M_PI/180*70 * -1; }
 }
 
 //! @brief 武器をリロード・捨てる
@@ -1101,14 +1119,14 @@ int AIcontrol::ControlWeapon()
 
 			if( longattack == false ){
 				// 1/100の確率で持ち替える
-				if( (random(100) == 0)&&(nextnds > 0) ){
+				if( (GetRand(100) == 0)&&(nextnds > 0) ){
 					ObjMgr->ChangeWeapon(ctrlid);
 					return 3;
 				}
 			}
 			else{
 				// 1/66の確率で持ち替える
-				if( (random(66) == 0)&&(nextnds > 0) ){
+				if( (GetRand(66) == 0)&&(nextnds > 0) ){
 					ObjMgr->ChangeWeapon(ctrlid);
 					return 3;
 				}
@@ -1126,7 +1144,7 @@ int AIcontrol::ControlWeapon()
 		else{ ways = 8; }
 
 		// 1/waysの確率で処理
-		if( random(ways) == 0 ){
+		if( GetRand(ways) == 0 ){
 			int under;
 
 			//リロード確率
@@ -1158,7 +1176,7 @@ int AIcontrol::ControlWeapon()
 			}
 
 			//ランダムに リロード実行 or 武器を持ちかえ
-			if( random(ways) <= under ){
+			if( GetRand(ways) <= under ){
 				ObjMgr->ReloadWeapon(ctrlid);
 				return 2;
 			}
@@ -1236,33 +1254,24 @@ int AIcontrol::ThrowGrenade()
 	Points->Getdata(&pdata, target_pointid);
 	posy2 = posy + VIEW_HEIGHT;
 
+	//一度全ての動きを止める
+	moveturn_mode = 0;
+
 	//目標地点への角度を求める
 	CheckTargetAngle(posx, pdata.y, posz, rx*-1 + (float)M_PI/2, ry, target_posx, posy2, target_posz, 0.0f, &atan_rx, &atan_ry, NULL);
 
-	//大きな差があれば少しづつ旋回するだけ
-	if( atan_rx > AI_TURNRAD ){
+	//旋回
+	if( atan_rx > 0.0f ){
 		SetFlag(moveturn_mode, AI_CTRL_TURNLEFT);
 	}
-	if( atan_rx < AI_TURNRAD*-1 ){
+	if( atan_rx < 0.0f ){
 		SetFlag(moveturn_mode, AI_CTRL_TURNRIGHT);
 	}
-	if( atan_ry > AI_TURNRAD ){
+	if( atan_ry > 0.0f ){
 		SetFlag(moveturn_mode, AI_CTRL_TURNUP);
 	}
-	if( atan_ry < AI_TURNRAD*-1 ){
+	if( atan_ry < 0.0f ){
 		SetFlag(moveturn_mode, AI_CTRL_TURNDOWN);
-	}
-
-	//微々たる差なら一気に向ける
-	if( abs(atan_rx) <= AI_TURNRAD ){
-		DelFlag(moveturn_mode, AI_CTRL_TURNRIGHT);
-		DelFlag(moveturn_mode, AI_CTRL_TURNLEFT);
-		rx += atan_rx;
-	}
-	if( abs(atan_ry) <= AI_TURNRAD ){
-		DelFlag(moveturn_mode, AI_CTRL_TURNUP);
-		DelFlag(moveturn_mode, AI_CTRL_TURNDOWN);
-		ry += atan_ry;
 	}
 
 	//投げる
@@ -1281,31 +1290,29 @@ int AIcontrol::ThrowGrenade()
 //! @brief 腕の角度を設定
 void AIcontrol::ArmAngle()
 {
-	float addry;
-
 	if( ctrlhuman->GetMainWeaponTypeNO() == ID_WEAPON_NONE ){	//手ぶら
-		addry = ARMRAD_NOWEAPON - ry;
-	}
-	else if( (battlemode == AI_CAUTION)&&(cautioncnt > 0) ){	//警戒中
-		addry = 0.0f - ry;
-	}
-	else{									//平常時で武器所有中
-		addry = AI_WEAPON_ARMRAD - ry;
-	}
-
-	//大きな差があれば少しづつ旋回するだけ
-	if( addry > AI_TURNRAD ){
-		SetFlag(moveturn_mode, AI_CTRL_TURNUP);
-	}
-	if( addry < AI_TURNRAD*-1 ){
+		//下に向け続ける
 		SetFlag(moveturn_mode, AI_CTRL_TURNDOWN);
 	}
+	else if( (battlemode == AI_CAUTION)&&(cautioncnt > 0) ){	//警戒中
+		float addry2 = 0.0f - ry;
 
-	//微々たる差なら一気に向ける
-	if( abs(addry) <= AI_TURNRAD ){
-		DelFlag(moveturn_mode, AI_CTRL_TURNUP);
-		DelFlag(moveturn_mode, AI_CTRL_TURNDOWN);
-		ry += addry;
+		//旋回
+		if( addry2 > 0.0f ){
+			SetFlag(moveturn_mode, AI_CTRL_TURNUP);
+		}
+		if( addry2 < 0.0f ){
+			SetFlag(moveturn_mode, AI_CTRL_TURNDOWN);
+		}
+	}
+	else{									//平常時で武器所有中
+		//旋回
+		if( ry < (float)M_PI/180*32 * -1 ){
+			SetFlag(moveturn_mode, AI_CTRL_TURNUP);
+		}
+		if( ry > (float)M_PI/180*28 * -1 ){
+			SetFlag(moveturn_mode, AI_CTRL_TURNDOWN);
+		}
 	}
 }
 
@@ -1335,7 +1342,7 @@ int AIcontrol::SearchEnemy()
 
 	//敵の探索回数と探索範囲（距離と角度）を設定
 	if( battlemode == AI_NORMAL ){
-		searchloops = (LevelParam->search) * 4;
+		searchloops = (LevelParam->search) * AI_TOTALHUMAN_SCALE;
 
 		if( weaponscope == 2 ){ maxDist = 50.0f; }
 		if( weaponscope == 1 ){ maxDist = 25.0f; }
@@ -1347,7 +1354,7 @@ int AIcontrol::SearchEnemy()
 		B_ry = (float)M_PI/180*60;
 	}
 	else {	//battlemode == AI_CAUTION
-		searchloops = (LevelParam->search) * 5;
+		searchloops = (LevelParam->search) * AI_TOTALHUMAN_SCALE + 4;
 
 		if( weaponscope == 2 ){ maxDist = 80.0f; }
 		if( weaponscope == 1 ){ maxDist = 40.0f; }
@@ -1361,7 +1368,7 @@ int AIcontrol::SearchEnemy()
 
 	//指定回数、敵を探索
 	for(int i=0; i<searchloops; i++){
-		int targetid = random(MAX_HUMAN);
+		int targetid = GetRand(MAX_HUMAN);
 
 		if( CheckLookEnemy(targetid, A_rx, A_ry, 200.0f, NULL) == true ){
 			longattack = false;
@@ -1369,7 +1376,7 @@ int AIcontrol::SearchEnemy()
 		}
 
 		if( CheckLookEnemy(targetid, B_rx, B_ry, maxDist, NULL) == true ){
-			if( random(4) == 0 ){
+			if( GetRand(4) == 0 ){
 				if( movemode == AI_RUN2 ){ longattack = false; }
 				else{ longattack = true; }
 				return 2;
@@ -1387,7 +1394,7 @@ int AIcontrol::SearchShortEnemy()
 	A_ry = (float)M_PI/180*52;
 
 	for(int i=0; i<3; i++){
-		int targetid = random(MAX_HUMAN);
+		int targetid = GetRand(MAX_HUMAN);
 
 		if( CheckLookEnemy(targetid, A_rx, A_ry, 200.0f, NULL) == true ){
 			longattack = false;
@@ -1629,12 +1636,12 @@ bool AIcontrol::CautionMain()
 		}
 	}
 	else if( cautioncnt < 100 ){	//100フレームを切ったら、ランダムに警戒終了（カウント：0に）
-		if( random(50) == 0 ){ cautioncnt = 0; }
+		if( GetRand(50) == 0 ){ cautioncnt = 0; }
 	}
 	else{ cautioncnt -= 1; }
 
 	//追尾中で対象から離れすぎたら、ランダムに警戒終了
-	if( (movemode == AI_TRACKING)&&(random(3) == 0) ){
+	if( (movemode == AI_TRACKING)&&(GetRand(3) == 0) ){
 		pointdata pdata;
 		float x, z;
 		float tx, tz;
@@ -1685,11 +1692,6 @@ bool AIcontrol::NormalMain()
 		SearchTarget(true);
 	}
 
-	//腕の角度を設定
-	if( movemode != AI_GRENADE ){
-		ArmAngle();
-	}
-
 	if( movemode == AI_RUN2 ){		//優先的な走りの処理
 		//敵を見つけたら攻撃に入る
 		if( SearchEnemy() != 0 ){
@@ -1704,7 +1706,7 @@ bool AIcontrol::NormalMain()
 		if(
 			(SearchEnemy() != 0)||							//敵を見つけた
 			(HitFlag == true)||(soundlists > 0)||	//被弾したか音が聞こえた
-			(CheckCorpse( random(MAX_HUMAN) ) == true)	//死体を見つけた
+			(CheckCorpse( GetRand(MAX_HUMAN) ) == true)	//死体を見つけた
 		){
 			newbattlemode = AI_CAUTION;
 			cautioncnt = 160;
@@ -1714,6 +1716,11 @@ bool AIcontrol::NormalMain()
 		else{
 			MovePath();		//移動実行
 		}
+	}
+
+	//腕の角度を設定
+	if( movemode != AI_GRENADE ){
+		ArmAngle();
 	}
 
 	//設定を判定
@@ -1742,6 +1749,8 @@ void AIcontrol::Init()
 	battlemode = AI_NORMAL;
 	movemode = AI_NULL;
 	enemyhuman = NULL;
+	addrx = 0.0f;
+	addry = 0.0f;
 	waitcnt = 0;
 	gotocnt = 0;
 	moveturn_mode = 0x00;
