@@ -32,7 +32,7 @@
 #ifndef OBJECTMANAGER_H
 #define OBJECTMANAGER_H
 
-#define MAX_HUMAN 96			//!< Å‘ål”
+#define MAX_HUMAN 96			//!< Å‘ål”@yŒxzFAIƒŒƒxƒ‹’²®‚ÌŠÖŒWãe24‚Ì”{”f‚É‚·‚é‚±‚ÆI
 #define MAX_WEAPON 200			//!< •Ší‚ÌÅ‘å”
 #define MAX_SMALLOBJECT 40		//!< ¬•¨‚ÌÅ‘å”
 
