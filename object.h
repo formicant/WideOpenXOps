@@ -98,7 +98,7 @@ protected:
 	int id_parameter;	//!< データの種類
 	int id_model;		//!< モデル認識番号
 	int id_texture;		//!< テクスチャ認識番号
-	bool RenderFlag;	//!< 表示フラグ
+	bool EnableFlag;	//!< 有効化フラグ
 
 public:
 	object(class ParameterInfo *in_Param = NULL, float x = 0.0f, float y = 0.0f, float z = 0.0f, float rx = 0.0f, float size = 1.0f, bool flag = true);
@@ -106,8 +106,8 @@ public:
 	virtual void SetParameterInfoClass(class ParameterInfo *in_Param);
 	virtual void SetPosData(float x, float y, float z, float rx);
 	virtual void GetPosData(float *x, float *y, float *z, float *rx);
-	virtual void SetDrawFlag(bool flag);
-	virtual bool GetDrawFlag();
+	virtual void SetEnableFlag(bool flag);
+	virtual bool GetEnableFlag();
 	virtual void SetModel(int id, float size);
 	virtual void SetTexture(int id);
 	virtual int RunFrame();

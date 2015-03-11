@@ -1418,7 +1418,7 @@ bool AIcontrol::CheckLookEnemy(class human* thuman, float search_rx, float searc
 	//無効なデータなら終了
 	if( ctrlhuman == NULL ){ return false; }
 	if( thuman == NULL ){ return false; }
-	if( thuman->GetDrawFlag() == false ){ return false; }
+	if( thuman->GetEnableFlag() == false ){ return false; }
 	if( thuman->GetDeadFlag() == true ){ return false; }
 
 	//自分と敵の座標を取得
@@ -1470,7 +1470,7 @@ bool AIcontrol::CheckCorpse(int id)
 	class human* thuman;
 	thuman = ObjMgr->GeHumanObject(id);
 	if( thuman == NULL ){ return false; }
-	if( thuman->GetDrawFlag() == false ){ return false; }
+	if( thuman->GetEnableFlag() == false ){ return false; }
 
 	//死亡していれば
 	if( thuman->GetDeadFlag() == true ){
@@ -1733,7 +1733,7 @@ void AIcontrol::Init()
 	if( CollD == NULL ){ return; }
 
 	//使用されていない人なら処理しない
-	if( ctrlhuman->GetDrawFlag() == false ){ return; }
+	if( ctrlhuman->GetEnableFlag() == false ){ return; }
 
 	//ステートを初期化
 	hold = false;
@@ -1820,7 +1820,7 @@ void AIcontrol::Process()
 	if( CollD == NULL ){ return; }
 
 	//無効な人クラスなら処理しない
-	if( ctrlhuman->GetDrawFlag() == false ){ return; }
+	if( ctrlhuman->GetEnableFlag() == false ){ return; }
 
 	//死亡したら
 	if( ctrlhuman->GetHP() <= 0 ){

@@ -160,7 +160,7 @@ int ObjectManager::AddHumanIndex(pointdata data, pointdata infodata)
 	Resource->GetHumanModel(upmodel, armmodel, &legmodel, walkmodel, runmodel);
 
 	for(int j=0; j<MAX_HUMAN; j++){
-		if( HumanIndex[j].GetDrawFlag() == false ){
+		if( HumanIndex[j].GetEnableFlag() == false ){
 			//初期化する
 			HumanIndex[j].SetPosData(data.x, data.y, data.z, data.r);
 			HumanIndex[j].SetParamData(infodata.p2, data.id, data.p4, infodata.p3, true);
@@ -182,7 +182,7 @@ int ObjectManager::AddHumanIndex(pointdata data, pointdata infodata)
 				HumanIndex[j].SetTexture(AddHumanIndex_TextureID);
 				HumanIndex[j].SetModel(upmodel[0], armmodel, legmodel, walkmodel, runmodel);
 			}
-			HumanIndex[j].SetDrawFlag(true);
+			HumanIndex[j].SetEnableFlag(true);
 			Humanindexid = j;
 			break;
 		}
@@ -256,7 +256,7 @@ int ObjectManager::AddHumanIndex(float px, float py, float pz, float rx, int par
 	Resource->GetHumanModel(upmodel, armmodel, &legmodel, walkmodel, runmodel);
 
 	for(int i=0; i<MAX_HUMAN; i++){
-		if( HumanIndex[i].GetDrawFlag() == false ){
+		if( HumanIndex[i].GetEnableFlag() == false ){
 			//初期化する
 			HumanIndex[i].SetPosData(px, py, pz, rx);
 			HumanIndex[i].SetParamData(paramID, -1, 0, TeamID, true);
@@ -281,7 +281,7 @@ int ObjectManager::AddHumanIndex(float px, float py, float pz, float rx, int par
 				HumanIndex[i].SetTexture(AddHumanIndex_TextureID);
 				HumanIndex[i].SetModel(upmodel[0], armmodel, legmodel, walkmodel, runmodel);
 			}
-			HumanIndex[i].SetDrawFlag(true);
+			HumanIndex[i].SetEnableFlag(true);
 			Humanindexid = i;
 			break;
 		}
@@ -347,13 +347,13 @@ int ObjectManager::AddWeaponIndex(pointdata data)
 	if( GameParamInfo->GetWeapon(data.p2, &WeaponParam) == 1 ){ return -1; }
 
 	for(int i=0; i<MAX_WEAPON; i++){
-		if( WeaponIndex[i].GetDrawFlag() == false ){
+		if( WeaponIndex[i].GetEnableFlag() == false ){
 			//初期化する
 			WeaponIndex[i].SetPosData(data.x, data.y, data.z, data.r);
 			WeaponIndex[i].SetParamData(WeaponID, 0, nbs, true);
 			WeaponIndex[i].SetModel(model, WeaponParam.size);
 			WeaponIndex[i].SetTexture(texture);
-			WeaponIndex[i].SetDrawFlag(true);
+			WeaponIndex[i].SetEnableFlag(true);
 			WeaponIndex[i].RunReload();
 			return i;
 		}
@@ -383,7 +383,7 @@ int ObjectManager::AddVisualWeaponIndex(int WeaponID, bool loadbullet)
 	}
 
 	for(int i=0; i<MAX_WEAPON; i++){
-		if( WeaponIndex[i].GetDrawFlag() == false ){
+		if( WeaponIndex[i].GetEnableFlag() == false ){
 			//初期化
 			WeaponIndex[i].SetPosData(0.0f, 0.0f, 0.0f, 0.0f);
 			if( loadbullet == false ){
@@ -394,7 +394,7 @@ int ObjectManager::AddVisualWeaponIndex(int WeaponID, bool loadbullet)
 			}
 			WeaponIndex[i].SetModel(model, WeaponParam.size);
 			WeaponIndex[i].SetTexture(texture);
-			WeaponIndex[i].SetDrawFlag(true);
+			WeaponIndex[i].SetEnableFlag(true);
 			return i;
 		}
 	}
@@ -413,13 +413,13 @@ int ObjectManager::AddSmallObjectIndex(pointdata data)
 	}
 
 	for(int j=0; j<MAX_SMALLOBJECT; j++){
-		if( SmallObjectIndex[j].GetDrawFlag() == false ){
+		if( SmallObjectIndex[j].GetEnableFlag() == false ){
 			//初期化
 			SmallObjectIndex[j].SetPosData(data.x, data.y, data.z, data.r);
 			SmallObjectIndex[j].SetParamData(data.p2, data.p4, true);
 			SmallObjectIndex[j].SetModel(model, 5.0f);
 			SmallObjectIndex[j].SetTexture(texture);
-			SmallObjectIndex[j].SetDrawFlag(true);
+			SmallObjectIndex[j].SetEnableFlag(true);
 
 			//位置修正フラグが有効ならば、マップと判定
 			if( data.p3 !=0 ){
@@ -448,13 +448,13 @@ int ObjectManager::AddSmallObjectIndex(float px, float py, float pz, float rx, i
 	}
 
 	for(int j=0; j<MAX_SMALLOBJECT; j++){
-		if( SmallObjectIndex[j].GetDrawFlag() == false ){
+		if( SmallObjectIndex[j].GetEnableFlag() == false ){
 			//初期化
 			SmallObjectIndex[j].SetPosData(px, py, pz, rx);
 			SmallObjectIndex[j].SetParamData(paramID, 0, true);
 			SmallObjectIndex[j].SetModel(model, 5.0f);
 			SmallObjectIndex[j].SetTexture(texture);
-			SmallObjectIndex[j].SetDrawFlag(true);
+			SmallObjectIndex[j].SetEnableFlag(true);
 
 			//位置修正フラグが有効ならば、マップと判定
 			if( MapColl == true ){
@@ -482,10 +482,10 @@ int ObjectManager::AddSmallObjectIndex(float px, float py, float pz, float rx, i
 int ObjectManager::AddEffect(float pos_x, float pos_y, float pos_z, float move_x, float move_y, float move_z, float size, float rotation, int count, int texture, int settype)
 {
 	for(int i=0; i<MAX_EFFECT; i++){
-		if( EffectIndex[i].GetDrawFlag() == false ){
+		if( EffectIndex[i].GetEnableFlag() == false ){
 			EffectIndex[i].SetPosData(pos_x, pos_y, pos_z, 0.0f);
 			EffectIndex[i].SetParamData(move_x, move_y, move_z, size, rotation, count, texture, settype, true);
-			EffectIndex[i].SetDrawFlag(true);
+			EffectIndex[i].SetEnableFlag(true);
 			return i;
 		}
 	}
@@ -522,11 +522,11 @@ int ObjectManager::AddMapEffect(int id, int face, float pos_x, float pos_y, floa
 
 	//エフェクト作成
 	for(int i=0; i<MAX_EFFECT; i++){
-		if( EffectIndex[i].GetDrawFlag() == false ){
+		if( EffectIndex[i].GetEnableFlag() == false ){
 			EffectIndex[i].SetPosData(pos_x, pos_y, pos_z, 0.0f);
 			EffectIndex[i].SetParamData(0.0f, 0.0f, 0.0f, size, rotation, count, texture, EFFECT_DISAPPEARHALF | EFFECT_NOBILLBOARD, true);
 			EffectIndex[i].SetRxRy(rx, ry);
-			EffectIndex[i].SetDrawFlag(true);
+			EffectIndex[i].SetEnableFlag(true);
 			return i;
 		}
 	}
@@ -562,8 +562,8 @@ bool ObjectManager::CollideHuman(human *in_humanA, human *in_humanB)
 	float angle, length;
 
 	//初期化されていないか、死亡して入れば判定しない
-	if( in_humanA->GetDrawFlag() == false ){ return false; }
-	if( in_humanB->GetDrawFlag() == false ){ return false; }
+	if( in_humanA->GetEnableFlag() == false ){ return false; }
+	if( in_humanB->GetEnableFlag() == false ){ return false; }
 	if( in_humanA->GetHP() <= 0 ){ return false; }
 	if( in_humanB->GetHP() <= 0 ){ return false; }
 
@@ -590,7 +590,7 @@ bool ObjectManager::CollideHuman(human *in_humanA, human *in_humanB)
 bool ObjectManager::CollideBullet(bullet *in_bullet)
 {
 	//使用されていない弾丸ならば、処理せずに返す。
-	if( in_bullet->GetDrawFlag() == false ){ return false; }
+	if( in_bullet->GetEnableFlag() == false ){ return false; }
 
 	float bx, by, bz;
 	float brx, bry;
@@ -631,7 +631,7 @@ bool ObjectManager::CollideBullet(bullet *in_bullet)
 		//貫通力が残っていなければ
 		if( penetration < 0 ){
 			//弾は無効にする
-			in_bullet->SetDrawFlag(false);
+			in_bullet->SetEnableFlag(false);
 			break;
 		}
 
@@ -658,7 +658,7 @@ bool ObjectManager::CollideBullet(bullet *in_bullet)
 		//人との当たり判定
 		for(int i=0; i<MAX_HUMAN; i++){
 			//使用されていないか、死亡していれば処理しない。
-			if( HumanIndex[i].GetDrawFlag() == false ){ continue; }
+			if( HumanIndex[i].GetEnableFlag() == false ){ continue; }
 			if( HumanIndex[i].GetHP() <= 0 ){ continue; }
 
 			//座標を取得
@@ -703,7 +703,7 @@ bool ObjectManager::CollideBullet(bullet *in_bullet)
 		//小物との当たり判定
 		for(int i=0; i<MAX_SMALLOBJECT; i++){
 			//使用されていなければ処理しない
-			if( SmallObjectIndex[i].GetDrawFlag() == false ){ continue; }
+			if( SmallObjectIndex[i].GetEnableFlag() == false ){ continue; }
 
 			//座標を取得
 			float ox, oy, oz;
@@ -854,7 +854,7 @@ void ObjectManager::HitBulletMap(float x, float y, float z)
 void ObjectManager::HitBulletHuman(int HitHuman_id, int Hit_id, float x, float y, float z, float brx, int attacks, int Shothuman_id)
 {
 	//使用されていないか、死亡していれば処理しない。
-	if( HumanIndex[HitHuman_id].GetDrawFlag() == false ){ return; }
+	if( HumanIndex[HitHuman_id].GetEnableFlag() == false ){ return; }
 	if( HumanIndex[HitHuman_id].GetHP() <= 0 ){ return; }
 
 	//人にダメージと衝撃を与える
@@ -888,7 +888,7 @@ void ObjectManager::HitBulletSmallObject(int HitSmallObject_id, float x, float y
 	int hp;
 
 	//使用されていなければ処理しない。
-	if( SmallObjectIndex[HitSmallObject_id].GetDrawFlag() == false ){ return; }
+	if( SmallObjectIndex[HitSmallObject_id].GetEnableFlag() == false ){ return; }
 
 	//体力がなければ処理しない
 	hp = SmallObjectIndex[HitSmallObject_id].GetHP();
@@ -924,7 +924,7 @@ bool ObjectManager::GrenadeExplosion(grenade *in_grenade)
 	//人に爆風の当たり判定
 	for(int i=0; i<MAX_HUMAN; i++){
 		//初期化されていないか、死亡していれば処理しない。
-		if( HumanIndex[i].GetDrawFlag() == false ){ continue; }
+		if( HumanIndex[i].GetEnableFlag() == false ){ continue; }
 		if( HumanIndex[i].GetHP() <= 0 ){ continue; }
 
 		float hx, hy, hz;
@@ -1009,7 +1009,7 @@ bool ObjectManager::GrenadeExplosion(grenade *in_grenade)
 	//小物に爆風の当たり判定
 	for(int i=0; i<MAX_SMALLOBJECT; i++){
 		//使用されていれば処理しない
-		if( SmallObjectIndex[i].GetDrawFlag() == false ){ continue; }
+		if( SmallObjectIndex[i].GetEnableFlag() == false ){ continue; }
 
 		float sx, sy, sz;
 		float x, y, z, r;
@@ -1103,7 +1103,7 @@ void ObjectManager::DeadEffect(human *in_human)
 bool ObjectManager::CollideBlood(effect *in_effect, int *id, int *face, float *pos_x, float *pos_y, float *pos_z)
 {
 	//無効なエフェクトならば処理しない
-	if( in_effect->GetDrawFlag() == false ){ return false; }
+	if( in_effect->GetEnableFlag() == false ){ return false; }
 	if( in_effect->GetTextureID() != Resource->GetEffectBloodTexture() ){ return false; }
 
 	//血が出ない設定なら処理しない
@@ -1145,11 +1145,11 @@ bool ObjectManager::CollideBlood(effect *in_effect, int *id, int *face, float *p
 void ObjectManager::PickupWeapon(human *in_human, weapon *in_weapon)
 {
 	//無効な人ならば処理しない
-	if( in_human->GetDrawFlag() == false ){ return; }
+	if( in_human->GetEnableFlag() == false ){ return; }
 	if( in_human->GetHP() <= 0 ){ return; }
 
 	//初期化されている武器で、かつ誰も使っていない武器ならば～
-	if( (in_weapon->GetDrawFlag() == true)&&(in_weapon->GetUsingFlag() == false) ){
+	if( (in_weapon->GetEnableFlag() == true)&&(in_weapon->GetUsingFlag() == false) ){
 		float human_x, human_y, human_z;
 		float weapon_x, weapon_y, weapon_z;
 		float x, z;
@@ -1177,27 +1177,27 @@ void ObjectManager::PickupWeapon(human *in_human, weapon *in_weapon)
 void ObjectManager::CleanupPointDataToObject()
 {
 	for(int i=0; i<MAX_HUMAN; i++){
-		HumanIndex[i].SetDrawFlag(false);
+		HumanIndex[i].SetEnableFlag(false);
 	}
 
 	for(int i=0; i<MAX_WEAPON; i++){
-		WeaponIndex[i].SetDrawFlag(false);
+		WeaponIndex[i].SetEnableFlag(false);
 	}
 
 	for(int i=0; i<MAX_SMALLOBJECT; i++){
-		SmallObjectIndex[i].SetDrawFlag(false);
+		SmallObjectIndex[i].SetEnableFlag(false);
 	}
 
 	for(int i=0; i<MAX_BULLET; i++){
-		BulletIndex[i].SetDrawFlag(false);
+		BulletIndex[i].SetEnableFlag(false);
 	}
 
 	for(int i=0; i<MAX_GRENADE; i++){
-		GrenadeIndex[i].SetDrawFlag(false);
+		GrenadeIndex[i].SetEnableFlag(false);
 	}
 
 	for(int i=0; i<MAX_EFFECT; i++){
-		EffectIndex[i].SetDrawFlag(false);
+		EffectIndex[i].SetEnableFlag(false);
 	}
 
 
@@ -1345,7 +1345,7 @@ bullet* ObjectManager::GetBulletObject(int id)
 bullet* ObjectManager::GetNewBulletObject()
 {
 	for(int i=0; i<MAX_BULLET; i++){
-		if( BulletIndex[i].GetDrawFlag() == false ){
+		if( BulletIndex[i].GetEnableFlag() == false ){
 			return &(BulletIndex[i]);
 		}
 	}
@@ -1357,7 +1357,7 @@ bullet* ObjectManager::GetNewBulletObject()
 grenade* ObjectManager::GetNewGrenadeObject()
 {
 	for(int i=0; i<MAX_GRENADE; i++){
-		if( GrenadeIndex[i].GetDrawFlag() == false ){
+		if( GrenadeIndex[i].GetEnableFlag() == false ){
 			return &(GrenadeIndex[i]);
 		}
 	}
@@ -1374,7 +1374,7 @@ human* ObjectManager::SearchHuman(signed char p4)
 
 	for(int i=0; i<MAX_HUMAN; i++){
 		//使われていない人ならば処理しない
-		if( HumanIndex[i].GetDrawFlag() == false ){ continue; }
+		if( HumanIndex[i].GetEnableFlag() == false ){ continue; }
 
 		//第4パラメータを取得
 		HumanIndex[i].GetParamData(NULL, NULL, &humanp4, NULL);
@@ -1398,7 +1398,7 @@ smallobject* ObjectManager::SearchSmallobject(signed char p4)
 	for(int i=0; i<MAX_SMALLOBJECT; i++){
 		//使われていない人ならば処理しない
 		//　【破壊積みのオブジェクトも判定するため、無効】
-		//if( SmallObjectIndex[i].GetDrawFlag() == false ){ continue; }
+		//if( SmallObjectIndex[i].GetEnableFlag() == false ){ continue; }
 
 		//第4パラメータを取得
 		SmallObjectIndex[i].GetParamData(NULL, &smallobjectp4);
@@ -1589,7 +1589,7 @@ int ObjectManager::ShotWeapon(int human_id)
 			//銃弾を発射
 			newbullet->SetPosData(pos_x, pos_y + WEAPONSHOT_HEIGHT, pos_z, rx, ry);
 			newbullet->SetParamData(attacks, ParamData.penetration, ParamData.speed * BULLET_SPEEDSCALE, teamid, human_id, true);
-			newbullet->SetDrawFlag(true);
+			newbullet->SetEnableFlag(true);
 		}
 		else{
 			//発射する未使用のオブジェクトを取得
@@ -1599,7 +1599,7 @@ int ObjectManager::ShotWeapon(int human_id)
 			//手榴弾発射
 			newgrenade->SetPosData(pos_x, pos_y + WEAPONSHOT_HEIGHT, pos_z, rx, ry);
 			newgrenade->SetParamData(8.0f, human_id, true);
-			newgrenade->SetDrawFlag(true);
+			newgrenade->SetEnableFlag(true);
 		}
 
 		//誤差を加算（ショットガン用）
@@ -1691,7 +1691,7 @@ void ObjectManager::ReloadWeapon(int human_id)
 	if( (human_id < 0)||(MAX_HUMAN <= human_id) ){ return; }
 
 	//無効な人ならば処理しない
-	if( HumanIndex[human_id].GetDrawFlag() == false ){ return; }
+	if( HumanIndex[human_id].GetEnableFlag() == false ){ return; }
 	if( HumanIndex[human_id].GetHP() <= 0 ){ return; }
 
 	//リロードを実行
@@ -1835,7 +1835,7 @@ bool ObjectManager::CheatNewWeapon(int human_id, int new_weaponID)
 		if( new_weaponID == ID_WEAPON_NONE ){			//武器を消すなら
 			//一度武器を捨てた上で、その武器を削除
 			if( myHuman->DumpWeapon() == true ){
-				weapon[selectweapon]->SetDrawFlag(false);
+				weapon[selectweapon]->SetEnableFlag(false);
 				return true;
 			}
 		}
@@ -1865,9 +1865,9 @@ bool ObjectManager::CheckZombieAttack(human* MyHuman, human* EnemyHuman)
 	if( EnemyHuman == NULL ){ return false; }
 
 	//使用されていないか、死亡していれば処理しない。
-	if( MyHuman->GetDrawFlag() == false ){ return false; }
+	if( MyHuman->GetEnableFlag() == false ){ return false; }
 	if( MyHuman->GetHP() <= 0 ){ return false; }
-	if( EnemyHuman->GetDrawFlag() == false ){ return false; }
+	if( EnemyHuman->GetEnableFlag() == false ){ return false; }
 	if( EnemyHuman->GetHP() <= 0 ){ return false; }
 
 	float mx, my, mz, mrx, tx, ty, tz;
@@ -1909,7 +1909,7 @@ void ObjectManager::HitZombieAttack(human* EnemyHuman)
 	if( EnemyHuman == NULL ){ return; }
 
 	//使用されていないか、死亡していれば処理しない。
-	if( EnemyHuman->GetDrawFlag() == false ){ return; }
+	if( EnemyHuman->GetEnableFlag() == false ){ return; }
 	if( EnemyHuman->GetHP() <= 0 ){ return; }
 
 	float tx, ty, tz;
@@ -1937,7 +1937,7 @@ bool ObjectManager::HumanResuscitation(int id)
 	if( (id < 0)||(MAX_HUMAN-1 < id) ){ return false; }
 
 	//使用されていないか、生存していれば処理しない。
-	if( HumanIndex[id].GetDrawFlag() == false ){ return false; }
+	if( HumanIndex[id].GetEnableFlag() == false ){ return false; }
 	if( HumanIndex[id].GetDeadFlag() == false ){ return false; }
 
 	int id_param, dataid, team;
@@ -1970,7 +1970,7 @@ int ObjectManager::CheckGameOverorComplete()
 	HumanIndex[Player_HumanID].GetParamData(NULL, NULL, NULL, &MyTeamid);	//プレイヤーのチーム番号を取得
 	for(int i=0; i<MAX_HUMAN; i++){
 		//初期化されていなければ処理しない
-		if( HumanIndex[i].GetDrawFlag() == false ){ continue; }
+		if( HumanIndex[i].GetEnableFlag() == false ){ continue; }
 
 		//調べる対象のチーム番号を取得
 		HumanIndex[i].GetParamData(NULL, NULL, NULL, &teamid);
@@ -1990,7 +1990,7 @@ int ObjectManager::CheckGameOverorComplete()
 
 
 	//ゲームオーバー判定
-	if( HumanIndex[Player_HumanID].GetDrawFlag() == true ){	//操作対象が有効ならば　（注：裏技による変更対策）
+	if( HumanIndex[Player_HumanID].GetEnableFlag() == true ){	//操作対象が有効ならば　（注：裏技による変更対策）
 		if( HumanIndex[Player_HumanID].GetDeadFlag() == true ){		//プレイヤーが死亡していれば
 			return 2;
 		}
@@ -2027,7 +2027,7 @@ bool ObjectManager::GetObjectInfoTag(float camera_x, float camera_y, float camer
 		//プレイヤー自身なら処理しない
 		if( i == Player_HumanID ){ continue; }
 
-		if( HumanIndex[i].GetDrawFlag() == true ){
+		if( HumanIndex[i].GetEnableFlag() == true ){
 			HumanIndex[i].GetPosData(&px, &py, &pz, NULL);
 
 			//視点を基準に対象までの角度を算出
@@ -2053,7 +2053,7 @@ bool ObjectManager::GetObjectInfoTag(float camera_x, float camera_y, float camer
 
 	//武器
 	for(int i=0; i<MAX_WEAPON; i++){
-		if( (WeaponIndex[i].GetDrawFlag() == true)&&(WeaponIndex[i].GetUsingFlag() == false) ){
+		if( (WeaponIndex[i].GetEnableFlag() == true)&&(WeaponIndex[i].GetUsingFlag() == false) ){
 			int lnbs, nbs;
 
 			WeaponIndex[i].GetPosData(&px, &py, &pz, NULL);
@@ -2073,7 +2073,7 @@ bool ObjectManager::GetObjectInfoTag(float camera_x, float camera_y, float camer
 
 	//小物
 	for(int i=0; i<MAX_SMALLOBJECT; i++){
-		if( SmallObjectIndex[i].GetDrawFlag() == true ){
+		if( SmallObjectIndex[i].GetEnableFlag() == true ){
 			SmallObjectIndex[i].GetPosData(&px, &py, &pz, NULL);
 			
 			//視点を基準に対象までの角度を算出
@@ -2146,7 +2146,7 @@ int ObjectManager::Process(int cmdF5id, float camera_rx, float camera_ry)
 		CollideBullet(&BulletIndex[i]);		//当たり判定を実行
 		BulletIndex[i].RunFrame();	//主計算
 
-		if( BulletIndex[i].GetDrawFlag() == true ){
+		if( BulletIndex[i].GetEnableFlag() == true ){
 			//弾の座標と角度を取得
 			BulletIndex[i].GetParamData(NULL, NULL, &speed, NULL, NULL);
 			BulletIndex[i].GetPosData(&bx, &by, &bz, &brx, &bry);
@@ -2171,7 +2171,7 @@ int ObjectManager::Process(int cmdF5id, float camera_rx, float camera_ry)
 		float pos_x, pos_y, pos_z;
 		if( CollideBlood(&(EffectIndex[i]), &id, &face, &pos_x, &pos_y, &pos_z) == true ){
 			AddMapEffect(id, face, pos_x, pos_y, pos_z, 10.0f, (float)M_PI/18*GetRand(18), (int)GAMEFPS * 20, Resource->GetEffectBloodTexture());
-			EffectIndex[i].SetDrawFlag(false);
+			EffectIndex[i].SetEnableFlag(false);
 		}
 		else{
 			EffectIndex[i].RunFrame(camera_rx, camera_ry);
@@ -2250,7 +2250,7 @@ int ObjectManager::SortEffect(float camera_x, float camera_y, float camera_z, ef
 
 	//カメラからの距離を求めつつ、総数を数える。
 	for(int i=0; i<MAX_EFFECT; i++){
-		if( EffectIndex[i].GetDrawFlag() == true ){
+		if( EffectIndex[i].GetEnableFlag() == true ){
 			float ex, ey, ez;
 			float x, y, z;
 

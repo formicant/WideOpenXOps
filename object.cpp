@@ -39,7 +39,7 @@ object::object(class ParameterInfo *in_Param, float x, float y, float z, float r
 	pos_y = y;
 	pos_z = z;
 	rotation_x = rx;
-	RenderFlag = flag;
+	EnableFlag = flag;
 	model_size = size;
 
 	id_parameter = 0;
@@ -84,18 +84,18 @@ void object::GetPosData(float *x, float *y, float *z, float *rx)
 	if( rx != NULL ){ *rx = rotation_x; }
 }
 
-//! @brief 描画フラグを設定
+//! @brief 有効化フラグを設定
 //! @param flag 設定するフラグ
-void object::SetDrawFlag(bool flag)
+void object::SetEnableFlag(bool flag)
 {
-	RenderFlag = flag;
+	EnableFlag = flag;
 }
 
-//! @brief 描画フラグを取得
+//! @brief 有効化フラグを取得
 //! @return 現在設定されているフラグ
-bool object::GetDrawFlag()
+bool object::GetEnableFlag()
 {
-	return RenderFlag;
+	return EnableFlag;
 }
 
 //! @brief モデルデータを設定
@@ -125,7 +125,7 @@ int object::RunFrame()
 void object::Render(D3DGraphics *d3dg)
 {
 	if( d3dg == NULL ){ return; }
-	if( RenderFlag == false ){ return; }
+	if( EnableFlag == false ){ return; }
 
 	d3dg->SetWorldTransform(pos_x, pos_y, pos_z, rotation_x, 0.0f, model_size);
 	d3dg->RenderModel(id_model, id_texture);
@@ -149,7 +149,7 @@ human::human(class ParameterInfo *in_Param, float x, float y, float z, float rx,
 	upmodel_size = 9.4f;
 	armmodel_size = 9.0f;
 	legmodel_size = 9.0f;
-	RenderFlag = flag;
+	EnableFlag = flag;
 	rotation_y = 0.0f;
 	armrotation_y = 0.0f;
 	reaction_y = 0.0f;
@@ -554,7 +554,7 @@ bool human::ShotWeapon(int *weapon_paramid, int *GunsightErrorRange)
 	}
 
 	//武器が無くなっていれば、装備から外した扱いに。　（手榴弾用）
-	if( weapon[selectweapon]->GetDrawFlag() == false ){
+	if( weapon[selectweapon]->GetEnableFlag() == false ){
 		weapon[selectweapon] = NULL;
 	}
 	return true;
@@ -677,7 +677,7 @@ void human::SetMoveWalk()
 int human::GetMovemode(bool nowdata)
 {
 	//使用されていないか、処理されていなければ終了
-	if( RenderFlag == false ){ return 0; }
+	if( EnableFlag == false ){ return 0; }
 	if( hp <= 0 ){ return 0; }
 
 	if( nowdata == false ){	//前のデータ
@@ -1475,7 +1475,7 @@ bool human::MapCollisionDetection(class Collision *CollD, class BlockDataInterfa
 int human::RunFrame(class Collision *CollD, class BlockDataInterface *inblockdata, bool F5mode)
 {
 	if( CollD == NULL ){ return 0; }
-	if( RenderFlag == false ){ return 0; }
+	if( EnableFlag == false ){ return 0; }
 
 #ifdef HUMAN_DEADBODY_COLLISION
 	if( deadstate == 5 ){ return 3; }
@@ -1512,17 +1512,7 @@ int human::RunFrame(class Collision *CollD, class BlockDataInterface *inblockdat
 		}
 	}
 
-	//照準の状態誤差の処理
-	GunsightErrorRange();
-
-	//死亡判定と倒れる処理
-	CheckDead = CheckAndProcessDead(CollD);
-	if( CheckDead == 3 ){ return 2; }
-	if( CheckDead != 0 ){ return 3; }
-
-	//進行方向と速度を決定
-	ControlProcess();
-
+	//足の角度を算出
 	if( hp <= 0 ){
 		legrotation_x = rotation_x;
 	}
@@ -1542,6 +1532,17 @@ int human::RunFrame(class Collision *CollD, class BlockDataInterface *inblockdat
 		//徐々にその向きに
 		legrotation_x = legrotation_x*0.85f + (rotation_x + move_rx2*-1)*0.15f;		// 3/4 + 1/4
 	}
+
+	//照準の状態誤差の処理
+	GunsightErrorRange();
+
+	//死亡判定と倒れる処理
+	CheckDead = CheckAndProcessDead(CollD);
+	if( CheckDead == 3 ){ return 2; }
+	if( CheckDead != 0 ){ return 3; }
+
+	//進行方向と速度を決定
+	ControlProcess();
 
 	//マップとの当たり判定
 	MapCollisionDetection(CollD, inblockdata, &FallDistance);
@@ -1595,7 +1596,7 @@ void human::Render(class D3DGraphics *d3dg, class ResourceManager *Resource, boo
 {
 	//正しく初期化されていなければ、処理しない
 	if( d3dg == NULL ){ return; }
-	if( RenderFlag == false ){ return; }
+	if( EnableFlag == false ){ return; }
 
 	//現在装備する武器のクラスを取得
 	class weapon *nowweapon;
@@ -1693,7 +1694,7 @@ weapon::weapon(class ParameterInfo *in_Param, float x, float y, float z, float r
 	move_y = 0.0f;
 	move_z = 0.0f;
 	rotation_x = rx;
-	RenderFlag = flag;
+	EnableFlag = flag;
 
 	id_parameter = id_param;
 	usingflag = false;
@@ -1828,7 +1829,7 @@ int weapon::Shot()
 		shotcnt = ParamData.blazings;
 
 		if( (bullets - Loadbullets) <= 0 ){		//（リロードしていない）弾が無くなれば、武器ごと消滅させる。
-			RenderFlag = false;
+			EnableFlag = false;
 			usingflag = false;
 		}
 		else if( Loadbullets <= 0 ){			//自動リロード
@@ -1914,7 +1915,7 @@ int weapon::GetReloadCnt()
 bool weapon::ResetWeaponParam(class ResourceManager *Resource, int id_param, int lnbs, int nbs)
 {
 	//初期化されていなければ、失敗
-	if( RenderFlag == false ){ return 0; }
+	if( EnableFlag == false ){ return 0; }
 
 	//指定された設定値へ上書き
 	id_parameter = id_param;
@@ -1946,7 +1947,7 @@ int weapon::RunFrame(class Collision *CollD)
 	if( CollD == NULL ){ return 0; }
 
 	//初期化されていなければ、失敗
-	if( RenderFlag == false ){ return 0; }
+	if( EnableFlag == false ){ return 0; }
 
 	//連射カウントが残っていれば、1 減らす
 	if( shotcnt > 0 ){
@@ -2027,7 +2028,7 @@ void weapon::Render(class D3DGraphics *d3dg)
 	if( d3dg == NULL ){ return; }
 
 	//初期化されてないか、誰かに使われていれば処理しない
-	if( RenderFlag == false ){ return; }
+	if( EnableFlag == false ){ return; }
 	if( usingflag == true ){ return; }
 
 	//武器を描画
@@ -2045,7 +2046,7 @@ smallobject::smallobject(class ParameterInfo *in_Param, class MIFInterface *in_M
 	pos_z = z;
 	rotation_x = rx;
 	rotation_y = 0.0f;
-	RenderFlag = flag;
+	EnableFlag = flag;
 	model_size = 5.0f;
 
 	id_parameter = id_param;
@@ -2188,7 +2189,7 @@ void smallobject::HitGrenadeExplosion(int attacks)
 //! @attention 通常は HitBullet()関数 および GrenadeExplosion()関数 から自動的に実行されるため、直接呼び出す必要はありません。
 void smallobject::Destruction()
 {
-	//RenderFlag = false;
+	//EnableFlag = false;
 	//return;
 
 	int jump;
@@ -2218,7 +2219,7 @@ void smallobject::Destruction()
 int smallobject::RunFrame()
 {
 	//描画されていないか、体力が残っていなければ処理しない。
-	if( RenderFlag == false ){ return 0; }
+	if( EnableFlag == false ){ return 0; }
 	if( hp > 0 ){ return 0; }
 
 	int cnt;
@@ -2248,7 +2249,7 @@ int smallobject::RunFrame()
 
 	//1秒飛んでいたら描画終了
 	if( cnt > (int)GAMEFPS ){
-		RenderFlag = false;
+		EnableFlag = false;
 		return 2;
 	}
 
@@ -2263,7 +2264,7 @@ void smallobject::Render(D3DGraphics *d3dg)
 	if( d3dg == NULL ){ return; }
 
 	//初期化されていなければ処理しない。
-	if( RenderFlag == false ){ return; }
+	if( EnableFlag == false ){ return; }
 
 	//描画
 	d3dg->SetWorldTransform(pos_x, pos_y, pos_z, rotation_x, rotation_y, model_size);
@@ -2276,7 +2277,7 @@ bullet::bullet(int modelid, int textureid)
 	model_size = 1.0f;
 	id_model = modelid;
 	id_texture = textureid;
-	RenderFlag = false;
+	EnableFlag = false;
 }
 
 //! @brief ディストラクタ
@@ -2352,11 +2353,11 @@ void bullet::GetParamData(int *_attacks, int *_penetration, int *_speed, int *_t
 int bullet::RunFrame()
 {
 	//初期化されていなければ処理しない
-	if( RenderFlag == false ){ return 0; }
+	if( EnableFlag == false ){ return 0; }
 
 	//消滅時間を過ぎていれば、オブジェクトを無効化
 	if( cnt > BULLET_DESTROYFRAME ){
-		RenderFlag = false;
+		EnableFlag = false;
 		return 0;
 	}
 
@@ -2377,7 +2378,7 @@ void bullet::Render(class D3DGraphics *d3dg)
 	if( d3dg == NULL ){ return; }
 
 	//初期化されていなければ処理しない。
-	if( RenderFlag == false ){ return; }
+	if( EnableFlag == false ){ return; }
 
 	//弾を移動前だったら描画しない
 	//　弾が頭から突き抜けて見える対策
@@ -2432,11 +2433,11 @@ float grenade::GetSpeed()
 int grenade::RunFrame(class Collision *CollD)
 {
 	//初期化されていなければ処理しない
-	if( RenderFlag == false ){ return 0; }
+	if( EnableFlag == false ){ return 0; }
 
 	//時間を過ぎていれば、オブジェクトを無効化し、「爆発」として返す。
 	if( cnt > GRENADE_DESTROYFRAME ){
-		RenderFlag = false;
+		EnableFlag = false;
 		return 2;
 	}
 
@@ -2501,7 +2502,7 @@ void grenade::Render(class D3DGraphics *d3dg)
 	if( d3dg == NULL ){ return; }
 
 	//初期化されていなければ処理しない。
-	if( RenderFlag == false ){ return; }
+	if( EnableFlag == false ){ return; }
 
 	//描画
 	d3dg->SetWorldTransform(pos_x, pos_y, pos_z, (rotation_x * -1 - (float)M_PI/2), 0.0f, (float)M_PI/2, model_size);
@@ -2523,10 +2524,10 @@ effect::effect(float x, float y, float z, float size, float rotation, int count,
 	id_texture = texture;
 	type = settype;
 	if( cnt > 0 ){
-		RenderFlag = true;
+		EnableFlag = true;
 	}
 	else{
-		RenderFlag = false;
+		EnableFlag = false;
 	}
 	alpha = 1.0f;
 }
@@ -2598,11 +2599,11 @@ void effect::GetMove(float *mx, float *my, float *mz)
 int effect::RunFrame(float camera_rx, float camera_ry)
 {
 	//初期化されていなければ処理しない
-	if( RenderFlag == false ){ return 0; }
+	if( EnableFlag == false ){ return 0; }
 
 	//カウントが終了したら、処理しないように設定
 	if( cnt <= 0 ){
-		RenderFlag = false;
+		EnableFlag = false;
 		return 2;
 	}
 
@@ -2654,7 +2655,7 @@ void effect::Render(class D3DGraphics *d3dg)
 	if( d3dg == NULL ){ return; }
 
 	//初期化されていなければ処理しない。
-	if( RenderFlag == false ){ return; }
+	if( EnableFlag == false ){ return; }
 
 	//描画
 	d3dg->SetWorldTransformEffect(pos_x, pos_y, pos_z, rotation_x, rotation_y, rotation_texture, model_size);

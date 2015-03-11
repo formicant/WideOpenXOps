@@ -1307,7 +1307,7 @@ void maingame::Input()
 							//弾オブジェクトを設定
 							newbullet->SetPosData(x, y, z, rx, ry);
 							newbullet->SetParamData(40, 5, 10, 1024, ObjMgr.GetPlayerID(), true);
-							newbullet->SetDrawFlag(true);
+							newbullet->SetEnableFlag(true);
 							GameSound->ShotWeapon(x, y, z, 0, 1024, true);
 
 							//スコアに加算
@@ -2362,7 +2362,7 @@ void maingame::RenderRadar()
 		thuman = ObjMgr.GeHumanObject(i);
 
 		//使われていない人や死体は無視する
-		if( thuman->GetDrawFlag() == false ){ continue; }
+		if( thuman->GetEnableFlag() == false ){ continue; }
 		if( thuman->GetDeadFlag() == true ){ continue; }
 
 		//人の情報を取得
@@ -2537,7 +2537,7 @@ void maingame::ProcessConsole()
 			int teamid;
 			bool deadflag;
 			human *thuman = ObjMgr.GeHumanObject(i);
-			if( thuman->GetDrawFlag() == true ){
+			if( thuman->GetEnableFlag() == true ){
 				//死亡状態とチーム番号を取得
 				deadflag = thuman->GetDeadFlag();
 				thuman->GetParamData(NULL, NULL, NULL, &teamid);
@@ -2742,7 +2742,7 @@ void maingame::ProcessConsole()
 	if( GetCommandNum("kill", &id) == true ){
 		if( (0 <= id)&&(id < MAX_HUMAN) ){
 			human *thuman = ObjMgr.GeHumanObject(id);
-			if( thuman->GetDrawFlag() == true ){
+			if( thuman->GetEnableFlag() == true ){
 				if( thuman->SetHP(0) == true ){
 					sprintf(str, "Killed Human[%d].", id);
 					AddInfoConsole(d3dg->GetColorCode(1.0f,1.0f,1.0f,1.0f), str);
@@ -2755,7 +2755,7 @@ void maingame::ProcessConsole()
 	if( GetCommandNum("break", &id) == true ){
 		if( (0 <= id)&&(id < MAX_SMALLOBJECT) ){
 			smallobject *tsmallobject = ObjMgr.GetSmallObject(id);
-			if( tsmallobject->GetDrawFlag() == true ){
+			if( tsmallobject->GetEnableFlag() == true ){
 				tsmallobject->Destruction();
 				sprintf(str, "Broke SmallObject[%d].", id);
 				AddInfoConsole(d3dg->GetColorCode(1.0f,1.0f,1.0f,1.0f), str);
