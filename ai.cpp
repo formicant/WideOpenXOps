@@ -235,29 +235,13 @@ void AIcontrol::MoveTarget()
 	//目標地点への角度を求める
 	CheckTargetAngle(posx, 0.0f, posz, rx*-1 + (float)M_PI/2, 0.0f, target_posx, 0.0f, target_posz, 0.0f, &atan, NULL, &r);
 
+	//旋回
 	if( atan > (float)M_PI/180*0.5f ){
 		SetFlag(moveturn_mode, AI_CTRL_TURNLEFT);
 	}
 	if( atan < (float)M_PI/180*0.5f * -1 ){
 		SetFlag(moveturn_mode, AI_CTRL_TURNRIGHT);
 	}
-
-	/*
-	//大きな差があれば少しづつ旋回するだけ
-	if( atan > AI_TURNRAD ){
-		SetFlag(moveturn_mode, AI_CTRL_TURNLEFT);
-	}
-	if( atan < AI_TURNRAD*-1 ){
-		SetFlag(moveturn_mode, AI_CTRL_TURNRIGHT);
-	}
-
-	//微々たる差なら一気に向く
-	if( abs(atan) <= AI_TURNRAD ){
-		DelFlag(moveturn_mode, AI_CTRL_TURNRIGHT);
-		DelFlag(moveturn_mode, AI_CTRL_TURNLEFT);
-		rx -= atan;
-	}
-	*/
 
 	//前進する
 	if( zombie == true ){
@@ -382,6 +366,14 @@ void AIcontrol::MoveRandom()
 	}
 	if( GetRand(sidestart) == 0 ){
 		SetFlag(moveturn_mode, AI_CTRL_MOVERIGHT);
+	}
+
+	//武器を持っておらず、手ぶらならば
+	if( ctrlhuman->GetMainWeaponTypeNO() == ID_WEAPON_NONE ){
+		// 1/80の確率で下がり始める
+		if( GetRand(80) == 0 ){
+			SetFlag(moveturn_mode, AI_CTRL_MOVEBACKWARD);
+		}
 	}
 
 	// 1/3の確率か、移動フラグが設定されていたら
@@ -680,29 +672,29 @@ void AIcontrol::Action()
 			}
 		}
 		else{
-			float addry2;
-
 			//自分が手ぶらならば～
 			if( weaponid == ID_WEAPON_NONE ){
 				if( EnemyHuman->GetMainWeaponTypeNO() == ID_WEAPON_NONE ){	//敵も手ぶらならば～
-					addry2 = ARMRAD_NOWEAPON - ry;
+					//下に向け続ける
+					SetFlag(moveturn_mode, AI_CTRL_TURNDOWN);
+					DelFlag(moveturn_mode, AI_CTRL_TURNUP);
 				}
 				else{														//敵が武器を持っていれば～
-					addry2 = (float)M_PI/18*8 - ry;
+					//上に向け続ける
+					SetFlag(moveturn_mode, AI_CTRL_TURNUP);
+					DelFlag(moveturn_mode, AI_CTRL_TURNDOWN);
 				}
 			}
 			else{
-				addry2 = atany;
-			}
-
-			//旋回
-			if( addry2 > 0.0f ){
-				SetFlag(moveturn_mode, AI_CTRL_TURNUP);
-				DelFlag(moveturn_mode, AI_CTRL_TURNDOWN);
-			}
-			if( addry2 < 0.0f ){
-				SetFlag(moveturn_mode, AI_CTRL_TURNDOWN);
-				DelFlag(moveturn_mode, AI_CTRL_TURNUP);
+				//旋回
+				if( atany > 0.0f ){
+					SetFlag(moveturn_mode, AI_CTRL_TURNUP);
+					DelFlag(moveturn_mode, AI_CTRL_TURNDOWN);
+				}
+				if( atany < 0.0f ){
+					SetFlag(moveturn_mode, AI_CTRL_TURNDOWN);
+					DelFlag(moveturn_mode, AI_CTRL_TURNUP);
+				}
 			}
 		}
 	}
@@ -909,7 +901,7 @@ int AIcontrol::HaveWeapon()
 {
 	int selectweapon;
 	class weapon *weapon[TOTAL_HAVEWEAPON];
-	int weaponid;
+	int nbs;
 
 	for(int i=0; i<TOTAL_HAVEWEAPON; i++){
 		weapon[i] = NULL;
@@ -920,11 +912,11 @@ int AIcontrol::HaveWeapon()
 
 	//武器を持っていれば、武器番号を取得
 	if( weapon[selectweapon] != NULL ){
-		weapon[selectweapon]->GetParamData(&weaponid, NULL, NULL);
+		weapon[selectweapon]->GetParamData(NULL, NULL, &nbs);
 	}
 
-	//武器を持っていないか、「ケース」ならば
-	if( (weapon[selectweapon] == NULL)||(weaponid == ID_WEAPON_CASE) ){
+	//武器を持っていないか、弾が0ならば
+	if( (weapon[selectweapon] == NULL)||(nbs == 0) ){
 		//次の武器を指定
 		int notselectweapon = selectweapon + 1;
 		if( notselectweapon == TOTAL_HAVEWEAPON ){ notselectweapon = 0; }

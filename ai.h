@@ -35,7 +35,6 @@
 #define AI_TOTALHUMAN_SCALE (MAX_HUMAN/24)		//!< 24l‚ ‚½‚è‚ÌÅ‘ål”‚Ì”{—¦
 
 #define AI_ADDTURNRAD (float)M_PI/180*0.8f		//!< AI‚Ìù‰ñi‰ñ“]”\—Íj
-#define AI_WEAPON_ARMRAD (float)M_PI/5*-1						//!< •ŠíŠ—L‚Ì˜r‚Ì•\Ž¦Šp“x
 #define AI_SEARCH_RX (float)M_PI/18*11	//!< “G‚ð”­Œ©‚·‚é‰¡Ž²Šp“x
 #define AI_SEARCH_RY (float)M_PI/18*6	//!< “G‚ð”­Œ©‚·‚écŽ²Šp“x
 
