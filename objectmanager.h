@@ -99,6 +99,7 @@ class ObjectManager
 	void HitBulletSmallObject(int HitSmallObject_id, float x, float y, float z, int attacks);
 	bool GrenadeExplosion(grenade *in_grenade);
 	void DeadEffect(human *in_human);
+	bool CollideBlood(effect *in_effect, int *id, int *face, float *pos_x, float *pos_y, float *pos_z);
 	void PickupWeapon(human *in_human, weapon *in_weapon);
 	void CleanupPointDataToObject();
 	int SortEffect(float camera_x, float camera_y, float camera_z, effectdata data[]);
@@ -112,6 +113,7 @@ public:
 	int AddVisualWeaponIndex(int WeaponID, bool loadbullet);
 	int AddSmallObjectIndex(float px, float py, float pz, float rx, int paramID, bool MapColl);
 	int AddEffect(float pos_x, float pos_y, float pos_z, float move_x, float move_y, float move_z, float size, float rotation, int count, int texture, int settype);
+	int AddMapEffect(int id, int face, float pos_x, float pos_y, float pos_z, float size, float rotation, int count, int texture);
 	void LoadPointData();
 	int GetPlayerID();
 	void SetPlayerID(int id);

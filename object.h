@@ -58,18 +58,19 @@
 #define MAX_DAMAGE_GRENADE_DISTANCE 80.0f		//!< 手榴弾によりダメージを受ける最大距離
 #define HUMAN_DAMAGE_GRENADE_HEAD 100			//!< 手榴弾による 頭 への最大ダメージ
 #define HUMAN_DAMAGE_GRENADE_LEG 80				//!< 手榴弾による 足 への最大ダメージ
-#define SMALLOBJECT_DAMAGE_GRENADE 80		//!< 手榴弾による 小物 への最大ダメージ
+#define SMALLOBJECT_DAMAGE_GRENADE 80			//!< 手榴弾による 小物 への最大ダメージ
 
 #define WEAPONERRORRANGE_SCALE 0.25f	//!< 武器の反動角度の倍率（×0.25 ＝ ÷4）
 
 #define ARMRAD_NOWEAPON ((float)M_PI/2*-1 + (float)M_PI/9)		//!< 手ぶら時の腕の表示角度
-#define ARMRAD_RELOADWEAPON ((float)M_PI/18*2 * -1)	//!< リロード時の腕の表示角度
+#define ARMRAD_RELOADWEAPON ((float)M_PI/18*2 * -1)				//!< リロード時の腕の表示角度
 
 #define HUMAN_MAPCOLLISION_R 5.0f							//!< 人とマップの当たり判定　半径
 #define HUMAN_MAPCOLLISION_HEIGTH 10.2f						//!< 人とマップの当たり判定　高さ（注：腰程度）
 #define HUMAN_MAPCOLLISION_SLOPEANGLE ((float)M_PI/18*5)	//!< 人とマップの当たり判定　登れない斜面の角度
 #define HUMAN_MAPCOLLISION_SLOPEFORCE 1.0f					//!< 人とマップの当たり判定　登れない斜面が人を押し出す力
-#define HUMAN_DEADLINE -100.0f			//!< 人が死亡するY座標（デッドライン）
+#define HUMAN_DEADLINE -100.0f						//!< 人が死亡するY座標（デッドライン）
+#define HUMAN_DEADADDRY ((float)M_PI/180*0.75f)		//!< 死体の倒れる加速度
 
 #define BULLET_SPEEDSCALE 3				//!< 弾速の倍率
 #define BULLET_DESTROYFRAME 40			//!< 弾の消滅フレーム数
@@ -138,6 +139,7 @@ protected:
 #ifdef HUMAN_DEADBODY_COLLISION
 	int deadstate;					//!< 死体になっているか
 #endif
+	float add_ry;					//!< 死体の倒れる加速度
 	int id_upmodel;							//!< 上半身
 	int id_armmodel[TOTAL_ARMMODE];			//!< 腕
 	int id_legmodel;						//!< 足（静止）
@@ -315,8 +317,7 @@ class effect : public object
 {
 protected:
 	int type;			//!< 種類
-	float camera_rx;	//!< カメラ角度
-	float camera_ry;	//!< カメラ角度
+	float rotation_y;	//!< 回転角度
 	float move_x;		//!< X軸移動量
 	float move_y;		//!< Y軸移動量
 	float move_z;		//!< Z軸移動量
@@ -329,7 +330,10 @@ public:
 	effect(float x = 0.0f, float y = 0.0f, float z = 0.0f, float size = 1.0f, float rotation = 0.0f, int count = 0, int texture = 0, int settype = 0);
 	~effect();
 	virtual void SetParamData(float in_move_x, float in_move_y, float in_move_z, float size, float rotation, int count, int texture, int settype, bool init);
-	virtual int RunFrame(float in_camera_rx, float in_camera_ry);
+	virtual void SetRxRy(float rx, float ry);
+	virtual int GetTextureID();
+	virtual void GetMove(float *mx, float *my, float *mz);
+	virtual int RunFrame(float camera_rx, float camera_ry);
 	virtual void Render(class D3DGraphics *d3dg);
 };
 
@@ -351,11 +355,13 @@ enum Human_MoveFlag {
 
 //! エフェクトの種類を表す定数
 enum Effect_Type {
-	EFFECT_NORMAL = 0x00,		//!< ノーマル
-	EFFECT_DISAPPEAR = 0x01,	//!< 消す
-	EFFECT_MAGNIFY = 0x02,		//!< 拡大
-	EFFECT_ROTATION = 0x04,		//!< 回転
-	EFFECT_FALL = 0x08			//!< 落下
+	EFFECT_NORMAL = 0x00,			//!< ノーマル
+	EFFECT_DISAPPEAR = 0x01,		//!< 消す
+	EFFECT_DISAPPEARHALF = 0x02,	//!< 半分の時間で消す
+	EFFECT_MAGNIFY = 0x04,			//!< 拡大
+	EFFECT_ROTATION = 0x08,			//!< 回転
+	EFFECT_FALL = 0x10,				//!< 落下
+	EFFECT_NOBILLBOARD = 0x20		//!< ビルボード化しない
 };
 
 #endif

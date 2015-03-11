@@ -171,6 +171,7 @@ human::human(class ParameterInfo *in_Param, float x, float y, float z, float rx,
 #ifdef HUMAN_DEADBODY_COLLISION
 	deadstate = 0;
 #endif
+	add_ry = 0.0f;
 	id_texture = -1;
 	id_upmodel = -1;
 	for(int i=0; i<TOTAL_ARMMODE; i++){
@@ -206,6 +207,7 @@ human::~human()
 //! @param p4 第4パラメータ
 //! @param team チーム番号
 //! @param init オブジェクトを初期化
+//! @warning init引数をtrueにして初期化する場合、先にSetPosData()関数で角度を設定しておくこと。
 void human::SetParamData(int id_param, int dataid, signed char p4, int team, bool init)
 {
 	id_parameter = id_param;
@@ -223,7 +225,7 @@ void human::SetParamData(int id_param, int dataid, signed char p4, int team, boo
 		rotation_y = 0.0f;
 		armrotation_y = (float)M_PI/18 * -3;
 		reaction_y = 0.0f;
-		legrotation_x = 0.0f;
+		legrotation_x = rotation_x;
 
 		for(int i=0; i<TOTAL_HAVEWEAPON; i++){
 			weapon[i] = NULL;
@@ -238,6 +240,7 @@ void human::SetParamData(int id_param, int dataid, signed char p4, int team, boo
 #ifdef HUMAN_DEADBODY_COLLISION
 		deadstate = 0;
 #endif
+		add_ry = 0.0f;
 		MoveFlag = 0x00;
 		MoveFlag_lt = MoveFlag;
 		scopemode = 0;
@@ -934,7 +937,6 @@ int human::CheckAndProcessDead(class Collision *CollD)
 	//状態：4
 	//［固定］
 
-	float add_ry = 0.0f;
 	float check_posx, check_posy, check_posz;
 
 	if( deadstate == 0 ){
@@ -942,19 +944,19 @@ int human::CheckAndProcessDead(class Collision *CollD)
 			//体の角度・腕の角度
 			switch( GetRand(4) ){
 				case 0:
-					add_ry = (float)M_PI/180*6;
+					add_ry = HUMAN_DEADADDRY;
 					armrotation_y = (float)M_PI/2;
 					break;
 				case 1:
-					add_ry = (float)M_PI/180*6 * -1;
+					add_ry = HUMAN_DEADADDRY * -1;
 					armrotation_y = (float)M_PI/2;
 					break;
 				case 2:
-					add_ry = (float)M_PI/180*6;
+					add_ry = HUMAN_DEADADDRY;
 					armrotation_y = (float)M_PI/2 * -1;
 					break;
 				case 3:
-					add_ry = (float)M_PI/180*6 * -1;
+					add_ry = HUMAN_DEADADDRY * -1;
 					armrotation_y = (float)M_PI/2 * -1;
 					break;
 			}
@@ -1007,10 +1009,10 @@ int human::CheckAndProcessDead(class Collision *CollD)
 
 		//前後に倒す
 		if( rotation_y > 0.0f ){		//rotation_y < (float)M_PI/4*3
-			add_ry = (float)M_PI/180*6;
+			add_ry += HUMAN_DEADADDRY;
 		}
 		else if( rotation_y < 0.0f ){	//rotation_y > (float)M_PI/4*3 * -1
-			add_ry = (float)M_PI/180*6 * -1;
+			add_ry -= HUMAN_DEADADDRY;
 		}
 
 		if( pos_y <= HUMAN_DEADLINE ){
@@ -1065,10 +1067,10 @@ int human::CheckAndProcessDead(class Collision *CollD)
 
 		//前後に倒す
 		if( rotation_y > 0.0f ){		//rotation_y < (float)M_PI/2
-			add_ry = (float)M_PI/180*6;
+			add_ry += HUMAN_DEADADDRY;
 		}
 		else if( rotation_y < 0.0f ){	//rotation_y > (float)M_PI/2 * -1
-			add_ry = (float)M_PI/180*6 * -1;
+			add_ry -= HUMAN_DEADADDRY;
 		}
 
 		//次のフレームの足の座標を取得
@@ -1116,39 +1118,45 @@ int human::CheckAndProcessDead(class Collision *CollD)
 		return 4;
 	}
 	else if( rotation_y > 0.0f ){		//倒れ始めていれば、そのまま倒れる。
-		if( rotation_y < (float)M_PI/2 ){
-			rotation_y += (float)M_PI/180*6;
-			return 2;
+		add_ry += HUMAN_DEADADDRY;
+		rotation_y += add_ry;
+		if( rotation_y >= (float)M_PI/2 ){
+			rotation_y = (float)M_PI/2;
+			return 3;
 		}
-		return 3;
+		return 2;
 	}
 	else if( rotation_y < 0.0f ){	//倒れ始めていれば、そのまま倒れる。
-		if( rotation_y > (float)M_PI/2 * -1 ){
-			rotation_y -= (float)M_PI/180*6;
-			return 2;
+		add_ry -= HUMAN_DEADADDRY;
+		rotation_y += add_ry;
+		if( rotation_y <= (float)M_PI/2 * -1 ){
+			rotation_y = (float)M_PI/2 * -1;
+			return 3;
 		}
-		return 3;
+		return 2;
 	}
 	else if( hp <= 0 ){		//HPが 0 以下になった（死亡した）瞬間なら、倒し始める
 		//体の角度・腕の角度
 		switch( GetRand(4) ){
 			case 0:
-				rotation_y = (float)M_PI/180*6;
+				add_ry = HUMAN_DEADADDRY;
 				armrotation_y = (float)M_PI/2;
 				break;
 			case 1:
-				rotation_y = (float)M_PI/180*6 * -1;
+				add_ry = HUMAN_DEADADDRY * -1;
 				armrotation_y = (float)M_PI/2;
 				break;
 			case 2:
-				rotation_y = (float)M_PI/180*6;
+				add_ry = HUMAN_DEADADDRY;
 				armrotation_y = (float)M_PI/2 * -1;
 				break;
 			case 3:
-				rotation_y = (float)M_PI/180*6 * -1;
+				add_ry = HUMAN_DEADADDRY * -1;
 				armrotation_y = (float)M_PI/2 * -1;
 				break;
 		}
+
+		rotation_y += add_ry;
 
 		//死体が埋まらぬよう、高さを +1.0 する
 		pos_y += 1.0f;
@@ -1472,7 +1480,11 @@ int human::RunFrame(class Collision *CollD, class BlockDataInterface *inblockdat
 #ifdef HUMAN_DEADBODY_COLLISION
 	if( deadstate == 5 ){ return 3; }
 #else
-	if( hp <= 0 ){ return 3; }
+	if( hp <= 0 ){
+		if( abs(rotation_y) >= (float)M_PI/2 ){
+			return 3;
+		}
+	}
 #endif
 
 	float FallDistance;
@@ -1500,29 +1512,6 @@ int human::RunFrame(class Collision *CollD, class BlockDataInterface *inblockdat
 		}
 	}
 
-	//足の角度を、-90度～90度の範囲に設定
-	if( hp <= 0 ){
-		legrotation_x = 0.0f;
-	}
-	else{
-		float add_legrx;
-
-		//目標値を設定
-		if( fabs(move_rx) > (float)M_PI/2 ){
-			add_legrx = move_rx + (float)M_PI - legrotation_x;
-		}
-		else{
-			add_legrx = move_rx - legrotation_x;
-		}
-		for(; add_legrx > (float)M_PI; add_legrx -= (float)M_PI*2){}
-		for(; add_legrx < (float)M_PI*-1; add_legrx += (float)M_PI*2){}
-
-		//補正していく
-		if( add_legrx > (float)M_PI/18 ){ legrotation_x += (float)M_PI/18; }
-		else if( add_legrx < (float)M_PI/18*-1 ){ legrotation_x -= (float)M_PI/18; }
-		else{ legrotation_x += add_legrx; }
-	}
-
 	//照準の状態誤差の処理
 	GunsightErrorRange();
 
@@ -1533,6 +1522,26 @@ int human::RunFrame(class Collision *CollD, class BlockDataInterface *inblockdat
 
 	//進行方向と速度を決定
 	ControlProcess();
+
+	if( hp <= 0 ){
+		legrotation_x = rotation_x;
+	}
+	else{
+		float move_rx2;
+
+		//足の向きを求める
+		if( fabs(move_rx) > (float)M_PI/2 ){
+			move_rx2 = move_rx + (float)M_PI;
+		}
+		else{
+			move_rx2 = move_rx;
+		}
+		for(; move_rx2 > (float)M_PI; move_rx2 -= (float)M_PI*2){}
+		for(; move_rx2 < (float)M_PI*-1; move_rx2 += (float)M_PI*2){}
+
+		//徐々にその向きに
+		legrotation_x = legrotation_x*0.85f + (rotation_x + move_rx2*-1)*0.15f;		// 3/4 + 1/4
+	}
 
 	//マップとの当たり判定
 	MapCollisionDetection(CollD, inblockdata, &FallDistance);
@@ -1615,7 +1624,7 @@ void human::Render(class D3DGraphics *d3dg, class ResourceManager *Resource, boo
 		}
 
 		//足を描画
-		d3dg->SetWorldTransform(pos_x, pos_y, pos_z, rotation_x + (float)M_PI + legrotation_x*-1, rotation_y, legmodel_size);
+		d3dg->SetWorldTransform(pos_x, pos_y, pos_z, legrotation_x + (float)M_PI, rotation_y, legmodel_size);
 		d3dg->RenderModel(legmodelid, id_texture);
 	}
 
@@ -2506,9 +2515,9 @@ effect::effect(float x, float y, float z, float size, float rotation, int count,
 	pos_y = y;
 	pos_z = z;
 	model_size = size;
-	camera_rx = 0.0f;
-	camera_ry = 0.0f;
-	rotation_x = rotation;
+	rotation_x = 0.0f;
+	rotation_y = 0.0f;
+	rotation_texture = rotation;
 	cnt = count;
 	setcnt = count;
 	id_texture = texture;
@@ -2550,16 +2559,43 @@ void effect::SetParamData(float in_move_x, float in_move_y, float in_move_z, flo
 	alpha = 1.0f;
 
 	if( init == true ){
-		camera_rx = 0.0f;
-		camera_ry = 0.0f;
+		rotation_x = 0.0f;
+		rotation_y = 0.0f;
 	}
 }
 
+//! @brief 横軸と縦軸の向きを設定
+//! @param rx 設定する横軸
+//! @param ry 設定する縦軸
+void effect::SetRxRy(float rx, float ry)
+{
+	rotation_x = rx;
+	rotation_y = ry;
+}
+
+//! テクスチャ認識番号を取得
+//! @return テクスチャ認識番号
+int effect::GetTextureID()
+{
+	return id_texture;
+}
+
+//! エフェクトの移動量を取得
+//! @param mx X軸移動量を受け取るポインタ
+//! @param my Y軸移動量を受け取るポインタ
+//! @param mz Z軸移動量を受け取るポインタ
+void effect::GetMove(float *mx, float *my, float *mz)
+{
+	*mx = move_x;
+	*my = move_y;
+	*mz = move_z;
+}
+
 //! @brief 計算を実行（ビルボード化）
-//! @param in_camera_rx カメラの横軸角度
-//! @param in_camera_ry カメラの縦軸角度
+//! @param camera_rx カメラの横軸角度
+//! @param camera_ry カメラの縦軸角度
 //! @return 処理実行：1　描画最終フレーム：2　処理なし：0
-int effect::RunFrame(float in_camera_rx, float in_camera_ry)
+int effect::RunFrame(float camera_rx, float camera_ry)
 {
 	//初期化されていなければ処理しない
 	if( RenderFlag == false ){ return 0; }
@@ -2570,9 +2606,11 @@ int effect::RunFrame(float in_camera_rx, float in_camera_ry)
 		return 2;
 	}
 
-	//カメラ座標を適用
-	camera_rx = in_camera_rx;
-	camera_ry = in_camera_ry;
+	if( (type & EFFECT_NOBILLBOARD) == 0 ){
+		//カメラ座標を適用し、ビルボード化する
+		rotation_x = camera_rx*-1;
+		rotation_y = camera_ry;
+	}
 
 	//座標移動
 	pos_x += move_x;
@@ -2582,6 +2620,11 @@ int effect::RunFrame(float in_camera_rx, float in_camera_ry)
 	//特殊処理を実行
 	if( type & EFFECT_DISAPPEAR ){	//消す
 		alpha -= 1.0f/setcnt;
+	}
+	if( type & EFFECT_DISAPPEARHALF ){	//半分の時間で消す
+		if( setcnt/2 > cnt ){
+			alpha -= 1.0f/(setcnt/2);
+		}
 	}
 	if( type & EFFECT_MAGNIFY ){	//拡大
 		model_size += model_size/50;
@@ -2614,6 +2657,6 @@ void effect::Render(class D3DGraphics *d3dg)
 	if( RenderFlag == false ){ return; }
 
 	//描画
-	d3dg->SetWorldTransformEffect(pos_x, pos_y, pos_z, camera_rx*-1, camera_ry, rotation_texture, model_size);
+	d3dg->SetWorldTransformEffect(pos_x, pos_y, pos_z, rotation_x, rotation_y, rotation_texture, model_size);
 	d3dg->RenderBoard(id_texture, alpha);
 }

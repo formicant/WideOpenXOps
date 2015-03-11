@@ -493,6 +493,47 @@ int ObjectManager::AddEffect(float pos_x, float pos_y, float pos_z, float move_x
 	return -1;
 }
 
+//! @brief （ビルボードでない）エフェクト追加
+//! @param id ブロック番号
+//! @param face 面番号
+//! @param pos_x X座標
+//! @param pos_y Y座標
+//! @param pos_z Z座標
+//! @param size 表示倍率
+//! @param rotation 回転角度
+//! @param count 表示フレーム数
+//! @param texture テクスチャの認識番号
+//! @return 成功：データ番号（0以上）　失敗：-1
+int ObjectManager::AddMapEffect(int id, int face, float pos_x, float pos_y, float pos_z, float size, float rotation, int count, int texture)
+{
+	blockdata data;
+	float vx, vy, vz;
+	float rx, ry;
+
+	//ブロックの面の情報を取得
+	BlockData->Getdata(&data, id);
+	vx = data.material[face].vx;
+	vy = data.material[face].vy;
+	vz = data.material[face].vz;
+
+	//角度を求める
+	rx = atan2(vz, vx) + (float)M_PI;
+	ry = atan2(vy, sqrt(vx*vx + vz*vz)) + (float)M_PI;
+
+	//エフェクト作成
+	for(int i=0; i<MAX_EFFECT; i++){
+		if( EffectIndex[i].GetDrawFlag() == false ){
+			EffectIndex[i].SetPosData(pos_x, pos_y, pos_z, 0.0f);
+			EffectIndex[i].SetParamData(0.0f, 0.0f, 0.0f, size, rotation, count, texture, EFFECT_DISAPPEARHALF | EFFECT_NOBILLBOARD, true);
+			EffectIndex[i].SetRxRy(rx, ry);
+			EffectIndex[i].SetDrawFlag(true);
+			return i;
+		}
+	}
+
+	return -1;
+}
+
 //! @brief 出血させる
 //! @param x X座標
 //! @param y Y座標
@@ -502,7 +543,7 @@ void ObjectManager::SetHumanBlood(float x, float y, float z)
 	if( GameConfig.GetBloodFlag() == true ){
 		for(int i=0; i<2; i++){
 			float rx = (float)M_PI/18*GetRand(36);
-			AddEffect(x + cos(rx)*1.0f, y + (float)(GetRand(20)-10)/10, z + sin(rx)*1.0f, cos(rx)*0.5f, 0.5f, sin(rx)*0.5f, 10.0f, (float)M_PI/18*GetRand(18), (int)GAMEFPS * 1, Resource->GetEffectBloodTexture(), EFFECT_FALL);
+			AddEffect(x + cos(rx)*1.0f, y + (float)(GetRand(20)-10)/10, z + sin(rx)*1.0f, cos(rx)*0.5f, 0.5f, sin(rx)*0.5f, 10.0f, (float)M_PI/18*GetRand(18), (int)(GAMEFPS * 0.5f), Resource->GetEffectBloodTexture(), EFFECT_FALL);
 		}
 	}
 }
@@ -1049,6 +1090,53 @@ void ObjectManager::DeadEffect(human *in_human)
 		AddEffect(hx-1.0f, hy-1.0f, hz+1.0f, 0.0f, 0.05f, 0.0f, 10.0f, rnd, (int)GAMEFPS * 3, Resource->GetEffectSmokeTexture(), EFFECT_DISAPPEAR | EFFECT_MAGNIFY | EFFECT_ROTATION);
 		AddEffect(hx+1.0f, hy+1.0f, hz-1.0f, 0.0f, 0.05f, 0.0f, 10.0f, rnd*-1, (int)GAMEFPS * 3, Resource->GetEffectSmokeTexture(), EFFECT_DISAPPEAR | EFFECT_MAGNIFY | EFFECT_ROTATION);
 	}
+}
+
+//! マップに血が付着するか判定
+//! @param in_effect 対象のエフェクトオブジェクト
+//! @param id 付着するブロック番号を受け取るポインタ
+//! @param face 付着する面番号を受け取るポインタ
+//! @param pos_x X座標を受け取るポインタ
+//! @param pos_y Y座標を受け取るポインタ
+//! @param pos_z Z座標を受け取るポインタ
+//! @return 付着する：true　付着しない：false
+bool ObjectManager::CollideBlood(effect *in_effect, int *id, int *face, float *pos_x, float *pos_y, float *pos_z)
+{
+	//無効なエフェクトならば処理しない
+	if( in_effect->GetDrawFlag() == false ){ return false; }
+	if( in_effect->GetTextureID() != Resource->GetEffectBloodTexture() ){ return false; }
+
+	//血が出ない設定なら処理しない
+	if( GameConfig.GetBloodFlag() == false ){ return false; }
+
+	float x, y, z;
+	float move_x, move_y, move_z;
+	float vx, vy, vz, dist, dist2;
+
+	//エフェクトのパラメーター取得
+	in_effect->GetPosData(&x, &y, &z, NULL);
+	in_effect->GetMove(&move_x, &move_y, &move_z);
+
+	//ベクトルを求める
+	dist = sqrt(move_x*move_x + move_y*move_y + move_z*move_z);
+	vx = move_x / dist;
+	vy = move_y / dist;
+	vz = move_z / dist;
+
+	//レイの当たり判定
+	if( CollD->CheckALLBlockIntersectRay(x, y, z, vx, vy, vz, id, face, &dist2, dist) == false ){
+		return false;
+	}
+
+	//マップよりわずかに浮かせる
+	dist2 -= 1.0f;
+
+	//付着する座標を求める
+	*pos_x = x + vx*dist2;
+	*pos_y = y + vy*dist2;
+	*pos_z = z + vz*dist2;
+
+	return true;
 }
 
 //! @brief 武器を拾う
@@ -2079,7 +2167,15 @@ int ObjectManager::Process(int cmdF5id, float camera_rx, float camera_ry)
 
 	//エフェクトオブジェクトの処理
 	for(int i=0; i<MAX_EFFECT; i++){
-		EffectIndex[i].RunFrame(camera_rx, camera_ry);
+		int id, face;
+		float pos_x, pos_y, pos_z;
+		if( CollideBlood(&(EffectIndex[i]), &id, &face, &pos_x, &pos_y, &pos_z) == true ){
+			AddMapEffect(id, face, pos_x, pos_y, pos_z, 10.0f, (float)M_PI/18*GetRand(18), (int)GAMEFPS * 20, Resource->GetEffectBloodTexture());
+			EffectIndex[i].SetDrawFlag(false);
+		}
+		else{
+			EffectIndex[i].RunFrame(camera_rx, camera_ry);
+		}
 	}
 
 	//手榴弾の処理
