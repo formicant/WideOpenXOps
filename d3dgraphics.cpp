@@ -142,16 +142,16 @@ int D3DGraphics::InitD3D(HWND hWnd, char *TextureFontFilename, bool fullscreen)
 	//HUD_myweapon [奥行き, 縦, 横]
 
 	//HUD_A　現在持っている武器を表示する座標
-	prx = (float)M_PI/180*-39 * aspecth /2;
-	pry = (float)M_PI/180*-55 /2;
+	prx = DegreeToRadian(-39) * aspecth /2;
+	pry = DegreeToRadian(-55) /2;
 	r = 7.5f;
 	HUD_myweapon_x[0] = cos(pry)*r;
 	HUD_myweapon_y[0] = sin(pry)*r;
 	HUD_myweapon_z[0] = sin(prx)*r;
 
 	//HUD_A　予備の武器を表示する座標
-	prx = (float)M_PI/180*-52 * aspecth /2;
-	pry = (float)M_PI/180*-60 /2;
+	prx = DegreeToRadian(-52) * aspecth /2;
+	pry = DegreeToRadian(-60) /2;
 	r = 16.0f;
 	HUD_myweapon_x[1] = cos(pry)*r;
 	HUD_myweapon_y[1] = sin(pry)*r;
@@ -781,7 +781,7 @@ void D3DGraphics::SetCamera(float camera_x, float camera_y, float camera_z, floa
 	for(; camera_ry<D3DX_PI*-1; camera_ry += D3DX_PI*2){}
 
 	//カメラの向きを決定
-	if( abs(camera_ry) < D3DX_PI/2 ){
+	if( fabs(camera_ry) < D3DX_PI/2 ){
 		vUpVecF = 1.0f;
 	}
 	else{
@@ -1362,8 +1362,8 @@ void D3DGraphics::Draw2DCycle(int x, int y, int r, int color)
 
 	//頂点座標と色などを設定
 	for(int i=0; i<16+1; i++){
-		pLineVertices[i].x = (float)x + cos((float)M_PI*2/16 * i) * r;
-		pLineVertices[i].y = (float)y + sin((float)M_PI*2/16 * i) * r;
+		pLineVertices[i].x = (float)x + cos(DegreeToRadian((360.0f/16.0f)) * i) * r;
+		pLineVertices[i].y = (float)y + sin(DegreeToRadian((360.0f/16.0f)) * i) * r;
 
 		pLineVertices[i].z = 0.0f;
 		pLineVertices[i].rhw = 1.0f;

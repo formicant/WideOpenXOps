@@ -62,15 +62,15 @@
 
 #define WEAPONERRORRANGE_SCALE 0.25f	//!< 武器の反動角度の倍率（×0.25 ＝ ÷4）
 
-#define ARMRAD_NOWEAPON ((float)M_PI/2*-1 + (float)M_PI/9)		//!< 手ぶら時の腕の表示角度
-#define ARMRAD_RELOADWEAPON ((float)M_PI/18*2 * -1)				//!< リロード時の腕の表示角度
+#define ARMRAD_NOWEAPON DegreeToRadian((-90 + 20))			//!< 手ぶら時の腕の表示角度
+#define ARMRAD_RELOADWEAPON DegreeToRadian(-20)				//!< リロード時の腕の表示角度
 
 #define HUMAN_MAPCOLLISION_R 5.0f							//!< 人とマップの当たり判定　半径
 #define HUMAN_MAPCOLLISION_HEIGTH 10.2f						//!< 人とマップの当たり判定　高さ（注：腰程度）
-#define HUMAN_MAPCOLLISION_SLOPEANGLE ((float)M_PI/18*5)	//!< 人とマップの当たり判定　登れない斜面の角度
+#define HUMAN_MAPCOLLISION_SLOPEANGLE DegreeToRadian(50)	//!< 人とマップの当たり判定　登れない斜面の角度
 #define HUMAN_MAPCOLLISION_SLOPEFORCE 1.0f					//!< 人とマップの当たり判定　登れない斜面が人を押し出す力
 #define HUMAN_DEADLINE -100.0f						//!< 人が死亡するY座標（デッドライン）
-#define HUMAN_DEADADDRY ((float)M_PI/180*0.75f)		//!< 死体の倒れる加速度
+#define HUMAN_DEADADDRY DegreeToRadian(0.75f)		//!< 死体の倒れる加速度
 
 #define BULLET_SPEEDSCALE 3				//!< 弾速の倍率
 #define BULLET_DESTROYFRAME 40			//!< 弾の消滅フレーム数

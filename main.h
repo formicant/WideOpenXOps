@@ -82,6 +82,8 @@
 #define DelFlag(value, bit) value = value & (~bit)	//!< ビットによるフラグ 解除
 #define GetFlag(value, bit) (value & bit)			//!< ビットによるフラグ 取得
 
+#define DegreeToRadian(value) ((float)M_PI/180*value)	//!< 度からラジアンへの変換
+
 //低レイヤー
 #if H_LAYERLEVEL >= 1
  #include "window.h"

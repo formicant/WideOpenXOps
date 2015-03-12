@@ -236,41 +236,41 @@ void AIcontrol::MoveTarget()
 	CheckTargetAngle(posx, 0.0f, posz, rx*-1 + (float)M_PI/2, 0.0f, target_posx, 0.0f, target_posz, 0.0f, &atan, NULL, &r);
 
 	//旋回
-	if( atan > (float)M_PI/180*0.5f ){
+	if( atan > DegreeToRadian(0.5f) ){
 		SetFlag(moveturn_mode, AI_CTRL_TURNLEFT);
 	}
-	if( atan < (float)M_PI/180*0.5f * -1 ){
+	if( atan < DegreeToRadian(-0.5f) ){
 		SetFlag(moveturn_mode, AI_CTRL_TURNRIGHT);
 	}
 
 	//前進する
 	if( zombie == true ){
-		if( abs(atan) < (float)M_PI/18*2 ){
+		if( fabs(atan) < DegreeToRadian(20) ){
 			SetFlag(moveturn_mode, AI_CTRL_MOVEWALK);
 		}
 	}
 	else if( battlemode == AI_CAUTION ){
-		if( abs(atan) < (float)M_PI/18*5 ){
+		if( fabs(atan) < DegreeToRadian(50) ){
 			SetFlag(moveturn_mode, AI_CTRL_MOVEFORWARD);
 		}
 	}
 	else if( movemode == AI_WALK ){
-		if( abs(atan) < (float)M_PI/180*6 ){
+		if( fabs(atan) < DegreeToRadian(6) ){
 			SetFlag(moveturn_mode, AI_CTRL_MOVEWALK);
 		}
 	}
 	else if( (movemode == AI_RUN)||(movemode == AI_RUN2) ){
-		if( abs(atan) < (float)M_PI/18*5 ){
+		if( fabs(atan) < DegreeToRadian(50) ){
 			SetFlag(moveturn_mode, AI_CTRL_MOVEFORWARD);
 		}
 	}
 	else if( (movemode == AI_WAIT)||(movemode == AI_STOP) ){
-		if( abs(atan) < (float)M_PI/180*6 ){
+		if( fabs(atan) < DegreeToRadian(6) ){
 			SetFlag(moveturn_mode, AI_CTRL_MOVEWALK);
 		}
 	}
 	else{	//movemode == AI_TRACKING
-		if( abs(atan) < (float)M_PI/18*2 ){
+		if( fabs(atan) < DegreeToRadian(20) ){
 			if( r < (AI_ARRIVALDIST_WALKTRACKING * AI_ARRIVALDIST_WALKTRACKING) ){
 				SetFlag(moveturn_mode, AI_CTRL_MOVEWALK);
 			}
@@ -306,18 +306,18 @@ void AIcontrol::MoveTarget2()
 	CheckTargetAngle(posx, 0.0f, posz, rx*-1 + (float)M_PI/2, 0.0f, target_posx, 0.0f, target_posz, 0.0f, &atan, NULL, NULL);
 
 	//前後移動の処理
-	if( abs(atan) < (float)M_PI/180*56 ){
+	if( fabs(atan) < DegreeToRadian(56) ){
 		SetFlag(moveturn_mode, AI_CTRL_MOVEFORWARD);
 	}
-	if( abs(atan) > (float)M_PI/180*123.5f ){
+	if( fabs(atan) > DegreeToRadian(123.5f) ){
 		SetFlag(moveturn_mode, AI_CTRL_MOVEBACKWARD);
 	}
 
 	//左右移動の処理
-	if( ((float)M_PI/180*-146 < atan)&&(atan < (float)M_PI/180*-33) ){
+	if( (DegreeToRadian(-146) < atan)&&(atan < DegreeToRadian(-33)) ){
 		SetFlag(moveturn_mode, AI_CTRL_TURNRIGHT);
 	}
-	if( ((float)M_PI/180*33 < atan)&&(atan < (float)M_PI/180*146) ){
+	if( (DegreeToRadian(33) < atan)&&(atan < DegreeToRadian(146)) ){
 		SetFlag(moveturn_mode, AI_CTRL_TURNLEFT);
 	}
 
@@ -521,17 +521,17 @@ bool AIcontrol::StopSeen()
 	DelFlag(moveturn_mode, AI_CTRL_TURNLEFT);
 
 	//旋回
-	if( tr > (float)M_PI/180*2.5f ){
+	if( tr > DegreeToRadian(2.5f) ){
 		SetFlag(moveturn_mode, AI_CTRL_TURNRIGHT);
 		returnflag = false;
 	}
-	if( tr < (float)M_PI/180*2.5f * -1 ){
+	if( tr < DegreeToRadian(-2.5f) ){
 		SetFlag(moveturn_mode, AI_CTRL_TURNLEFT);
 		returnflag = false;
 	}
 
 	//特定方向に向けているか判定
-	if( abs(tr) < (float)M_PI/180 ){
+	if( fabs(tr) < DegreeToRadian(1) ){
 		returnflag = true;
 	}
 
@@ -720,8 +720,8 @@ void AIcontrol::Action()
 		}
 
 		//敵に向かって前進する
-		if( abs(atanx) <= (float)M_PI/180*25 ){
-			if( (abs(atanx) <= (float)M_PI/180*15) && (r < 24.0f*24.0f) && (actioncnt%50 > 20) ){
+		if( fabs(atanx) <= DegreeToRadian(25) ){
+			if( (fabs(atanx) <= DegreeToRadian(15)) && (r < 24.0f*24.0f) && (actioncnt%50 > 20) ){
 				//歩きを取り消し、走る
 				SetFlag(moveturn_mode, AI_CTRL_MOVEFORWARD);
 				DelFlag(moveturn_mode, AI_CTRL_MOVEWALK);
@@ -738,7 +738,7 @@ void AIcontrol::Action()
 		}
 		*/
 
-		if( (r < 9.0f*9.0f)&&( abs(y) < 10.0f) ){
+		if( (r < 9.0f*9.0f)&&( fabs(y) < 10.0f) ){
 			float x = posx - tx;
 			float z = posz - tz;
 
@@ -749,13 +749,13 @@ void AIcontrol::Action()
 			float erx, ery;
 			EnemyHuman->GetRxRy(&erx, &ery);
 			switch(GetRand(3)){
-				case 0: erx -= (float)M_PI/180*2; break;
-				case 1: erx += (float)M_PI/180*2; break;
+				case 0: erx -= DegreeToRadian(2); break;
+				case 1: erx += DegreeToRadian(2); break;
 				default: break;
 			}
 			switch(GetRand(3)){
-				case 0: ery -= (float)M_PI/180*2; break;
-				case 1: ery += (float)M_PI/180*2; break;
+				case 0: ery -= DegreeToRadian(2); break;
+				case 1: ery += DegreeToRadian(2); break;
 				default: break;
 			}
 			EnemyHuman->SetRxRy(erx, ery);
@@ -771,20 +771,20 @@ void AIcontrol::Action()
 		float ShotAngle;
 		if( longattack == false ){
 			//敵を捉えたと判定する、許容誤差を計算する
-			ShotAngle = (float)M_PI/180*8;
+			ShotAngle = DegreeToRadian(8);
 			if( weaponid != ID_WEAPON_NONE ){
 				WeaponParameter wparam;
 				Param->GetWeapon(weaponid, &wparam);
 				if( wparam.scopemode == 1 ){
-					ShotAngle = (float)M_PI/180*6;
+					ShotAngle = DegreeToRadian(6);
 				}
 				if( wparam.scopemode == 2 ){
-					ShotAngle = (float)M_PI/180*4;
+					ShotAngle = DegreeToRadian(4);
 				}
 			}
 
 			//AIレベルごとに調整
-			ShotAngle += (float)M_PI/180*0.5f * LevelParam->limitserror;
+			ShotAngle += DegreeToRadian(0.5f) * LevelParam->limitserror;
 
 			if( movemode == AI_RUN2 ){
 				ShotAngle *= 1.5f;
@@ -792,24 +792,24 @@ void AIcontrol::Action()
 		}
 		else{
 			//敵を捉えたと判定する、許容誤差を計算する
-			ShotAngle = (float)M_PI/180*4;
+			ShotAngle = DegreeToRadian(4);
 			if( weaponid != ID_WEAPON_NONE ){
 				WeaponParameter wparam;
 				Param->GetWeapon(weaponid, &wparam);
 				if( wparam.scopemode == 1 ){
-					ShotAngle = (float)M_PI/180*3;
+					ShotAngle = DegreeToRadian(3);
 				}
 				if( wparam.scopemode == 2 ){
-					ShotAngle = (float)M_PI/180*2;
+					ShotAngle = DegreeToRadian(2);
 				}
 			}
 
 			//AIレベルごとに調整
-			ShotAngle += (float)M_PI/180*0.2f * LevelParam->limitserror;
+			ShotAngle += DegreeToRadian(0.2f) * LevelParam->limitserror;
 		}
 
 		//敵を捉えていれば
-		float atanxy = abs(atanx) + abs(atany);
+		float atanxy = fabs(atanx) + fabs(atany);
 		if( atanxy < ShotAngle ){
 			int rand = LevelParam->attack;
 			if( longattack == true ){ rand += 1; }
@@ -1058,12 +1058,12 @@ void AIcontrol::ControlMoveTurn()
 	addry *= 0.8f;
 
 	//0.0fへ補正
-	if( abs(addrx) < (float)M_PI/180*0.2f ){ addrx = 0.0f; }
-	if( abs(addry) < (float)M_PI/180*0.2f ){ addry = 0.0f; }
+	if( fabs(addrx) < DegreeToRadian(0.2f) ){ addrx = 0.0f; }
+	if( fabs(addry) < DegreeToRadian(0.2f) ){ addry = 0.0f; }
 
 	//縦の回転範囲を収める
-	if( ry > (float)M_PI/180*70 ){ ry = (float)M_PI/180*70; }
-	if( ry < (float)M_PI/180*70 * -1 ){ ry = (float)M_PI/180*70 * -1; }
+	if( ry > DegreeToRadian(70) ){ ry = DegreeToRadian(70); }
+	if( ry < DegreeToRadian(-70) ){ ry = DegreeToRadian(-70); }
 }
 
 //! @brief 武器をリロード・捨てる
@@ -1267,7 +1267,7 @@ int AIcontrol::ThrowGrenade()
 	}
 
 	//投げる
-	if( (abs(atan_rx) < (float)M_PI/1800*15)&&(abs(atan_ry) < (float)M_PI/1800*15) ){
+	if( (fabs(atan_rx) < DegreeToRadian(1.5f))&&(fabs(atan_ry) < DegreeToRadian(1.5f)) ){
 		//角度を設定
 		ctrlhuman->SetRxRy(rx, ry);
 
@@ -1299,10 +1299,10 @@ void AIcontrol::ArmAngle()
 	}
 	else{									//平常時で武器所有中
 		//旋回
-		if( ry < (float)M_PI/180*32 * -1 ){
+		if( ry < DegreeToRadian(-32) ){
 			SetFlag(moveturn_mode, AI_CTRL_TURNUP);
 		}
-		if( ry > (float)M_PI/180*28 * -1 ){
+		if( ry > DegreeToRadian(-28) ){
 			SetFlag(moveturn_mode, AI_CTRL_TURNDOWN);
 		}
 	}
@@ -1340,10 +1340,10 @@ int AIcontrol::SearchEnemy()
 		if( weaponscope == 1 ){ maxDist = 25.0f; }
 		else{ maxDist = 0.0f; }
 		maxDist += 12.0f*((LevelParam->search)-2) + 350.0f;
-		A_rx = (float)M_PI/180*60;
-		A_ry = (float)M_PI/180*110;
-		B_rx = (float)M_PI/180*40;
-		B_ry = (float)M_PI/180*60;
+		A_rx = DegreeToRadian(60);
+		A_ry = DegreeToRadian(110);
+		B_rx = DegreeToRadian(40);
+		B_ry = DegreeToRadian(60);
 	}
 	else {	//battlemode == AI_CAUTION
 		searchloops = (LevelParam->search) * AI_TOTALHUMAN_SCALE + 4;
@@ -1352,10 +1352,10 @@ int AIcontrol::SearchEnemy()
 		if( weaponscope == 1 ){ maxDist = 40.0f; }
 		else{ maxDist = 0.0f; }
 		maxDist += 15.0f*((LevelParam->search)-2) + 420.0f;
-		A_rx = (float)M_PI/180*80;
-		A_ry = (float)M_PI/180*130;
-		B_rx = (float)M_PI/180*50;
-		B_ry = (float)M_PI/180*80;
+		A_rx = DegreeToRadian(80);
+		A_ry = DegreeToRadian(130);
+		B_rx = DegreeToRadian(50);
+		B_ry = DegreeToRadian(80);
 	}
 
 	//指定回数、敵を探索
@@ -1382,8 +1382,8 @@ int AIcontrol::SearchEnemy()
 int AIcontrol::SearchShortEnemy()
 {
 	float A_rx, A_ry;
-	A_rx = (float)M_PI/180*100;
-	A_ry = (float)M_PI/180*52;
+	A_rx = DegreeToRadian(100);
+	A_ry = DegreeToRadian(52);
 
 	for(int i=0; i<3; i++){
 		int targetid = GetRand(MAX_HUMAN);
@@ -1437,7 +1437,7 @@ bool AIcontrol::CheckLookEnemy(class human* thuman, float search_rx, float searc
 		//距離を判定し、角度も取得
 		if( CheckTargetAngle(posx, posy, posz, rx*-1 + (float)M_PI/2, 0.0f, tx, ty, tz, maxDist, &mrx, &mry, &Dist2) == true ){
 			//角度上、視界に入っていれば
-			if( (abs(mrx) < search_rx/2)&&(abs(mry) < search_ry/2) ){
+			if( (fabs(mrx) < search_rx/2)&&(fabs(mry) < search_ry/2) ){
 				float vx, vy, vz;
 
 				Dist = sqrt(Dist2);
@@ -1490,7 +1490,7 @@ bool AIcontrol::CheckCorpse(int id)
 
 			//距離と角度を計算
 			if( CheckTargetAngle(posx, posy, posz, rx*-1 + (float)M_PI/2, 0.0f, tposx, tposy, tposz, 22.0f, &atan, NULL, NULL) == true ){
-				if( abs(atan) < (float)M_PI/18*4 ){
+				if( fabs(atan) < DegreeToRadian(40) ){
 					return true;
 				}
 			}

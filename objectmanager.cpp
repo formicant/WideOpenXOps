@@ -542,8 +542,8 @@ void ObjectManager::SetHumanBlood(float x, float y, float z)
 {
 	if( GameConfig.GetBloodFlag() == true ){
 		for(int i=0; i<2; i++){
-			float rx = (float)M_PI/18*GetRand(36);
-			AddEffect(x + cos(rx)*1.0f, y + (float)(GetRand(20)-10)/10, z + sin(rx)*1.0f, cos(rx)*0.5f, 0.5f, sin(rx)*0.5f, 10.0f, (float)M_PI/18*GetRand(18), (int)(GAMEFPS * 0.5f), Resource->GetEffectBloodTexture(), EFFECT_FALL);
+			float rx = DegreeToRadian(10)*GetRand(36);
+			AddEffect(x + cos(rx)*1.0f, y + (float)(GetRand(20)-10)/10, z + sin(rx)*1.0f, cos(rx)*0.5f, 0.5f, sin(rx)*0.5f, 10.0f, DegreeToRadian(10)*GetRand(18), (int)(GAMEFPS * 0.5f), Resource->GetEffectBloodTexture(), EFFECT_FALL);
 		}
 	}
 }
@@ -836,7 +836,7 @@ bool ObjectManager::CollideBullet(bullet *in_bullet)
 void ObjectManager::HitBulletMap(float x, float y, float z)
 {
 	//エフェクト（煙）を表示
-	AddEffect(x, y, z, 0.0f, 0.05f, 0.0f, 5.0f, (float)M_PI/18*GetRand(18), (int)(GAMEFPS * 0.5f), Resource->GetEffectSmokeTexture(), EFFECT_DISAPPEAR | EFFECT_MAGNIFY);
+	AddEffect(x, y, z, 0.0f, 0.05f, 0.0f, 5.0f, DegreeToRadian(10)*GetRand(18), (int)(GAMEFPS * 0.5f), Resource->GetEffectSmokeTexture(), EFFECT_DISAPPEAR | EFFECT_MAGNIFY);
 
 	//効果音を再生
 	GameSound->HitMap(x, y, z);
@@ -898,7 +898,7 @@ void ObjectManager::HitBulletSmallObject(int HitSmallObject_id, float x, float y
 	SmallObjectIndex[HitSmallObject_id].HitBullet(attacks);
 
 	//エフェクト（煙）を表示
-	AddEffect(x, y, z, 0.0f, 0.05f, 0.0f, 5.0f, (float)M_PI/18*GetRand(18), (int)(GAMEFPS * 0.5f), Resource->GetEffectSmokeTexture(), EFFECT_DISAPPEAR | EFFECT_MAGNIFY);
+	AddEffect(x, y, z, 0.0f, 0.05f, 0.0f, 5.0f, DegreeToRadian(10)*GetRand(18), (int)(GAMEFPS * 0.5f), Resource->GetEffectSmokeTexture(), EFFECT_DISAPPEAR | EFFECT_MAGNIFY);
 
 	//効果音を再生
 	int id;
@@ -1046,7 +1046,7 @@ bool ObjectManager::GrenadeExplosion(grenade *in_grenade)
 	AddEffect(gx, gy, gz, 0.0f, 0.0f, 0.0f, 30.0f, 0.0f, 2, Resource->GetEffectMflashTexture(), EFFECT_NORMAL);
 
 	//エフェクト（煙）の表示
-	float rnd = (float)M_PI/18*GetRand(18);
+	float rnd = DegreeToRadian(10)*GetRand(18);
 	AddEffect(gx+1.0f, gy+1.0f, gz+1.0f, 0.0f, 0.05f, 0.0f, 10.0f, rnd, (int)GAMEFPS * 3, Resource->GetEffectSmokeTexture(), EFFECT_DISAPPEAR | EFFECT_MAGNIFY | EFFECT_ROTATION);
 	AddEffect(gx-1.0f, gy-1.0f, gz-1.0f, 0.0f, 0.05f, 0.0f, 10.0f, rnd*-1, (int)GAMEFPS * 3, Resource->GetEffectSmokeTexture(), EFFECT_DISAPPEAR | EFFECT_MAGNIFY | EFFECT_ROTATION);
 	AddEffect(gx-1.0f, gy-1.0f, gz+1.0f, 0.0f, 0.05f, 0.0f, 10.0f, rnd, (int)GAMEFPS * 3, Resource->GetEffectSmokeTexture(), EFFECT_DISAPPEAR | EFFECT_MAGNIFY | EFFECT_ROTATION);
@@ -1084,7 +1084,7 @@ void ObjectManager::DeadEffect(human *in_human)
 		hz += sin(hrx*-1 - (float)M_PI/2) * sin(hry) * HUMAN_HEIGTH/2;
 
 		//エフェクト（煙）の表示
-		float rnd = (float)M_PI/18*GetRand(18);
+		float rnd = DegreeToRadian(10)*GetRand(18);
 		AddEffect(hx+1.0f, hy+1.0f, hz+1.0f, 0.0f, 0.05f, 0.0f, 10.0f, rnd, (int)GAMEFPS * 3, Resource->GetEffectSmokeTexture(), EFFECT_DISAPPEAR | EFFECT_MAGNIFY | EFFECT_ROTATION);
 		AddEffect(hx-1.0f, hy-1.0f, hz-1.0f, 0.0f, 0.05f, 0.0f, 10.0f, rnd*-1, (int)GAMEFPS * 3, Resource->GetEffectSmokeTexture(), EFFECT_DISAPPEAR | EFFECT_MAGNIFY | EFFECT_ROTATION);
 		AddEffect(hx-1.0f, hy-1.0f, hz+1.0f, 0.0f, 0.05f, 0.0f, 10.0f, rnd, (int)GAMEFPS * 3, Resource->GetEffectSmokeTexture(), EFFECT_DISAPPEAR | EFFECT_MAGNIFY | EFFECT_ROTATION);
@@ -1563,9 +1563,9 @@ int ObjectManager::ShotWeapon(int human_id)
 
 		//誤差分 加算する
 		float a;
-		a = (float)M_PI/180 * GetRand(360);
-		rx += cos(a)*ErrorRange * ((float)M_PI/180*0.15f);
-		ry += sin(a)*ErrorRange * ((float)M_PI/180*0.15f);
+		a = DegreeToRadian(1) * GetRand(360);
+		rx += cos(a)*ErrorRange * DegreeToRadian(0.15f);
+		ry += sin(a)*ErrorRange * DegreeToRadian(0.15f);
 
 		//手榴弾でなければ
 		if( grenadeflag == false ){
@@ -1664,7 +1664,7 @@ void ObjectManager::ShotWeaponEffect(int humanid)
 	d3dg->ResetWorldTransform();
 
 	//マズルフラッシュ描画
-	AddEffect(x, y, z, 0.0f, 0.0f, 0.0f, flashsize, (float)M_PI/18*GetRand(18), 1, Resource->GetEffectMflashTexture(), EFFECT_NORMAL);
+	AddEffect(x, y, z, 0.0f, 0.0f, 0.0f, flashsize, DegreeToRadian(10)*GetRand(18), 1, Resource->GetEffectMflashTexture(), EFFECT_NORMAL);
 
 	//行列でエフェクト座標を計算
 	d3dg->SetWorldTransformHumanWeapon(pos_x, pos_y + 16.0f, pos_z, ParamData.flashx/10, ParamData.flashy/10, ParamData.flashz/10 - 0.1f, rotation_x, armrotation_y*-1, 1.0f);
@@ -1672,7 +1672,7 @@ void ObjectManager::ShotWeaponEffect(int humanid)
 	d3dg->ResetWorldTransform();
 
 	//エフェクト（煙）の表示
-	AddEffect(x, y, z, 0.0f, 0.05f, 0.0f, smokesize, (float)M_PI/18*GetRand(18), (int)(GAMEFPS/3), Resource->GetEffectSmokeTexture(), EFFECT_DISAPPEAR | EFFECT_MAGNIFY | EFFECT_ROTATION);
+	AddEffect(x, y, z, 0.0f, 0.05f, 0.0f, smokesize, DegreeToRadian(10)*GetRand(18), (int)(GAMEFPS/3), Resource->GetEffectSmokeTexture(), EFFECT_DISAPPEAR | EFFECT_MAGNIFY | EFFECT_ROTATION);
 
 	//行列でエフェクト座標を計算
 	d3dg->SetWorldTransformHumanWeapon(pos_x, pos_y + 16.0f, pos_z, ParamData.yakkyou_px/10, ParamData.yakkyou_py/10, ParamData.yakkyou_pz/10, rotation_x, armrotation_y*-1, 1.0f);
@@ -1680,7 +1680,7 @@ void ObjectManager::ShotWeaponEffect(int humanid)
 	d3dg->ResetWorldTransform();
 
 	//薬莢描画
-	AddEffect(x, y, z, mx, my, mz, yakkyousize, (float)M_PI/18*GetRand(18), (int)(GAMEFPS/2), Resource->GetEffectYakkyouTexture(), EFFECT_ROTATION | EFFECT_FALL);
+	AddEffect(x, y, z, mx, my, mz, yakkyousize, DegreeToRadian(10)*GetRand(18), (int)(GAMEFPS/2), Resource->GetEffectYakkyouTexture(), EFFECT_ROTATION | EFFECT_FALL);
 }
 
 //! @brief 武器をリロード
@@ -2035,7 +2035,7 @@ bool ObjectManager::GetObjectInfoTag(float camera_x, float camera_y, float camer
 				int team;
 
 				//角度上、視界に入っていれば
-				if( abs(rx) < (float)M_PI/18 ){
+				if( fabs(rx) < DegreeToRadian(10) ){
 					HumanIndex[i].GetParamData(NULL, NULL, NULL, &team);
 					if( team == Player_teamID ){
 						*color = d3dg->GetColorCode(0.0f,0.0f,1.0f,1.0f);
@@ -2062,7 +2062,7 @@ bool ObjectManager::GetObjectInfoTag(float camera_x, float camera_y, float camer
 			//視点を基準に対象までの角度を算出
 			if( CheckTargetAngle(camera_x, camera_y, camera_z, camera_rx, camera_ry, px, py, pz, dist, &rx, &ry, &r) == true ){
 				//角度上、視界に入っていれば
-				if( (abs(rx) < (float)M_PI/18)&&(abs(ry) < (float)M_PI/18) ){
+				if( (fabs(rx) < DegreeToRadian(10))&&(fabs(ry) < DegreeToRadian(10)) ){
 					*color = d3dg->GetColorCode(0.0f,1.0f,0.0f,1.0f);
 					sprintf(infostr, "Weapon[%d]  %d:%d", i, lnbs, (nbs - lnbs));
 					dist = sqrt(r);
@@ -2079,7 +2079,7 @@ bool ObjectManager::GetObjectInfoTag(float camera_x, float camera_y, float camer
 			//視点を基準に対象までの角度を算出
 			if( CheckTargetAngle(camera_x, camera_y, camera_z, camera_rx, camera_ry, px, py, pz, dist, &rx, &ry, &r) == true ){
 				//角度上、視界に入っていれば
-				if( (abs(rx) < (float)M_PI/18)&&(abs(ry) < (float)M_PI/18) ){
+				if( (fabs(rx) < DegreeToRadian(10))&&(fabs(ry) < DegreeToRadian(10)) ){
 					*color = d3dg->GetColorCode(1.0f,1.0f,0.0f,1.0f);
 					sprintf(infostr, "SmallObject[%d]  HP %d", i, SmallObjectIndex[i].GetHP());
 					dist = sqrt(r);
@@ -2170,7 +2170,7 @@ int ObjectManager::Process(int cmdF5id, float camera_rx, float camera_ry)
 		int id, face;
 		float pos_x, pos_y, pos_z;
 		if( CollideBlood(&(EffectIndex[i]), &id, &face, &pos_x, &pos_y, &pos_z) == true ){
-			AddMapEffect(id, face, pos_x, pos_y, pos_z, 10.0f, (float)M_PI/18*GetRand(18), (int)GAMEFPS * 20, Resource->GetEffectBloodTexture());
+			AddMapEffect(id, face, pos_x, pos_y, pos_z, 10.0f, DegreeToRadian(10)*GetRand(18), (int)GAMEFPS * 20, Resource->GetEffectBloodTexture());
 			EffectIndex[i].SetEnableFlag(false);
 		}
 		else{

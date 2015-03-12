@@ -45,9 +45,9 @@
 #define HUDA_WEAPON_SIZEH 3		//!< 武器情報を表示する領域・縦サイズ（32ピクセルの配置個数）
 
 #define VIEW_HEIGHT 19.0f							//!< 視点の高さ
-#define VIEWANGLE_NORMAL ((float)M_PI/180*65)		//!< 視野角　標準
-#define VIEWANGLE_SCOPE_1 ((float)M_PI/180*30)		//!< 視野角　スコープ1
-#define VIEWANGLE_SCOPE_2 ((float)M_PI/180*15)		//!< 視野角　スコープ2
+#define VIEWANGLE_NORMAL DegreeToRadian(65)			//!< 視野角　標準
+#define VIEWANGLE_SCOPE_1 DegreeToRadian(30)		//!< 視野角　スコープ1
+#define VIEWANGLE_SCOPE_2 DegreeToRadian(15)		//!< 視野角　スコープ2
 
 #define TOTAL_EVENTLINE 3				//!< イベントのライン数
 #define TOTAL_EVENTENTRYPOINT_0 -100	//!< ライン 0 の開始認識番号

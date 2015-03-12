@@ -34,9 +34,9 @@
 
 #define AI_TOTALHUMAN_SCALE (MAX_HUMAN/24)		//!< 24l‚ ‚½‚è‚ÌÅ‘ål”‚Ì”{—¦
 
-#define AI_ADDTURNRAD (float)M_PI/180*0.8f		//!< AI‚Ìù‰ñi‰ñ“]”\—Íj
-#define AI_SEARCH_RX (float)M_PI/18*11	//!< “G‚ð”­Œ©‚·‚é‰¡Ž²Šp“x
-#define AI_SEARCH_RY (float)M_PI/18*6	//!< “G‚ð”­Œ©‚·‚écŽ²Šp“x
+#define AI_ADDTURNRAD DegreeToRadian(0.8f)	//!< AI‚Ìù‰ñi‰ñ“]j”\—Í
+#define AI_SEARCH_RX DegreeToRadian(110)	//!< “G‚ð”­Œ©‚·‚é‰¡Ž²Šp“x
+#define AI_SEARCH_RY DegreeToRadian(60)		//!< “G‚ð”­Œ©‚·‚écŽ²Šp“x
 
 #define AI_ARRIVALDIST_PATH 5.0f		//!< ƒpƒX‚É“ž’B‚µ‚½‚Æ”»’è‚·‚é‹——£
 #define AI_ARRIVALDIST_TRACKING 18.0f	//!< ’Ç”ö‘ÎÛ‚É“ž’B‚µ‚½‚Æ”»’è‚·‚é‹——£

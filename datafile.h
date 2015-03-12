@@ -40,8 +40,8 @@
 #define MAX_POINTMESSAGES 16	//!< .msgファイルの最大メッセージ数
 #define MAX_POINTMESSAGEBYTE (71+2)	//!< .msgファイル 1行あたりの最大バイト数
 
-#define LIGHT_RX ((float)M_PI/18*19)	//!< ライトの横軸角度（ブロックの陰影計算用）
-#define LIGHT_RY ((float)M_PI/18*12)	//!< ライトの縦軸角度（ブロックの陰影計算用）
+#define LIGHT_RX DegreeToRadian(190)	//!< ライトの横軸角度（ブロックの陰影計算用）
+#define LIGHT_RY DegreeToRadian(120)	//!< ライトの縦軸角度（ブロックの陰影計算用）
 
 #ifndef H_LAYERLEVEL
  #define H_LAYERLEVEL 1		//!< Select include file.

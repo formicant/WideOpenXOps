@@ -230,12 +230,12 @@ void opening::Process()
 		camera_x = -5.0f;
 		camera_y = 58.0f;
 		camera_z = 29.0f;
-		camera_rx = (float)M_PI/180*206;
-		camera_ry = (float)M_PI/180*12;
+		camera_rx = DegreeToRadian(206);
+		camera_ry = DegreeToRadian(12);
 	}
 	else if( framecnt < 5*((int)GAMEFPS) ){
-		camera_rx += (float)M_PI/180*1.1f;
-		camera_ry -= (float)M_PI/180*0.7f;
+		camera_rx += DegreeToRadian(1.1f);
+		camera_ry -= DegreeToRadian(0.7f);
 	}
 	else if( framecnt < 17*((int)GAMEFPS) ){
 		camera_z += 0.08f;
@@ -602,8 +602,8 @@ void mainmenu::Process()
 	camera_x -= 4.0f;
 	camera_y += 22.0f;
 	camera_z -= 12.0f;
-	camera_rx = (float)M_PI/180 * (45);
-	camera_ry = (float)M_PI/180 * (-25);
+	camera_rx = DegreeToRadian(45);
+	camera_ry = DegreeToRadian(-25);
 
 	framecnt += 1;
 }
@@ -1168,7 +1168,7 @@ void maingame::Input()
 	if( myHuman->GetScopeMode() == 0 ){ mang = 0.01f; }
 	if( myHuman->GetScopeMode() == 1 ){ mang = 0.0032f; }
 	if( myHuman->GetScopeMode() == 2 ){ mang = 0.0060f; }
-	MouseSensitivity = (float)M_PI/180 * mang * GameConfig.GetMouseSensitivity();
+	MouseSensitivity = DegreeToRadian(1) * mang * GameConfig.GetMouseSensitivity();
 
 	//マウス反転（オプション設定）が有効ならば、反転する。
 	if( GameConfig.GetInvertMouseFlag() == true ){
@@ -1182,13 +1182,13 @@ void maingame::Input()
 			mouse_ry -= y * MouseSensitivity;
 
 			//キー操作による向きを計算
-			if( inputCtrl->CheckKeyNow(OriginalkeycodeToDinputdef(0x00)) ){ mouse_ry += (float)M_PI/180 * 3; }		// [↑]
-			if( inputCtrl->CheckKeyNow(OriginalkeycodeToDinputdef(0x01)) ){ mouse_ry -= (float)M_PI/180 * 3; }		// [↓]
-			if( inputCtrl->CheckKeyNow(OriginalkeycodeToDinputdef(0x02)) ){ mouse_rx -= (float)M_PI/180 * 3; }		// [←]
-			if( inputCtrl->CheckKeyNow(OriginalkeycodeToDinputdef(0x03)) ){ mouse_rx += (float)M_PI/180 * 3; }		// [→]
+			if( inputCtrl->CheckKeyNow(OriginalkeycodeToDinputdef(0x00)) ){ mouse_ry += DegreeToRadian(3); }		// [↑]
+			if( inputCtrl->CheckKeyNow(OriginalkeycodeToDinputdef(0x01)) ){ mouse_ry -= DegreeToRadian(3); }		// [↓]
+			if( inputCtrl->CheckKeyNow(OriginalkeycodeToDinputdef(0x02)) ){ mouse_rx -= DegreeToRadian(3); }		// [←]
+			if( inputCtrl->CheckKeyNow(OriginalkeycodeToDinputdef(0x03)) ){ mouse_rx += DegreeToRadian(3); }		// [→]
 
-			if( mouse_ry > (float)M_PI/18*7 ) mouse_ry = (float)M_PI/18*7;
-			if( mouse_ry < (float)M_PI/18*7 *-1 ) mouse_ry = (float)M_PI/18*7 *-1;
+			if( mouse_ry > DegreeToRadian(70) ) mouse_ry = DegreeToRadian(70);
+			if( mouse_ry < DegreeToRadian(-70) ) mouse_ry = DegreeToRadian(-70);
 		}
 	}
 	else{								//デバックモードならば
@@ -1205,8 +1205,8 @@ void maingame::Input()
 		//camera_ry -= y*0.0025f;
 		camera_rx -= x * MouseSensitivity;
 		camera_ry -= y * MouseSensitivity;
-		if( camera_ry > (float)M_PI/18*7 ) camera_ry = (float)M_PI/18*7;
-		if( camera_ry < (float)M_PI/18*7 *-1 ) camera_ry = (float)M_PI/18*7 *-1;
+		if( camera_ry > DegreeToRadian(7) ) camera_ry = DegreeToRadian(7);
+		if( camera_ry < DegreeToRadian(-7) ) camera_ry = DegreeToRadian(-7);
 	}
 
 	//ゲーム終了操作かチェック
@@ -1219,7 +1219,7 @@ void maingame::Input()
 		if( Camera_F1mode == false ){
 			Camera_F1mode = true;
 			view_rx = 0.0f;
-			view_ry = (float)M_PI/8 * -1;
+			view_ry = DegreeToRadian(-22.5f);
 		}
 		else{
 			Camera_F1mode = false;
@@ -1405,16 +1405,16 @@ void maingame::Input()
 			//カメラ操作
 			if( Camera_F1mode == true ){
 				if( inputCtrl->CheckKeyNow( OriginalkeycodeToDinputdef(0x0C) ) ){	//NUM8
-					view_ry -= (float)M_PI/180 * 2;
+					view_ry -= DegreeToRadian(2);
 				}
 				if( inputCtrl->CheckKeyNow( OriginalkeycodeToDinputdef(0x09) ) ){	//NUM5
-					view_ry += (float)M_PI/180 * 2;
+					view_ry += DegreeToRadian(2);
 				}
 				if( inputCtrl->CheckKeyNow( OriginalkeycodeToDinputdef(0x08) ) ){	//NUM4
-					view_rx -= (float)M_PI/180 * 2;
+					view_rx -= DegreeToRadian(2);
 				}
 				if( inputCtrl->CheckKeyNow( OriginalkeycodeToDinputdef(0x0A) ) ){	//NUM6
-					view_rx += (float)M_PI/180 * 2;
+					view_rx += DegreeToRadian(2);
 				}
 			}
 
@@ -1668,8 +1668,8 @@ void maingame::Process()
 		//
 	}
 	else if( myHuman->GetHP() <= 0 ){
-		float rx = (float)M_PI/180*end_framecnt;
-		float ry = (float)M_PI/180*85*-1;
+		float rx = DegreeToRadian(end_framecnt);
+		float ry = DegreeToRadian(-85);
 		float r = 25.0f;
 
 		camera_x = x + cos(rx)*cos(ry)*r;
@@ -2138,7 +2138,7 @@ void maingame::Render2D()
 		//（3D描画）所持している武器モデルの描画・メイン武器
 		GameParamInfo.GetWeapon(weapon_paramid[selectweapon], &weapon_paramdata);
 		Resource.GetWeaponModelTexture(weapon_paramid[selectweapon], &weaponmodel, &weapontexture);
-		d3dg->SetWorldTransformPlayerWeapon(true, camera_x, camera_y, camera_z, camera_rx, camera_ry, (float)M_PI/180*framecnt*2, weapon_paramdata.size);
+		d3dg->SetWorldTransformPlayerWeapon(true, camera_x, camera_y, camera_z, camera_rx, camera_ry, DegreeToRadian(framecnt*2), weapon_paramdata.size);
 		d3dg->RenderModel(weaponmodel, weapontexture);
 
 		//（3D描画）所持している武器モデルの描画・サブ武器
@@ -2223,7 +2223,7 @@ bool maingame::GetRadarPos(float in_x, float in_y, float in_z, int RadarPosX, in
 	z = in_z - camera_z;
 
 	//近ければ処理する
-	if( (check == false) || ((abs(x) < RadarWorldR*2)&&(abs(z) < RadarWorldR*2)&&(abs(y) < 80.0f)) ){
+	if( (check == false) || ((fabs(x) < RadarWorldR*2)&&(fabs(z) < RadarWorldR*2)&&(fabs(y) < 80.0f)) ){
 		//角度を距離を計算
 		rx = atan2(z, x);
 		r = sqrt(x*x + z*z);
@@ -2234,7 +2234,7 @@ bool maingame::GetRadarPos(float in_x, float in_y, float in_z, int RadarPosX, in
 		z2 = sin(rx2) * r;
 
 		//収まるか判定
-		if( (check == false) || ((abs(x2) < RadarWorldR)&&(abs(z2) < RadarWorldR)) ){
+		if( (check == false) || ((fabs(x2) < RadarWorldR)&&(fabs(z2) < RadarWorldR)) ){
 			//描画座標を計算
 			r2 = r / RadarWorldR * (RadarSize/2);
 			*out_x = (int)(RadarPosX+RadarSize/2 + cos(rx2) * r2);
@@ -2283,7 +2283,7 @@ void maingame::RenderRadar()
 			for(int j=0; j<6; j++){
 				//登れない斜面か判定　※地面や階段などの傾斜を除外する
 				float angle = acos(bdata.material[j].vy);
-				if( (HUMAN_MAPCOLLISION_SLOPEANGLE < angle)&&(angle < (float)M_PI/18*12) ){
+				if( (HUMAN_MAPCOLLISION_SLOPEANGLE < angle)&&(angle < DegreeToRadian(120)) ){
 
 					//ブロック頂点データの関連付けを取得
 					blockdataface(j, &(vid[0]), NULL);
@@ -2328,7 +2328,7 @@ void maingame::RenderRadar()
 
 					if( GetRadarPos(data.x, data.y, data.z, RadarPosX, RadarPosY, RadarSize, RadarWorldR, &x_2d, &y_2d, &y, true) == true ){
 						//高さによる透明度
-						if( (abs(y) < 40.0f) ){
+						if( (fabs(y) < 40.0f) ){
 							alpha = 1.0f;
 						}
 						else{
@@ -2372,7 +2372,7 @@ void maingame::RenderRadar()
 
 		if( GetRadarPos(tx, ty, tz, RadarPosX, RadarPosY, RadarSize, RadarWorldR, &x_2d, &y_2d, &y, true) == true ){
 			//高さによる透明度
-			if( (abs(y) < 40.0f) ){
+			if( (fabs(y) < 40.0f) ){
 				alpha = 1.0f;
 			}
 			else{
@@ -2618,8 +2618,8 @@ void maingame::ProcessConsole()
 			camera_x = 100.0f;
 			camera_y = 100.0f;
 			camera_z = -100.0f;
-			camera_rx = (float)M_PI/180*135;
-			camera_ry = (float)M_PI/180*(-40);
+			camera_rx = DegreeToRadian(135);
+			camera_ry = DegreeToRadian(-40);
 		}
 	}
 

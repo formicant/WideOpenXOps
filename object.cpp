@@ -223,7 +223,7 @@ void human::SetParamData(int id_param, int dataid, signed char p4, int team, boo
 		move_z = 0.0f;
 		move_y_flag = false;
 		rotation_y = 0.0f;
-		armrotation_y = (float)M_PI/18 * -3;
+		armrotation_y = DegreeToRadian(-30);
 		reaction_y = 0.0f;
 		legrotation_x = rotation_x;
 
@@ -438,7 +438,7 @@ void human::ChangeWeapon(int id)
 	SetDisableScope();
 
 	//腕の角度（反動）を設定
-	reaction_y = (float)M_PI/18*2 * -1;
+	reaction_y = DegreeToRadian(-20);
 
 	//切り替え完了のカウント
 	selectweaponcnt = 10;
@@ -539,18 +539,18 @@ bool human::ShotWeapon(int *weapon_paramid, int *GunsightErrorRange)
 
 	//スコープを使用している状態の反動を加算
 	if( (ParamData.scopemode == 1)&&(scopemode != 0) ){
-		armrotation_y += (float)M_PI/180 * (WEAPONERRORRANGE_SCALE * ParamData.reaction);
+		armrotation_y += DegreeToRadian(1) * (WEAPONERRORRANGE_SCALE * ParamData.reaction);
 	}
 	if( ParamData.scopemode == 2 ){
-		armrotation_y += (float)M_PI/180 * (WEAPONERRORRANGE_SCALE * ParamData.reaction);
+		armrotation_y += DegreeToRadian(1) * (WEAPONERRORRANGE_SCALE * ParamData.reaction);
 	}
 
 	//腕に反動を伝える
 	if( param_id == ID_WEAPON_GRENADE ){
-		reaction_y = (float)M_PI/18*2;
+		reaction_y = DegreeToRadian(20);
 	}
 	else{
-		reaction_y = (float)M_PI/360 * ParamData.reaction;
+		reaction_y = DegreeToRadian(0.5f) * ParamData.reaction;
 	}
 
 	//武器が無くなっていれば、装備から外した扱いに。　（手榴弾用）
@@ -945,19 +945,19 @@ int human::CheckAndProcessDead(class Collision *CollD)
 			switch( GetRand(4) ){
 				case 0:
 					add_ry = HUMAN_DEADADDRY;
-					armrotation_y = (float)M_PI/2;
+					armrotation_y = DegreeToRadian(90);
 					break;
 				case 1:
 					add_ry = HUMAN_DEADADDRY * -1;
-					armrotation_y = (float)M_PI/2;
+					armrotation_y = DegreeToRadian(90);
 					break;
 				case 2:
 					add_ry = HUMAN_DEADADDRY;
-					armrotation_y = (float)M_PI/2 * -1;
+					armrotation_y = DegreeToRadian(-90);
 					break;
 				case 3:
 					add_ry = HUMAN_DEADADDRY * -1;
-					armrotation_y = (float)M_PI/2 * -1;
+					armrotation_y = DegreeToRadian(-90);
 					break;
 			}
 
@@ -967,7 +967,7 @@ int human::CheckAndProcessDead(class Collision *CollD)
 			//所持している武器を全て捨てる
 			for(int i=0; i<TOTAL_HAVEWEAPON; i++){
 				if( weapon[i] != NULL ){
-					weapon[i]->Dropoff(pos_x, pos_y, pos_z, (float)M_PI/18*GetRand(36), 1.5f);
+					weapon[i]->Dropoff(pos_x, pos_y, pos_z, DegreeToRadian(10)*GetRand(36), 1.5f);
 					weapon[i] = NULL;
 				}
 			}
@@ -994,24 +994,24 @@ int human::CheckAndProcessDead(class Collision *CollD)
 
 	if( deadstate == 1 ){
 		//135度以上倒れていれば
-		if( abs(rotation_y) >= (float)M_PI/4*3 ){
+		if( fabs(rotation_y) >= DegreeToRadian(135) ){
 			deadstate = 2;
 			return 2;
 		}
 
 		if( pos_y <= (HUMAN_DEADLINE + 10.0f) ){
 			//90度以上倒れていれば
-			if( abs(rotation_y) >= (float)M_PI/2 ){
+			if( fabs(rotation_y) >= DegreeToRadian(90) ){
 				deadstate = 4;
 				return 2;
 			}
 		}
 
 		//前後に倒す
-		if( rotation_y > 0.0f ){		//rotation_y < (float)M_PI/4*3
+		if( rotation_y > 0.0f ){		//rotation_y < DegreeToRadian(135)
 			add_ry += HUMAN_DEADADDRY;
 		}
-		else if( rotation_y < 0.0f ){	//rotation_y > (float)M_PI/4*3 * -1
+		else if( rotation_y < 0.0f ){	//rotation_y > DegreeToRadian(-135)
 			add_ry -= HUMAN_DEADADDRY;
 		}
 
@@ -1060,16 +1060,16 @@ int human::CheckAndProcessDead(class Collision *CollD)
 		//deadstate = 4;
 
 		//90度以上倒れていれば
-		if( abs(rotation_y) >= (float)M_PI/2 ){
+		if( fabs(rotation_y) >= DegreeToRadian(90) ){
 			deadstate = 4;
 			return 2;
 		}
 
 		//前後に倒す
-		if( rotation_y > 0.0f ){		//rotation_y < (float)M_PI/2
+		if( rotation_y > 0.0f ){		//rotation_y < DegreeToRadian(90)
 			add_ry += HUMAN_DEADADDRY;
 		}
-		else if( rotation_y < 0.0f ){	//rotation_y > (float)M_PI/2 * -1
+		else if( rotation_y < 0.0f ){	//rotation_y > DegreeToRadian(-90)
 			add_ry -= HUMAN_DEADADDRY;
 		}
 
@@ -1114,14 +1114,14 @@ int human::CheckAndProcessDead(class Collision *CollD)
 
 	return 0;
 #else
-	if( abs(rotation_y) >= (float)M_PI/2 ){
+	if( fabs(rotation_y) >= DegreeToRadian(90) ){
 		return 4;
 	}
 	else if( rotation_y > 0.0f ){		//倒れ始めていれば、そのまま倒れる。
 		add_ry += HUMAN_DEADADDRY;
 		rotation_y += add_ry;
-		if( rotation_y >= (float)M_PI/2 ){
-			rotation_y = (float)M_PI/2;
+		if( rotation_y >= DegreeToRadian(90) ){
+			rotation_y = DegreeToRadian(90);
 			return 3;
 		}
 		return 2;
@@ -1129,8 +1129,8 @@ int human::CheckAndProcessDead(class Collision *CollD)
 	else if( rotation_y < 0.0f ){	//倒れ始めていれば、そのまま倒れる。
 		add_ry -= HUMAN_DEADADDRY;
 		rotation_y += add_ry;
-		if( rotation_y <= (float)M_PI/2 * -1 ){
-			rotation_y = (float)M_PI/2 * -1;
+		if( rotation_y <= DegreeToRadian(-90) ){
+			rotation_y = DegreeToRadian(-90);
 			return 3;
 		}
 		return 2;
@@ -1140,19 +1140,19 @@ int human::CheckAndProcessDead(class Collision *CollD)
 		switch( GetRand(4) ){
 			case 0:
 				add_ry = HUMAN_DEADADDRY;
-				armrotation_y = (float)M_PI/2;
+				armrotation_y = DegreeToRadian(90);
 				break;
 			case 1:
 				add_ry = HUMAN_DEADADDRY * -1;
-				armrotation_y = (float)M_PI/2;
+				armrotation_y = DegreeToRadian(90);
 				break;
 			case 2:
 				add_ry = HUMAN_DEADADDRY;
-				armrotation_y = (float)M_PI/2 * -1;
+				armrotation_y = DegreeToRadian(-90);
 				break;
 			case 3:
 				add_ry = HUMAN_DEADADDRY * -1;
-				armrotation_y = (float)M_PI/2 * -1;
+				armrotation_y = DegreeToRadian(-90);
 				break;
 		}
 
@@ -1164,7 +1164,7 @@ int human::CheckAndProcessDead(class Collision *CollD)
 		//所持している武器を全て捨てる
 		for(int i=0; i<TOTAL_HAVEWEAPON; i++){
 			if( weapon[i] != NULL ){
-				weapon[i]->Dropoff(pos_x, pos_y, pos_z, (float)M_PI/18*GetRand(36), 1.5f);
+				weapon[i]->Dropoff(pos_x, pos_y, pos_z, DegreeToRadian(10)*GetRand(36), 1.5f);
 				weapon[i] = NULL;
 			}
 		}
@@ -1185,55 +1185,55 @@ void human::ControlProcess()
 {
 	//進行方向と速度を決定
 	if( GetFlag(MoveFlag, MOVEFLAG_WALK) ){
-		move_rx = 0.0f;
+		move_rx = DegreeToRadian(0);
 		AddPosOrder(rotation_x*-1 + move_rx + (float)M_PI/2, 0.0f, HUMAN_PROGRESSWALK_ACCELERATION);
 		walkcnt += 1;
 		runcnt = 0;
 	}
 	else if( GetFlag(MoveFlag, (MOVEFLAG_FORWARD | MOVEFLAG_BACK | MOVEFLAG_LEFT | MOVEFLAG_RIGHT)) == MOVEFLAG_FORWARD ){
-		move_rx = 0.0f;
+		move_rx = DegreeToRadian(0);
 		AddPosOrder(rotation_x*-1 + move_rx + (float)M_PI/2, 0.0f, HUMAN_PROGRESSRUN_ACCELERATION);
 		walkcnt = 0;
 		runcnt += 1;
 	}
 	else if( GetFlag(MoveFlag, (MOVEFLAG_FORWARD | MOVEFLAG_BACK | MOVEFLAG_LEFT | MOVEFLAG_RIGHT)) == MOVEFLAG_BACK ){
-		move_rx = (float)M_PI;
+		move_rx = DegreeToRadian(180);
 		AddPosOrder(rotation_x*-1 + move_rx + (float)M_PI/2, 0.0f, HUMAN_REGRESSRUN_ACCELERATION);
 		walkcnt = 0;
 		runcnt += 1;
 	}
 	else if( GetFlag(MoveFlag, (MOVEFLAG_FORWARD | MOVEFLAG_BACK | MOVEFLAG_LEFT | MOVEFLAG_RIGHT)) == MOVEFLAG_LEFT ){
-		move_rx = (float)M_PI/2;
+		move_rx = DegreeToRadian(90);
 		AddPosOrder(rotation_x*-1 + move_rx + (float)M_PI/2, 0.0f, HUMAN_SIDEWAYSRUN_ACCELERATION);
 		walkcnt = 0;
 		runcnt += 1;
 	}
 	else if( GetFlag(MoveFlag, (MOVEFLAG_FORWARD | MOVEFLAG_BACK | MOVEFLAG_LEFT | MOVEFLAG_RIGHT)) == MOVEFLAG_RIGHT ){
-		move_rx = (float)M_PI/2 * -1;
+		move_rx = DegreeToRadian(-90);
 		AddPosOrder(rotation_x*-1 + move_rx + (float)M_PI/2, 0.0f, HUMAN_SIDEWAYSRUN_ACCELERATION);
 		walkcnt = 0;
 		runcnt += 1;
 	}
 	else if( GetFlag(MoveFlag, (MOVEFLAG_FORWARD | MOVEFLAG_BACK | MOVEFLAG_LEFT | MOVEFLAG_RIGHT)) == (MOVEFLAG_FORWARD | MOVEFLAG_LEFT) ){
-		move_rx = (float)M_PI/4;
+		move_rx = DegreeToRadian(45);
 		AddPosOrder(rotation_x*-1 + move_rx + (float)M_PI/2, 0.0f, HUMAN_PROGRESSRUN_SIDEWAYSRUN_ACCELERATION);
 		walkcnt = 0;
 		runcnt += 1;
 	}
 	else if( GetFlag(MoveFlag, (MOVEFLAG_FORWARD | MOVEFLAG_BACK | MOVEFLAG_LEFT | MOVEFLAG_RIGHT)) == (MOVEFLAG_BACK | MOVEFLAG_LEFT) ){
-		move_rx = (float)M_PI/4*3;
+		move_rx = DegreeToRadian(135);
 		AddPosOrder(rotation_x*-1 + move_rx + (float)M_PI/2, 0.0f, HUMAN_REGRESSRUN_SIDEWAYSRUN_ACCELERATION);
 		walkcnt = 0;
 		runcnt += 1;
 	}
 	else if( GetFlag(MoveFlag, (MOVEFLAG_FORWARD | MOVEFLAG_BACK | MOVEFLAG_LEFT | MOVEFLAG_RIGHT)) == (MOVEFLAG_BACK | MOVEFLAG_RIGHT) ){
-		move_rx = (float)M_PI/4*3 * -1;
+		move_rx = DegreeToRadian(-135);
 		AddPosOrder(rotation_x*-1 + move_rx + (float)M_PI/2, 0.0f, HUMAN_REGRESSRUN_SIDEWAYSRUN_ACCELERATION);
 		walkcnt = 0;
 		runcnt += 1;
 	}
 	else if( GetFlag(MoveFlag, (MOVEFLAG_FORWARD | MOVEFLAG_BACK | MOVEFLAG_LEFT | MOVEFLAG_RIGHT)) == (MOVEFLAG_FORWARD | MOVEFLAG_RIGHT) ){
-		move_rx = (float)M_PI/4 * -1;
+		move_rx = DegreeToRadian(-45);
 		AddPosOrder(rotation_x*-1 + move_rx + (float)M_PI/2, 0.0f, HUMAN_PROGRESSRUN_SIDEWAYSRUN_ACCELERATION);
 		walkcnt = 0;
 		runcnt += 1;
@@ -1305,7 +1305,7 @@ bool human::MapCollisionDetection(class Collision *CollD, class BlockDataInterfa
 				if( Invincible == false ){
 					//ダメージ計算
 					if( move_y > HUMAN_DAMAGE_MINSPEED ){ hp -= 0; }
-					else{ hp -= (int)((float)HUMAN_DAMAGE_MAXFALL / abs(HUMAN_DAMAGE_MAXSPEED - (HUMAN_DAMAGE_MINSPEED)) * abs(move_y - (HUMAN_DAMAGE_MINSPEED))); }
+					else{ hp -= (int)((float)HUMAN_DAMAGE_MAXFALL / fabs(HUMAN_DAMAGE_MAXSPEED - (HUMAN_DAMAGE_MINSPEED)) * fabs(move_y - (HUMAN_DAMAGE_MINSPEED))); }
 				}
 
 				FallDistance = (Dist - offset) * -1;
@@ -1481,7 +1481,7 @@ int human::RunFrame(class Collision *CollD, class BlockDataInterface *inblockdat
 	if( deadstate == 5 ){ return 3; }
 #else
 	if( hp <= 0 ){
-		if( abs(rotation_y) >= (float)M_PI/2 ){
+		if( fabs(rotation_y) >= DegreeToRadian(90) ){
 			return 3;
 		}
 	}
@@ -1497,11 +1497,11 @@ int human::RunFrame(class Collision *CollD, class BlockDataInterface *inblockdat
 
 	//発砲による反動
 	if( reaction_y > 0.0f ){
-		if( reaction_y > (float)M_PI/180*2 ){ reaction_y -= (float)M_PI/180*2; }
+		if( reaction_y > DegreeToRadian(2) ){ reaction_y -= DegreeToRadian(2); }
 		else{ reaction_y = 0.0f; }
 	}
 	if( reaction_y < 0.0f ){
-		if( reaction_y < (float)M_PI/180*2 ){ reaction_y += (float)M_PI/180*2; }
+		if( reaction_y < DegreeToRadian(2) ){ reaction_y += DegreeToRadian(2); }
 		else{ reaction_y = 0.0f; }
 	}
 
@@ -1520,7 +1520,7 @@ int human::RunFrame(class Collision *CollD, class BlockDataInterface *inblockdat
 		float move_rx2;
 
 		//足の向きを求める
-		if( fabs(move_rx) > (float)M_PI/2 ){
+		if( fabs(move_rx) > DegreeToRadian(90)){
 			move_rx2 = move_rx + (float)M_PI;
 		}
 		else{
@@ -2004,8 +2004,8 @@ int weapon::RunFrame(class Collision *CollD)
 		}
 
 		//ブロックに接していれば、そこまで落下する
-		if( CollD->CheckALLBlockIntersectDummyRay(pos_x, pos_y, pos_z, 0, -1, 0, NULL, NULL, &Dist, abs(move_y)) == true ){
-			CollD->CheckALLBlockIntersectRay(pos_x, pos_y, pos_z, 0, -1, 0, NULL, NULL, &Dist, abs(move_y));
+		if( CollD->CheckALLBlockIntersectDummyRay(pos_x, pos_y, pos_z, 0, -1, 0, NULL, NULL, &Dist, fabs(move_y)) == true ){
+			CollD->CheckALLBlockIntersectRay(pos_x, pos_y, pos_z, 0, -1, 0, NULL, NULL, &Dist, fabs(move_y));
 			pos_y -= Dist - 0.2f;
 			motionflag = false;
 			return 0;
@@ -2209,10 +2209,10 @@ void smallobject::Destruction()
 	jump_cnt = jump;
 
 	//姿勢設定
-	jump_rx = (float)M_PI/18 * GetRand(36);
+	jump_rx = DegreeToRadian(10) * GetRand(36);
 	move_rx = (float)jump * 0.04243f;
-	add_rx = (float)M_PI/180 * GetRand(20);
-	add_ry = (float)M_PI/180 * GetRand(20);
+	add_rx = DegreeToRadian(1) * GetRand(20);
+	add_ry = DegreeToRadian(1) * GetRand(20);
 }
 
 //! @brief 計算を実行（破壊時の移動など）
@@ -2632,10 +2632,10 @@ int effect::RunFrame(float camera_rx, float camera_ry)
 	}
 	if( type & EFFECT_ROTATION ){	//回転
 		if( rotation_texture > 0.0f ){
-			rotation_texture += (float)M_PI/180*1;
+			rotation_texture += DegreeToRadian(1);
 		}
 		else{
-			rotation_texture -= (float)M_PI/180*1;
+			rotation_texture -= DegreeToRadian(1);
 		}
 	}
 	if( type & EFFECT_FALL ){		//落下
