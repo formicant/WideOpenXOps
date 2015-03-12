@@ -337,9 +337,9 @@ bool Collision::CheckIntersectTri(int blockid, int face, float RayPos_x, float R
 
 
 	//外積
-	vx2 = ((data.y[ vID[2] ] - data.y[ vID[1] ]) * (z - data.z[ vID[1] ])) - ((y - data.y[ vID[1] ]) * (data.z[ vID[2] ] - data.z[ vID[0] ]));
-	vy2 = ((data.z[ vID[2] ] - data.z[ vID[1] ]) * (x - data.x[ vID[1] ])) - ((z - data.z[ vID[1] ]) * (data.x[ vID[2] ] - data.x[ vID[0] ]));
-	vz2 = ((data.x[ vID[2] ] - data.x[ vID[1] ]) * (y - data.y[ vID[1] ])) - ((x - data.x[ vID[1] ]) * (data.y[ vID[2] ] - data.y[ vID[0] ]));
+	vx2 = ((data.y[ vID[2] ] - data.y[ vID[1] ]) * (z - data.z[ vID[1] ])) - ((y - data.y[ vID[1] ]) * (data.z[ vID[2] ] - data.z[ vID[1] ]));
+	vy2 = ((data.z[ vID[2] ] - data.z[ vID[1] ]) * (x - data.x[ vID[1] ])) - ((z - data.z[ vID[1] ]) * (data.x[ vID[2] ] - data.x[ vID[1] ]));
+	vz2 = ((data.x[ vID[2] ] - data.x[ vID[1] ]) * (y - data.y[ vID[1] ])) - ((x - data.x[ vID[1] ]) * (data.y[ vID[2] ] - data.y[ vID[1] ]));
 
 	//内積
 	d1 = data.material[face].vx*vx2 + data.material[face].vy*vy2 + data.material[face].vz*vz2;		//ブロック面の法線との関係を算出
@@ -1009,13 +1009,8 @@ bool CollideAABBRay(float box_min_x, float box_min_y, float box_min_z, float box
 
 	//X・Y・Zの3軸分の処理
 	for(int axis=0; axis<3; axis++){
-		if( (box_min[axis] <= RayPos[axis])&&(RayPos[axis] <= box_max[axis]) ){
-			//内側に入っていれば、そのまま軸の情報として記録
-			Ray_min[axis] = RayPos[axis];
-			Ray_max[axis] = RayPos[axis];
-		}
-		else if( RayDir[axis] == 0.0f ){
-			//（内側に入っていないのに）ベクトルの方向が 0 なら、既にAABBの外
+		if( ( (RayPos[axis] < box_min[axis])||(box_max[axis] < RayPos[axis]) )&&(RayDir[axis] == 0.0f) ){
+			//内側に入っていないのに ベクトルの方向が 0 なら、既にAABBの外
 			return false;
 		}
 		else{
@@ -1026,10 +1021,6 @@ bool CollideAABBRay(float box_min_x, float box_min_y, float box_min_z, float box
 			t1 = (box_min[axis] - RayPos[axis]) / RayDir[axis];
 			t2 = (box_max[axis] - RayPos[axis]) / RayDir[axis];
 
-			//距離がマイナス（＝ベクトル逆方向）ならAABBとは あたらない
-			if( t1 < 0.0f ){ return false; }
-			if( t2 < 0.0f ){ return false; }
-
 			//交点までの距離が最小・最大で逆なら、入れ替える。
 			if( t1 > t2 ){
 				float temp = t1; t1 = t2; t2 = temp;
@@ -1038,16 +1029,25 @@ bool CollideAABBRay(float box_min_x, float box_min_y, float box_min_z, float box
 			//軸の情報として記録
 			Ray_min[axis] = t1;
 			Ray_max[axis] = t2;
+
+			if( (box_min[axis] <= RayPos[axis])&&(RayPos[axis] <= box_max[axis]) ){
+				//内側に入っていれば、そのまま軸の情報として記録
+				Ray_min[axis] = 0.0f;
+			}
+
+			//距離がマイナス（＝ベクトル逆方向）ならAABBとは あたらない
+			if( Ray_min[axis] < 0.0f ){ return false; }
+			if( Ray_max[axis] < 0.0f ){ return false; }
 		}
 	}
 
 	//各軸で、最も遠い‘最小距離’と最も近い‘最大距離’を算出
 	Ray_tmin = Ray_min[0];
 	Ray_tmax = Ray_max[0];
-	if( Ray_tmin > Ray_min[1] ){ Ray_tmin = Ray_min[1]; }
-	if( Ray_tmax < Ray_max[1] ){ Ray_tmax = Ray_max[1]; }
-	if( Ray_tmin > Ray_min[2] ){ Ray_tmin = Ray_min[2]; }
-	if( Ray_tmax < Ray_max[2] ){ Ray_tmax = Ray_max[2]; }
+	if( Ray_tmin < Ray_min[1] ){ Ray_tmin = Ray_min[1]; }
+	if( Ray_tmax > Ray_max[1] ){ Ray_tmax = Ray_max[1]; }
+	if( Ray_tmin < Ray_min[2] ){ Ray_tmin = Ray_min[2]; }
+	if( Ray_tmax > Ray_max[2] ){ Ray_tmax = Ray_max[2]; }
 
 	//最小距離と最大距離の関係が正しければ～
 	if( (Ray_tmax - Ray_tmin) > 0 ){
