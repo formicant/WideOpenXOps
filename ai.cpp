@@ -531,7 +531,7 @@ bool AIcontrol::StopSeen()
 	}
 
 	//特定方向に向けているか判定
-	if( fabs(tr) < DegreeToRadian(1) ){
+	if( fabs(tr) <= DegreeToRadian(2.5f) ){
 		returnflag = true;
 	}
 
@@ -1209,6 +1209,7 @@ int AIcontrol::ControlWeapon()
 
 //! @brief 手榴弾を投げる
 //! @return 処理中：0　投げ終わった：1　手榴弾を持っていない：2
+//! @attention 手榴弾を投げるパスに応じた処理です。敵発見時の攻撃はAction()関数を参照してください。
 int AIcontrol::ThrowGrenade()
 {
 	int selectweapon;
@@ -1250,7 +1251,7 @@ int AIcontrol::ThrowGrenade()
 	moveturn_mode = 0;
 
 	//目標地点への角度を求める
-	CheckTargetAngle(posx, pdata.y, posz, rx*-1 + (float)M_PI/2, ry, target_posx, posy2, target_posz, 0.0f, &atan_rx, &atan_ry, NULL);
+	CheckTargetAngle(posx, posy2, posz, rx*-1 + (float)M_PI/2, ry, pdata.x, pdata.y, pdata.z, 0.0f, &atan_rx, &atan_ry, NULL);
 
 	//旋回
 	if( atan_rx > 0.0f ){
