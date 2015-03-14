@@ -670,33 +670,28 @@ bool ObjectManager::CollideBullet(bullet *in_bullet)
 			//同じチーム番号（味方）なら処理しない
 			if( h_teamid == teamid ){ continue; }
 
-			//人全体の当たり判定
-			if( CollideAABBRay(ox-3.0f, oy, oz-3.0f, ox+3.0f, oy+HUMAN_HEIGTH, oz+3.0f, bvx, bvy, bvz, vx, vy, vz, &Dist, (float)speed - TotalDist) == true ){
-
-				//頭の当たり判定
-				if( CollideAABBRay(ox-1.0f, oy+17.5f, oz-1.0f, ox+1.0f, oy+20.0f, oz+1.0f, bvx, bvy, bvz, vx, vy, vz, &Dist, (float)speed - TotalDist) == true ){
-					if( Dist < HumanHead_Dist ){
-						HumanHead_id = i;
-						HumanHead_Dist = Dist;
-					}
+			//頭の当たり判定
+			if( CollideCylinderRay(ox, oy + HUMAN_BULLETCOLLISION_LEG_H + HUMAN_BULLETCOLLISION_UP_H, oz, HUMAN_BULLETCOLLISION_HEAD_R, HUMAN_BULLETCOLLISION_HEAD_H, bvx, bvy, bvz, vx, vy, vz, &Dist, (float)speed - TotalDist) == true ){
+				if( Dist < HumanHead_Dist ){
+					HumanHead_id = i;
+					HumanHead_Dist = Dist;
 				}
+			}
 
-				//上半身と当たり判定
-				if( CollideAABBRay(ox-3.0f, oy+10.0f, oz-3.0f, ox+3.0f, oy+17.5f, oz+3.0f, bvx, bvy, bvz, vx, vy, vz, &Dist, (float)speed - TotalDist) == true ){
-					if( Dist < HumanUp_Dist ){
-						HumanUp_id = i;
-						HumanUp_Dist = Dist;
-					}
+			//上半身と当たり判定
+			if( CollideCylinderRay(ox, oy + HUMAN_BULLETCOLLISION_LEG_H, oz, HUMAN_BULLETCOLLISION_UP_R, HUMAN_BULLETCOLLISION_UP_H, bvx, bvy, bvz, vx, vy, vz, &Dist, (float)speed - TotalDist) == true ){
+				if( Dist < HumanUp_Dist ){
+					HumanUp_id = i;
+					HumanUp_Dist = Dist;
 				}
+			}
 
-				//足と当たり判定
-				if( CollideAABBRay(ox-3.0f, oy, oz-3.0f, ox+3.0f, oy+10.0f, oz+3.0f, bvx, bvy, bvz, vx, vy, vz, &Dist, (float)speed - TotalDist) == true ){
-					if( Dist < HumanLeg_Dist ){
-						HumanLeg_id = i;
-						HumanLeg_Dist = Dist;
-					}
+			//足と当たり判定
+			if( CollideCylinderRay(ox, oy, oz, HUMAN_BULLETCOLLISION_LEG_R, HUMAN_BULLETCOLLISION_LEG_H, bvx, bvy, bvz, vx, vy, vz, &Dist, (float)speed - TotalDist) == true ){
+				if( Dist < HumanLeg_Dist ){
+					HumanLeg_id = i;
+					HumanLeg_Dist = Dist;
 				}
-
 			}
 		}
 
@@ -2318,6 +2313,21 @@ void ObjectManager::Render(float camera_x, float camera_y, float camera_z, int H
 		}
 
 		HumanIndex[i].Render(d3dg, Resource, DrawArm, player);
+
+		/*
+		//当たり判定の簡易表示
+		float x, y, z;
+		HumanIndex[i].GetPosData(&x, &y, &z, NULL);
+		if( HumanIndex[i].GetHP() > 0 ){
+			d3dg->SetWorldTransform(x, y, z, 0.0f, 0.0f, 1.0f);
+			d3dg->Drawline(HUMAN_BULLETCOLLISION_HEAD_R, HUMAN_BULLETCOLLISION_LEG_H + HUMAN_BULLETCOLLISION_UP_H + HUMAN_BULLETCOLLISION_HEAD_H, 0.0f, HUMAN_BULLETCOLLISION_HEAD_R * -1, HUMAN_BULLETCOLLISION_LEG_H + HUMAN_BULLETCOLLISION_UP_H + HUMAN_BULLETCOLLISION_HEAD_H, 0.0f);
+			d3dg->Drawline(0.0f, HUMAN_BULLETCOLLISION_LEG_H + HUMAN_BULLETCOLLISION_UP_H + HUMAN_BULLETCOLLISION_HEAD_H, HUMAN_BULLETCOLLISION_HEAD_R, 0.0f, HUMAN_BULLETCOLLISION_LEG_H + HUMAN_BULLETCOLLISION_UP_H + HUMAN_BULLETCOLLISION_HEAD_H, HUMAN_BULLETCOLLISION_HEAD_R * -1);
+			d3dg->Drawline(HUMAN_BULLETCOLLISION_UP_R, HUMAN_BULLETCOLLISION_LEG_H + HUMAN_BULLETCOLLISION_UP_H, 0.0f, HUMAN_BULLETCOLLISION_UP_R * -1, HUMAN_BULLETCOLLISION_LEG_H + HUMAN_BULLETCOLLISION_UP_H, 0.0f);
+			d3dg->Drawline(0.0f, HUMAN_BULLETCOLLISION_LEG_H + HUMAN_BULLETCOLLISION_UP_H, HUMAN_BULLETCOLLISION_UP_R, 0.0f, HUMAN_BULLETCOLLISION_LEG_H + HUMAN_BULLETCOLLISION_UP_H, HUMAN_BULLETCOLLISION_UP_R * -1);
+			d3dg->Drawline(HUMAN_BULLETCOLLISION_LEG_R, HUMAN_BULLETCOLLISION_LEG_H, 0.0f, HUMAN_BULLETCOLLISION_LEG_R * -1, HUMAN_BULLETCOLLISION_LEG_H, 0.0f);
+			d3dg->Drawline(0.0f, HUMAN_BULLETCOLLISION_LEG_H, HUMAN_BULLETCOLLISION_LEG_R, 0.0f, HUMAN_BULLETCOLLISION_LEG_H, HUMAN_BULLETCOLLISION_LEG_R * -1);
+		}
+		*/
 	}
 
 	//武器描画

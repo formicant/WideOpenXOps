@@ -883,6 +883,7 @@ bool CollideCylinder(float c1_x, float c1_y, float c1_z, float c1_r, float c1_h,
 //! @return 当たっている：true　当たっていない：false
 //! @warning RayPos（始点）と RayDir（ベクトル）を間違えないこと。
 //! @warning 判定を行う最大距離を指定しないと、パフォーマンスが大幅に低下します。
+//! @todo レイの始点が球体の外側でかつ球体と逆向きの場合、正しく判定できない？
 bool CollideSphereRay(float s_x, float s_y, float s_z, float s_r, float RayPos_x, float RayPos_y, float RayPos_z, float RayDir_x, float RayDir_y, float RayDir_z, float *Dist, float maxDist)
 {
 	if( maxDist > 0.0f ){
@@ -931,6 +932,11 @@ bool CollideSphereRay(float s_x, float s_y, float s_z, float s_r, float RayPos_x
 		RDist = sqrt(s_r*s_r - MinDist*MinDist);	//（点半径から）点に最も近づく距離
 
 		*Dist = RayDist - RDist;	//レイ視点最短 - 半径最短 = レイ視点から半径までの最短
+
+		//判定を行う最大距離よりも遠ければ、当たってないことに
+		if( (maxDist > 0.0f)&&(maxDist < *Dist) ){
+			return false;
+		}
 		return true;
 	}
 
@@ -1051,22 +1057,132 @@ bool CollideAABBRay(float box_min_x, float box_min_y, float box_min_z, float box
 
 	//最小距離と最大距離の関係が正しければ～
 	if( (Ray_tmax - Ray_tmin) > 0 ){
-		float x, y, z;
-		float d;
-
-		//レイの始点から最小距離を算出
-		x = Ray_min[0] * RayDir[0];
-		y = Ray_min[1] * RayDir[1];
-		z = Ray_min[2] * RayDir[2];
-		d = sqrt(x*x + y*y + z*z);
-
 		//判定を行う最大距離より遠ければ、判定無効。
 		if( maxDist > 0.0f ){
-			if( d > maxDist ){ return false; }
+			if( Ray_tmin > maxDist ){ return false; }
 		}
 
 		//距離を代入し返す
-		if( Dist != NULL ){ *Dist = d; }
+		if( Dist != NULL ){ *Dist = Ray_tmin; }
+		return true;
+	}
+
+	return false;
+}
+
+//! @brief 円柱とレイ（光線）のあたり判定
+//! @param c_x 円柱 底辺のx座標
+//! @param c_y 円柱 底辺のy座標
+//! @param c_z 円柱 底辺のz座標
+//! @param c_r 円柱 の半径
+//! @param c_h 円柱 の高さ
+//! @param RayPos_x レイの位置（始点）を指定する X座標
+//! @param RayPos_y レイの位置（始点）を指定する Y座標
+//! @param RayPos_z レイの位置（始点）を指定する Z座標
+//! @param RayDir_x レイのベクトルを指定する X成分
+//! @param RayDir_y レイのベクトルを指定する Y成分
+//! @param RayDir_z レイのベクトルを指定する Z成分
+//! @param Dist 当たった円柱との距離を受け取るポインタ
+//! @param maxDist 判定を行う最大距離　（0.0fを超える値）
+//! @return 当たっている：true　当たっていない：false
+//! @warning RayPos（始点）と RayDir（ベクトル）を間違えないこと。
+bool CollideCylinderRay(float c_x, float c_y, float c_z, float c_r, float c_h, float RayPos_x, float RayPos_y, float RayPos_z, float RayDir_x, float RayDir_y, float RayDir_z, float *Dist, float maxDist)
+{
+	float x, z, d;
+	float cMinDist, cRayDist, cRDist;
+	float Ray_min[2];
+	float Ray_max[2];
+	float Ray_tmin, Ray_tmax;
+
+
+	// X-Z平面で円として処理する
+
+	//点とレイ始点の距離
+	x = c_x - RayPos_x;
+	z = c_z - RayPos_z;
+	d = sqrt(x*x + z*z);
+
+	//点（円柱の中心）とレイの最短距離を求める
+	cMinDist = DistancePosRay(c_x, 0.0f, c_z, RayPos_x, 0.0f, RayPos_z, RayDir_x, 0.0f, RayDir_z, maxDist);
+
+	//最短距離が半径より離れている時点で当たらない
+	if( cMinDist > c_r ){
+		return false;
+	}
+
+	cRayDist = sqrt(d*d - cMinDist*cMinDist);		//（レイ始点から）点に最も近づく距離
+	cRDist = sqrt(c_r*c_r - cMinDist*cMinDist);	//（点半径から）点に最も近づく距離
+
+	if( d < c_r ){
+		Ray_min[0] = 0;		//始点が円の中なら距離ゼロ
+	}
+	else{
+		Ray_min[0] = cRayDist - cRDist;	//レイ視点最短 - 半径最短 = レイ視点から半径までの最短
+	}
+
+	//点とレイ終点の距離
+	x = c_x - RayPos_x + RayDir_x*maxDist;
+	z = c_z - RayPos_z + RayDir_x*maxDist;
+	d = sqrt(x*x + z*z);
+
+	if( d < c_r ){
+		Ray_max[0] = maxDist;		//終点が円の中なら最大距離
+	}
+	else{
+		Ray_max[0] = cRayDist + cRDist;
+	}
+
+
+	//Y軸のみAABBと同様の処理
+
+	if( ( (RayPos_y < c_y)||((c_y+c_h) < RayPos_y) )&&(RayDir_y == 0.0f) ){
+		//内側に入っていないのに ベクトルの方向が 0 なら、既に円柱の外
+		return false;
+	}
+
+	//内側に入っていないが、ベクトルが方向を持つなら～
+	float t1, t2;
+
+	//円柱をベクトルが突き抜ける交点までの距離を取得
+	t1 = (c_y - RayPos_y) / RayDir_y;
+	t2 = ((c_y+c_h) - RayPos_y) / RayDir_y;
+
+	//交点までの距離が最小・最大で逆なら、入れ替える。
+	if( t1 > t2 ){
+		float temp = t1; t1 = t2; t2 = temp;
+	}
+
+	//軸の情報として記録
+	Ray_min[1] = t1;
+	Ray_max[1] = t2;
+
+	if( (c_y <= RayPos_y)&&(RayPos_y <= (c_y+c_h)) ){
+		//内側に入っていれば、そのまま軸の情報として記録
+		Ray_min[1] = 0.0f;
+	}
+
+	//距離がマイナス（＝ベクトル逆方向）なら円柱とは あたらない
+	if( Ray_min[1] < 0.0f ){ return false; }
+	if( Ray_max[1] < 0.0f ){ return false; }
+
+
+	//両計算を合わせる
+
+	//各軸で、最も遠い‘最小距離’と最も近い‘最大距離’を算出
+	Ray_tmin = Ray_min[0];
+	Ray_tmax = Ray_max[0];
+	if( Ray_tmin < Ray_min[1] ){ Ray_tmin = Ray_min[1]; }
+	if( Ray_tmax > Ray_max[1] ){ Ray_tmax = Ray_max[1]; }
+
+	//最小距離と最大距離の関係が正しければ～
+	if( (Ray_tmax - Ray_tmin) > 0 ){
+		//判定を行う最大距離より遠ければ、判定無効。
+		if( maxDist > 0.0f ){
+			if( Ray_tmin > maxDist ){ return false; }
+		}
+
+		//距離を代入し返す
+		if( Dist != NULL ){ *Dist = Ray_tmin; }
 		return true;
 	}
 
