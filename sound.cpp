@@ -51,9 +51,9 @@ SoundControl::~SoundControl()
 }
 
 //! @brief 初期化
-//! @param hWnd ウィンドウハンドル
+//! @param WindowCtrl WindowControlクラスのポインタ
 //! @return 成功：0　失敗：1
-int SoundControl::InitSound(HWND hWnd)
+int SoundControl::InitSound(WindowControl *WindowCtrl)
 {
 	//DirectSoundオブジェクトを生成
 	if( FAILED( DirectSoundCreate8(NULL, &pDSound, NULL) ) ){
@@ -61,7 +61,7 @@ int SoundControl::InitSound(HWND hWnd)
 	}
 
 	//協調レベルの設定
-	if( FAILED( pDSound->SetCooperativeLevel(hWnd, DSSCL_EXCLUSIVE) ) ){
+	if( FAILED( pDSound->SetCooperativeLevel(WindowCtrl->GethWnd(), DSSCL_EXCLUSIVE) ) ){
 		return 1;
 	}
 
@@ -448,9 +448,9 @@ SoundControl::~SoundControl()
 
 //! @brief 初期化@n
 //! （DLLのロード、初期化関数の実行）
-//! @param hWnd ウィンドウハンドル
+//! @param WindowCtrl WindowControlクラスのポインタ
 //! @return 成功：0　失敗：1
-int SoundControl::InitSound(HWND hWnd)
+int SoundControl::InitSound(WindowControl *WindowCtrl)
 {
 	if( lib != NULL ){
 		return 1;
@@ -471,7 +471,7 @@ int SoundControl::InitSound(HWND hWnd)
 	DSrelease = (FARPROCI)GetProcAddress(lib, "DSrelease");
 
 	//DLL初期化を実行
-	if( DSinit(hWnd) == 0 ){
+	if( DSinit(WindowCtrl->GethWnd()) == 0 ){
 		//DLLを開放
 		FreeLibrary(lib);
 		lib = NULL;

@@ -29,8 +29,6 @@
 // SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 //--------------------------------------------------------------------------------
 
-//#define INPUT_DIRECTINPUT	//!< @brief 入力を取得するインターフェースの選択 @details 定数宣言有効：DirectInput　定数宣言無効（コメント化）：WinAPI
-
 #include "input.h"
 
 //! @brief コンストラクタ
@@ -78,12 +76,14 @@ InputControl::~InputControl()
 #endif
 }
 
-//! @brief 初期化@n
-//! （DirectInput）
-//! @param in_hWnd ウィンドウハンドル
+//! @brief 初期化
+//! @param WindowCtrl WindowControlクラスのポインタ
 //! @return 成功：0　失敗：1
-int InputControl::InitD3Dinput(HWND in_hWnd)
+int InputControl::InitD3Dinput(WindowControl *WindowCtrl)
 {
+	//ウインドウハンドルを設定
+	hWnd = WindowCtrl->GethWnd();
+
 #ifdef INPUT_DIRECTINPUT
 	//DirectInput初期化
 	if( FAILED( DirectInput8Create(GetModuleHandle(NULL), DIRECTINPUT_VERSION, IID_IDirectInput8, (void**)&pDI, NULL) ) ){
@@ -108,9 +108,6 @@ int InputControl::InitD3Dinput(HWND in_hWnd)
 
 	//カーソルを非表示
 	ShowCursor(false);
-
-	//ウインドウハンドルを設定
-	hWnd = in_hWnd;
 
 	return 0;
 }

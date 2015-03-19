@@ -64,11 +64,12 @@
 #include <string.h>
 
 //windows.hを使用しないならば
-/*
-#define HWND int
-#define _MAX_PATH 260
-#define MAX_PATH 260
-*/
+#ifndef _MAX_PATH
+ #define _MAX_PATH 260		//!< _MAX_PATH is 260
+#endif
+#ifndef MAX_PATH
+ #define MAX_PATH 260		//!< MAX_PATH is 260
+#endif
 
 //#define PATH_DELIMITER_SLASH	//!< パス区切り文字を、'\'から‘/’へ変換する。
 

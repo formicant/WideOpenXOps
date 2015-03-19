@@ -74,7 +74,7 @@ class SoundControl
 public:
 	SoundControl();
 	~SoundControl();
-	int InitSound(HWND hWnd);
+	int InitSound(WindowControl *WindowCtrl);
 	void SetVolume(float volume);
 	void SetCamera(float x, float y, float z, float rx);
 	int LoadSound(char* filename);
@@ -104,7 +104,7 @@ public:
 public:
 	SoundControl();
 	~SoundControl();
-	int InitSound(HWND hWnd);
+	int InitSound(WindowControl *WindowCtrl);
 	void SetVolume(float volume);
 	void SetCamera(float x, float y, float z, float rx);
 	int LoadSound(char* filename);

@@ -57,23 +57,23 @@ EventControl Event[TOTAL_EVENTLINE];	//!< イベント制御クラス
 
 
 //! @brief 基本的な初期化処理
-int InitGame(HWND hWnd)
+int InitGame(WindowControl *WindowCtrl)
 {
 	//DirectX初期化
-	if( d3dg.InitD3D(hWnd, "data\\char.dds", GameConfig.GetFullscreenFlag()) ){
-		ErrorInfo(hWnd, "Direct3Dの作成に失敗しました", false);
+	if( d3dg.InitD3D(WindowCtrl, "data\\char.dds", GameConfig.GetFullscreenFlag()) ){
+		WindowCtrl->ErrorInfo("Direct3Dの作成に失敗しました");
 		return 1;
 	}
 
 	//Directinputの初期化
-	if( inputCtrl.InitD3Dinput(hWnd) ){
-		ErrorInfo(hWnd, "Input initialization error", false);
+	if( inputCtrl.InitD3Dinput(WindowCtrl) ){
+		WindowCtrl->ErrorInfo("Input initialization error");
 		return 1;
 	}
 
 	//EASY DIRECT SOUND 初期化
-	if( SoundCtrl.InitSound(hWnd) ){
-		ErrorInfo(hWnd, "DLL open failed", false);
+	if( SoundCtrl.InitSound(WindowCtrl) ){
+		WindowCtrl->ErrorInfo("DLL open failed");
 		return 1;
 	}
 
@@ -121,9 +121,9 @@ int InitGame(HWND hWnd)
 //! @brief DirectXをリセットする
 //! @return 失敗：1　それ以外：0
 //! @attention 通常は、描画処理に失敗した場合に限り呼び出してください。
-int ResetGame(HWND hWnd)
+int ResetGame(WindowControl *WindowCtrl)
 {
-	int rtn = d3dg.ResetD3D(hWnd);
+	int rtn = d3dg.ResetD3D(WindowCtrl);
 
 	if( rtn == 0 ){
 		//リソースを初期化
@@ -141,7 +141,8 @@ int ResetGame(HWND hWnd)
 		//
 	}
 	if( rtn == 2 ){
-		ErrorInfo(hWnd, "Resetに失敗しました", true);
+		WindowCtrl->ErrorInfo("Resetに失敗しました");
+		WindowCtrl->CloseWindow();
 		return 1;
 	}
 	return 0;
@@ -3005,7 +3006,7 @@ void InitScreen(opening *Opening, mainmenu *MainMenu, briefing *Briefing, mainga
 }
 
 //! @brief screen派生クラスの実行
-void ProcessScreen(HWND hWnd, opening *Opening, mainmenu *MainMenu, briefing *Briefing, maingame *MainGame, result *Result, unsigned int framecnt)
+void ProcessScreen(WindowControl *WindowCtrl, opening *Opening, mainmenu *MainMenu, briefing *Briefing, maingame *MainGame, result *Result, unsigned int framecnt)
 {
 	int error;
 
@@ -3014,10 +3015,12 @@ void ProcessScreen(HWND hWnd, opening *Opening, mainmenu *MainMenu, briefing *Br
 		case STATE_CREATE_OPENING:
 			error = Opening->Create();
 			if( error == 1 ){
-				ErrorInfo(hWnd, "block data open failed", true);
+				WindowCtrl->ErrorInfo("block data open failed");
+				WindowCtrl->CloseWindow();
 			}
 			if( error == 2 ){
-				ErrorInfo(hWnd, "point data open failed", true);
+				WindowCtrl->ErrorInfo("point data open failed");
+				WindowCtrl->CloseWindow();
 			}
 			break;
 
@@ -3028,7 +3031,7 @@ void ProcessScreen(HWND hWnd, opening *Opening, mainmenu *MainMenu, briefing *Br
 			Opening->Sound();
 			if( (GameConfig.GetFrameskipFlag() == false)||(framecnt%2 == 0) ){
 				if( Opening->RenderMain() == true ){
-					ResetGame(hWnd);
+					ResetGame(WindowCtrl);
 				}
 			}
 			break;
@@ -3042,10 +3045,12 @@ void ProcessScreen(HWND hWnd, opening *Opening, mainmenu *MainMenu, briefing *Br
 		case STATE_CREATE_MENU:
 			error = MainMenu->Create();
 			if( error == 1 ){
-				ErrorInfo(hWnd, "block data open failed", true);
+				WindowCtrl->ErrorInfo("block data open failed");
+				WindowCtrl->CloseWindow();
 			}
 			if( error == 2 ){
-				ErrorInfo(hWnd, "point data open failed", true);
+				WindowCtrl->ErrorInfo("point data open failed");
+				WindowCtrl->CloseWindow();
 			}
 			break;
 
@@ -3056,7 +3061,7 @@ void ProcessScreen(HWND hWnd, opening *Opening, mainmenu *MainMenu, briefing *Br
 			MainMenu->Sound();
 			if( (GameConfig.GetFrameskipFlag() == false)||(framecnt%2 == 0) ){
 				if( MainMenu->RenderMain() == true ){
-					ResetGame(hWnd);
+					ResetGame(WindowCtrl);
 				}
 			}
 			break;
@@ -3070,7 +3075,8 @@ void ProcessScreen(HWND hWnd, opening *Opening, mainmenu *MainMenu, briefing *Br
 		case STATE_CREATE_BRIEFING:
 			error = Briefing->Create();
 			if( error == 1 ){
-				ErrorInfo(hWnd, "briefing data open failed", true);
+				WindowCtrl->ErrorInfo("briefing data open failed");
+				WindowCtrl->CloseWindow();
 			}
 			break;
 
@@ -3080,7 +3086,7 @@ void ProcessScreen(HWND hWnd, opening *Opening, mainmenu *MainMenu, briefing *Br
 			Briefing->Process();
 			if( (GameConfig.GetFrameskipFlag() == false)||(framecnt%2 == 0) ){
 				if( Briefing->RenderMain() == true ){
-					ResetGame(hWnd);
+					ResetGame(WindowCtrl);
 				}
 			}
 			break;
@@ -3094,10 +3100,12 @@ void ProcessScreen(HWND hWnd, opening *Opening, mainmenu *MainMenu, briefing *Br
 		case STATE_CREATE_MAINGAME:
 			error = MainGame->Create();
 			if( error == 1 ){
-				ErrorInfo(hWnd, "block data open failed", true);
+				WindowCtrl->ErrorInfo("block data open failed");
+				WindowCtrl->CloseWindow();
 			}
 			if( error == 2 ){
-				ErrorInfo(hWnd, "point data open failed", true);
+				WindowCtrl->ErrorInfo("point data open failed");
+				WindowCtrl->CloseWindow();
 			}
 			break;
 
@@ -3108,7 +3116,7 @@ void ProcessScreen(HWND hWnd, opening *Opening, mainmenu *MainMenu, briefing *Br
 			MainGame->Sound();
 			if( (GameConfig.GetFrameskipFlag() == false)||(framecnt%2 == 0) ){
 				if( MainGame->RenderMain() == true ){
-					ResetGame(hWnd);
+					ResetGame(WindowCtrl);
 				}
 			}
 			break;
@@ -3129,7 +3137,7 @@ void ProcessScreen(HWND hWnd, opening *Opening, mainmenu *MainMenu, briefing *Br
 			Result->Process();
 			if( (GameConfig.GetFrameskipFlag() == false)||(framecnt%2 == 0) ){
 				if( Result->RenderMain() == true ){
-					ResetGame(hWnd);
+					ResetGame(WindowCtrl);
 				}
 			}
 			break;
@@ -3141,7 +3149,7 @@ void ProcessScreen(HWND hWnd, opening *Opening, mainmenu *MainMenu, briefing *Br
 
 		//ゲーム終了
 		case STATE_EXIT:
-			GameEnd(hWnd);
+			WindowCtrl->CloseWindow();
 			break;
 
 		default:

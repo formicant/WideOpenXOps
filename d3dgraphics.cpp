@@ -69,16 +69,16 @@ D3DGraphics::~D3DGraphics()
 
 //! @brief 初期化@n
 //! （DirectX 9）
-//! @param hWnd ウィンドウハンドル
+//! @param WindowCtrl WindowControlクラスのポインタ
 //! @param TextureFontFilename 使用するテクスチャフォントのファイル名
 //! @param fullscreen false：ウィンドウ表示　true：フルスクリーン用表示
 //! @return 成功：0　失敗：1
-int D3DGraphics::InitD3D(HWND hWnd, char *TextureFontFilename, bool fullscreen)
+int D3DGraphics::InitD3D(WindowControl *WindowCtrl, char *TextureFontFilename, bool fullscreen)
 {
 	D3DPRESENT_PARAMETERS d3dpp;
 	RECT rec;
 
-	GetClientRect( hWnd, &rec);
+	GetClientRect(WindowCtrl->GethWnd(), &rec);
 
 	fullscreenflag = fullscreen;
 
@@ -114,8 +114,8 @@ int D3DGraphics::InitD3D(HWND hWnd, char *TextureFontFilename, bool fullscreen)
 		d3dpp.FullScreen_RefreshRateInHz = dispmode.RefreshRate;
 	}
 
-	if( FAILED( pD3D->CreateDevice(D3DADAPTER_DEFAULT, D3DDEVTYPE_HAL, hWnd, D3DCREATE_HARDWARE_VERTEXPROCESSING, &d3dpp, &pd3dDevice) ) ){
-		if( FAILED( pD3D->CreateDevice(D3DADAPTER_DEFAULT, D3DDEVTYPE_HAL, hWnd, D3DCREATE_SOFTWARE_VERTEXPROCESSING, &d3dpp, &pd3dDevice) ) ){
+	if( FAILED( pD3D->CreateDevice(D3DADAPTER_DEFAULT, D3DDEVTYPE_HAL, WindowCtrl->GethWnd(), D3DCREATE_HARDWARE_VERTEXPROCESSING, &d3dpp, &pd3dDevice) ) ){
+		if( FAILED( pD3D->CreateDevice(D3DADAPTER_DEFAULT, D3DDEVTYPE_HAL, WindowCtrl->GethWnd(), D3DCREATE_SOFTWARE_VERTEXPROCESSING, &d3dpp, &pd3dDevice) ) ){
 			return 1;
 		}
 	}
@@ -162,9 +162,9 @@ int D3DGraphics::InitD3D(HWND hWnd, char *TextureFontFilename, bool fullscreen)
 
 //! @brief リセット@n
 //! （ウィンドウ最小化からの復帰　など）
-//! @param hWnd ウィンドウハンドル
+//! @param WindowCtrl WindowControlクラスのポインタ
 //! @return 成功：0　待ち：1　失敗：2
-int D3DGraphics::ResetD3D(HWND hWnd)
+int D3DGraphics::ResetD3D(WindowControl *WindowCtrl)
 {
 	//フォーカスを失っているなら待たせる
 	if( pd3dDevice->TestCooperativeLevel() == D3DERR_DEVICELOST ){
@@ -177,7 +177,7 @@ int D3DGraphics::ResetD3D(HWND hWnd)
 	D3DPRESENT_PARAMETERS d3dpp;
 	RECT rec;
 
-	GetClientRect( hWnd, &rec);
+	GetClientRect(WindowCtrl->GethWnd(), &rec);
 
 	//D3Dデバイスの作成
 	ZeroMemory(&d3dpp, sizeof(d3dpp));

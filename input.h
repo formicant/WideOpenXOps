@@ -39,6 +39,8 @@
 
 #include <windows.h>
 
+//#define INPUT_DIRECTINPUT	//!< @brief 入力を取得するインターフェースの選択 @details 定数宣言有効：DirectInput　定数宣言無効（コメント化）：WinAPI
+
 #ifdef INPUT_DIRECTINPUT
  #define DIRECTINPUT_VERSION 0x0800	//!< 警告「DIRECTINPUT_VERSION undefined. Defaulting to version 0x0800」を防止
  #include <dinput.h>
@@ -70,7 +72,7 @@ class InputControl
 public:
 	InputControl();
 	~InputControl();
-	int InitD3Dinput(HWND in_hWnd);
+	int InitD3Dinput(WindowControl *WindowCtrl);
 	void GetInputState(bool mousemode);
 	void MoveMouseCenter();
 	bool CheckKeyNow(int id);

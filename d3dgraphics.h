@@ -117,8 +117,8 @@ class D3DGraphics
 public:
 	D3DGraphics();
 	~D3DGraphics();
-	int InitD3D(HWND hWnd, char *TextureFontFilename, bool fullscreen);
-	int ResetD3D(HWND hWnd);
+	int InitD3D(WindowControl *WindowCtrl, char *TextureFontFilename, bool fullscreen);
+	int ResetD3D(WindowControl *WindowCtrl);
 	int LoadModel(char* filename);
 	int MorphingModel(int idA, int idB);
 	void CleanupModel(int id);

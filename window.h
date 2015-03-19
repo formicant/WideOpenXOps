@@ -32,6 +32,8 @@
 #ifndef WINDOW_H
 #define WINDOW_H
 
+class WindowControl;	//プロトタイプ宣言
+
 #ifndef H_LAYERLEVEL
  #define H_LAYERLEVEL 1		//!< Select include file.
 #endif
@@ -43,9 +45,27 @@
 
 #pragma comment(lib, "winmm.lib")
 
-HWND InitWindow(HINSTANCE hInstance, char* title, int width, int height, int nCmdShow, bool fullscreen);
-void ErrorInfo(HWND hWnd, char *str, bool exit);
-void GameEnd(HWND hWnd);
+//! @brief ウィンドウ制御クラス
+//! @details ゲーム画面を表示するウィンドウを制御し管理します。
+class WindowControl
+{
+	HINSTANCE hInstance;	//!< インスタンス ハンドル
+	int nCmdShow;			//!< ウィンドウの表示状態
+	HWND hWnd;				//!< ウィンドウハンドル
+
+	static LRESULT WINAPI WindowProc(HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam);
+
+public:
+	WindowControl();
+	~WindowControl();
+	void SetParam(HINSTANCE in_hInstance, int in_nCmdShow);
+	bool InitWindow(char* title, int width, int height, bool fullscreen);
+	HWND GethWnd();
+	int CheckMainLoop();
+	void ErrorInfo(char *str);
+	void CloseWindow();
+};
+
 float GetFps(int getcnt);
 bool ControlFps();
 unsigned int GetTimeMS();

@@ -31,23 +31,42 @@
 
 #include "window.h"
 
-LRESULT WINAPI WindowProc(HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam);
+//! @brief コンストラクタ
+WindowControl::WindowControl()
+{
+	hInstance = 0;
+	nCmdShow = 0;
+	hWnd = NULL;
+}
+
+//! @brief ディストラクタ
+WindowControl::~WindowControl()
+{
+	//
+}
+
+//! @brief アプリケーションの情報を設定
+//! @param in_hInstance インスタンス ハンドル
+//! @param in_nCmdShow ウィンドウの表示状態
+void WindowControl::SetParam(HINSTANCE in_hInstance, int in_nCmdShow)
+{
+	hInstance = in_hInstance;
+	nCmdShow = in_nCmdShow;
+}
 
 //! @brief メインウィンドウ作成
-//! @param hInstance インスタンス ハンドル
 //! @param title ウィンドウタイトル
 //! @param width ウィンドウの幅
 //! @param height ウィンドウの高さ
-//! @param nCmdShow ウィンドウの表示状態
 //! @param fullscreen false：ウィンドウ表示　true：フルスクリーン用表示
-//! @return ウィンドウハンドル
-HWND InitWindow(HINSTANCE hInstance, char* title, int width, int height, int nCmdShow, bool fullscreen)
+//! @return 成功：true　失敗：false
+//! @warning 先にSetParam()関数で設定しておく必要があります。
+bool WindowControl::InitWindow(char* title, int width, int height, bool fullscreen)
 {
 	WNDCLASS wc;
 	int x, y;
 	RECT Rect;
 	DWORD dwStyle;
-	HWND hWnd;
 
 	//ウィンドウクラスの登録
 	wc.style		= CS_HREDRAW | CS_VREDRAW;
@@ -61,7 +80,7 @@ HWND InitWindow(HINSTANCE hInstance, char* title, int width, int height, int nCm
 	wc.lpszMenuName	= NULL;
 	wc.lpszClassName	= "MainWindow";
 	if( !RegisterClass(&wc) ){
-		return NULL;
+		return false;
 	}
 
 	if( fullscreen == false ){
@@ -96,18 +115,17 @@ HWND InitWindow(HINSTANCE hInstance, char* title, int width, int height, int nCm
 	//ウィンドウ作成
 	hWnd = CreateWindow( "MainWindow", title, dwStyle, x, y, width, height, NULL, NULL, hInstance, NULL );
 	if( hWnd == NULL ){
-		return NULL;
+		return false;
 	}
 
 	//表示
 	ShowWindow( hWnd, nCmdShow );
 
-	return hWnd;
-
+	return true;
 }
 
 //! @brief メインウィンドウのウィンドウプロシージャ
-LRESULT WINAPI WindowProc(HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam)
+LRESULT WINAPI WindowControl::WindowProc(HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam)
 {
 	switch( msg ){
 		case WM_DESTROY:
@@ -117,20 +135,52 @@ LRESULT WINAPI WindowProc(HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam)
 	return DefWindowProc(hWnd, msg, wParam, lParam);
 }
 
-//! @brief エラーメッセージ表示
-//! @param hWnd ウィンドウハンドル
-//! @param *str メッセージ
-//! @param exit プログラムを終了：true　メッセージを表示するだけ：false
-void ErrorInfo(HWND hWnd, char *str, bool exit)
+//! @brief ウィンドウハンドルを取得
+//! @return ウィンドウハンドル
+HWND WindowControl::GethWnd()
 {
-	MessageBox(hWnd, str, "ERROR", MB_OK);
-	if( exit == true ){
-		PostMessage(hWnd, WM_CLOSE, 0L, 0L);
-	}
+	return hWnd;
 }
 
-//! @brief ゲーム終了を要求
-void GameEnd(HWND hWnd)
+//! @brief ウインドウメッセージを処理（メインループ判定）
+//! @return アイドル状態：0　ゲームのメイン処理実行：1　ウインドウが閉じた：-1
+//! @attention 本関数から「1」が返された場合に限り、ゲームのメイン処理を実行してください。
+//! @attention 本関数から「-1」が返された場合、各リソースやインターフェースを解放し、ゲームを終了してください。
+int WindowControl::CheckMainLoop()
+{
+	MSG msg = {0};
+
+	if( PeekMessage( &msg, NULL, 0U, 0U, PM_REMOVE ) ){
+		//ウインドウメッセージが来ている
+
+		TranslateMessage( &msg );
+		DispatchMessage( &msg );
+
+		if( msg.message == WM_QUIT ){
+			return -1;
+		}
+		return 0;
+	}
+	else if( GetActiveWindow() == hWnd ){
+		//ゲームのフレーム処理
+		return 1;
+	}
+	//else{
+		//ウインドウメッセージが来るまで待つ
+		WaitMessage();
+		return 0;
+	//}
+}
+
+//! @brief エラーメッセージ表示
+//! @param *str メッセージ
+void WindowControl::ErrorInfo(char *str)
+{
+	MessageBox(hWnd, str, "ERROR", MB_OK);
+}
+
+//! @brief ウィンドウを閉じるように要求
+void WindowControl::CloseWindow()
 {
 	PostMessage(hWnd, WM_CLOSE, 0L, 0L);
 }

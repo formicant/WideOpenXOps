@@ -45,6 +45,9 @@ StateMachine GameState;
 //! ゲーム設定データ
 Config GameConfig;
 
+//! メインウインドウ
+WindowControl MainWindow;
+
 //! @brief WinMain()関数
 int WINAPI WinMain(HINSTANCE hInstance,	HINSTANCE hPrevInstance, LPTSTR lpCmdLine, int nCmdShow)
 {
@@ -64,7 +67,7 @@ int WINAPI WinMain(HINSTANCE hInstance,	HINSTANCE hPrevInstance, LPTSTR lpCmdLin
 
 	//設定ファイル読み込み
 	if( GameConfig.LoadFile("config.dat") == 1 ){
-		ErrorInfo(NULL, "config data open failed", false);
+		MainWindow.ErrorInfo("config data open failed");
 		return 1;
 	}
 
@@ -75,11 +78,11 @@ int WINAPI WinMain(HINSTANCE hInstance,	HINSTANCE hPrevInstance, LPTSTR lpCmdLin
 #endif
 
 	//ウィンドウ初期化
-	HWND hWnd;
-	hWnd = InitWindow(hPrevInstance, GAMENAME, SCREEN_WIDTH, SCREEN_HEIGHT, nCmdShow, GameConfig.GetFullscreenFlag());
+	MainWindow.SetParam(hPrevInstance, nCmdShow);
+	MainWindow.InitWindow(GAMENAME, SCREEN_WIDTH, SCREEN_HEIGHT, GameConfig.GetFullscreenFlag());
 
 	//基本的な初期化処理
-	if( InitGame(hWnd) ){
+	if( InitGame(&MainWindow) ){
 		return 1;
 	}
 
@@ -93,26 +96,15 @@ int WINAPI WinMain(HINSTANCE hInstance,	HINSTANCE hPrevInstance, LPTSTR lpCmdLin
 
 	unsigned int framecnt = 0;
 
-	MSG msg = {0};
-
-	//[WM_QUIT]が来るまで回る
-	while( msg.message != WM_QUIT ){
-		if( PeekMessage( &msg, NULL, 0U, 0U, PM_REMOVE ) ){		//ウインドウメッセージが来ている
-			TranslateMessage( &msg );
-			DispatchMessage( &msg );
-		}
-		else if( GetActiveWindow() == hWnd ){					//ウインドウがアクティブならば
+	for(int flag = 0; flag != -1; flag = MainWindow.CheckMainLoop()){
+		if( flag == 1 ){
 			//メイン処理
-			ProcessScreen(hWnd, &Opening, &MainMenu, &Briefing, &MainGame, &Result, framecnt);
+			ProcessScreen(&MainWindow, &Opening, &MainMenu, &Briefing, &MainGame, &Result, framecnt);
 
 			//FPS調整
 			ControlFps();
 
 			framecnt++;
-		}
-		else{													//ウインドウが非アクティブで、ウインドウメッセージも来ない
-			//ウインドウメッセージが来るまで待つ
-			WaitMessage();
 		}
 	}
 

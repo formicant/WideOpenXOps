@@ -67,7 +67,7 @@
 #endif
 #include "main.h"
 
-int InitGame(HWND hWnd);
+int InitGame(WindowControl *WindowCtrl);
 
 //! ƒQ[ƒ€‚Ìó‘Ô‚ğó‚¯“n‚µ‚·‚é\‘¢‘Ì
 struct GameInfo{
@@ -231,6 +231,6 @@ public:
 };
 
 void InitScreen(opening *Opening, mainmenu *MainMenu, briefing *Briefing, maingame *MainGame, result *Result);
-void ProcessScreen(HWND hWnd, opening *Opening, mainmenu *MainMenu, briefing *Briefing, maingame *MainGame, result *Result, unsigned int framecnt);
+void ProcessScreen(WindowControl *WindowCtrl, opening *Opening, mainmenu *MainMenu, briefing *Briefing, maingame *MainGame, result *Result, unsigned int framecnt);
 
 #endif
