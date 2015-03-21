@@ -1206,8 +1206,8 @@ void maingame::Input()
 		//camera_ry -= y*0.0025f;
 		camera_rx -= x * MouseSensitivity;
 		camera_ry -= y * MouseSensitivity;
-		if( camera_ry > DegreeToRadian(7) ) camera_ry = DegreeToRadian(7);
-		if( camera_ry < DegreeToRadian(-7) ) camera_ry = DegreeToRadian(-7);
+		if( camera_ry > DegreeToRadian(70) ) camera_ry = DegreeToRadian(70);
+		if( camera_ry < DegreeToRadian(-70) ) camera_ry = DegreeToRadian(-70);
 	}
 
 	//ゲーム終了操作かチェック
@@ -1473,6 +1473,11 @@ void maingame::Input()
 
 					//プレイヤーの向きを取得
 					ObjMgr.GetPlayerHumanObject()->GetRxRy(&mouse_rx, &mouse_ry);
+
+					//F1モード時にカメラの向きを再設定
+					if( Camera_F1mode == true ){
+						camera_rx = DegreeToRadian(90);
+					}
 				}
 				if( inputCtrl->CheckKeyDown(OriginalkeycodeToDinputdef(0x03)) ){		// [→]
 					//現在のプレイヤー番号を取得
@@ -1487,6 +1492,11 @@ void maingame::Input()
 
 					//プレイヤーの向きを取得
 					ObjMgr.GetPlayerHumanObject()->GetRxRy(&mouse_rx, &mouse_ry);
+
+					//F1モード時にカメラの向きを再設定
+					if( Camera_F1mode == true ){
+						camera_rx = DegreeToRadian(90);
+					}
 				}
 			}
 
@@ -1680,8 +1690,8 @@ void maingame::Process()
 		camera_ry = ry;
 	}
 	else if( Camera_F1mode == true ){
-		float crx = view_rx + mouse_rx*-1 + (float)M_PI/2;
-		float cry = view_ry + mouse_ry;
+		float crx = camera_rx*0.6f + (view_rx + mouse_rx*-1 + (float)M_PI/2)*0.4f;		// 3/5 + 2/5
+		float cry = camera_ry*0.6f + (view_ry + mouse_ry)*0.4f;							// 3/5 + 2/5
 		float dist;
 		if( CollD.CheckALLBlockIntersectRay(x, y + HUMAN_HEIGTH, z, cos(crx)*cos(cry)*-1, sin(cry*-1), sin(crx)*cos(cry)*-1, NULL, NULL, &dist, 13.0f) == true ){
 			dist -= 1.0f;

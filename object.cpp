@@ -393,6 +393,9 @@ int human::PickupWeapon(class weapon *in_weapon)
 		if( in_weapon->Pickup() == 0 ){
 			weapon[selectweapon] = in_weapon;
 
+			//腕の角度（反動）を設定
+			reaction_y = DegreeToRadian(-20);
+
 			//切り替え完了のカウント
 			selectweaponcnt = 10;
 
