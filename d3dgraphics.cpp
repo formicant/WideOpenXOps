@@ -1006,6 +1006,10 @@ void D3DGraphics::DrawMapdata(bool wireframe)
 			pd3dDevice->SetFVF(D3DFVF_XYZ|D3DFVF_DIFFUSE);
 			pd3dDevice->SetTexture(0, NULL);
 		}
+		else if( ptextures[ mapTextureID[textureID] ] == NULL ){
+			pd3dDevice->SetFVF(D3DFVF_XYZ|D3DFVF_DIFFUSE);
+			pd3dDevice->SetTexture(0, NULL);
+		}
 		else{
 			pd3dDevice->SetFVF(D3DFVF_XYZ|D3DFVF_DIFFUSE|D3DFVF_TEX1);
 			pd3dDevice->SetTexture(0, ptextures[mapTextureID[textureID]] );
@@ -1553,6 +1557,11 @@ D3DGraphics::D3DGraphics()
 	hGLRC = NULL;
 	width = 0;
 	height = 0;
+	SystemFont = NULL;
+	now_SystemFontUStr = new WCHAR [1];
+	now_SystemFontUStr[0] = NULL;
+	SystemFontListIdx = 0;
+	SystemFontListIdxSize = 0;
 	now_textureid = -1;
 
 	camera_x = 0.0f;
@@ -1580,8 +1589,19 @@ D3DGraphics::~D3DGraphics()
 		CleanupTexture(i);
 	}
 
+	if( SystemFont != NULL ){
+		DeleteObject(SystemFont);
+	}
+	if( now_SystemFontUStr != NULL ){
+		delete [] now_SystemFontUStr;
+	}
+	if( SystemFontListIdx != 0 ){
+		glDeleteLists(SystemFontListIdx, SystemFontListIdxSize);
+	}
+
 	if( hGLRC != NULL ){ wglDeleteContext(hGLRC); }
 
+	//libjpeg解放
 	jpeg_destroy_decompress(&cinfo);
 }
 
@@ -1659,6 +1679,10 @@ int D3DGraphics::InitD3D(WindowControl *WindowCtrl, char *TextureFontFilename, b
 
 	//デバイスコンテキスト解放
 	ReleaseDC(hWnd, hDC);
+
+	//システムフォント用意
+	//フォント名：ＭＳ ゴシック　サイズ：18
+	SystemFont = CreateFont(18, 0, 0, 0, FW_NORMAL, FALSE, FALSE, FALSE, SHIFTJIS_CHARSET, OUT_DEFAULT_PRECIS, CLIP_DEFAULT_PRECIS, DEFAULT_QUALITY, FIXED_PITCH | FF_MODERN, "ＭＳ ゴシック");
 
 
 	//テクスチャフォント用画像のファイル名を設定
@@ -3109,10 +3133,76 @@ void D3DGraphics::Drawline(float x1, float y1, float z1, float x2, float y2, flo
 //! @param y y座標
 //! @param str 文字列　（改行コード：可）
 //! @param color 色
-//! @warning <b>本関数の処理は実装されていません。</b>
+//! @warning <b>描画は非常に低速です。</b>画面内で何度も呼び出すとパフォーマンスに影響します。
+//! @warning「改行コードを活用し一度に描画する」「日本語が必要ない文字はテクスチャフォントを活用する」などの対応を講じてください。
+//! @attention フォントの種類やサイズは固定です。　文字を二重に重ねて立体感を出さないと見にくくなります。
+//! @todo 文字を二重に重ねると、上下関係が正しく処理されない。
+//! @todo 1文字目が欠ける場合がある。
 void D3DGraphics::Draw2DMSFontText(int x, int y, char *str, int color)
 {
-	//
+	int len = strlen(str);
+	WCHAR *ustr;
+
+	Start2DRender();
+
+	//テクスチャ無効
+	glDisable(GL_TEXTURE_2D);
+
+	//Unicode文字列へ変換
+	ustr = new WCHAR [len+1];
+	MultiByteToWideChar(CP_ACP,	0, str, -1, ustr, len + 1);
+
+	//新たな文字列なら、リソースを作り直す
+	if( lstrcmpW(ustr, now_SystemFontUStr) != 0 ){
+		GLuint listIdx;
+		HDC hDC;
+
+		//古いデータを削除
+		glDeleteLists(SystemFontListIdx, SystemFontListIdxSize);
+		delete [] now_SystemFontUStr;
+
+		//デバイスコンテキスト設定
+		hDC = GetDC(hWnd);
+		wglMakeCurrent(hDC, hGLRC);
+		SelectObject(hDC, SystemFont);
+
+		//ディスプレイリストを作成
+		listIdx = glGenLists(len);
+		for(int i=0; i<lstrlenW(ustr); i++){
+			wglUseFontBitmapsW(hDC, ustr[i], 1, listIdx+i);
+		}
+
+		//デバイスコンテキスト廃棄
+		ReleaseDC(hWnd, hDC);
+
+		//設定を記録
+		now_SystemFontUStr = new WCHAR [len+1];
+		lstrcpyW(now_SystemFontUStr, ustr);
+		SystemFontListIdx = listIdx;
+		SystemFontListIdxSize = len;
+	}
+
+	//座標と色を設定
+	glBitmap(0, 0, 0, 0, 10, 0, NULL);
+	glRasterPos2i(x, y);
+	glColor4ub((color>>24)&0xFF, (color>>16)&0xFF, (color>>8)&0xFF, color&0xFF);
+
+	for(int i=0; i<lstrlenW(ustr); i++){
+		if( ustr[i] == '\n' ){
+			//改行する
+			y += 19;
+			glRasterPos2i(x, y);
+		}
+		else{
+			//ディスプレイリスト描画
+			glCallList(SystemFontListIdx + i);
+		}
+	}
+
+	//Unicode文字列の廃棄
+	delete [] ustr;
+
+	End2DRender();
 }
 
 //! @brief 文字を中央揃えで描画（システムフォント使用）
@@ -3122,10 +3212,10 @@ void D3DGraphics::Draw2DMSFontText(int x, int y, char *str, int color)
 //! @param h 縦の大きさ
 //! @param str 文字列　（改行コード：可）
 //! @param color 色
-//! @warning <b>本関数の処理は実装されていません。</b>
+//! @warning <b>正しく中央揃えになりません。</b>
 void D3DGraphics::Draw2DMSFontTextCenter(int x, int y, int w, int h, char *str, int color)
 {
-	//
+	Draw2DMSFontText(x, y, str, color);
 }
 
 //! @brief 2D描画用設定

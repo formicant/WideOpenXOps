@@ -200,6 +200,10 @@ class D3DGraphics
 	MODELDATA pmodel[MAX_MODEL];			//!< モデルデータを格納
 	TEXTUREDATA ptextures[MAX_TEXTURE];		//!< テクスチャを格納
 	GLuint textureobjname[MAX_TEXTURE];		//!< テクスチャオブジェクト
+	HFONT SystemFont;				//!< システムフォント用の論理フォント
+	WCHAR *now_SystemFontUStr;		//!< 現在表示中のシステムフォントによる文字列（Unicode）
+	GLuint SystemFontListIdx;		//!< システムフォントのディスプレイリスト
+	int SystemFontListIdxSize;		//!< システムフォントのディスプレイリストのサイズ
 	int now_textureid;		//!< 現在設定中のテクスチャ番号
 
 	float camera_x;			//!< カメラ座標
