@@ -29,8 +29,22 @@
 // SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 //--------------------------------------------------------------------------------
 
-#ifndef DIRECTX_H
-#define DIRECTX_H
+// ***** OpenGL core only *****
+//
+// libjpeg
+//    Copyright (C) 1991-2014, Thomas G. Lane, Guido Vollbeding.
+//    this software is based in part on the work of the Independent JPEG Group
+//
+// zlib
+//    Copyright (C) 1995-2013 Jean-loup Gailly and Mark Adler
+//
+// libpng
+//    Copyright (c) 1998-2014 Glenn Randers-Pehrson
+//
+// ****************************
+
+#ifndef D3DGRAPHICS_H
+#define D3DGRAPHICS_H
 
 #define MAX_MODEL 96		//!< 最大モデル数
 #define MAX_TEXTURE 64		//!< 最大テクスチャ数
@@ -43,6 +57,10 @@
 #endif
 #include "main.h"
 
+//#define GRAPHICS_OPENGL		//!< @brief 使用するグラフィックスコアの選択 @details 定数宣言有効：OpenGL 1.1　定数宣言無効（コメント化）：DirectX 9.0c
+
+#ifndef GRAPHICS_OPENGL
+
 #define BLOCKDATA_GPUMEMORY	//!< @brief ブロックデータを格納するメモリーを選択 @details 定数宣言有効：GPUメモリー　定数宣言無効（コメント化）：メインメモリー
 
 #pragma warning(disable:4819)		//VC++警告防止
@@ -51,6 +69,27 @@
 
 #pragma comment(lib, "d3d9.lib")
 #pragma comment(lib, "d3dx9.lib")
+
+#else	//GRAPHICS_OPENGL
+
+#include <ctype.h>
+#include <windows.h>
+#include <GL/gl.h>
+#include <GL/glu.h>
+#include "lib/libjpeg/jpeglib.h"
+#include "lib/zlib/zlib.h"
+#include "lib/libpng/png.h"
+
+#pragma comment(lib, "opengl32.lib")
+#pragma comment(lib, "glu32.lib")
+
+#pragma comment(lib, "lib/libjpeg/libjpeg_t.lib")
+#pragma comment(lib, "lib/zlib/zlib.lib")
+#pragma comment(lib, "lib/libpng/libpng.lib")
+
+#endif	//GRAPHICS_OPENGL
+
+#ifndef GRAPHICS_OPENGL
 
 //! 3Dポリゴン描画用構造体
 struct VERTEXTXTA
@@ -62,7 +101,8 @@ struct VERTEXTXTA
 };
 
 //! 2Dポリゴン描画用構造体
-struct TLVERTX {
+struct TLVERTX
+{
 	FLOAT    x;		//!< position
 	FLOAT    y;		//!< position
 	FLOAT    z;		//!< position
@@ -72,12 +112,48 @@ struct TLVERTX {
 	FLOAT    tv;	//!< texture coordinates
 };
 
+#else	//GRAPHICS_OPENGL
+
+//! モデルデータの頂点格納構造体
+struct MODELVDATA
+{
+	float x;	//!< position
+	float y;	//!< position
+	float z;	//!< position
+	float u;	//!< texture coordinates
+	float v;	//!< texture coordinates
+};
+
+//! モデルデータ構造体
+struct MODELDATA
+{
+	bool useflag;			//!< 有効化フラグ
+	int polygons;			//!< ポリゴン数
+	float *VertexAry;		//!< 頂点格納配列
+	float *ColorAry;		//!< 色格納配列
+	float *TexCoordAry;		//!< テクスチャ座標格納配列
+};
+
+//! テクスチャ構造体
+struct TEXTUREDATA
+{
+	bool useflag;			//!< 有効化フラグ
+	int width;				//!< 幅
+	int height;				//!< 高さ
+	unsigned char *data;	//!< 実データ
+};
+
+#endif	//GRAPHICS_OPENGL
+
+
 //! @brief 画面描画を行うクラス
 //! @details 画面の描画機能やそれに直接関連する処理を行います。
 //! @details 具体的に、3D描画・2D描画・モデルファイルやテクスチャ管理　を行う機能があります。
-//! @details 内部ではDirectX 9を使用しています。
 class D3DGraphics
 {
+
+#ifndef GRAPHICS_OPENGL
+
 	LPDIRECT3D9 pD3D;					//!< DIRECT3D9のポインタ
 	LPDIRECT3DDEVICE9 pd3dDevice;		//!< DIRECT3DDEVICE9のポインタ
 	float aspect;						//!< 画面のアスペクト比
@@ -113,6 +189,49 @@ class D3DGraphics
 	void End2DMSFontTextRender();
 	void Start2DRender();
 	void End2DRender();
+
+#else	//GRAPHICS_OPENGL
+
+	HWND hWnd;				//!< ウィンドウハンドル
+	HGLRC hGLRC;			//!< OpenGLのコンテキスト
+	int width;				//!< 幅
+	int height;				//!< 高さ
+	PAINTSTRUCT Paint_ps;					//!< BeginPaint()関数とEndPaint()関数用
+	MODELDATA pmodel[MAX_MODEL];			//!< モデルデータを格納
+	TEXTUREDATA ptextures[MAX_TEXTURE];		//!< テクスチャを格納
+	GLuint textureobjname[MAX_TEXTURE];		//!< テクスチャオブジェクト
+	int now_textureid;		//!< 現在設定中のテクスチャ番号
+
+	float camera_x;			//!< カメラ座標
+	float camera_y;			//!< カメラ座標
+	float camera_z;			//!< カメラ座標
+	float camera_rx;		//!< カメラ回転角度
+	float camera_ry;		//!< カメラ回転角度
+	float viewangle;		//!< カメラの視野角
+
+	class BlockDataInterface* blockdata;		//!< 読み込んだブロックデータを格納するクラスへのポインタ
+	int bs;										//!< ブロック数
+	int mapTextureID[TOTAL_BLOCKTEXTURE];		//!< テクスチャ番号
+
+	char TextureFontFname[_MAX_PATH];	//!< テクスチャフォントのファイル名
+	int TextureFont;				//!< テクスチャフォントのテクスチャID
+
+	float HUD_myweapon_x[TOTAL_HAVEWEAPON];		//!< HUD_Aの武器表示 X座標
+	float HUD_myweapon_y[TOTAL_HAVEWEAPON];		//!< HUD_Aの武器表示 Y座標
+	float HUD_myweapon_z[TOTAL_HAVEWEAPON];		//!< HUD_Aの武器表示 Z座標
+
+	jpeg_decompress_struct cinfo;	//!< libjpeg
+	jpeg_error_mgr jerr;			//!< libjpeg
+
+	bool LoadBMPTexture(char* filename, bool BlackTransparent, TEXTUREDATA *ptexture);
+	bool LoadDDSTexture(char* filename, bool BlackTransparent, TEXTUREDATA *ptexture);
+	bool LoadJPEGTexture(char* filename, bool BlackTransparent, TEXTUREDATA *ptexture);
+	bool LoadPNGTexture(char* filename, bool BlackTransparent, TEXTUREDATA *ptexture);
+	void SetTexture(int TextureID);
+	void Start2DRender();
+	void End2DRender();
+
+#endif	//GRAPHICS_OPENGL
 
 public:
 	D3DGraphics();
