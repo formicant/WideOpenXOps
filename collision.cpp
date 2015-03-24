@@ -124,7 +124,29 @@ int Collision::InitCollision(BlockDataInterface* in_blockdata)
 				//一ヵ所でも頂点が同じなら、板状になっていると判定。
 				if( (data.x[j] == data.x[k])&&(data.y[j] == data.y[k])&&(data.z[j] == data.z[k]) ){
 					BoardBlock[i] = true;
+					j = 8; k = 8;	//break
 				}
+			}
+		}
+
+		//ブロックの中心を算出
+		float mx = 0.0f;
+		float my = 0.0f;
+		float mz = 0.0f;
+		for(int j=0; j<8; j++){
+			mx += data.x[j];
+			my += data.y[j];
+			mz += data.z[j];
+		}
+		mx /= 8;
+		my /= 8;
+		mz /= 8;
+
+		//ブロックの中心点に対して1面でも表面ならば、板状になっていると判定。
+		for(int j=0; j<6; j++){
+			if( CheckPolygonFront(i, j, mx, my, mz) == true ){
+				BoardBlock[i] = true;
+				break;
 			}
 		}
 	}
@@ -230,7 +252,7 @@ bool Collision::CheckPolygonFront(int id, int face, float x, float y, float z)
 	//内積
 	d = bdata.material[face].vx*vx + bdata.material[face].vy*vy + bdata.material[face].vz*vz;
 
-	if( d < 0.0f ){
+	if( d <= 0.0f ){
 		return true;
 	}
 	return false;
@@ -260,7 +282,7 @@ bool Collision::CheckPolygonFrontRx(int id, int face, float rx)
 	//内積
 	d = bdata.material[face].vx*vx + bdata.material[face].vz*vz;
 
-	if( d < 0.0f ){
+	if( d <= 0.0f ){
 		return true;
 	}
 	return false;
@@ -1086,6 +1108,7 @@ bool CollideAABBRay(float box_min_x, float box_min_y, float box_min_z, float box
 //! @param maxDist 判定を行う最大距離　（0.0fを超える値）
 //! @return 当たっている：true　当たっていない：false
 //! @warning RayPos（始点）と RayDir（ベクトル）を間違えないこと。
+//! @attention Y軸方向へ垂直に立つ円柱です。向きは変えられません。
 bool CollideCylinderRay(float c_x, float c_y, float c_z, float c_r, float c_h, float RayPos_x, float RayPos_y, float RayPos_z, float RayDir_x, float RayDir_y, float RayDir_z, float *Dist, float maxDist)
 {
 	float x, z, d;
