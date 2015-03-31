@@ -184,7 +184,7 @@ void BlockDataInterface::CalculationBlockdata(bool screen)
 			g = (float)sqrt(xs * xs + ys * ys + zs * zs);
 
 			//もし法線がおかしければ、もう一方の三角形で計算をやり直す
-			if( g == 0.0f ){
+			if( g < 0.01f ){
 				xs = ((data[i].y[ vID[1] ] - data[i].y[ vID[0] ]) * (data[i].z[ vID[2] ] - data[i].z[ vID[0] ])) - ((data[i].y[ vID[2] ] - data[i].y[ vID[0] ]) * (data[i].z[ vID[1] ] - data[i].z[ vID[0] ]));
 				ys = ((data[i].z[ vID[1] ] - data[i].z[ vID[0] ]) * (data[i].x[ vID[2] ] - data[i].x[ vID[0] ])) - ((data[i].z[ vID[2] ] - data[i].z[ vID[0] ]) * (data[i].x[ vID[1] ] - data[i].x[ vID[0] ]));
 				zs = ((data[i].x[ vID[1] ] - data[i].x[ vID[0] ]) * (data[i].y[ vID[2] ] - data[i].y[ vID[0] ])) - ((data[i].x[ vID[2] ] - data[i].x[ vID[0] ]) * (data[i].y[ vID[1] ] - data[i].y[ vID[0] ]));
@@ -334,6 +334,7 @@ PointDataInterface::PointDataInterface()
 	//イベントメッセージ初期化
 	for(int i=0; i<MAX_POINTMESSAGES; i++){
 		text[i] = new char[MAX_POINTMESSAGEBYTE];
+		text[i][0] = NULL;
 	}
 }
 
