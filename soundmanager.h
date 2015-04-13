@@ -36,8 +36,8 @@
 
 #define MAX_SOUNDHITMAP 95			//!< ƒ}ƒbƒv’…’e‰¹‚ÌÅ‘å‰¹—Ê
 #define MAX_SOUNDHITSMALLOBJ 110	//!< ¬•¨’…’e‰¹‚ÌÅ‘å‰¹—Ê
-#define MAX_SOUNDHITHUMAN 90		//!< l’…’ei”í’ej‰¹‚ÌÅ‘å‰¹—Ê
-#define MAX_SOUNDPASSING 80		//!< ’e‚ª‰¡Ø‚é‰¹‚ÌÅ‘å‰¹—Ê
+#define MAX_SOUNDHITHUMAN 75		//!< l’…’ei”í’ej‰¹‚ÌÅ‘å‰¹—Ê
+#define MAX_SOUNDPASSING 80			//!< ’e‚ª‰¡Ø‚é‰¹‚ÌÅ‘å‰¹—Ê
 #define MAX_SOUNDCCOGRENADE 100		//!< ŽèžÖ’e ƒoƒEƒ“ƒhE’µ‚Ë•Ô‚è‰¹‚ÌÅ‘å‰¹—Ê
 #define MAX_SOUNDHITGRENADE 120		//!< ŽèžÖ’e ”š”­‰¹‚ÌÅ‘å‰¹—Ê
 
