@@ -1283,6 +1283,9 @@ int AIcontrol::ThrowGrenade()
 //! @brief ˜r‚ÌŠp“x‚ðÝ’è
 void AIcontrol::ArmAngle()
 {
+	DelFlag(moveturn_mode, AI_CTRL_TURNUP);
+	DelFlag(moveturn_mode, AI_CTRL_TURNDOWN);
+
 	if( ctrlhuman->GetMainWeaponTypeNO() == ID_WEAPON_NONE ){	//Žè‚Ô‚ç
 		//‰º‚ÉŒü‚¯‘±‚¯‚é
 		SetFlag(moveturn_mode, AI_CTRL_TURNDOWN);
@@ -1291,10 +1294,10 @@ void AIcontrol::ArmAngle()
 		float addry2 = 0.0f - ry;
 
 		//ù‰ñ
-		if( addry2 > 0.0f ){
+		if( addry2 > DegreeToRadian(1.0f) ){
 			SetFlag(moveturn_mode, AI_CTRL_TURNUP);
 		}
-		if( addry2 < 0.0f ){
+		if( addry2 < DegreeToRadian(-1.0f) ){
 			SetFlag(moveturn_mode, AI_CTRL_TURNDOWN);
 		}
 	}

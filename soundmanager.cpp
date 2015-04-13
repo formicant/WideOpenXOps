@@ -429,25 +429,25 @@ bool SoundManager::CheckApproach(soundlist *plist, float camera_x, float camera_
 	float x, y, z;
 	float dist1, dist2, dist3;
 
+	//1フレーム前の距離
+	x = camera_x - (plist->x - plist->move_x);
+	y = camera_y - (plist->y - plist->move_y);
+	z = camera_z - (plist->z - plist->move_z);
+	dist1 = x*x + y*y + z*z;
+
 	//現在位置の距離
 	x = camera_x - plist->x;
 	y = camera_y - plist->y;
 	z = camera_z - plist->z;
-	dist1 = x*x + y*y + z*z;
+	dist2 = x*x + y*y + z*z;
 
 	//1フレーム後の距離
 	x = camera_x - (plist->x + plist->move_x);
 	y = camera_y - (plist->y + plist->move_y);
 	z = camera_z - (plist->z + plist->move_z);
-	dist2 = x*x + y*y + z*z;
-
-	//2フレーム後の位置
-	x = camera_x - (plist->x + plist->move_x*2);
-	y = camera_y - (plist->y + plist->move_y*2);
-	z = camera_z - (plist->z + plist->move_z*2);
 	dist3 = x*x + y*y + z*z;
 
-	//1フレーム後の距離が最も近ければ～
+	//現在位置の距離が最も近ければ～
 	if( (dist1 > dist2)&&(dist2 < dist3) ){
 		float speed;
 		float min_dist, dist;
@@ -459,7 +459,7 @@ bool SoundManager::CheckApproach(soundlist *plist, float camera_x, float camera_
 		min_dist = DistancePosRay(camera_x, camera_y, camera_z, plist->x, plist->y, plist->z, plist->move_x/speed, plist->move_y/speed, plist->move_z/speed, (float)speed*2);
 
 		//最短距離時の座標を求める
-		dist = (float)sqrt(dist1 - min_dist*min_dist);
+		dist = (float)sqrt(dist2 - min_dist*min_dist);
 		*min_x = plist->x + plist->move_x/speed * dist;
 		*min_y = plist->y + plist->move_y/speed * dist;
 		*min_z = plist->z + plist->move_z/speed * dist;
