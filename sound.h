@@ -50,11 +50,15 @@
  #pragma comment(lib, "dsound.lib")
  #pragma comment(lib, "dxguid.lib")
  #pragma comment(lib, "winmm.lib")
+
+ #define SOUND_CORE "DirectSound"		//!< バージョン表示用情報
 #else	//#ifdef SOUND_DIRECTSOUND
  typedef int (*FARPROCH)(HWND);			//!< DLL Parameter
  typedef int (*FARPROCCI)(char*, int);	//!< DLL Parameter
  typedef int (*FARPROCIII)(int, int, int);		//!< DLL Parameter
  typedef int (*FARPROCI)(int);			//!< DLL Parameter
+
+ #define SOUND_CORE "ezds"				//!< バージョン表示用情報
 #endif	//#ifdef SOUND_DIRECTSOUND
 
 //! @brief サウンドを再生するクラス

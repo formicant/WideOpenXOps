@@ -2867,6 +2867,7 @@ void maingame::ProcessConsole()
 	if( strcmp(NewCommand, "ver") == 0 ){
 		sprintf(str, "%s   Version:%s", GAMENAME, GAMEVERSION);
 		AddInfoConsole(d3dg->GetColorCode(1.0f,1.0f,1.0f,1.0f), str);
+		AddInfoConsole(d3dg->GetColorCode(1.0f,1.0f,1.0f,1.0f), " (Graphics:"GRAPHICS_CORE"   Sound:"SOUND_CORE")");
 	}
 
 	//スクリーンショットを撮影

@@ -70,6 +70,8 @@
 #pragma comment(lib, "d3d9.lib")
 #pragma comment(lib, "d3dx9.lib")
 
+#define GRAPHICS_CORE "DirectX 9.0"		//!< バージョン表示用情報
+
 #else	//GRAPHICS_OPENGL
 
 #include <ctype.h>
@@ -86,6 +88,8 @@
 #pragma comment(lib, "lib/libjpeg/libjpeg_t.lib")
 #pragma comment(lib, "lib/zlib/zlib.lib")
 #pragma comment(lib, "lib/libpng/libpng.lib")
+
+#define GRAPHICS_CORE "OpenGL 1.1"		//!< バージョン表示用情報
 
 #endif	//GRAPHICS_OPENGL
 
