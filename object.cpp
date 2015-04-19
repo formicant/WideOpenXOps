@@ -1617,14 +1617,16 @@ void human::Render(class D3DGraphics *d3dg, class ResourceManager *Resource, boo
 		if( GetFlag(MoveFlag_lt, MOVEFLAG_WALK) ){
 			legmodelid = id_walkmodel[ (walkcnt/3 % TOTAL_WALKMODE) ];	//歩き
 		}
-		if( GetFlag(MoveFlag_lt, (MOVEFLAG_LEFT | MOVEFLAG_RIGHT)) ){
-			legmodelid = id_runmodel[ (runcnt/3 % TOTAL_RUNMODE) ];		//左右走り
-		}
-		if( GetFlag(MoveFlag_lt, MOVEFLAG_FORWARD) ){
-			legmodelid = id_runmodel[ (runcnt/2 % TOTAL_RUNMODE) ];		//前走り
-		}
-		if( GetFlag(MoveFlag_lt, MOVEFLAG_BACK) ){
-			legmodelid = id_runmodel[ (runcnt/4 % TOTAL_RUNMODE) ];		//後ろ走り
+		else{
+			if( GetFlag(MoveFlag_lt, (MOVEFLAG_LEFT | MOVEFLAG_RIGHT)) ){
+				legmodelid = id_runmodel[ (runcnt/3 % TOTAL_RUNMODE) ];		//左右走り
+			}
+			if( GetFlag(MoveFlag_lt, MOVEFLAG_FORWARD) ){
+				legmodelid = id_runmodel[ (runcnt/2 % TOTAL_RUNMODE) ];		//前走り
+			}
+			if( GetFlag(MoveFlag_lt, MOVEFLAG_BACK) ){
+				legmodelid = id_runmodel[ (runcnt/4 % TOTAL_RUNMODE) ];		//後ろ走り
+			}
 		}
 
 		//足を描画
