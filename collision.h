@@ -39,22 +39,30 @@
 
 #include <float.h>
 
+//! 当たり判定用ブロックデータ構造体
+struct Coll_Blockdata{
+	float x[8];					//!< ブロック X座標
+	float y[8];					//!< ブロック Y座標
+	float z[8];					//!< ブロック Z座標
+	float polygon_center_x[6];	//!< ブロックの面の中心 X座標
+	float polygon_center_y[6];	//!< ブロックの面の中心 Y座標
+	float polygon_center_z[6];	//!< ブロックの面の中心 Z座標
+	float min_x;				//!< ブロック X座標の最小値
+	float min_y;				//!< ブロック Y座標の最小値
+	float min_z;				//!< ブロック Z座標の最小値
+	float max_x;				//!< ブロック X座標の最大値
+	float max_y;				//!< ブロック Y座標の最大値
+	float max_z;				//!< ブロック Z座標の最大値
+	bool BoardBlock;			//!< ブロック が厚さ0で板状になっているか
+	int worldgroup;				//!< 空間分割のグループ
+};
+
 //! @brief 当たり判定を行うクラス
 //! @details マップとして使用されるブロックデータへの当たり判定（追突検出）を行います。
 class Collision
 {
 	class BlockDataInterface* blockdata;		//!< 読み込んだブロックデータが格納されたクラスへのポインタ
-	float *bdata_polygon_center_x;		//!< 各ブロックの面の中心 X座標
-	float *bdata_polygon_center_y;		//!< 各ブロックの面の中心 Y座標
-	float *bdata_polygon_center_z;		//!< 各ブロックの面の中心 Z座標
-	float *bmin_x;		//!< 各ブロック X座標の最大値
-	float *bmin_y;		//!< 各ブロック Y座標の最大値
-	float *bmin_z;		//!< 各ブロック Z座標の最大値
-	float *bmax_x;		//!< 各ブロック X座標の最小値
-	float *bmax_y;		//!< 各ブロック Y座標の最小値
-	float *bmax_z;		//!< 各ブロック Z座標の最小値
-	bool *BoardBlock;	//!< 各ブロック が厚さ0で板状になっているか
-	int *bdata_worldgroup;	//!< 空間分割のグループ
+	Coll_Blockdata *cbdata;						//!< ブロックデータ
 
 	bool CheckIntersectTri(int blockid, int face, float RayPos_x, float RayPos_y, float RayPos_z, float RayDir_x, float RayDir_y, float RayDir_z, float *out_Dist);
 
@@ -62,7 +70,7 @@ public:
 	Collision();
 	~Collision();
 	int InitCollision(BlockDataInterface* in_blockdata);
-	void GetBlockPosMINMAX(struct blockdata data, float *min_x, float *min_y, float *min_z, float *max_x, float *max_y, float *max_z);
+	void GetBlockPosMINMAX(int id, float *min_x, float *min_y, float *min_z, float *max_x, float *max_y, float *max_z);
 	int GetWorldGroup(float x, float z);
 	bool CheckPolygonFront(int id, int face, float x, float y, float z);
 	bool CheckPolygonFrontRx(int id, int face, float rx);

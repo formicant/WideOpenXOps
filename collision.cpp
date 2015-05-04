@@ -35,43 +35,23 @@
 Collision::Collision()
 {
 	blockdata = NULL;
-	bdata_polygon_center_x = new float[MAX_BLOCKS * 6];
-	bdata_polygon_center_y = new float[MAX_BLOCKS * 6];
-	bdata_polygon_center_z = new float[MAX_BLOCKS * 6];
-	bmin_x = new float[MAX_BLOCKS];
-	bmin_y = new float[MAX_BLOCKS];
-	bmin_z = new float[MAX_BLOCKS];
-	bmax_x = new float[MAX_BLOCKS];
-	bmax_y = new float[MAX_BLOCKS];
-	bmax_z = new float[MAX_BLOCKS];
-	BoardBlock = new bool[MAX_BLOCKS];
-	bdata_worldgroup = new int[MAX_BLOCKS];
+	cbdata = new Coll_Blockdata[MAX_BLOCKS];
 	for(int i=0; i<MAX_BLOCKS; i++){
-		bmin_x[i] = 0.0f;
-		bmin_y[i] = 0.0f;
-		bmin_z[i] = 0.0f;
-		bmax_x[i] = 0.0f;
-		bmax_y[i] = 0.0f;
-		bmax_z[i] = 0.0f;
-		BoardBlock[i] = false;
-		bdata_worldgroup[i] = 0;
+		cbdata[i].min_x = 0.0f;
+		cbdata[i].min_y = 0.0f;
+		cbdata[i].min_z = 0.0f;
+		cbdata[i].max_x = 0.0f;
+		cbdata[i].max_y = 0.0f;
+		cbdata[i].max_z = 0.0f;
+		cbdata[i].BoardBlock = false;
+		cbdata[i].worldgroup = 0;
 	}
 }
 
 //! @brief ディストラクタ
 Collision::~Collision()
 {
-	if( bdata_polygon_center_x != NULL ){ delete [] bdata_polygon_center_x; }
-	if( bdata_polygon_center_y != NULL ){ delete [] bdata_polygon_center_y; }
-	if( bdata_polygon_center_z != NULL ){ delete [] bdata_polygon_center_z; }
-	if( bmin_x != NULL ){ delete [] bmin_x; }
-	if( bmin_y != NULL ){ delete [] bmin_y; }
-	if( bmin_z != NULL ){ delete [] bmin_z; }
-	if( bmax_x != NULL ){ delete [] bmax_x; }
-	if( bmax_y != NULL ){ delete [] bmax_y; }
-	if( bmax_z != NULL ){ delete [] bmax_z; }
-	if( BoardBlock != NULL ){ delete [] BoardBlock; }
-	if( bdata_worldgroup != NULL ){ delete [] bdata_worldgroup; }
+	if( cbdata != NULL ){ delete [] cbdata; }
 }
 
 //! @brief ブロックデータを取り込む
@@ -88,42 +68,77 @@ int Collision::InitCollision(BlockDataInterface* in_blockdata)
 	bs = blockdata->GetTotaldatas();
 
 	for(int i=0; i<bs; i++){
-		BoardBlock[i] = false;
+		cbdata[i].BoardBlock = false;
+	}
+
+	for(int i=0; i<bs; i++){
+		float cx = 0.0f;
+		float cy = 0.0f;
+		float cz = 0.0f;
+		float x, y, z, rx, ry, r;
+
+		blockdata->Getdata(&data, i);
+
+		//中心を求める
+		for(int j=0; j<8; j++){
+			cx += data.x[j];
+			cy += data.y[j];
+			cz += data.z[j];
+		}
+		cx /= 8;
+		cy /= 8;
+		cz /= 8;
+
+		//各頂点の座標を再計算
+		for(int j=0; j<8; j++){
+			//中心からの位置関係を算出
+			x = data.x[j] - cx;
+			y = data.y[j] - cy;
+			z = data.z[j] - cz;
+			rx = atan2(z, x);
+			ry = atan2(y, sqrt(x*x + z*z));
+			r = sqrt(x*x + y*y + z*z);
+
+			//大きくする
+			r += 0.1f;
+
+			//座標を再計算
+			cbdata[i].x[j] = cx + cos(rx) * cos(ry) * r;
+			cbdata[i].y[j] = cy + sin(ry) * r;
+			cbdata[i].z[j] = cz + sin(rx) * cos(ry) * r;
+		}
 	}
 
 	//判定用平面の中心点算出
 	for(int i=0; i<bs; i++){
-		blockdata->Getdata(&data, i);
 		for(int j=0; j<6; j++){
 			blockdataface(j, &vID[0], NULL);
 
-			bdata_polygon_center_x[i*6 + j] = 0.0f;
-			bdata_polygon_center_y[i*6 + j] = 0.0f;
-			bdata_polygon_center_z[i*6 + j] = 0.0f;
+			cbdata[i].polygon_center_x[j] = 0.0f;
+			cbdata[i].polygon_center_y[j] = 0.0f;
+			cbdata[i].polygon_center_z[j] = 0.0f;
 
 			//4頂点の中心点を算出
 			for(int k=0; k<4; k++){
-				bdata_polygon_center_x[i*6 + j] += data.x[ vID[k] ];
-				bdata_polygon_center_y[i*6 + j] += data.y[ vID[k] ];
-				bdata_polygon_center_z[i*6 + j] += data.z[ vID[k] ];
+				cbdata[i].polygon_center_x[j] += cbdata[i].x[ vID[k] ];
+				cbdata[i].polygon_center_y[j] += cbdata[i].y[ vID[k] ];
+				cbdata[i].polygon_center_z[j] += cbdata[i].z[ vID[k] ];
 			}
-			bdata_polygon_center_x[i*6 + j] /= 4;
-			bdata_polygon_center_y[i*6 + j] /= 4;
-			bdata_polygon_center_z[i*6 + j] /= 4;
+			cbdata[i].polygon_center_x[j] /= 4;
+			cbdata[i].polygon_center_y[j] /= 4;
+			cbdata[i].polygon_center_z[j] /= 4;
 		}
 	}
 
 	//板状のブロックを検出
 	for(int i=0; i<bs; i++){
-		blockdata->Getdata(&data, i);
-
-		BoardBlock[i] = false;
+		cbdata[i].BoardBlock = false;
 
 		for(int j=0; j<8; j++){
 			for(int k=j+1; k<8; k++){
 				//一ヵ所でも頂点が同じなら、板状になっていると判定。
-				if( (data.x[j] == data.x[k])&&(data.y[j] == data.y[k])&&(data.z[j] == data.z[k]) ){
-					BoardBlock[i] = true;
+				if( (cbdata[i].x[j] == cbdata[i].x[k])&&(cbdata[i].y[j] == cbdata[i].y[k])&&(cbdata[i].z[j] == cbdata[i].z[k]) ){
+					cbdata[i].BoardBlock = true;
 					j = 8; k = 8;	//break
 				}
 			}
@@ -134,9 +149,9 @@ int Collision::InitCollision(BlockDataInterface* in_blockdata)
 		float my = 0.0f;
 		float mz = 0.0f;
 		for(int j=0; j<8; j++){
-			mx += data.x[j];
-			my += data.y[j];
-			mz += data.z[j];
+			mx += cbdata[i].x[j];
+			my += cbdata[i].y[j];
+			mz += cbdata[i].z[j];
 		}
 		mx /= 8;
 		my /= 8;
@@ -145,7 +160,7 @@ int Collision::InitCollision(BlockDataInterface* in_blockdata)
 		//ブロックの中心点に対して1面でも表面ならば、板状になっていると判定。
 		for(int j=0; j<6; j++){
 			if( CheckPolygonFront(i, j, mx, my, mz) == true ){
-				BoardBlock[i] = true;
+				cbdata[i].BoardBlock = true;
 				break;
 			}
 		}
@@ -154,50 +169,44 @@ int Collision::InitCollision(BlockDataInterface* in_blockdata)
 
 	//ブロックAABB作成
 	for(int i=0; i<bs; i++){
-		blockdata->Getdata(&data, i);
-		GetBlockPosMINMAX(data, &bmin_x[i], &bmin_y[i], &bmin_z[i], &bmax_x[i], &bmax_y[i], &bmax_z[i]);
+		GetBlockPosMINMAX(i, &cbdata[i].min_x, &cbdata[i].min_y, &cbdata[i].min_z, &cbdata[i].max_x, &cbdata[i].max_y, &cbdata[i].max_z);
 	}
 
 	//ブロックの空間分割グループを計算
 	for(int i=0; i<bs; i++){
-		///*
-		blockdata->Getdata(&data, i);
-
-		bdata_worldgroup[i] = GetWorldGroup(bmin_x[i], bmin_z[i]);
-		if( GetWorldGroup(bmax_x[i], bmax_z[i]) != bdata_worldgroup[i] ){
-			bdata_worldgroup[i] = 0;
+		cbdata[i].worldgroup = GetWorldGroup(cbdata[i].min_x, cbdata[i].min_z);
+		if( GetWorldGroup(cbdata[i].max_x, cbdata[i].max_z) != cbdata[i].worldgroup ){
+			cbdata[i].worldgroup = 0;
 		}
-		//*/
-		//bdata_worldgroup[i] = 0;
 	}
 
 	return 0;
 }
 
 //! @brief ブロックの座標最大値・最小値を返す
-//! @param data ブロックデータの構造体
+//! @param id 判定するブロック番号
 //! @param *min_x 最小 X座標を返すポインタ
 //! @param *min_y 最小 Y座標を返すポインタ
 //! @param *min_z 最小 Z座標を返すポインタ
 //! @param *max_x 最大 X座標を返すポインタ
 //! @param *max_y 最大 Y座標を返すポインタ
 //! @param *max_z 最大 Z座標を返すポインタ
-void Collision::GetBlockPosMINMAX(struct blockdata data, float *min_x, float *min_y, float *min_z, float *max_x, float *max_y, float *max_z)
+void Collision::GetBlockPosMINMAX(int id, float *min_x, float *min_y, float *min_z, float *max_x, float *max_y, float *max_z)
 {
-	*min_x = data.x[0];
-	*min_y = data.y[0];
-	*min_z = data.z[0];
-	*max_x = data.x[0];
-	*max_y = data.y[0];
-	*max_z = data.z[0];
+	*min_x = cbdata[id].x[0];
+	*min_y = cbdata[id].y[0];
+	*min_z = cbdata[id].z[0];
+	*max_x = cbdata[id].x[0];
+	*max_y = cbdata[id].y[0];
+	*max_z = cbdata[id].z[0];
 	for(int i=1; i<8; i++){
-		if( *min_x > data.x[i] ){ *min_x = data.x[i]; }
-		if( *min_y > data.y[i] ){ *min_y = data.y[i]; }
-		if( *min_z > data.z[i] ){ *min_z = data.z[i]; }
+		if( *min_x > cbdata[id].x[i] ){ *min_x = cbdata[id].x[i]; }
+		if( *min_y > cbdata[id].y[i] ){ *min_y = cbdata[id].y[i]; }
+		if( *min_z > cbdata[id].z[i] ){ *min_z = cbdata[id].z[i]; }
 
-		if( *max_x < data.x[i] ){ *max_x = data.x[i]; }
-		if( *max_y < data.y[i] ){ *max_y = data.y[i]; }
-		if( *max_z < data.z[i] ){ *max_z = data.z[i]; }
+		if( *max_x < cbdata[id].x[i] ){ *max_x = cbdata[id].x[i]; }
+		if( *max_y < cbdata[id].y[i] ){ *max_y = cbdata[id].y[i]; }
+		if( *max_z < cbdata[id].z[i] ){ *max_z = cbdata[id].z[i]; }
 	}
 
 	//計算誤差対策のため、わずかに大きめにする。
@@ -245,9 +254,9 @@ bool Collision::CheckPolygonFront(int id, int face, float x, float y, float z)
 	blockdata->Getdata(&bdata, id);
 
 	//面の中心を基準点に、座標のベクトルを求める
-	vx = bdata_polygon_center_x[id*6 + face] - x;
-	vy = bdata_polygon_center_y[id*6 + face] - y;
-	vz = bdata_polygon_center_z[id*6 + face] - z;
+	vx = cbdata[id].polygon_center_x[face] - x;
+	vy = cbdata[id].polygon_center_y[face] - y;
+	vz = cbdata[id].polygon_center_z[face] - z;
 
 	//内積
 	d = bdata.material[face].vx*vx + bdata.material[face].vy*vy + bdata.material[face].vz*vz;
@@ -322,9 +331,9 @@ bool Collision::CheckIntersectTri(int blockid, int face, float RayPos_x, float R
 	}
 
 	//面の中心を基準点に、座標のベクトルを求める
-	vx1 = RayPos_x - bdata_polygon_center_x[blockid*6 + face];
-	vy1 = RayPos_y - bdata_polygon_center_y[blockid*6 + face];
-	vz1 = RayPos_z - bdata_polygon_center_z[blockid*6 + face];
+	vx1 = RayPos_x - cbdata[blockid].polygon_center_x[face];
+	vy1 = RayPos_y - cbdata[blockid].polygon_center_y[face];
+	vz1 = RayPos_z - cbdata[blockid].polygon_center_z[face];
 
 	//内積
 	d2 = data.material[face].vx*vx1 + data.material[face].vy*vy1 + data.material[face].vz*vz1;		//面までの最短距離が求まる
@@ -337,9 +346,9 @@ bool Collision::CheckIntersectTri(int blockid, int face, float RayPos_x, float R
 
 
 	//ブロック全体のAABBに入らなければ除外
-	if( (x < bmin_x[blockid])||(bmax_x[blockid] < x) ){ return false; }
-	if( (y < bmin_y[blockid])||(bmax_y[blockid] < y) ){ return false; }
-	if( (z < bmin_z[blockid])||(bmax_z[blockid] < z) ){ return false; }
+	if( (x < cbdata[blockid].min_x)||(cbdata[blockid].max_x < x) ){ return false; }
+	if( (y < cbdata[blockid].min_y)||(cbdata[blockid].max_y < y) ){ return false; }
+	if( (z < cbdata[blockid].min_z)||(cbdata[blockid].max_z < z) ){ return false; }
 
 
 	//以下、ブロック面の内側に交点があるかチェック
@@ -417,29 +426,29 @@ bool Collision::CheckBlockInside(int blockid, float x, float y, float z, bool wo
 	if( (blockid < 0)||(blockdata->GetTotaldatas() <= blockid) ){ return false; }
 
 	//板状のブロックは計算外
-	if( BoardBlock[blockid] == true ){ return false; }
+	if( cbdata[blockid].BoardBlock == true ){ return false; }
 
 
 	//判定の荒削り
 	if( worldgroup == true ){
 
 		//空間分割
-		if( bdata_worldgroup[blockid] != 0 ){
+		if( cbdata[blockid].worldgroup != 0 ){
 			//観測点の空間のグループを取得
 			int worldgroup = GetWorldGroup(x, z);
 
 			if( worldgroup != 0 ){
 				//空間のグループが違えば計算外
-				if( bdata_worldgroup[blockid] != worldgroup ){
+				if( cbdata[blockid].worldgroup != worldgroup ){
 					return false;
 				}
 			}
 		}
 
 		//範囲で検索
-		if( (x < bmin_x[blockid])||(bmax_x[blockid] < x) ){ return false; }
-		if( (y < bmin_y[blockid])||(bmax_y[blockid] < y) ){ return false; }
-		if( (z < bmin_z[blockid])||(bmax_z[blockid] < z) ){ return false; }
+		if( (x < cbdata[blockid].min_x)||(cbdata[blockid].max_x < x) ){ return false; }
+		if( (y < cbdata[blockid].min_y)||(cbdata[blockid].max_y < y) ){ return false; }
+		if( (z < cbdata[blockid].min_z)||(cbdata[blockid].max_z < z) ){ return false; }
 	}
 
 
@@ -506,7 +515,7 @@ bool Collision::CheckBlockIntersectRay(int blockid, float RayPos_x, float RayPos
 	int worldgroupB = 0;
 
 	//板状のブロックは計算外
-	if( BoardBlock[blockid] == true ){
+	if( cbdata[blockid].BoardBlock == true ){
 		if( face != NULL ){ *face = 0; }
 		*Dist = 0.0f;
 		return false;
@@ -535,14 +544,14 @@ bool Collision::CheckBlockIntersectRay(int blockid, float RayPos_x, float RayPos
 	}
 
 	if( maxDist > 0.0f ){
-		if( bdata_worldgroup[blockid] != 0 ){
+		if( cbdata[blockid].worldgroup != 0 ){
 			//始点と終点が、空間のグループから出ていなければ
 			if( (worldgroupA != 0)&&(worldgroupA == worldgroupB) ){
 
 				//空間のグループが違えば計算外
-				if( bdata_worldgroup[blockid] == worldgroupA ){		//worldgroupA == worldgroupB
+				if( cbdata[blockid].worldgroup == worldgroupA ){		//worldgroupA == worldgroupB
 					//境界ボックス同士で判定
-					if( CollideBoxAABB(bmin_x[blockid], bmin_y[blockid], bmin_z[blockid], bmax_x[blockid], bmax_y[blockid], bmax_z[blockid], rmin_x, rmin_y, rmin_z, rmax_x, rmax_y, rmax_z) == false ){
+					if( CollideBoxAABB(cbdata[blockid].min_x, cbdata[blockid].min_y, cbdata[blockid].min_z, cbdata[blockid].max_x, cbdata[blockid].max_y, cbdata[blockid].max_z, rmin_x, rmin_y, rmin_z, rmax_x, rmax_y, rmax_z) == false ){
 						//当たってなければ、このブロックは調べない。
 						if( face != NULL ){ *face = 0; }
 						*Dist = 0.0f;
@@ -554,7 +563,7 @@ bool Collision::CheckBlockIntersectRay(int blockid, float RayPos_x, float RayPos
 	}
 
 	//境界ボックスとレイで判定
-	if( CollideAABBRay(bmin_x[blockid], bmin_y[blockid], bmin_z[blockid], bmax_x[blockid], bmax_y[blockid], bmax_z[blockid], RayPos_x, RayPos_y, RayPos_z, RayDir_x, RayDir_y, RayDir_z, NULL, -1.0f) == false ){
+	if( CollideAABBRay(cbdata[blockid].min_x, cbdata[blockid].min_y, cbdata[blockid].min_z, cbdata[blockid].max_x, cbdata[blockid].max_y, cbdata[blockid].max_z, RayPos_x, RayPos_y, RayPos_z, RayDir_x, RayDir_y, RayDir_z, NULL, -1.0f) == false ){
 		//当たってなければ、このブロックは調べない。
 		if( face != NULL ){ *face = 0; }
 		*Dist = 0.0f;
@@ -645,18 +654,18 @@ bool Collision::CheckALLBlockIntersectRay(float RayPos_x, float RayPos_y, float 
 	
 	for(int i=0; i<bs; i++){
 		//板状のブロックは計算外
-		if( BoardBlock[i] == true ){ continue; }
+		if( cbdata[i].BoardBlock == true ){ continue; }
 
 		if( maxDist > 0.0f ){
-			if( bdata_worldgroup[i] != 0 ){
+			if( cbdata[i].worldgroup != 0 ){
 				//始点と終点が、空間のグループから出ていなければ
 				if( (worldgroupA != 0)&&(worldgroupA == worldgroupB) ){
 
 					//空間のグループが違えば計算外
-					if( bdata_worldgroup[i] == worldgroupA ){		//worldgroupA == worldgroupB
+					if( cbdata[i].worldgroup == worldgroupA ){		//worldgroupA == worldgroupB
 
 						//境界ボックス同士で判定
-						if( CollideBoxAABB(bmin_x[i], bmin_y[i], bmin_z[i], bmax_x[i], bmax_y[i], bmax_z[i], rmin_x, rmin_y, rmin_z, rmax_x, rmax_y, rmax_z) == false ){
+						if( CollideBoxAABB(cbdata[i].min_x, cbdata[i].min_y, cbdata[i].min_z, cbdata[i].max_x, cbdata[i].max_y, cbdata[i].max_z, rmin_x, rmin_y, rmin_z, rmax_x, rmax_y, rmax_z) == false ){
 							continue;	//当たってなければ、このブロックは調べない。
 						}
 
@@ -666,7 +675,7 @@ bool Collision::CheckALLBlockIntersectRay(float RayPos_x, float RayPos_y, float 
 		}
 
 		//境界ボックスとレイで判定
-		if( CollideAABBRay(bmin_x[i], bmin_y[i], bmin_z[i], bmax_x[i], bmax_y[i], bmax_z[i], RayPos_x, RayPos_y, RayPos_z, RayDir_x, RayDir_y, RayDir_z, NULL, -1.0f) == false ){
+		if( CollideAABBRay(cbdata[i].min_x, cbdata[i].min_y, cbdata[i].min_z, cbdata[i].max_x, cbdata[i].max_y, cbdata[i].max_z, RayPos_x, RayPos_y, RayPos_z, RayDir_x, RayDir_y, RayDir_z, NULL, -1.0f) == false ){
 			continue;		//当たってなければ、このブロックは調べない。
 		}
 

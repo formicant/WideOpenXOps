@@ -2287,7 +2287,7 @@ void maingame::RenderRadar()
 		BlockData.Getdata(&bdata, i);
 
 		//表示候補のブロックを検出（荒削り）
-		CollD.GetBlockPosMINMAX(bdata, &x_min, &y_min, &z_min, &x_max, &y_max, &z_max);
+		CollD.GetBlockPosMINMAX(i, &x_min, &y_min, &z_min, &x_max, &y_max, &z_max);
 		if( CollideBoxAABB(x_min, y_min, z_min, x_max, y_max, z_max, camera_x-RadarWorldR*2, camera_y-1.0f, camera_z-RadarWorldR*2, camera_x+RadarWorldR*2, camera_y+1.0f, camera_z+RadarWorldR*2) == true ){
 
 			//各面ごとに処理する

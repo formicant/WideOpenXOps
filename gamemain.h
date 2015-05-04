@@ -85,7 +85,7 @@ struct GameInfo{
 //! コンソールを管理する構造体
 struct ConsoleData{
 	int color;						//!< 色
-	char textdata[MAX_CONSOLELEN];	//!< 文字列
+	char textdata[MAX_CONSOLELEN+1];	//!< 文字列
 };
 #endif
 
