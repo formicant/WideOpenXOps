@@ -211,6 +211,9 @@ int SoundControl::LoadSound(char* filename)
 	//一時領域を解放
 	delete pWavData;
 
+	//フォーマット情報解放
+	delete pwfex;
+
 	//セカンダリバッファーのコピーを作成
 	for(int i=1; i<MAX_SOUNDLISTS; i++){
 		if( pDSound->DuplicateSoundBuffer(pDSBuffer[id][0], &(pDSBuffer[id][i])) != DS_OK ){
@@ -369,7 +372,7 @@ bool SoundControl::CheckSoundFile(char* filename, int *filesize, int *fileoffset
 		if( mmioRead(hMmio, (HPSTR) &pcmWaveFormat, sizeof(pcmWaveFormat)) == sizeof(pcmWaveFormat) ){
 			if( pcmWaveFormat.wf.wFormatTag == WAVE_FORMAT_PCM ){
 				if( (pcmWaveFormat.wf.nChannels == 1)||(pcmWaveFormat.wf.nChannels == 2) ){
-					*pwfex = (WAVEFORMATEX*)new CHAR[ sizeof(WAVEFORMATEX) ];
+					*pwfex = new WAVEFORMATEX;
 					if( *pwfex != NULL ){
 						memcpy( *pwfex, &pcmWaveFormat, sizeof(pcmWaveFormat) );
 						//pwfex->cbSize = 0;
@@ -403,15 +406,18 @@ bool SoundControl::CheckSoundFile(char* filename, int *filesize, int *fileoffset
 }
 
 //! @brief SetVolume()用　1/100 dB (デシベル) を計算
-//! @param volume 音量（0～155）
-//! @return 1/100 dB (デシベル)
+//! @param volume 音量（-50～100）
+//! @return 1/100 dB (デシベル).
+//! @attention 引数に 156 以上が渡された場合は無音になります。
 int SoundControl::GetDSVolume(int volume)
 {
-	if( volume <= 0 ){ return DSBVOLUME_MIN; }
-	if( volume >= 155 ){ return DSBVOLUME_MAX; }
+	if( volume >= 156 ){ return DSBVOLUME_MIN; }
+	if( volume <= -50 ){ return DSBVOLUME_MIN; }
+	if( volume >= 100 ){ return DSBVOLUME_MAX; }
 
-	float volume2 = 1.0f/155 * volume;
-	return (int)(10.0f * (log10f(volume2) / log10f(2)));
+	float volume2 = 1.0f/150 * (volume + 50);
+	int retn = (int)((DSBVOLUME_MIN-DSBVOLUME_MAX) * (1.0f - volume2));
+	return retn;
 }
 
 #else
