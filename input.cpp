@@ -460,7 +460,7 @@ int OriginalkeycodeToDinputdef(int code)
 		case 0x37: out = 'X'; break;
 		case 0x38: out = 'Y'; break;
 		case 0x39: out = 'Z'; break;
-		case 0x3A: out = VK_DIVIDE; break;
+		case 0x3A: out = VK_OEM_2; break;
 		case 0x3B: out = VK_OEM_1; break;
 		case 0x3C: out = VK_OEM_PLUS; break;
 		case 0x3D: out = VK_OEM_MINUS; break;

@@ -1183,10 +1183,10 @@ void maingame::Input()
 			mouse_ry -= y * MouseSensitivity;
 
 			//キー操作による向きを計算
-			if( inputCtrl->CheckKeyNow(OriginalkeycodeToDinputdef(0x00)) ){ mouse_ry += DegreeToRadian(3); }		// [↑]
-			if( inputCtrl->CheckKeyNow(OriginalkeycodeToDinputdef(0x01)) ){ mouse_ry -= DegreeToRadian(3); }		// [↓]
-			if( inputCtrl->CheckKeyNow(OriginalkeycodeToDinputdef(0x02)) ){ mouse_rx -= DegreeToRadian(3); }		// [←]
-			if( inputCtrl->CheckKeyNow(OriginalkeycodeToDinputdef(0x03)) ){ mouse_rx += DegreeToRadian(3); }		// [→]
+			if( CheckInputControl(KEY_TURNUP, 0) ){ mouse_ry += DegreeToRadian(3); }		// 標準：[↑]
+			if( CheckInputControl(KEY_TURNDOWN, 0) ){ mouse_ry -= DegreeToRadian(3); }		// 標準：[↓]
+			if( CheckInputControl(KEY_TURNLEFT, 0) ){ mouse_rx -= DegreeToRadian(3); }		// 標準：[←]
+			if( CheckInputControl(KEY_TURNRIGHT, 0) ){ mouse_rx += DegreeToRadian(3); }		// 標準：[→]
 
 			if( mouse_ry > DegreeToRadian(70) ) mouse_ry = DegreeToRadian(70);
 			if( mouse_ry < DegreeToRadian(-70) ) mouse_ry = DegreeToRadian(-70);
