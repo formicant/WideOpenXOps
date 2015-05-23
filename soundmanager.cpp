@@ -423,7 +423,6 @@ int SoundManager::GetTargetList(soundlist **plist)
 //! @param min_y 最短距離のY座標を受け取るポインタ
 //! @param min_z 最短距離のZ座標を受け取るポインタ
 //! @return 通り過ぎた：true　通り過ぎていない：false
-//! @todo 動作未検証
 bool SoundManager::CheckApproach(soundlist *plist, float camera_x, float camera_y, float camera_z, float *min_x, float *min_y, float *min_z)
 {
 	float x, y, z;

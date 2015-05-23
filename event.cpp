@@ -118,6 +118,8 @@ int EventControl::Execution(int *endcnt, bool *complete, int *MessageID, bool *S
 
 		//次のポイントを探す
 		if( Point->SearchPointdata(&data, 0x08, 0, 0, 0, nextp4, 0) == 0 ){ return cnt; }
+
+		//無効な番号なら処理しない
 		if( (data.p1 < 10)||(19 < data.p1) ){ return cnt; }
 
 		switch(data.p1){
@@ -204,6 +206,10 @@ int EventControl::Execution(int *endcnt, bool *complete, int *MessageID, bool *S
 				thuman->SetTeamID(0);
 				nextp4 = data.p3;
 				break;
+
+			//新たなイベントポイントを追加する場合、ここに書く。
+			//　※ 種類番号の競合 厳禁
+			//　※ 本switch文直前にある、条件判定（範囲チェック）も書き換えること。
 		}
 	}
 	return cnt;

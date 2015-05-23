@@ -83,8 +83,8 @@ protected:
 	float camera_x;			//!< カメラ座標
 	float camera_y;			//!< カメラ座標
 	float camera_z;			//!< カメラ座標
-	float camera_rx;		//!< カメラ座標
-	float camera_ry;		//!< カメラ座標
+	float camera_rx;		//!< カメラ回転角度
+	float camera_ry;		//!< カメラ回転角度
 	virtual void Render3D();
 	virtual void Render2D();
 
