@@ -910,7 +910,7 @@ int AIcontrol::HaveWeapon()
 	//•Ší‚Ìî•ñ‚ğæ“¾
 	ctrlhuman->GetWeapon(&selectweapon, weapon);
 
-	//•Ší‚ğ‚Á‚Ä‚¢‚ê‚ÎA•Ší”Ô†‚ğæ“¾
+	//•Ší‚ğ‚Á‚Ä‚¢‚ê‚ÎA‡Œv’e”‚ğæ“¾
 	if( weapon[selectweapon] != NULL ){
 		weapon[selectweapon]->GetParamData(NULL, NULL, &nbs);
 	}
@@ -921,10 +921,15 @@ int AIcontrol::HaveWeapon()
 		int notselectweapon = selectweapon + 1;
 		if( notselectweapon == TOTAL_HAVEWEAPON ){ notselectweapon = 0; }
 
-		//‚¿‘Ö‚¦‚é
+		//Ÿ‚Ì•Ší‚ğ‚Á‚Ä‚¢‚ê‚Î
 		if( weapon[notselectweapon] != NULL ){
-			ObjMgr->ChangeWeapon(ctrlid);
-			return 1;
+			//Ÿ‚Ì•Ší‚Ì’e”‚ª0‚Å‚È‚¯‚ê‚Î
+			weapon[notselectweapon]->GetParamData(NULL, NULL, &nbs);
+			if( nbs > 0 ){
+				//‚¿‘Ö‚¦‚é
+				ObjMgr->ChangeWeapon(ctrlid);
+				return 1;
+			}
 		}
 	}
 
