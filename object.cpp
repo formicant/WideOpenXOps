@@ -944,24 +944,20 @@ int human::CheckAndProcessDead(class Collision *CollD)
 
 	if( deadstate == 0 ){
 		if( hp <= 0 ){		//HP‚ª 0 ˆÈ‰º‚É‚È‚Á‚½iŽ€–S‚µ‚½juŠÔ‚È‚çA“|‚µŽn‚ß‚é
-			//‘Ì‚ÌŠp“xE˜r‚ÌŠp“x
-			switch( GetRand(4) ){
-				case 0:
-					add_ry = HUMAN_DEADADDRY;
-					armrotation_y = DegreeToRadian(90);
-					break;
-				case 1:
-					add_ry = HUMAN_DEADADDRY * -1;
-					armrotation_y = DegreeToRadian(90);
-					break;
-				case 2:
-					add_ry = HUMAN_DEADADDRY;
-					armrotation_y = DegreeToRadian(-90);
-					break;
-				case 3:
-					add_ry = HUMAN_DEADADDRY * -1;
-					armrotation_y = DegreeToRadian(-90);
-					break;
+			//‘Ì‚ÌŠp“x
+			if( GetRand(2) == 0 ){
+				add_ry = HUMAN_DEADADDRY;
+			}
+			else{
+				add_ry = HUMAN_DEADADDRY * -1;
+			}
+
+			//˜r‚ÌŠp“x
+			if( armrotation_y < 0.0f ){
+				armrotation_y = DegreeToRadian(-90);
+			}
+			else{
+				armrotation_y = DegreeToRadian(90);
 			}
 
 			//Ž€‘Ì‚ª–„‚Ü‚ç‚Ê‚æ‚¤A‚‚³‚ð +1.0 ‚·‚é
