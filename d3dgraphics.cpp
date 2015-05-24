@@ -2008,6 +2008,7 @@ void D3DGraphics::CleanupModel(int id)
 	if( (id < 0)||((MAX_MODEL -1) < id) ){ return; }
 	if( pmodel[id].useflag == false ){ return; }
 
+	delete pmodel[id].VertexAry;
 	delete pmodel[id].ColorAry;
 	delete pmodel[id].TexCoordAry;
 	pmodel[id].useflag = false;
@@ -3121,7 +3122,7 @@ void D3DGraphics::Drawline(float x1, float y1, float z1, float x2, float y2, flo
 	//•`‰æ
 	glVertexPointer(3, GL_FLOAT, 0, VertexAry);
 	glColorPointer(4, GL_UNSIGNED_BYTE, 0, ColorAry);
-	glDrawArrays(GL_LINE_LOOP, 0, 2);
+	glDrawArrays(GL_LINE_STRIP, 0, 2);
 
 	//”z—ñ–³Œø‰»
 	glDisableClientState(GL_VERTEX_ARRAY);
@@ -3319,6 +3320,10 @@ void D3DGraphics::Draw2DTextureFontText(int x, int y, char *str, int color, int 
 
 	//2D•`‰æ—pÝ’è‚ð‰ðœ
 	End2DRender();
+
+	delete [] VertexAry;
+	delete [] ColorAry;
+	delete [] TexCoordAry;
 }
 
 //! @brief ü‚ð•`‰æ
@@ -3356,7 +3361,7 @@ void D3DGraphics::Draw2DLine(int x1, int y1, int x2, int y2, int color)
 	//•`‰æ
 	glVertexPointer(2, GL_FLOAT, 0, VertexAry);
 	glColorPointer(4, GL_UNSIGNED_BYTE, 0, ColorAry);
-	glDrawArrays(GL_LINE_LOOP, 0, 2);
+	glDrawArrays(GL_LINE_STRIP, 0, 2);
 
 	//”z—ñ–³Œø‰»
 	glDisableClientState(GL_VERTEX_ARRAY);
@@ -3406,7 +3411,7 @@ void D3DGraphics::Draw2DCycle(int x, int y, int r, int color)
 	//•`‰æ
 	glVertexPointer(2, GL_FLOAT, 0, VertexAry);
 	glColorPointer(4, GL_UNSIGNED_BYTE, 0, ColorAry);
-	glDrawArrays(GL_LINE_LOOP, 0, 16+1);
+	glDrawArrays(GL_LINE_STRIP, 0, 16+1);
 
 	//”z—ñ–³Œø‰»
 	glDisableClientState(GL_VERTEX_ARRAY);
