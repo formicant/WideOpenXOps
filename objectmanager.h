@@ -82,6 +82,8 @@ class ObjectManager
 	int *Human_headshot;	//!< 敵の頭部に命中した数
 	bool *Human_ShotFlag;	//!< 発砲フラグ（マズルフラッシュ用）
 
+	bool FriendlyFire;		//!< FF（同士討ち）有効化
+
 	int Player_HumanID;		//!< プレイヤーが操作する人オブジェクトのID
 
 	int AddHumanIndex_TextureID;		//!< 前回読み込んだテクスチャID
@@ -122,6 +124,8 @@ public:
 	int AddEffect(float pos_x, float pos_y, float pos_z, float move_x, float move_y, float move_z, float size, float rotation, int count, int texture, int settype);
 	int AddMapEffect(int id, int face, float pos_x, float pos_y, float pos_z, float size, float rotation, int count, int texture);
 	void LoadPointData();
+	bool GetFriendlyFireFlag();
+	void SetFriendlyFireFlag(bool flag);
 	int GetPlayerID();
 	void SetPlayerID(int id);
 	human* GeHumanObject(int id);
@@ -152,7 +156,7 @@ public:
 	bool HumanResuscitation(int id);
 	int CheckGameOverorComplete();
 	bool GetObjectInfoTag(float camera_x, float camera_y, float camera_z, float camera_rx, float camera_ry, int *color, char *infostr);
-	int Process(int cmdF5id, float camera_rx, float camera_ry);
+	int Process(int cmdF5id, bool demomode, float camera_rx, float camera_ry);
 	bool GetHumanShotInfo(int id, int *ontarget, int *kill, int *headshot);
 	void Render(float camera_x, float camera_y, float camera_z, int HidePlayer);
 	void Cleanup();

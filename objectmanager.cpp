@@ -46,6 +46,7 @@ ObjectManager::ObjectManager()
 	Human_kill = new int[MAX_HUMAN];
 	Human_headshot = new int[MAX_HUMAN];
 	Human_ShotFlag = new bool[MAX_HUMAN];
+	FriendlyFire = false;
 	Player_HumanID = 0;
 	AddHumanIndex_TextureID = -1;
 
@@ -657,6 +658,9 @@ bool ObjectManager::CollideBullet(bullet *in_bullet)
 
 		//人との当たり判定
 		for(int i=0; i<MAX_HUMAN; i++){
+			//その人自身が発砲した弾なら処理しない。
+			if( i == humanid ){ continue; }
+
 			//使用されていないか、死亡していれば処理しない。
 			if( HumanIndex[i].GetEnableFlag() == false ){ continue; }
 			if( HumanIndex[i].GetHP() <= 0 ){ continue; }
@@ -667,8 +671,10 @@ bool ObjectManager::CollideBullet(bullet *in_bullet)
 			HumanIndex[i].GetPosData(&ox, &oy, &oz, NULL);
 			HumanIndex[i].GetParamData(NULL, NULL, NULL, &h_teamid);
 
-			//同じチーム番号（味方）なら処理しない
-			if( h_teamid == teamid ){ continue; }
+			if( FriendlyFire == false ){
+				//同じチーム番号（味方）なら処理しない
+				if( h_teamid == teamid ){ continue; }
+			}
 
 			//頭の当たり判定
 			if( CollideCylinderRay(ox, oy + HUMAN_BULLETCOLLISION_LEG_H + HUMAN_BULLETCOLLISION_UP_H, oz, HUMAN_BULLETCOLLISION_HEAD_R, HUMAN_BULLETCOLLISION_HEAD_H, bvx, bvy, bvz, vx, vy, vz, &Dist, (float)speed - TotalDist) == true ){
@@ -1204,6 +1210,7 @@ void ObjectManager::CleanupPointDataToObject()
 //! @brief ポイントデータを元にオブジェクトを配置
 void ObjectManager::LoadPointData()
 {
+	FriendlyFire = false;
 	Player_HumanID = 0;
 
 	/*
@@ -1276,6 +1283,20 @@ void ObjectManager::LoadPointData()
 			AddSmallObjectIndex(data);
 		}
 	}
+}
+
+//! @brief FF（同士討ち）有効化フラグを取得
+//! @return フラグ
+bool ObjectManager::GetFriendlyFireFlag()
+{
+	return FriendlyFire;
+}
+
+//! @brief FF（同士討ち）有効化フラグを設定
+//! @param flag フラグ
+void ObjectManager::SetFriendlyFireFlag(bool flag)
+{
+	FriendlyFire = flag;
 }
 
 //! @brief プレイヤー番号を取得
@@ -2092,11 +2113,13 @@ bool ObjectManager::GetObjectInfoTag(float camera_x, float camera_y, float camer
 
 //! @brief オブジェクトの主計算処理
 //! @param cmdF5id 上昇機能（F5裏技）させる人データ番号（-1で機能無効）
+//! @param demomode デモモード
 //! @param camera_rx カメラの横軸角度
 //! @param camera_ry カメラの縦軸角度
 //! @return 常に 0
 //! @attention 一般的に cmdF5id は、F5裏技使用中はプレイヤー番号（GetPlayerID()関数で取得）、未使用時は -1 を指定します。
-int ObjectManager::Process(int cmdF5id, float camera_rx, float camera_ry)
+//! @attention demomode は主にメニュー画面で使用します。有効にすると、銃弾・手榴弾を処理しません。
+int ObjectManager::Process(int cmdF5id, bool demomode, float camera_rx, float camera_ry)
 {
 	//このフレームの戦歴を初期化
 	for(int i=0; i<MAX_HUMAN; i++){
@@ -2132,23 +2155,33 @@ int ObjectManager::Process(int cmdF5id, float camera_rx, float camera_ry)
 		SmallObjectIndex[i].RunFrame();
 	}
 
-	//弾オブジェクトの処理
-	for(int i=0; i<MAX_BULLET; i++){
-		float bx, by, bz, brx, bry;
-		int speed;
-		float mx, my, mz;
+	if( demomode == false ){
+		//弾オブジェクトの処理
+		for(int i=0; i<MAX_BULLET; i++){
+			float bx, by, bz, brx, bry;
+			int speed;
+			float mx, my, mz;
 
-		CollideBullet(&BulletIndex[i]);		//当たり判定を実行
-		BulletIndex[i].RunFrame();	//主計算
+			CollideBullet(&BulletIndex[i]);		//当たり判定を実行
+			BulletIndex[i].RunFrame();	//主計算
 
-		if( BulletIndex[i].GetEnableFlag() == true ){
-			//弾の座標と角度を取得
-			BulletIndex[i].GetParamData(NULL, NULL, &speed, NULL, NULL);
-			BulletIndex[i].GetPosData(&bx, &by, &bz, &brx, &bry);
-			mx = cos(brx)*cos(bry)*speed;
-			my = sin(bry)*speed;
-			mz = sin(brx)*cos(bry)*speed;
-			GameSound->PassingBullet(bx, by, bz, mx, my, mz);
+			if( BulletIndex[i].GetEnableFlag() == true ){
+				//弾の座標と角度を取得
+				BulletIndex[i].GetParamData(NULL, NULL, &speed, NULL, NULL);
+				BulletIndex[i].GetPosData(&bx, &by, &bz, &brx, &bry);
+				mx = cos(brx)*cos(bry)*speed;
+				my = sin(bry)*speed;
+				mz = sin(brx)*cos(bry)*speed;
+				GameSound->PassingBullet(bx, by, bz, mx, my, mz);
+			}
+		}
+	}
+	else{
+		//全ての弾オブジェクトを消す
+		for(int i=0; i<MAX_BULLET; i++){
+			if( BulletIndex[i].GetEnableFlag() == true ){
+				BulletIndex[i].SetEnableFlag(false);
+			}
 		}
 	}
 
@@ -2173,26 +2206,36 @@ int ObjectManager::Process(int cmdF5id, float camera_rx, float camera_ry)
 		}
 	}
 
-	//手榴弾の処理
-	for(int i=0; i<MAX_GRENADE; i++){
-		float speed = GrenadeIndex[i].GetSpeed();
+	if( demomode == false ){
+		//手榴弾の処理
+		for(int i=0; i<MAX_GRENADE; i++){
+			float speed = GrenadeIndex[i].GetSpeed();
 
-		//主計算
-		int rcr = GrenadeIndex[i].RunFrame(CollD);
+			//主計算
+			int rcr = GrenadeIndex[i].RunFrame(CollD);
 
-		//バウンド・跳ね返ったならば
-		if( rcr == 1 ){
-			if( speed > 3.4f ){
-				//座標を取得し、効果音再生
-				float x, y, z;
-				GrenadeIndex[i].GetPosData(&x, &y, &z, NULL, NULL);
-				GameSound->GrenadeBound(x, y, z);
+			//バウンド・跳ね返ったならば
+			if( rcr == 1 ){
+				if( speed > 3.4f ){
+					//座標を取得し、効果音再生
+					float x, y, z;
+					GrenadeIndex[i].GetPosData(&x, &y, &z, NULL, NULL);
+					GameSound->GrenadeBound(x, y, z);
+				}
+			}
+
+			//爆発したなら
+			if( rcr == 2 ){
+				GrenadeExplosion(&(GrenadeIndex[i]));
 			}
 		}
-
-		//爆発したなら
-		if( rcr == 2 ){
-			GrenadeExplosion(&(GrenadeIndex[i]));
+	}
+	else{
+		//全ての手榴弾を消す
+		for(int i=0; i<MAX_GRENADE; i++){
+			if( GrenadeIndex[i].GetEnableFlag() == true ){
+				GrenadeIndex[i].SetEnableFlag(false);
+			}
 		}
 	}
 

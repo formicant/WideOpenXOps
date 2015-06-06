@@ -219,7 +219,7 @@ void opening::Input()
 void opening::Process()
 {
 	//オブジェクトマネージャーを実行
-	ObjMgr.Process(-1, camera_rx, camera_ry);
+	ObjMgr.Process(-1, false, camera_rx, camera_ry);
 
 	//AIを実行
 	for(int i=0; i<MAX_HUMAN; i++){
@@ -590,7 +590,7 @@ void mainmenu::Input()
 void mainmenu::Process()
 {
 	//オブジェクトマネージャーを実行
-	ObjMgr.Process(-1, camera_rx, camera_ry);
+	ObjMgr.Process(-1, true, camera_rx, camera_ry);
 
 	//AIを実行
 	for(int i=0; i<MAX_HUMAN; i++){
@@ -1591,10 +1591,10 @@ void maingame::Process()
 
 	//オブジェクトマネージャーを実行
 	if( Cmd_F5 == true ){
-		ObjMgr.Process( ObjMgr.GetPlayerID() , camera_rx, camera_ry);
+		ObjMgr.Process( ObjMgr.GetPlayerID() , false, camera_rx, camera_ry);
 	}
 	else{
-		ObjMgr.Process(-1, camera_rx, camera_ry);
+		ObjMgr.Process(-1, false, camera_rx, camera_ry);
 	}
 
 	//プレイヤーの戦歴を加算
@@ -2528,7 +2528,7 @@ void maingame::ProcessConsole()
 		AddInfoConsole(d3dg->GetColorCode(1.0f,1.0f,1.0f,1.0f), "info        view         center      map");
 		AddInfoConsole(d3dg->GetColorCode(1.0f,1.0f,1.0f,1.0f), "tag         radar        inmap");
 		AddInfoConsole(d3dg->GetColorCode(1.0f,1.0f,1.0f,1.0f), "revive      treat <NUM>  nodamage <NUM>");
-		AddInfoConsole(d3dg->GetColorCode(1.0f,1.0f,1.0f,1.0f), "kill <NUM>  break <NUM>  newobj <NUM>");
+		AddInfoConsole(d3dg->GetColorCode(1.0f,1.0f,1.0f,1.0f), "kill <NUM>  break <NUM>  newobj <NUM>  ff");
 		AddInfoConsole(d3dg->GetColorCode(1.0f,1.0f,1.0f,1.0f), "bot         nofight      caution     stop");
 		AddInfoConsole(d3dg->GetColorCode(1.0f,1.0f,1.0f,1.0f), "estop       ss           clear");
 	}
@@ -2782,6 +2782,18 @@ void maingame::ProcessConsole()
 				sprintf(str, "Add SmallObject[%d].", dataid);
 				AddInfoConsole(d3dg->GetColorCode(1.0f,1.0f,1.0f,1.0f), str);
 			}
+		}
+	}
+
+	//FF（同士討ち）有効化
+	if( strcmp(NewCommand, "ff") == 0 ){
+		if( ObjMgr.GetFriendlyFireFlag() == false ){
+			ObjMgr.SetFriendlyFireFlag(true);
+			AddInfoConsole(d3dg->GetColorCode(1.0f,1.0f,1.0f,1.0f), "Enable Friendly Fire.");
+		}
+		else{
+			ObjMgr.SetFriendlyFireFlag(false);
+			AddInfoConsole(d3dg->GetColorCode(1.0f,1.0f,1.0f,1.0f), "Disable Friendly Fire.");
 		}
 	}
 
