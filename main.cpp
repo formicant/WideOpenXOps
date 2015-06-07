@@ -54,7 +54,7 @@ Config GameConfig;
 WindowControl MainWindow;
 
 //! @brief WinMain()ŠÖ”
-int WINAPI WinMain(HINSTANCE hInstance,	HINSTANCE hPrevInstance, LPTSTR lpCmdLine, int nCmdShow)
+int WINAPI WinMain(HINSTANCE hInstance,	HINSTANCE hPrevInstance, LPSTR lpCmdLine, int nCmdShow)
 {
 	//—”‰Šú‰»
 	InitRand();
