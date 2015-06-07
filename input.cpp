@@ -74,6 +74,15 @@ InputControl::~InputControl()
 	//DirectInputを開放
 	if( pDI != NULL) pDI->Release();
 #endif
+
+#ifdef ENABLE_DEBUGLOG
+	//ログに出力
+ #ifdef INPUT_DIRECTINPUT
+	OutputLog.WriteLog(LOG_CLEANUP, "入力", "DirectInput");
+ #else
+	OutputLog.WriteLog(LOG_CLEANUP, "入力", "WinAPI");
+ #endif
+#endif
 }
 
 //! @brief 初期化
@@ -81,6 +90,15 @@ InputControl::~InputControl()
 //! @return 成功：0　失敗：1
 int InputControl::InitD3Dinput(WindowControl *WindowCtrl)
 {
+#ifdef ENABLE_DEBUGLOG
+	//ログに出力
+ #ifdef INPUT_DIRECTINPUT
+	OutputLog.WriteLog(LOG_INIT, "入力", "DirectInput");
+ #else
+	OutputLog.WriteLog(LOG_INIT, "入力", "WinAPI");
+ #endif
+#endif
+
 	//ウインドウハンドルを設定
 	hWnd = WindowCtrl->GethWnd();
 
@@ -108,6 +126,11 @@ int InputControl::InitD3Dinput(WindowControl *WindowCtrl)
 
 	//カーソルを非表示
 	ShowCursor(false);
+
+#ifdef ENABLE_DEBUGLOG
+	//ログに出力
+	OutputLog.WriteLog(LOG_COMPLETE, "", "");
+#endif
 
 	return 0;
 }

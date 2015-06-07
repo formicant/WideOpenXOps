@@ -61,6 +61,11 @@ int Config::LoadFile(char *fname)
 	FILE *fp;
 	char buf;
 
+#ifdef ENABLE_DEBUGLOG
+	//ログに出力
+	OutputLog.WriteLog(LOG_LOAD, "設定ファイル", fname);
+#endif
+
 #ifdef PATH_DELIMITER_SLASH
 	//パス区切り文字を変換
 	fname = ChangePathDelimiter(fname);
@@ -121,6 +126,11 @@ int Config::LoadFile(char *fname)
 
 	//ファイルハンドルを閉じる
 	fclose(fp);
+
+#ifdef ENABLE_DEBUGLOG
+	//ログに出力
+	OutputLog.WriteLog(LOG_COMPLETE, "", "");
+#endif
 	return 0;
 }
 

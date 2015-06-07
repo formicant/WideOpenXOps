@@ -52,7 +52,7 @@
 #define SCREEN_WIDTH 640		//!< スクリーンの幅
 #define SCREEN_HEIGHT 480		//!< スクリーンの高さ
 
-#define MAX_ADDONLIST 128	//!< ADDONを読み込む最大数
+#define MAX_ADDONLIST 128		//!< ADDONを読み込む最大数
 
 #define TOTAL_HAVEWEAPON 2		//!< 持てる武器の数
 
@@ -63,6 +63,9 @@
 #include <math.h>
 #include <string.h>
 
+#define ENABLE_DEBUGLOG			//!< @brief デバック用ログ出力の有効化（コメント化で機能無効）
+//#define PATH_DELIMITER_SLASH	//!< パス区切り文字を、'\'から‘/’へ変換する。
+
 //windows.hを使用しないならば
 #ifndef _MAX_PATH
  #define _MAX_PATH 260		//!< _MAX_PATH is 260
@@ -70,8 +73,6 @@
 #ifndef MAX_PATH
  #define MAX_PATH 260		//!< MAX_PATH is 260
 #endif
-
-//#define PATH_DELIMITER_SLASH	//!< パス区切り文字を、'\'から‘/’へ変換する。
 
 //BorlandC++ Compiler用の処理
 #ifdef __BORLANDC__
@@ -87,6 +88,7 @@
 
 //低レイヤー
 #if H_LAYERLEVEL >= 1
+ #include "debug.h"
  #include "window.h"
  #include "config.h"
  #include "datafile.h"
@@ -117,6 +119,9 @@
 //追加ライブラリ
 // not .lib
 
+#ifdef ENABLE_DEBUGLOG
+ extern class DebugLog OutputLog;
+#endif
 extern class StateMachine GameState;
 extern class Config GameConfig;
 

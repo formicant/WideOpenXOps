@@ -48,6 +48,11 @@ SoundControl::~SoundControl()
 		}
 	}
 	if( pDSound != NULL ){ pDSound->Release(); }
+
+#ifdef ENABLE_DEBUGLOG
+	//ログに出力
+	OutputLog.WriteLog(LOG_CLEANUP, "サウンド", "ezds.dll");
+#endif
 }
 
 //! @brief 初期化
@@ -55,6 +60,11 @@ SoundControl::~SoundControl()
 //! @return 成功：0　失敗：1
 int SoundControl::InitSound(WindowControl *WindowCtrl)
 {
+#ifdef ENABLE_DEBUGLOG
+	//ログに出力
+	OutputLog.WriteLog(LOG_INIT, "サウンド", "DirectSound");
+#endif
+
 	//DirectSoundオブジェクトを生成
 	if( FAILED( DirectSoundCreate8(NULL, &pDSound, NULL) ) ){
 		return 1;
@@ -81,6 +91,11 @@ int SoundControl::InitSound(WindowControl *WindowCtrl)
 
 	//ロール・オフ（減衰度合い）設定
 	p3DListener->SetRolloffFactor(0.05f, DS3D_IMMEDIATE);
+
+#ifdef ENABLE_DEBUGLOG
+	//ログに出力
+	OutputLog.WriteLog(LOG_COMPLETE, "", "");
+#endif
 
 	return 0;
 }
@@ -111,6 +126,11 @@ void SoundControl::SetCamera(float x, float y, float z, float rx)
 int SoundControl::LoadSound(char* filename)
 {
 	if( pDSound == NULL ){ return -1; }
+
+#ifdef ENABLE_DEBUGLOG
+	//ログに出力
+	OutputLog.WriteLog(LOG_LOAD, "サウンド", filename);
+#endif
 
 	//開いている番号を探す
 	int id=0;
@@ -226,6 +246,11 @@ int SoundControl::LoadSound(char* filename)
 	pDSBuffer[id][0]->SetVolume(DSBVOLUME_MIN);
 	pDSBuffer[id][0]->Play(NULL, 0, NULL);
 
+#ifdef ENABLE_DEBUGLOG
+	//ログに出力
+	OutputLog.WriteLog(LOG_COMPLETE, "", id);
+#endif
+
 	return id;
 }
 
@@ -331,6 +356,11 @@ void SoundControl::CleanupSound(int id)
 		if( pDSBuffer[id][i] != NULL ){ pDSBuffer[id][i]->Release(); }
 		pDSBuffer[id][i] = NULL;
 	}
+
+#ifdef ENABLE_DEBUGLOG
+	//ログに出力
+	OutputLog.WriteLog(LOG_CLEANUP, "サウンド", id);
+#endif
 }
 
 //! @brief Waveファイルの情報を調べる
@@ -450,6 +480,11 @@ SoundControl::~SoundControl()
 
 	//DLLを開放
 	FreeLibrary(lib);
+
+#ifdef ENABLE_DEBUGLOG
+	//ログに出力
+	OutputLog.WriteLog(LOG_CLEANUP, "サウンド", "ezds.dll");
+#endif
 }
 
 //! @brief 初期化@n
@@ -458,6 +493,11 @@ SoundControl::~SoundControl()
 //! @return 成功：0　失敗：1
 int SoundControl::InitSound(WindowControl *WindowCtrl)
 {
+#ifdef ENABLE_DEBUGLOG
+	//ログに出力
+	OutputLog.WriteLog(LOG_INIT, "サウンド", "ezds.dll");
+#endif
+
 	if( lib != NULL ){
 		return 1;
 	}
@@ -483,6 +523,11 @@ int SoundControl::InitSound(WindowControl *WindowCtrl)
 		lib = NULL;
 		//return 1;
 	}
+
+#ifdef ENABLE_DEBUGLOG
+	//ログに出力
+	OutputLog.WriteLog(LOG_COMPLETE, "", "");
+#endif
 
 	return 0;
 }
@@ -515,6 +560,11 @@ int SoundControl::LoadSound(char* filename)
 {
 	if( lib == NULL ){ return -1; }
 
+#ifdef ENABLE_DEBUGLOG
+	//ログに出力
+	OutputLog.WriteLog(LOG_LOAD, "サウンド", filename);
+#endif
+
 	//使用していないデータ番号を探す
 	for(int i=0; i<MAX_LOADSOUND; i++){
 		if( useflag[i] == false ){
@@ -529,6 +579,11 @@ int SoundControl::LoadSound(char* filename)
 
 			//使用中を新たすフラグをセット
 			useflag[i] = true;
+
+#ifdef ENABLE_DEBUGLOG
+			//ログに出力
+			OutputLog.WriteLog(LOG_COMPLETE, "", i);
+#endif
 			return i;
 		}
 	}
@@ -602,6 +657,11 @@ void SoundControl::CleanupSound(int id)
 
 	//使用中フラグを解除
 	useflag[id] = false;
+
+#ifdef ENABLE_DEBUGLOG
+	//ログに出力
+	OutputLog.WriteLog(LOG_CLEANUP, "サウンド", id);
+#endif
 }
 
 //! @brief 音源との距離を調べる

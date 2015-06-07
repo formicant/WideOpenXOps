@@ -132,6 +132,29 @@ void StateMachine::NextState()
 		default:
 			NowState = STATE_NULL;
 	}
+
+#ifdef ENABLE_DEBUGLOG
+	//ログに出力
+	switch(NowState){
+		case STATE_CREATE_OPENING:
+			OutputLog.WriteLog(LOG_CHECK, "画面遷移", "オープニング");
+			break;
+		case STATE_CREATE_MENU:
+			OutputLog.WriteLog(LOG_CHECK, "画面遷移", "メニュー");
+			break;
+		case STATE_CREATE_BRIEFING:
+			OutputLog.WriteLog(LOG_CHECK, "画面遷移", "ブリーフィング");
+			break;
+		case STATE_CREATE_MAINGAME:
+			OutputLog.WriteLog(LOG_CHECK, "画面遷移", "ミッション");
+			break;
+		case STATE_CREATE_RESULT:
+			OutputLog.WriteLog(LOG_CHECK, "画面遷移", "リザルト");
+			break;
+		default:
+			;//
+	}
+#endif
 }
 
 //! @brief マウスクリック を受けた

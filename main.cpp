@@ -39,6 +39,11 @@
  #pragma comment(lib, "Shlwapi.lib")
 #endif
 
+#ifdef ENABLE_DEBUGLOG
+ //! ログ出力
+ DebugLog OutputLog;
+#endif
+
 //! ステートマシン
 StateMachine GameState;
 
@@ -63,6 +68,25 @@ int WINAPI WinMain(HINSTANCE hInstance,	HINSTANCE hPrevInstance, LPTSTR lpCmdLin
 	GetModuleFileName(NULL, path, MAX_PATH);
 	PathRemoveFileSpec(path);
 	SetCurrentDirectory(path);
+#endif
+
+#ifdef ENABLE_DEBUGLOG
+	//メモ：Windows環境なら、lpCmdLine引数とかGetCommandLine()関数でも取れますけどね・・。
+
+	//引数を分解
+	for(int i=0; i<__argc; i++){
+
+		//"log"が与えられていたら、ログ出力を有効化
+		if( strcmp(__argv[i], "log") == 0 ){
+			//ファイル作成
+			OutputLog.MakeLog();
+
+			MainWindow.ErrorInfo("Enable Debug Log...");
+		}
+	}
+
+	//ログに出力
+	OutputLog.WriteLog(LOG_CHECK, "起動", "エントリーポイント開始");
 #endif
 
 	//設定ファイル読み込み
@@ -94,6 +118,11 @@ int WINAPI WinMain(HINSTANCE hInstance,	HINSTANCE hPrevInstance, LPTSTR lpCmdLin
 	InitScreen(&Opening, &MainMenu, &Briefing, &MainGame, &Result);
 
 
+#ifdef ENABLE_DEBUGLOG
+	//ログに出力
+	OutputLog.WriteLog(LOG_CHECK, "起動", "メインループ");
+#endif
+
 	unsigned int framecnt = 0;
 
 	for(int flag = 0; flag != -1; flag = MainWindow.CheckMainLoop()){
@@ -108,5 +137,9 @@ int WINAPI WinMain(HINSTANCE hInstance,	HINSTANCE hPrevInstance, LPTSTR lpCmdLin
 		}
 	}
 
+#ifdef ENABLE_DEBUGLOG
+	//ログに出力
+	OutputLog.WriteLog(LOG_CHECK, "終了", "エントリーポイント終了");
+#endif
 	return 0;
 }

@@ -62,12 +62,22 @@ ParameterInfo::~ParameterInfo()
 	if( Weapon != NULL ){ delete [] Weapon; }
 	if( SmallObject != NULL ){ delete [] SmallObject; }
 	if( AIlevel != NULL ){ delete [] AIlevel; }
+
+#ifdef ENABLE_DEBUGLOG
+	//ログに出力
+	OutputLog.WriteLog(LOG_CLEANUP, "設定値", "");
+#endif
 }
 
 //! @brief 初期化（パラメータの設定）
 //! @attention この関数を呼び出さないと、クラス自体が正しく機能しません。
 void ParameterInfo::InitInfo()
 {
+#ifdef ENABLE_DEBUGLOG
+	//ログに出力
+	OutputLog.WriteLog(LOG_INIT, "設定値", "");
+#endif
+
 	Human = new HumanParameter[TOTAL_PARAMETERINFO_HUMAN];
 	Weapon = new WeaponParameter[TOTAL_PARAMETERINFO_WEAPON];
 	SmallObject = new SmallObjectParameter[TOTAL_PARAMETERINFO_SMALLOBJECT];
@@ -1532,6 +1542,11 @@ void ParameterInfo::InitInfo()
 	AIlevel[5].attack = 10;
 	AIlevel[5].search = 6;
 	AIlevel[5].limitserror = -3;
+
+#ifdef ENABLE_DEBUGLOG
+	//ログに出力
+	OutputLog.WriteLog(LOG_COMPLETE, "", "");
+#endif
 }
 
 //! @brief 人の設定を取得

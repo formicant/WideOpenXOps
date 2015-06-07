@@ -81,6 +81,11 @@ D3DGraphics::~D3DGraphics()
 
 	if( pd3dDevice != NULL ) pd3dDevice->Release();
 	if( pD3D != NULL ) pD3D->Release();
+
+#ifdef ENABLE_DEBUGLOG
+	//ログに出力
+	OutputLog.WriteLog(LOG_CLEANUP, "グラフィック", "DirectX");
+#endif
 }
 
 //! @brief 初期化@n
@@ -91,6 +96,11 @@ D3DGraphics::~D3DGraphics()
 //! @return 成功：0　失敗：1
 int D3DGraphics::InitD3D(WindowControl *WindowCtrl, char *TextureFontFilename, bool fullscreen)
 {
+#ifdef ENABLE_DEBUGLOG
+	//ログに出力
+	OutputLog.WriteLog(LOG_INIT, "グラフィック", "DirectX");
+#endif
+
 	D3DPRESENT_PARAMETERS d3dpp;
 	RECT rec;
 
@@ -135,6 +145,11 @@ int D3DGraphics::InitD3D(WindowControl *WindowCtrl, char *TextureFontFilename, b
 			return 1;
 		}
 	}
+
+#ifdef ENABLE_DEBUGLOG
+	//ログに出力
+	OutputLog.WriteLog(LOG_COMPLETE, "", "");
+#endif
 
 	//テクスチャフォント用画像のファイル名を設定
 	strcpy(TextureFontFname, TextureFontFilename);
@@ -187,6 +202,11 @@ int D3DGraphics::ResetD3D(WindowControl *WindowCtrl)
 		return 1;
 	}
 
+#ifdef ENABLE_DEBUGLOG
+	//ログに出力
+	OutputLog.WriteLog(LOG_INIT, "グラフィック", "DirectX（リセット）");
+#endif
+
 	//リソース解放
 	CleanupD3Dresource();
 
@@ -229,6 +249,11 @@ int D3DGraphics::ResetD3D(WindowControl *WindowCtrl)
 	if( InitSubset() != 0){
 		return 2;
 	}
+
+#ifdef ENABLE_DEBUGLOG
+	//ログに出力
+	OutputLog.WriteLog(LOG_COMPLETE, "", "");
+#endif
 
 	return 0;
 }
@@ -326,6 +351,11 @@ void D3DGraphics::CleanupD3Dresource()
 //! @return 成功：モデル認識番号（0以上）　失敗：-1
 int D3DGraphics::LoadModel(char* filename)
 {
+#ifdef ENABLE_DEBUGLOG
+	//ログに出力
+	OutputLog.WriteLog(LOG_LOAD, "モデル", filename);
+#endif
+
 	int id = -1;
 
 	//空いている要素を探す
@@ -354,7 +384,7 @@ int D3DGraphics::LoadModel(char* filename)
 	D3DXMATERIAL* d3dxMaterials = (D3DXMATERIAL*)pD3DXMtrlBuffer->GetBufferPointer();
 	int num = nummaterials[id];
 	pmaterials[id] = new D3DMATERIAL9[num];
-	if( pmaterials[id]  == NULL ) return -3;
+	if( pmaterials[id]  == NULL ) return -1;
 
 	//構造体に代入
 	for( int i=0; i<num; i=i+1 ){
@@ -365,6 +395,10 @@ int D3DGraphics::LoadModel(char* filename)
 	//バッファを開放
 	pD3DXMtrlBuffer->Release();
 
+#ifdef ENABLE_DEBUGLOG
+	//ログに出力
+	OutputLog.WriteLog(LOG_COMPLETE, "", id);
+#endif
 	return id;
 }
 
@@ -376,6 +410,14 @@ int D3DGraphics::LoadModel(char* filename)
 //! @attention それぞれのモデルデータが正しくないか 頂点数が異なる場合、実行に失敗します。
 int D3DGraphics::MorphingModel(int idA, int idB)
 {
+#ifdef ENABLE_DEBUGLOG
+	char str[128];
+	sprintf(str, "中間データ作成　　ID：%d and %d", idA, idB);
+
+	//ログに出力
+	OutputLog.WriteLog(LOG_LOAD, "モデル", str);
+#endif
+
 	//データが正しいか調べる
 	if( (idA < 0)||((MAX_MODEL -1) < idA) ){ return -1; }
 	if( pmesh[idA] == NULL ){ return -1; }
@@ -442,6 +484,10 @@ int D3DGraphics::MorphingModel(int idA, int idB)
 		pvbN->Unlock();
 	}
 
+#ifdef ENABLE_DEBUGLOG
+	//ログに出力
+	OutputLog.WriteLog(LOG_COMPLETE, "", idN);
+#endif
 	return idN;
 }
 
@@ -455,6 +501,11 @@ void D3DGraphics::CleanupModel(int id)
 
 		pmesh[id]->Release();
 		pmesh[id] = NULL;
+
+#ifdef ENABLE_DEBUGLOG
+		//ログに出力
+		OutputLog.WriteLog(LOG_CLEANUP, "モデル", id);
+#endif
 	}
 }
 
@@ -468,6 +519,11 @@ int D3DGraphics::LoadTexture(char* filename, bool texturefont, bool BlackTranspa
 	int id = -1;
 	D3DXIMAGE_INFO info;
 	int MipLevels;
+
+#ifdef ENABLE_DEBUGLOG
+	//ログに出力
+	OutputLog.WriteLog(LOG_LOAD, "テクスチャ", filename);
+#endif
 
 	//空いている認識番号を探す
 	for(int i=0; i<MAX_TEXTURE; i++){
@@ -505,6 +561,11 @@ int D3DGraphics::LoadTexture(char* filename, bool texturefont, bool BlackTranspa
 			return -1;
 		}
 	}
+
+#ifdef ENABLE_DEBUGLOG
+	//ログに出力
+	OutputLog.WriteLog(LOG_COMPLETE, "", id);
+#endif
 	return id;
 }
 
@@ -545,6 +606,11 @@ void D3DGraphics::CleanupTexture(int id)
 	if( ptextures[id] != NULL ){
 		ptextures[id]->Release();
 		ptextures[id] = NULL;
+
+#ifdef ENABLE_DEBUGLOG
+		//ログに出力
+		OutputLog.WriteLog(LOG_CLEANUP, "テクスチャ", id);
+#endif
 	}
 }
 
@@ -854,6 +920,11 @@ void D3DGraphics::LoadMapdata(BlockDataInterface* in_blockdata, char *directory)
 		}
 	}
 
+#ifdef ENABLE_DEBUGLOG
+	//ログに出力
+	OutputLog.WriteLog(LOG_LOAD, "マップ", "（頂点データ）");
+#endif
+
 #ifdef BLOCKDATA_GPUMEMORY
 	VERTEXTXTA* pVertices;
 
@@ -925,6 +996,11 @@ void D3DGraphics::LoadMapdata(BlockDataInterface* in_blockdata, char *directory)
 			}
 		}
 	}
+#endif
+
+#ifdef ENABLE_DEBUGLOG
+	//ログに出力
+	OutputLog.WriteLog(LOG_COMPLETE, "", "");
 #endif
 }
 
@@ -1063,6 +1139,11 @@ void D3DGraphics::CleanupMapdata()
 	bs = 0;
 
 	blockdata = NULL;
+
+#ifdef ENABLE_DEBUGLOG
+	//ログに出力
+	OutputLog.WriteLog(LOG_CLEANUP, "マップ", "（頂点データ）");
+#endif
 }
 
 //! @brief モデルファイルを描画
@@ -1601,6 +1682,11 @@ D3DGraphics::~D3DGraphics()
 
 	if( hGLRC != NULL ){ wglDeleteContext(hGLRC); }
 
+#ifdef ENABLE_DEBUGLOG
+	//ログに出力
+	OutputLog.WriteLog(LOG_CLEANUP, "グラフィック", "OpenGL");
+#endif
+
 	//libjpeg解放
 	jpeg_destroy_decompress(&cinfo);
 }
@@ -1613,6 +1699,11 @@ D3DGraphics::~D3DGraphics()
 //! @return 成功：0　失敗：1
 int D3DGraphics::InitD3D(WindowControl *WindowCtrl, char *TextureFontFilename, bool fullscreen)
 {
+#ifdef ENABLE_DEBUGLOG
+	//ログに出力
+	OutputLog.WriteLog(LOG_INIT, "グラフィック", "OpenGL");
+#endif
+
 	hWnd = WindowCtrl->GethWnd();
 
 	RECT prc;
@@ -1684,6 +1775,10 @@ int D3DGraphics::InitD3D(WindowControl *WindowCtrl, char *TextureFontFilename, b
 	//フォント名：ＭＳ ゴシック　サイズ：18
 	SystemFont = CreateFont(18, 0, 0, 0, FW_NORMAL, FALSE, FALSE, FALSE, SHIFTJIS_CHARSET, OUT_DEFAULT_PRECIS, CLIP_DEFAULT_PRECIS, DEFAULT_QUALITY, FIXED_PITCH | FF_MODERN, "ＭＳ ゴシック");
 
+#ifdef ENABLE_DEBUGLOG
+	//ログに出力
+	OutputLog.WriteLog(LOG_COMPLETE, "", "");
+#endif
 
 	//テクスチャフォント用画像のファイル名を設定
 	strcpy(TextureFontFname, TextureFontFilename);
@@ -1727,7 +1822,17 @@ int D3DGraphics::InitD3D(WindowControl *WindowCtrl, char *TextureFontFilename, b
 //! @return 成功：0　待ち：1　失敗：2
 int D3DGraphics::ResetD3D(WindowControl *WindowCtrl)
 {
+#ifdef ENABLE_DEBUGLOG
+	//ログに出力
+	OutputLog.WriteLog(LOG_INIT, "グラフィック", "OpenGL（リセット）");
+#endif
+
 	hWnd = WindowCtrl->GethWnd();
+
+#ifdef ENABLE_DEBUGLOG
+	//ログに出力
+	OutputLog.WriteLog(LOG_ERROR, "", "");
+#endif
 
 	return 2;
 }
@@ -1737,6 +1842,11 @@ int D3DGraphics::ResetD3D(WindowControl *WindowCtrl)
 //! @return 成功：モデル認識番号（0以上）　失敗：-1
 int D3DGraphics::LoadModel(char* filename)
 {
+#ifdef ENABLE_DEBUGLOG
+	//ログに出力
+	OutputLog.WriteLog(LOG_LOAD, "モデル", filename);
+#endif
+
 	int id = -1;
 	FILE *fp;
 	char buf[256];
@@ -1966,6 +2076,11 @@ int D3DGraphics::LoadModel(char* filename)
 	pmodel[id].VertexAry = VertexAry;
 	pmodel[id].ColorAry = ColorAry;
 	pmodel[id].TexCoordAry = TexCoordAry;
+
+#ifdef ENABLE_DEBUGLOG
+	//ログに出力
+	OutputLog.WriteLog(LOG_COMPLETE, "", id);
+#endif
 	return id;
 }
 
@@ -1977,7 +2092,13 @@ int D3DGraphics::LoadModel(char* filename)
 //! @attention それぞれのモデルデータが正しくないか 頂点数が異なる場合、実行に失敗します。
 int D3DGraphics::MorphingModel(int idA, int idB)
 {
-	return idA;
+#ifdef ENABLE_DEBUGLOG
+	char str[128];
+	sprintf(str, "中間データ作成　　ID：%d and %d", idA, idB);
+
+	//ログに出力
+	OutputLog.WriteLog(LOG_LOAD, "モデル", str);
+#endif
 
 	/*
 	//データが正しいか調べる
@@ -1999,6 +2120,13 @@ int D3DGraphics::MorphingModel(int idA, int idB)
 
 	return -1;
 	*/
+
+#ifdef ENABLE_DEBUGLOG
+	//ログに出力
+	OutputLog.WriteLog(LOG_ERROR, "", "");
+#endif
+
+	return idA;
 }
 
 //! @brief モデルファイルを解放
@@ -2012,6 +2140,11 @@ void D3DGraphics::CleanupModel(int id)
 	delete pmodel[id].ColorAry;
 	delete pmodel[id].TexCoordAry;
 	pmodel[id].useflag = false;
+
+#ifdef ENABLE_DEBUGLOG
+	//ログに出力
+	OutputLog.WriteLog(LOG_CLEANUP, "モデル", id);
+#endif
 }
 
 //! @brief テクスチャを読み込む
@@ -2024,6 +2157,11 @@ int D3DGraphics::LoadTexture(char* filename, bool texturefont, bool BlackTranspa
 	int id = -1;
 	char filename2[MAX_PATH];
 	int format = 0;
+
+#ifdef ENABLE_DEBUGLOG
+	//ログに出力
+	OutputLog.WriteLog(LOG_LOAD, "テクスチャ", filename);
+#endif
 
 	//空いている認識番号を探す
 	for(int i=0; i<MAX_TEXTURE; i++){
@@ -2113,6 +2251,11 @@ int D3DGraphics::LoadTexture(char* filename, bool texturefont, bool BlackTranspa
 
 	//テクスチャ無効
 	glDisable(GL_TEXTURE_2D);
+
+#ifdef ENABLE_DEBUGLOG
+	//ログに出力
+	OutputLog.WriteLog(LOG_COMPLETE, "", id);
+#endif
 
 	return id;
 
@@ -2554,6 +2697,11 @@ void D3DGraphics::CleanupTexture(int id)
 	delete ptextures[id].data;
 	glDeleteTextures(1 , &(textureobjname[id]));
 	ptextures[id].useflag = false;
+
+#ifdef ENABLE_DEBUGLOG
+	//ログに出力
+	OutputLog.WriteLog(LOG_CLEANUP, "テクスチャ", id);
+#endif
 }
 
 //! @brief 全ての描画処理を開始

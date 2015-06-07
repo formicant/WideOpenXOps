@@ -82,6 +82,11 @@ BlockDataInterface::~BlockDataInterface()
 {
 	//blockdata構造体解放
 	if( data != NULL ) delete [] data;
+
+#ifdef ENABLE_DEBUGLOG
+	//ログに出力
+	OutputLog.WriteLog(LOG_CLEANUP, "BD1", "");
+#endif
 }
 
 //! @brief ブロックデータファイルを読みこむ
@@ -93,6 +98,11 @@ int BlockDataInterface::LoadFiledata(char *fname)
 	unsigned char bdata_header[2];
 	float bdata_main[80];
 	char bdata_mainb[30];
+
+#ifdef ENABLE_DEBUGLOG
+	//ログに出力
+	OutputLog.WriteLog(LOG_LOAD, "BD1", fname);
+#endif
 
 #ifdef PATH_DELIMITER_SLASH
 	//パス区切り文字を変換
@@ -149,6 +159,11 @@ int BlockDataInterface::LoadFiledata(char *fname)
 
 	//ファイルハンドルを解放
 	fclose( fp );
+
+#ifdef ENABLE_DEBUGLOG
+	//ログに出力
+	OutputLog.WriteLog(LOG_COMPLETE, "", "");
+#endif
 
 	return 0;
 }
@@ -348,6 +363,11 @@ PointDataInterface::~PointDataInterface()
 	for(int i=0; i<MAX_POINTMESSAGES; i++){
 		if( text[i] != NULL ) delete [] text[i];
 	}
+
+#ifdef ENABLE_DEBUGLOG
+	//ログに出力
+	OutputLog.WriteLog(LOG_CLEANUP, "PD1", "");
+#endif
 }
 
 //! @brief ポイントデータファイルを読みこむ
@@ -360,6 +380,11 @@ int PointDataInterface::LoadFiledata(char *fname)
 	float pdata_mainf[200][4];
 	char pdata_mainc[200][4];
 	char fname2[MAX_PATH];
+
+#ifdef ENABLE_DEBUGLOG
+	//ログに出力
+	OutputLog.WriteLog(LOG_LOAD, "PD1", fname);
+#endif
 
 #ifdef PATH_DELIMITER_SLASH
 	//パス区切り文字を変換
@@ -402,6 +427,11 @@ int PointDataInterface::LoadFiledata(char *fname)
 	//ファイルポインタを閉じる
 	fclose( fp );
 
+#ifdef ENABLE_DEBUGLOG
+	//ログに出力
+	OutputLog.WriteLog(LOG_COMPLETE, "", "");
+#endif
+
 	//「同ファイル名.msg」を生成
 	strcpy(fname2, fname);
 	//PathRemoveExtension(fname2);
@@ -421,6 +451,11 @@ int PointDataInterface::LoadFiledata(char *fname)
 	//ファイルを読み込み
 	fp = fopen( fname2, "r" );
 	if( fp != NULL ){
+#ifdef ENABLE_DEBUGLOG
+		//ログに出力
+		OutputLog.WriteLog(LOG_LOAD, "MSG", fname2);
+#endif
+
 		//メッセージデータを取得
 		for(int i=0; i<MAX_POINTMESSAGES; i++){
 			if( fgets(text[i], MAX_POINTMESSAGEBYTE, fp) == NULL ){ break; }
@@ -431,8 +466,19 @@ int PointDataInterface::LoadFiledata(char *fname)
 			}
 		}
 
+#ifdef ENABLE_DEBUGLOG
+		//ログに出力
+		OutputLog.WriteLog(LOG_COMPLETE, "", "");
+#endif
+
 		//ファイルポインタを開放
 		fclose( fp );
+	}
+	else{
+#ifdef ENABLE_DEBUGLOG
+		//ログに出力
+		OutputLog.WriteLog(LOG_CHECK, "MSG", "ファイルなし");
+#endif
 	}
 
 	return 0;
@@ -601,6 +647,11 @@ int MIFInterface::LoadFiledata(char *fname)
 {
 	char str[64];
 
+#ifdef ENABLE_DEBUGLOG
+	//ログに出力
+	OutputLog.WriteLog(LOG_LOAD, "MIF", fname);
+#endif
+
 	mif = true;
 
 	//拡張子が.txtならば
@@ -739,6 +790,11 @@ int MIFInterface::LoadFiledata(char *fname)
 	//ファイルハンドルを開放
 	fclose( fp );
 
+#ifdef ENABLE_DEBUGLOG
+	//ログに出力
+	OutputLog.WriteLog(LOG_COMPLETE, "", "");
+#endif
+
 
 	//追加小物情報を初期値へ
 	strcpy(addsmallobject_modelpath, "");
@@ -750,6 +806,11 @@ int MIFInterface::LoadFiledata(char *fname)
 
 	//何かしらの追加小物情報ファイルが指定されていれば
 	if( (strcmp(addsmallobject_path, "") != 0)&&(strcmp(addsmallobject_path, "!") != 0) ){
+
+#ifdef ENABLE_DEBUGLOG
+		//ログに出力
+		OutputLog.WriteLog(LOG_LOAD, "（追加小物）", addsmallobject_path);
+#endif
 
 #ifdef PATH_DELIMITER_SLASH
 		//パス区切り文字を変換
@@ -789,7 +850,18 @@ int MIFInterface::LoadFiledata(char *fname)
 			//ファイルハンドルを開放
 			fclose( fp );
 		}
+
+#ifdef ENABLE_DEBUGLOG
+		//ログに出力
+		OutputLog.WriteLog(LOG_COMPLETE, "", "");
+#endif
 	}
+#ifdef ENABLE_DEBUGLOG
+	else{
+		//ログに出力
+		OutputLog.WriteLog(LOG_CHECK, "（追加小物）", "ファイルなし");
+	}
+#endif
 
 	return 0;
 }
@@ -1021,6 +1093,14 @@ int AddonList::LoadFiledata(char *dir)
 
 	//ミッション名をソートする
 	Sort();
+
+#ifdef ENABLE_DEBUGLOG
+	char str[128];
+	sprintf(str, "addonフォルダ調査（ディレクトリ：%s　合計数：%d）", dir, datas);
+
+	//ログに出力
+	OutputLog.WriteLog(LOG_CHECK, "ディレクトリ", str);
+#endif
 
 	return datas;
 }
