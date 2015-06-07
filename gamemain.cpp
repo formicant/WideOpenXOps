@@ -204,12 +204,10 @@ void opening::Input()
 	if( inputCtrl->CheckKeyDown(GetEscKeycode()) ){
 		GameState->PushBackSpaceKey();
 	}
-
-	if( inputCtrl->CheckMouseButtonUpL() ){
+	else if( inputCtrl->CheckMouseButtonUpL() ){
 		GameState->PushMouseButton();
 	}
-
-	if( inputCtrl->CheckKeyDown(OriginalkeycodeToDinputdef(0x0F)) ){		// [ENTER]
+	else if( inputCtrl->CheckKeyDown(OriginalkeycodeToDinputdef(0x0F)) ){		// [ENTER]
 		//[ENTER]を押しても、マウスをクリックしたことにする。
 		GameState->PushMouseButton();
 	}
@@ -500,9 +498,24 @@ void mainmenu::Input()
 	if( mainmenu_mouseY < 0 ){ mainmenu_mouseY = 0; }
 	if( mainmenu_mouseY > SCREEN_HEIGHT-1 ){ mainmenu_mouseY = SCREEN_HEIGHT-1; }
 
-	//ESCキーを処理
-	if( inputCtrl->CheckKeyDown(GetEscKeycode()) ){
+	if( inputCtrl->CheckKeyDown(GetEscKeycode()) ){		//ESCキーを処理
 		GameState->PushBackSpaceKey();
+	}
+	else if( inputCtrl->CheckMouseButtonUpL() ){		//ミッション選択
+		for(int i=0; i<TOTAL_MENUITEMS; i++){
+			char name[32];
+			if( GameInfoData.selectaddon == false ){
+				GameParamInfo.GetOfficialMission(scrollitems + i, name, NULL, NULL, NULL);
+			}
+			else{
+				strcpy(name, GameAddon.GetMissionName(scrollitems + i));
+			}
+
+			if( (MAINMENU_X < mainmenu_mouseX)&&(mainmenu_mouseX < (MAINMENU_X+(signed)strlen(name)*20))&&(MAINMENU_Y+30 + i*30 < mainmenu_mouseY)&&(mainmenu_mouseY < MAINMENU_Y+30 + i*30 + 26) ){
+				GameInfoData.selectmission_id = scrollitems + i;
+				GameState->PushMouseButton();
+			}
+		}
 	}
 
 	//スクロールバーを押したか判定
@@ -525,22 +538,6 @@ void mainmenu::Input()
 		// DOWN
 		if( (MAINMENU_X < mainmenu_mouseX)&&(mainmenu_mouseX < (MAINMENU_X+340))&&((MAINMENU_Y+MAINMENU_H-55) < mainmenu_mouseY)&&(mainmenu_mouseY < (MAINMENU_Y+MAINMENU_H-55+30)) ){
 			if( scrollitems < (totalmission - TOTAL_MENUITEMS) ){ scrollitems += 1; }
-		}
-
-		//ミッション選択
-		for(int i=0; i<TOTAL_MENUITEMS; i++){
-			char name[32];
-			if( GameInfoData.selectaddon == false ){
-				GameParamInfo.GetOfficialMission(scrollitems + i, name, NULL, NULL, NULL);
-			}
-			else{
-				strcpy(name, GameAddon.GetMissionName(scrollitems + i));
-			}
-
-			if( (MAINMENU_X < mainmenu_mouseX)&&(mainmenu_mouseX < (MAINMENU_X+(signed)strlen(name)*20))&&(MAINMENU_Y+30 + i*30 < mainmenu_mouseY)&&(mainmenu_mouseY < MAINMENU_Y+30 + i*30 + 26) ){
-				GameInfoData.selectmission_id = scrollitems + i;
-				GameState->PushMouseButton();
-			}
 		}
 	}
 
@@ -1210,9 +1207,11 @@ void maingame::Input()
 		if( camera_ry < DegreeToRadian(-70) ) camera_ry = DegreeToRadian(-70);
 	}
 
-	//ゲーム終了操作かチェック
-	if( inputCtrl->CheckKeyDown(GetEscKeycode()) ){
+	if( inputCtrl->CheckKeyDown(GetEscKeycode()) ){					//ゲーム終了操作かチェック
 		GameState->PushBackSpaceKey();
+	}
+	else if( inputCtrl->CheckKeyDown( GetFunctionKeycode(12) ) ){	//リセット操作かチェック
+		GameState->PushF12Key();
 	}
 
 	//カメラ表示モード変更操作かチェック
@@ -1237,11 +1236,6 @@ void maingame::Input()
 		else{
 			Camera_F2mode += 1;
 		}
-	}
-
-	//リセット操作かチェック
-	if( inputCtrl->CheckKeyDown( GetFunctionKeycode(12) ) ){
-		GameState->PushF12Key();
 	}
 
 #ifdef ENABLE_DEBUGCONSOLE

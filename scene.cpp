@@ -69,8 +69,7 @@ void scene::Input()
 	if( inputCtrl->CheckKeyDown(GetEscKeycode()) ){
 		GameState->PushBackSpaceKey();
 	}
-
-	if( inputCtrl->CheckMouseButtonUpL() ){
+	else if( inputCtrl->CheckMouseButtonUpL() ){
 		GameState->PushMouseButton();
 	}
 }
