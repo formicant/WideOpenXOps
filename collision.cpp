@@ -956,7 +956,7 @@ bool CollideSphereRay(float s_x, float s_y, float s_z, float s_r, float RayPos_x
 	}
 
 	//点（球体の中心）とレイの最短距離を求める
-	MinDist = DistancePosRay(s_x, s_y, s_z, RayPos_x, RayPos_y, RayPos_z, RayDir_x, RayDir_y, RayDir_z, maxDist);
+	MinDist = DistancePosRay(s_x, s_y, s_z, RayPos_x, RayPos_y, RayPos_z, RayDir_x, RayDir_y, RayDir_z);
 
 	if( MinDist <= s_r ){
 		RayDist = sqrt(d*d - MinDist*MinDist);		//（レイ始点から）点に最も近づく距離
@@ -1135,7 +1135,7 @@ bool CollideCylinderRay(float c_x, float c_y, float c_z, float c_r, float c_h, f
 	d = sqrt(x*x + z*z);
 
 	//点（円柱の中心）とレイの最短距離を求める
-	cMinDist = DistancePosRay(c_x, 0.0f, c_z, RayPos_x, 0.0f, RayPos_z, RayDir_x, 0.0f, RayDir_z, maxDist);
+	cMinDist = DistancePosRay(c_x, 0.0f, c_z, RayPos_x, 0.0f, RayPos_z, RayDir_x, 0.0f, RayDir_z);
 
 	//最短距離が半径より離れている時点で当たらない
 	if( cMinDist > c_r ){
@@ -1231,28 +1231,37 @@ bool CollideCylinderRay(float c_x, float c_y, float c_z, float c_r, float c_h, f
 //! @param RayDir_x レイのベクトルを指定する X成分
 //! @param RayDir_y レイのベクトルを指定する Y成分
 //! @param RayDir_z レイのベクトルを指定する Z成分
-//! @param maxDist 判定を行う最大距離
 //! @return 最短距離
 //! @warning RayPos（始点）と RayDir（ベクトル）を間違えないこと。
-float DistancePosRay(float Pos_x, float Pos_y, float Pos_z, float RayPos_x, float RayPos_y, float RayPos_z, float RayDir_x, float RayDir_y, float RayDir_z, float maxDist)
+//! @attention レイの方向は考慮されますが、レイの長さは考慮されません。
+float DistancePosRay(float Pos_x, float Pos_y, float Pos_z, float RayPos_x, float RayPos_y, float RayPos_z, float RayDir_x, float RayDir_y, float RayDir_z)
 {
 	float x1, y1, z1;
 	float x2, y2, z2;
 	float x3, y3, z3;
+	float Dot;
 
 	x1 = Pos_x - RayPos_x;
 	y1 = Pos_y - RayPos_y;
 	z1 = Pos_z - RayPos_z;
-	x2 = RayDir_x * maxDist;
-	y2 = RayDir_y * maxDist;
-	z2 = RayDir_z * maxDist;
+	x2 = RayDir_x;
+	y2 = RayDir_y;
+	z2 = RayDir_z;
+
+	//内積
+	Dot = x1 * x2 + y1 * y2 + z1 * z2;
+
+	//レイのベクトルが逆方向なら
+	if( Dot < 0.0f ){
+		return sqrt(x1*x1 + y1*y1 + z1*z1);
+	}
 
 	//外積
 	x3 = y1 * z2 - z1 * y2;
 	y3 = z1 * x2 - x1 * z2;
 	z3 = x1 * y2 - y1 * x2;
 
-	return sqrt(x3*x3 + y3*y3 + z3*z3) / maxDist;
+	return sqrt(x3*x3 + y3*y3 + z3*z3) / sqrt(RayDir_x*RayDir_x + RayDir_y*RayDir_y + RayDir_z*RayDir_z);
 }
 
 //! @brief 線分と線分の当たり判定（2D）

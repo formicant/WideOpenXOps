@@ -455,7 +455,7 @@ bool SoundManager::CheckApproach(soundlist *plist, float camera_x, float camera_
 		speed = (float)sqrt(plist->move_x*plist->move_x + plist->move_y*plist->move_y + plist->move_z*plist->move_z);
 
 		//Å’Z‹——£‚ÌÀ•W‚ğ‹‚ß‚é
-		min_dist = DistancePosRay(camera_x, camera_y, camera_z, plist->x, plist->y, plist->z, plist->move_x/speed, plist->move_y/speed, plist->move_z/speed, (float)speed*2);
+		min_dist = DistancePosRay(camera_x, camera_y, camera_z, plist->x, plist->y, plist->z, plist->move_x/speed, plist->move_y/speed, plist->move_z/speed);
 
 		//Å’Z‹——£‚ÌÀ•W‚ğ‹‚ß‚é
 		dist = (float)sqrt(dist2 - min_dist*min_dist);
