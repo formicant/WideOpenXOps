@@ -88,7 +88,7 @@ InputControl::~InputControl()
 //! @brief 初期化
 //! @param WindowCtrl WindowControlクラスのポインタ
 //! @return 成功：0　失敗：1
-int InputControl::InitD3Dinput(WindowControl *WindowCtrl)
+int InputControl::InitInput(WindowControl *WindowCtrl)
 {
 #ifdef ENABLE_DEBUGLOG
 	//ログに出力

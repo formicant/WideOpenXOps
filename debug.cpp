@@ -186,17 +186,17 @@ bool DebugLog::WriteLog(int tag, char* title, char* text)
 	}
 
 	//現在のミリ秒
-	fprintf(fp, "<tr><td>　%d　</tb>", GetTimeMS());
+	fprintf(fp, "<tr><td>　%d　</td>", GetTimeMS());
 
 	if( (tag != LOG_COMPLETE)&&(tag != LOG_ERROR) ){
 		//通常の情報
-		fprintf(fp, "<td width=100><b><font color=#%s>%s</font></b></tb>", tagcolor, tagstr);
-		fprintf(fp, "<td width=100>%s</tb><td colspan=3>%s</tb>", title, text);
+		fprintf(fp, "<td width=100><b><font color=#%s>%s</font></b></td>", tagcolor, tagstr);
+		fprintf(fp, "<td width=100>%s</td><td colspan=3>%s</td>", title, text);
 	}
 	else{
 		//完了・エラー情報
-		fprintf(fp, "<td colspan=2></td><td width=100><b><font color=#%s>%s</font></b></tb>", tagcolor, tagstr);
-		fprintf(fp, "<td>%s</tb><td>%s</tb>", title, text);
+		fprintf(fp, "<td colspan=2></td><td width=100><b><font color=#%s>%s</font></b></td>", tagcolor, tagstr);
+		fprintf(fp, "<td>%s</td><td>%s</td>", title, text);
 	}
 
 	fprintf(fp, "</tr>\n");

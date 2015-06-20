@@ -72,7 +72,7 @@ class InputControl
 public:
 	InputControl();
 	~InputControl();
-	int InitD3Dinput(WindowControl *WindowCtrl);
+	int InitInput(WindowControl *WindowCtrl);
 	void GetInputState(bool mousemode);
 	void MoveMouseCenter();
 	bool CheckKeyNow(int id);

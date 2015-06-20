@@ -66,7 +66,7 @@ int InitGame(WindowControl *WindowCtrl)
 	}
 
 	//Directinput‚Ì‰Šú‰»
-	if( inputCtrl.InitD3Dinput(WindowCtrl) ){
+	if( inputCtrl.InitInput(WindowCtrl) ){
 		WindowCtrl->ErrorInfo("Input initialization error");
 		return 1;
 	}
