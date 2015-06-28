@@ -47,7 +47,7 @@
 
 //定数
 #define GAMENAME "OpenXOPS"		//!< ゲーム名
-#define GAMEVERSION "1.011"		//!< ゲームのバージョン
+#define GAMEVERSION "1.020"		//!< ゲームのバージョン
 #define GAMEFRAMEMS 30			//!< フレームあたりの処理時間（ms）
 #define GAMEFPS (1000.0f/GAMEFRAMEMS)	//!< FPS（フレームレート）　1000 / 30 = 33.333[FPS]
 #define SCREEN_WIDTH 640		//!< スクリーンの幅
