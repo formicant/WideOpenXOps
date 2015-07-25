@@ -504,6 +504,7 @@ void mainmenu::Input()
 	else if( inputCtrl->CheckMouseButtonUpL() ){		//ミッション選択
 		for(int i=0; i<TOTAL_MENUITEMS; i++){
 			char name[32];
+			strcpy(name, "");
 			if( GameInfoData.selectaddon == false ){
 				GameParamInfo.GetOfficialMission(scrollitems + i, name, NULL, NULL, NULL);
 			}
