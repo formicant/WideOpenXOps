@@ -303,7 +303,7 @@ int D3DGraphics::InitSubset()
 		return 1;
 	}
 	//フォント名：ＭＳ ゴシック　サイズ：18
-	HRESULT hr = D3DXCreateFont( pd3dDevice, -18, 0, FW_NORMAL, 1, FALSE, DEFAULT_CHARSET, OUT_DEFAULT_PRECIS,
+	HRESULT hr = D3DXCreateFont( pd3dDevice, -18, 0, FW_NORMAL, 1, FALSE, SHIFTJIS_CHARSET , OUT_DEFAULT_PRECIS,
 								DEFAULT_QUALITY, DEFAULT_PITCH | FF_DONTCARE, "ＭＳ ゴシック", &pxmsfont);
 	if( FAILED(hr) ) return 1;
 
