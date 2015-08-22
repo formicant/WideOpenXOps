@@ -1058,6 +1058,9 @@ int maingame::Create()
 	AddInfoConsole(d3dg->GetColorCode(1.0f,1.0f,1.0f,1.0f), "        Command list >help");
 #endif
 
+	//マウスカーソルを中央へ移動
+	inputCtrl->MoveMouseCenter();
+
 	GameState->NextState();
 	return 0;
 }
@@ -2909,6 +2912,13 @@ void maingame::ProcessConsole()
 			InfoConsoleData[i].textdata[0] = NULL;
 		}
 	}
+
+#ifdef _DEBUG
+	//リセット操作
+	if( strcmp(NewCommand, "f12") == 0 ){
+		GameState->PushF12Key();
+	}
+#endif
 }
 
 //! @brief デバック用コンソールの描画処理
