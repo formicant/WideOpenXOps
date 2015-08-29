@@ -1044,6 +1044,7 @@ int maingame::Create()
 
 #ifdef ENABLE_DEBUGCONSOLE
 	Show_Console = false;
+	ScreenShot = 0;
 
 	//コンソール用初期化
 	InfoConsoleData = new ConsoleData [MAX_CONSOLELINES];
@@ -1209,6 +1210,11 @@ void maingame::Input()
 		camera_ry -= y * MouseSensitivity;
 		if( camera_ry > DegreeToRadian(70) ) camera_ry = DegreeToRadian(70);
 		if( camera_ry < DegreeToRadian(-70) ) camera_ry = DegreeToRadian(-70);
+	}
+
+	//プレイヤー（オブジェクト）の向きを設定
+	if( (PlayerAI == false)&&(myHuman->GetHP() > 0) ){
+		myHuman->SetRxRy(mouse_rx, mouse_ry);
 	}
 
 	if( inputCtrl->CheckKeyDown(GetEscKeycode()) ){					//ゲーム終了操作かチェック
@@ -1581,11 +1587,6 @@ void maingame::Process()
 	WeaponParameter data;
 	weaponid = myHuman->GetMainWeaponTypeNO();
 	GameParamInfo.GetWeapon(weaponid, &data);
-
-	//プレイヤー（オブジェクト）の向きを設定
-	if( (PlayerAI == false)&&(myHuman->GetHP() > 0) ){
-		myHuman->SetRxRy(mouse_rx, mouse_ry);
-	}
 
 	//オブジェクトマネージャーを実行
 	if( Cmd_F5 == true ){
@@ -2161,7 +2162,10 @@ void maingame::Render2D()
 
 #ifdef ENABLE_DEBUGCONSOLE
 	if( Show_Console == true ){
-		if( ScreenShot == false ){
+		if( ScreenShot == 1 ){
+			ScreenShot = 2;
+		}
+		else{
 			RenderConsole();
 		}
 	}
@@ -2883,7 +2887,7 @@ void maingame::ProcessConsole()
 
 	//スクリーンショットを撮影
 	//　※コンソール画面を削除するため、撮影を1フレーム遅らせる。
-	if( ScreenShot == true ){
+	if( ScreenShot == 2 ){
 		char fname[256];
 
 		//ファイル名を決定
@@ -2898,12 +2902,13 @@ void maingame::ProcessConsole()
 		else{
 			AddInfoConsole(d3dg->GetColorCode(1.0f,1.0f,1.0f,1.0f), "[Error] Save failed.");
 		}
-	}
-	if( strcmp(NewCommand, "ss") == 0 ){
-		ScreenShot = true;
+
+		ScreenShot = 0;
 	}
 	else{
-		ScreenShot = false;
+		if( strcmp(NewCommand, "ss") == 0 ){
+			ScreenShot = 1;
+		}
 	}
 
 	//コンソールをクリア

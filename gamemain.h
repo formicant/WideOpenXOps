@@ -199,7 +199,7 @@ class maingame : public D3Dscene
 	ConsoleData *InfoConsoleData;			//!< デバック用コンソールデータ（表示済み）
 	ConsoleData *InputConsoleData;			//!< デバック用コンソールデータ（入力中）
 	char NewCommand[MAX_CONSOLELEN];	//!< 新たに入力された未処理のコマンド
-	bool ScreenShot;		//!< SSを撮影する
+	int ScreenShot;		//!< SSを撮影する
 	void AddInfoConsole(int color, char *str);
 	void ConsoleInputText(char inchar);
 	void ConsoleDeleteText();
