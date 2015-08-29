@@ -298,7 +298,7 @@ void opening::Render2D()
 	if( ((int)(0.5f*GAMEFPS) < framecnt)&&(framecnt < (int)(4.0f*GAMEFPS)) ){
 		char str[32];
 		float effectA = 1.0f;
-		sprintf(str, GAMENAME" project", 0, 0);
+		sprintf(str, "%s project", GAMENAME);
 		if( framecnt < (int)(1.5f*GAMEFPS) ){ effectA = GetEffectAlpha(framecnt, 1.0f, 1.0f, 0.5f, false); }
 		if( framecnt > (int)(3.0f*GAMEFPS) ){ effectA = GetEffectAlpha(framecnt, 1.0f, 1.0f, 3.0f, true); }
 		d3dg->Draw2DTextureFontText(SCREEN_WIDTH/2 - strlen(str)*22/2, SCREEN_HEIGHT - 140, str, d3dg->GetColorCode(1.0f,1.0f,1.0f,effectA), 22, 22);
@@ -338,7 +338,7 @@ void opening::Render2D()
 	if( (int)(12.0f*GAMEFPS) <= framecnt ){	//framecnt < (int)(17.0f*GAMEFPS)
 		char str[32];
 		float effectA = 1.0f;
-		sprintf(str, GAMENAME, 0, 0);
+		sprintf(str, GAMENAME);
 		if( framecnt < (int)(13.0f*GAMEFPS) ){ effectA = GetEffectAlpha(framecnt, 1.0f, 1.0f, 12.0f, false); }
 		if( ((int)(16.0f*GAMEFPS) < framecnt)&&(framecnt < (int)(17.0f*GAMEFPS)) ){ effectA = GetEffectAlpha(framecnt, 1.0f, 1.0f, 16.0f, true); }
 		if( framecnt >= (int)(17.0f*GAMEFPS) ){ effectA = 0.0f; }
@@ -2877,7 +2877,8 @@ void maingame::ProcessConsole()
 	if( strcmp(NewCommand, "ver") == 0 ){
 		sprintf(str, "%s   Version:%s", GAMENAME, GAMEVERSION);
 		AddInfoConsole(d3dg->GetColorCode(1.0f,1.0f,1.0f,1.0f), str);
-		AddInfoConsole(d3dg->GetColorCode(1.0f,1.0f,1.0f,1.0f), " (Graphics:"GRAPHICS_CORE"   Sound:"SOUND_CORE")");
+		sprintf(str, " (Graphics:%s   Sound:%s)", GRAPHICS_CORE, SOUND_CORE);
+		AddInfoConsole(d3dg->GetColorCode(1.0f,1.0f,1.0f,1.0f), str);
 	}
 
 	//スクリーンショットを撮影
