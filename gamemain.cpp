@@ -1677,16 +1677,15 @@ void maingame::Process()
 	if( Camera_Debugmode == true ){
 		//
 	}
-	else if( myHuman->GetHP() <= 0 ){
-		float rx = DegreeToRadian(end_framecnt);
-		float ry = DegreeToRadian(-85);
-		float r = 25.0f;
+	else if( myHuman->GetDeadFlag() == true ){
+		float ry = camera_ry*0.95f + DegreeToRadian(-89.0f)*0.05f;						// 19/20 + 1/20
+		float r = 3.12f;
 
-		camera_x = x + cos(rx)*cos(ry)*r;
-		camera_y = y - sin(ry)*r;
-		camera_z = z + sin(rx)*cos(ry)*r;
-		camera_rx = rx;
+		camera_rx += DegreeToRadian(1.0f);
 		camera_ry = ry;
+		camera_x = x + cos(camera_rx)*r;
+		camera_y = y + 33.3f;
+		camera_z = z + sin(camera_rx)*r;
 	}
 	else if( Camera_F1mode == true ){
 		float crx = camera_rx*0.6f + (view_rx + mouse_rx*-1 + (float)M_PI/2)*0.4f;		// 3/5 + 2/5
