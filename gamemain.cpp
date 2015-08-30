@@ -1678,7 +1678,13 @@ void maingame::Process()
 		//
 	}
 	else if( myHuman->GetDeadFlag() == true ){
-		float ry = camera_ry*0.95f + DegreeToRadian(-89.0f)*0.05f;						// 19/20 + 1/20
+		float camera_ry2 = camera_ry;
+
+		//camera_ry2‚ð -PI`PI ‚ÌŠÔ‚É³‹K‰»
+		for(; camera_ry2>(float)M_PI; camera_ry2 -= (float)M_PI*2){}
+		for(; camera_ry2<(float)M_PI*-1; camera_ry2 += (float)M_PI*2){}
+
+		float ry = camera_ry2*0.95f + DegreeToRadian(-89.0f)*0.05f;						// 19/20 + 1/20
 		float r = 3.12f;
 
 		camera_rx += DegreeToRadian(1.0f);

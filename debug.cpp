@@ -76,7 +76,7 @@ bool DebugLog::MakeLog()
 	//ヘッダー
 	fprintf(fp, "<html>\n");
 	fprintf(fp, "<head>\n");
-	fprintf(fp, "<title>"GAMENAME" "GAMEVERSION" Debug Log</title>\n");
+	fprintf(fp, "<title>%s %s Debug Log</title>\n", GAMENAME, GAMEVERSION);
 	fprintf(fp, "<style type=text/css>\n");
 	fprintf(fp, "<!--//\n");
 	fprintf(fp, "body{ font-size : 12px; }\n");
@@ -89,7 +89,7 @@ bool DebugLog::MakeLog()
 
 	//ページ上部
 	fprintf(fp, "<p>\n");
-	fprintf(fp, "<b>"GAMENAME" "GAMEVERSION" 実行ログ</b><br>\n");
+	fprintf(fp, "<b>%s %s 実行ログ</b><br>\n", GAMENAME, GAMEVERSION);
 	fprintf(fp, "日時：%04d年%02d月%02d日　%02d時%02d分%02d秒<br>\n", local->tm_year + 1900, local->tm_mon + 1, local->tm_mday, local->tm_hour, local->tm_min, local->tm_sec);
 	fprintf(fp, "</p>\n");
 
