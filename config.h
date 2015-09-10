@@ -75,7 +75,7 @@ class Config
 	int Brightness;						//!< 画面の明るさ
 	bool InvertMouseFlag;				//!< マウス反転
 	bool FrameskipFlag;					//!< フレームスキップ
-	bool AnotherGunsightFlag;			//!< 別の標準を使用
+	bool AnotherGunsightFlag;			//!< 別の照準を使用
 	char PlayerName[MAX_PLAYERNAME];	//!< プレイヤー名
 
 public:

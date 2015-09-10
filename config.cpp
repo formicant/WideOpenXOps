@@ -116,7 +116,7 @@ int Config::LoadFile(char *fname)
 	if( buf == 0x00 ){ FrameskipFlag = false; }
 	else{ FrameskipFlag = true; }
 
-	//別の標準を使用
+	//別の照準を使用
 	fread(&buf, 1, 1, fp);
 	if( buf == 0x00 ){ AnotherGunsightFlag = false; }
 	else{ AnotherGunsightFlag = true; }

@@ -51,7 +51,7 @@ SoundControl::~SoundControl()
 
 #ifdef ENABLE_DEBUGLOG
 	//ログに出力
-	OutputLog.WriteLog(LOG_CLEANUP, "サウンド", "ezds.dll");
+	OutputLog.WriteLog(LOG_CLEANUP, "サウンド", "DirectSound");
 #endif
 }
 

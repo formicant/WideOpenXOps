@@ -1256,8 +1256,8 @@ void D3DGraphics::Start2DMSFontTextRender()
 //! @param str 文字列　（改行コード：可）
 //! @param color 色
 //! @warning <b>描画は非常に低速です。</b>画面内で何度も呼び出すとパフォーマンスに影響します。
-//! @warning「改行コードを活用し一度に描画する」「日本語が必要ない文字はテクスチャフォントを活用する」などの対応を講じてください。
-//! @attention DirectXの ID3DXSprite を使用し、システムフォントで描画ています。
+//! @warning 「改行コードを活用し一度に描画する」「日本語が必要ない文字はテクスチャフォントを活用する」などの対応を講じてください。
+//! @attention DirectXの ID3DXSprite を使用し、システムフォントで描画しています。
 //! @attention フォントの種類やサイズは固定です。　文字を二重に重ねて立体感を出さないと見にくくなります。
 void D3DGraphics::Draw2DMSFontText(int x, int y, char *str, int color)
 {
@@ -1271,7 +1271,7 @@ void D3DGraphics::Draw2DMSFontText(int x, int y, char *str, int color)
 	D3DXMatrixIdentity(&matWorld);
 	ptextsprite->SetTransform(&matWorld);
 
-	//文字をを描画
+	//文字を描画
 	RECT rc = {x, y, 0, 0};
 	pxmsfont->DrawText(ptextsprite, str, -1, &rc, DT_NOCLIP, color);
 
@@ -1287,8 +1287,8 @@ void D3DGraphics::Draw2DMSFontText(int x, int y, char *str, int color)
 //! @param str 文字列　（改行コード：可）
 //! @param color 色
 //! @warning <b>描画は非常に低速です。</b>画面内で何度も呼び出すとパフォーマンスに影響します。
-//! @warning「改行コードを活用し一度に描画する」「日本語が必要ない文字はテクスチャフォントを活用する」などの対応を講じてください。
-//! @attention DirectXの ID3DXSprite を使用し、システムフォントで描画ています。
+//! @warning 「改行コードを活用し一度に描画する」「日本語が必要ない文字はテクスチャフォントを活用する」などの対応を講じてください。
+//! @attention DirectXの ID3DXSprite を使用し、システムフォントで描画しています。
 //! @attention フォントの種類やサイズは固定です。　文字を二重に重ねて立体感を出さないと見にくくなります。
 void D3DGraphics::Draw2DMSFontTextCenter(int x, int y, int w, int h, char *str, int color)
 {
@@ -1302,7 +1302,7 @@ void D3DGraphics::Draw2DMSFontTextCenter(int x, int y, int w, int h, char *str, 
 	D3DXMatrixIdentity(&matWorld);
 	ptextsprite->SetTransform(&matWorld);
 
-	//文字をを描画
+	//文字を描画
 	RECT rc = {x, y, x+w, y+h};
 	pxmsfont->DrawText(ptextsprite, str, -1, &rc, DT_CENTER, color);
 

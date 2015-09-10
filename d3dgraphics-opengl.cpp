@@ -705,7 +705,7 @@ int D3DGraphics::LoadTexture(char* filename, bool texturefont, bool BlackTranspa
 	*/
 }
 
-//! @brief BMPファイルをを読み込む
+//! @brief BMPファイルを読み込む
 //! @param filename ファイル名
 //! @param BlackTransparent 黒を透過する
 //! @param ptexture 受け取るTEXTUREDATA構造体のポインタ
@@ -806,7 +806,7 @@ bool D3DGraphics::LoadBMPTexture(char* filename, bool BlackTransparent, TEXTURED
 	return true;
 }
 
-//! @brief DDSファイルをを読み込む
+//! @brief DDSファイルを読み込む
 //! @param filename ファイル名
 //! @param BlackTransparent 黒を透過する
 //! @param ptexture 受け取るTEXTUREDATA構造体のポインタ
@@ -885,7 +885,7 @@ bool D3DGraphics::LoadDDSTexture(char* filename, bool BlackTransparent, TEXTURED
 	return true;
 }
 
-//! @brief JPEGファイルをを読み込む
+//! @brief JPEGファイルを読み込む
 //! @param filename ファイル名
 //! @param BlackTransparent 黒を透過する
 //! @param ptexture 受け取るTEXTUREDATA構造体のポインタ
@@ -971,7 +971,7 @@ bool D3DGraphics::LoadJPEGTexture(char* filename, bool BlackTransparent, TEXTURE
 	return true;
 }
 
-//! @brief PNGファイルをを読み込む
+//! @brief PNGファイルを読み込む
 //! @param filename ファイル名
 //! @param BlackTransparent 黒を透過する
 //! @param ptexture 受け取るTEXTUREDATA構造体のポインタ

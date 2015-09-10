@@ -176,7 +176,7 @@ int WindowControl::CheckMainLoop()
 //! @param *str メッセージ
 void WindowControl::ErrorInfo(char *str)
 {
-	MessageBox(hWnd, str, "ERROR", MB_OK);
+	MessageBox(hWnd, str, "error", MB_OK);
 }
 
 //! @brief ウィンドウを閉じるように要求

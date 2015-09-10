@@ -73,7 +73,7 @@ int InitGame(WindowControl *WindowCtrl)
 
 	//EASY DIRECT SOUND ‰Šú‰»
 	if( SoundCtrl.InitSound(WindowCtrl) ){
-		WindowCtrl->ErrorInfo("DLL open failed");
+		WindowCtrl->ErrorInfo("dll open failed");
 		return 1;
 	}
 
