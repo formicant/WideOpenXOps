@@ -59,19 +59,19 @@ EventControl Event[TOTAL_EVENTLINE];	//!< イベント制御クラス
 //! @brief 基本的な初期化処理
 int InitGame(WindowControl *WindowCtrl)
 {
-	//DirectX初期化
+	//D3DGraphicsクラス初期化
 	if( d3dg.InitD3D(WindowCtrl, "data\\char.dds", GameConfig.GetFullscreenFlag()) ){
 		WindowCtrl->ErrorInfo("Direct3Dの作成に失敗しました");
 		return 1;
 	}
 
-	//Directinput初期化
+	//InputControlクラス初期化
 	if( inputCtrl.InitInput(WindowCtrl) ){
 		WindowCtrl->ErrorInfo("Input initialization error");
 		return 1;
 	}
 
-	//EASY DIRECT SOUND 初期化
+	//SoundControlクラス初期化
 	if( SoundCtrl.InitSound(WindowCtrl) ){
 		WindowCtrl->ErrorInfo("dll open failed");
 		return 1;
@@ -118,7 +118,7 @@ int InitGame(WindowControl *WindowCtrl)
 	return 0;
 }
 
-//! @brief DirectXをリセットする
+//! @brief リソースをリセットする
 //! @return 失敗：1　それ以外：0
 //! @attention 通常は、描画処理に失敗した場合に限り呼び出してください。
 int ResetGame(WindowControl *WindowCtrl)
@@ -151,20 +151,20 @@ int ResetGame(WindowControl *WindowCtrl)
 //! @brief 基本的な解放処理
 void CleanupGame()
 {
-	//リソースを初期化
+	//リソースを解放
 	Resource.DestroyResource();
 
-	//設定値を初期化
+	//設定値を解放
 	GameParamInfo.DestroyInfo();
 
 
-	//DirectX解放
+	//D3DGraphicsクラス解放
 	d3dg.DestroyD3D();
 
-	//Directinput解放
+	//InputControlクラス解放
 	inputCtrl.DestroyInput();
 
-	//EASY DIRECT SOUND 解放
+	//SoundControlクラス解放
 	SoundCtrl.DestroySound();
 }
 
