@@ -158,20 +158,27 @@ opening::~opening()
 
 int opening::Create()
 {
+	int blockflag, pointflag;
+
 	//ブロックデータ読み込み
-	if( BlockData.LoadFiledata("data\\map10\\temp.bd1") ){
-		//block data open failed
-		return 1;
+	blockflag = BlockData.LoadFiledata("data\\map10\\temp.bd1");
+
+	//ポイントデータ読み込み
+	pointflag = PointData.LoadFiledata("data\\map10\\op.pd1");
+
+	//ファイル読み込みでエラーがあったら中断
+	if( (blockflag != 0)||(pointflag != 0) ){
+		//2bit : point data open failed
+		//1bit : block data open failed
+		return pointflag*2 + blockflag;
 	}
+
+	//ブロックデータ初期化
 	BlockData.CalculationBlockdata(false);
 	d3dg->LoadMapdata(&BlockData, "data\\map10\\");
 	CollD.InitCollision(&BlockData);
 
-	//ポイントデータ読み込み
-	if( PointData.LoadFiledata("data\\map10\\op.pd1") ){
-		//point data open failed
-		return 2;
-	}
+	//ポイントデータ初期化
 	ObjMgr.LoadPointData();
 	ObjMgr.SetPlayerID(MAX_HUMAN-1);	//実在しない人をプレイヤーに（銃声のサウンド再生対策）
 
@@ -378,6 +385,7 @@ int mainmenu::Create()
 	char path[MAX_PATH];
 	char bdata[MAX_PATH];
 	char pdata[MAX_PATH];
+	int blockflag, pointflag;
 
 	//デモを決定し読み込む
 	switch( GetRand(6) ){
@@ -406,19 +414,24 @@ int mainmenu::Create()
 	strcat(pdata, "demo.pd1");
 
 	//ブロックデータ読み込み
-	if( BlockData.LoadFiledata(bdata) ){
-		//block data open failed
-		return 1;
+	blockflag = BlockData.LoadFiledata(bdata);
+
+	//ポイントデータ読み込み
+	pointflag = PointData.LoadFiledata(pdata);
+
+	//ファイル読み込みでエラーがあったら中断
+	if( (blockflag != 0)||(pointflag != 0) ){
+		//2bit : point data open failed
+		//1bit : block data open failed
+		return pointflag*2 + blockflag;
 	}
+
+	//ブロックデータ初期化
 	BlockData.CalculationBlockdata(false);
 	d3dg->LoadMapdata(&BlockData, path);
 	CollD.InitCollision(&BlockData);
 
-	//ポイントデータ読み込み
-	if( PointData.LoadFiledata(pdata) ){
-		//point data open failed
-		return 2;
-	}
+	//ポイントデータ初期化
 	ObjMgr.LoadPointData();
 
 	//AI設定
@@ -950,6 +963,7 @@ int maingame::Create()
 	char bdata[MAX_PATH];
 	char pdata[MAX_PATH];
 	char pdata2[MAX_PATH];
+	int blockflag, pointflag;
 
 	//.bd1と.pd1のファイルパスを求める
 	if( MIFdata.GetFiletype() == false ){
@@ -977,19 +991,24 @@ int maingame::Create()
 	Resource.LoadAddSmallObject(MIFdata.GetAddSmallobjectModelPath(), MIFdata.GetAddSmallobjectTexturePath(), MIFdata.GetAddSmallobjectSoundPath());
 
 	//ブロックデータ読み込み
-	if( BlockData.LoadFiledata(bdata) ){
-		//block data open failed
-		return 1;
+	blockflag = BlockData.LoadFiledata(bdata);
+
+	//ポイントデータ読み込み
+	pointflag = PointData.LoadFiledata(pdata);
+
+	//ファイル読み込みでエラーがあったら中断
+	if( (blockflag != 0)||(pointflag != 0) ){
+		//2bit : point data open failed
+		//1bit : block data open failed
+		return pointflag*2 + blockflag;
 	}
+
+	//ブロックデータ初期化
 	BlockData.CalculationBlockdata(MIFdata.GetScreenFlag());
 	d3dg->LoadMapdata(&BlockData, path);
 	CollD.InitCollision(&BlockData);
 
-	//ポイントデータ読み込み
-	if( PointData.LoadFiledata(pdata) ){
-		//point data open failed
-		return 2;
-	}
+	//ポイントデータ初期化
 	ObjMgr.LoadPointData();
 
 	//AI設定
@@ -3053,13 +3072,15 @@ void ProcessScreen(WindowControl *WindowCtrl, opening *Opening, mainmenu *MainMe
 		//オープニング初期化
 		case STATE_CREATE_OPENING:
 			error = Opening->Create();
-			if( error == 1 ){
-				WindowCtrl->ErrorInfo("block data open failed");
-				WindowCtrl->CloseWindow();
-			}
-			if( error == 2 ){
-				WindowCtrl->ErrorInfo("point data open failed");
-				WindowCtrl->CloseWindow();
+			if( error != 0 ){
+				if( (error&0x0001) != 0 ){
+					WindowCtrl->ErrorInfo("block data open failed");
+				}
+				if( (error&0x0002) != 0 ){
+					WindowCtrl->ErrorInfo("point data open failed");
+				}
+				//WindowCtrl->CloseWindow();
+				GameState.PushBackSpaceKey();
 			}
 			break;
 
@@ -3083,12 +3104,13 @@ void ProcessScreen(WindowControl *WindowCtrl, opening *Opening, mainmenu *MainMe
 		//メニュー初期化
 		case STATE_CREATE_MENU:
 			error = MainMenu->Create();
-			if( error == 1 ){
-				WindowCtrl->ErrorInfo("block data open failed");
-				WindowCtrl->CloseWindow();
-			}
-			if( error == 2 ){
-				WindowCtrl->ErrorInfo("point data open failed");
+			if( error != 0 ){
+				if( (error&0x0001) != 0 ){
+					WindowCtrl->ErrorInfo("block data open failed");
+				}
+				if( (error&0x0002) != 0 ){
+					WindowCtrl->ErrorInfo("point data open failed");
+				}
 				WindowCtrl->CloseWindow();
 			}
 			break;
@@ -3138,12 +3160,13 @@ void ProcessScreen(WindowControl *WindowCtrl, opening *Opening, mainmenu *MainMe
 		//メインゲーム初期化
 		case STATE_CREATE_MAINGAME:
 			error = MainGame->Create();
-			if( error == 1 ){
-				WindowCtrl->ErrorInfo("block data open failed");
-				WindowCtrl->CloseWindow();
-			}
-			if( error == 2 ){
-				WindowCtrl->ErrorInfo("point data open failed");
+			if( error != 0 ){
+				if( (error&0x0001) != 0 ){
+					WindowCtrl->ErrorInfo("block data open failed");
+				}
+				if( (error&0x0002) != 0 ){
+					WindowCtrl->ErrorInfo("point data open failed");
+				}
 				WindowCtrl->CloseWindow();
 			}
 			break;
