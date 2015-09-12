@@ -78,32 +78,7 @@ D3DGraphics::D3DGraphics()
 //! @brief ディストラクタ
 D3DGraphics::~D3DGraphics()
 {
-	for(int i=0; i<MAX_MODEL; i++){
-		CleanupModel(i);
-	}
-	for(int i=0; i<MAX_TEXTURE; i++){
-		CleanupTexture(i);
-	}
-
-	if( SystemFont != NULL ){
-		DeleteObject(SystemFont);
-	}
-	if( now_SystemFontUStr != NULL ){
-		delete [] now_SystemFontUStr;
-	}
-	if( SystemFontListIdx != 0 ){
-		glDeleteLists(SystemFontListIdx, SystemFontListIdxSize);
-	}
-
-	if( hGLRC != NULL ){ wglDeleteContext(hGLRC); }
-
-#ifdef ENABLE_DEBUGLOG
-	//ログに出力
-	OutputLog.WriteLog(LOG_CLEANUP, "グラフィック", "OpenGL");
-#endif
-
-	//libjpeg解放
-	jpeg_destroy_decompress(&cinfo);
+	DestroyD3D();
 }
 
 //! @brief 初期化@n
@@ -250,6 +225,46 @@ int D3DGraphics::ResetD3D(WindowControl *WindowCtrl)
 #endif
 
 	return 2;
+}
+
+//! @brief 解放
+//! @attention 本関数は自動的に呼び出されますが、明示的に呼び出すことも可能です。
+void D3DGraphics::DestroyD3D()
+{
+	if( hGLRC == NULL ){ return; }
+
+	for(int i=0; i<MAX_MODEL; i++){
+		CleanupModel(i);
+	}
+	for(int i=0; i<MAX_TEXTURE; i++){
+		CleanupTexture(i);
+	}
+
+	if( SystemFont != NULL ){
+		DeleteObject(SystemFont);
+		SystemFont = NULL;
+	}
+	if( now_SystemFontUStr != NULL ){
+		delete [] now_SystemFontUStr;
+		now_SystemFontUStr = NULL;
+	}
+	if( SystemFontListIdx != 0 ){
+		glDeleteLists(SystemFontListIdx, SystemFontListIdxSize);
+		SystemFontListIdx = 0;
+	}
+
+	if( hGLRC != NULL ){
+		wglDeleteContext(hGLRC);
+		hGLRC = NULL;
+	}
+
+#ifdef ENABLE_DEBUGLOG
+	//ログに出力
+	OutputLog.WriteLog(LOG_CLEANUP, "グラフィック", "OpenGL");
+#endif
+
+	//libjpeg解放
+	jpeg_destroy_decompress(&cinfo);
 }
 
 //! @brief モデルファイルを読み込む（.x）

@@ -58,6 +58,8 @@ class InputControl
 	LPDIRECTINPUT8 pDI;					//!< DIRECTINPUT8のポインタ
 	LPDIRECTINPUTDEVICE8 pDIDevice;		//!< DIRECTINPUTDEVICE8のポインタ・キーボード用
 	LPDIRECTINPUTDEVICE8 pMouse;		//!< DIRECTINPUTDEVICE8のポインタ・マウス用
+#else
+	bool InitFlag;		//!< 初期化フラグ
 #endif
 	char keys[256];			//!< キー情報を格納する配列
 	char keys_lt[256];		//!< （前回の）キー情報を格納する配列
@@ -73,6 +75,7 @@ public:
 	InputControl();
 	~InputControl();
 	int InitInput(WindowControl *WindowCtrl);
+	void DestroyInput();
 	void GetInputState(bool mousemode);
 	void MoveMouseCenter();
 	bool CheckKeyNow(int id);

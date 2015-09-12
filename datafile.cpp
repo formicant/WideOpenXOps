@@ -85,7 +85,7 @@ BlockDataInterface::~BlockDataInterface()
 
 #ifdef ENABLE_DEBUGLOG
 	//ログに出力
-	OutputLog.WriteLog(LOG_CLEANUP, "BD1", "");
+	//OutputLog.WriteLog(LOG_CLEANUP, "BD1", "");
 #endif
 }
 
@@ -382,7 +382,7 @@ PointDataInterface::~PointDataInterface()
 
 #ifdef ENABLE_DEBUGLOG
 	//ログに出力
-	OutputLog.WriteLog(LOG_CLEANUP, "PD1", "");
+	//OutputLog.WriteLog(LOG_CLEANUP, "PD1", "");
 #endif
 }
 

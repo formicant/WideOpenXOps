@@ -120,7 +120,7 @@ int WINAPI WinMain(HINSTANCE hInstance,	HINSTANCE hPrevInstance, LPSTR lpCmdLine
 
 #ifdef ENABLE_DEBUGLOG
 	//ログに出力
-	OutputLog.WriteLog(LOG_CHECK, "起動", "メインループ");
+	OutputLog.WriteLog(LOG_CHECK, "起動", "メインループ突入");
 #endif
 
 	unsigned int framecnt = 0;
@@ -136,6 +136,15 @@ int WINAPI WinMain(HINSTANCE hInstance,	HINSTANCE hPrevInstance, LPSTR lpCmdLine
 			framecnt++;
 		}
 	}
+
+#ifdef ENABLE_DEBUGLOG
+	//ログに出力
+	OutputLog.WriteLog(LOG_CHECK, "終了", "メインループ脱出");
+#endif
+
+
+	//基本的な解放処理
+	CleanupGame();
 
 #ifdef ENABLE_DEBUGLOG
 	//ログに出力

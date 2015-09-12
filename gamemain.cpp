@@ -65,7 +65,7 @@ int InitGame(WindowControl *WindowCtrl)
 		return 1;
 	}
 
-	//Directinputの初期化
+	//Directinput初期化
 	if( inputCtrl.InitInput(WindowCtrl) ){
 		WindowCtrl->ErrorInfo("Input initialization error");
 		return 1;
@@ -146,6 +146,26 @@ int ResetGame(WindowControl *WindowCtrl)
 		return 1;
 	}
 	return 0;
+}
+
+//! @brief 基本的な解放処理
+void CleanupGame()
+{
+	//リソースを初期化
+	Resource.DestroyResource();
+
+	//設定値を初期化
+	GameParamInfo.DestroyInfo();
+
+
+	//DirectX解放
+	d3dg.DestroyD3D();
+
+	//Directinput解放
+	inputCtrl.DestroyInput();
+
+	//EASY DIRECT SOUND 解放
+	SoundCtrl.DestroySound();
 }
 
 //! @brief コンストラクタ

@@ -134,6 +134,7 @@ public:
 	ParameterInfo();
 	~ParameterInfo();
 	void InitInfo();
+	void DestroyInfo();
 	int GetHuman(int id, HumanParameter *out_data);
 	int GetHumanTexturePath(int id, char *out_str);
 	int GetWeapon(int id, WeaponParameter *out_data);

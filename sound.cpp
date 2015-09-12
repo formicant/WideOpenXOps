@@ -42,17 +42,7 @@ SoundControl::SoundControl()
 //! @brief ディストラクタ
 SoundControl::~SoundControl()
 {
-	for(int i=0;i<MAX_LOADSOUND; i++){
-		for(int j=0; j<MAX_SOUNDLISTS; j++){
-			if( pDSBuffer[i][j] != NULL ){ pDSBuffer[i][j]->Release(); }
-		}
-	}
-	if( pDSound != NULL ){ pDSound->Release(); }
-
-#ifdef ENABLE_DEBUGLOG
-	//ログに出力
-	OutputLog.WriteLog(LOG_CLEANUP, "サウンド", "DirectSound");
-#endif
+	DestroySound();
 }
 
 //! @brief 初期化
@@ -98,6 +88,31 @@ int SoundControl::InitSound(WindowControl *WindowCtrl)
 #endif
 
 	return 0;
+}
+
+//! @brief 解放
+//! @attention 本関数は自動的に呼び出されますが、明示的に呼び出すことも可能です。
+void SoundControl::DestroySound()
+{
+	if( pDSound == NULL ){ return; }
+
+	for(int i=0;i<MAX_LOADSOUND; i++){
+		for(int j=0; j<MAX_SOUNDLISTS; j++){
+			if( pDSBuffer[i][j] != NULL ){
+				pDSBuffer[i][j]->Release();
+				pDSBuffer[i][j] = NULL;
+			}
+		}
+	}
+	if( pDSound != NULL ){
+		pDSound->Release();
+		pDSound = NULL;
+	}
+
+#ifdef ENABLE_DEBUGLOG
+	//ログに出力
+	OutputLog.WriteLog(LOG_CLEANUP, "サウンド", "DirectSound");
+#endif
 }
 
 //! @brief 再生音量を設定
@@ -466,25 +481,7 @@ SoundControl::SoundControl()
 //! @brief ディストラクタ
 SoundControl::~SoundControl()
 {
-	if( lib == NULL ){ return; }
-
-	//使用中のサウンドデータ数を数える
-	int total = 0;
-	for(int i=0; i<MAX_LOADSOUND; i++){
-		if( useflag[i] == true ){ total += 1; }
-	}
-
-	//サウンドデータを開放し、DLLを終了
-	DSrelease(total);
-	DSend();
-
-	//DLLを開放
-	FreeLibrary(lib);
-
-#ifdef ENABLE_DEBUGLOG
-	//ログに出力
-	OutputLog.WriteLog(LOG_CLEANUP, "サウンド", "ezds.dll");
-#endif
+	DestroySound();
 }
 
 //! @brief 初期化@n
@@ -530,6 +527,32 @@ int SoundControl::InitSound(WindowControl *WindowCtrl)
 #endif
 
 	return 0;
+}
+
+//! @brief 解放
+//! @attention 本関数は自動的に呼び出されますが、明示的に呼び出すことも可能です。
+void SoundControl::DestroySound()
+{
+	if( lib == NULL ){ return; }
+
+	//使用中のサウンドデータ数を数える
+	int total = 0;
+	for(int i=0; i<MAX_LOADSOUND; i++){
+		if( useflag[i] == true ){ total += 1; }
+	}
+
+	//サウンドデータを開放し、DLLを終了
+	DSrelease(total);
+	DSend();
+
+	//DLLを開放
+	FreeLibrary(lib);
+	lib = NULL;
+
+#ifdef ENABLE_DEBUGLOG
+	//ログに出力
+	OutputLog.WriteLog(LOG_CLEANUP, "サウンド", "ezds.dll");
+#endif
 }
 
 //! @brief 再生音量を設定

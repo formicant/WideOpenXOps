@@ -62,16 +62,7 @@ D3DGraphics::D3DGraphics()
 //! @brief ディストラクタ
 D3DGraphics::~D3DGraphics()
 {
-	//リソース解放
-	CleanupD3Dresource();
-
-	if( pd3dDevice != NULL ) pd3dDevice->Release();
-	if( pD3D != NULL ) pD3D->Release();
-
-#ifdef ENABLE_DEBUGLOG
-	//ログに出力
-	OutputLog.WriteLog(LOG_CLEANUP, "グラフィック", "DirectX");
-#endif
+	DestroyD3D();
 }
 
 //! @brief 初期化@n
@@ -244,6 +235,30 @@ int D3DGraphics::ResetD3D(WindowControl *WindowCtrl)
 	return 0;
 }
 
+//! @brief 解放
+//! @attention 本関数は自動的に呼び出されますが、明示的に呼び出すことも可能です。
+void D3DGraphics::DestroyD3D()
+{
+	if( (pd3dDevice == NULL)&&(pD3D == NULL) ){ return; }
+
+	//リソース解放
+	CleanupD3Dresource();
+
+	if( pd3dDevice != NULL ){
+		pd3dDevice->Release();
+		pd3dDevice = NULL;
+	}
+	if( pD3D != NULL ){
+		pD3D->Release();
+		pD3D = NULL;
+	}
+
+#ifdef ENABLE_DEBUGLOG
+	//ログに出力
+	OutputLog.WriteLog(LOG_CLEANUP, "グラフィック", "DirectX");
+#endif
+}
+
 //! @brief 描画関係の細部設定
 //! @attention 初期化時に1度だけ実行してください。
 int D3DGraphics::InitSubset()
@@ -320,7 +335,10 @@ void D3DGraphics::CleanupD3Dresource()
 		pxmsfont->Release();
 		pxmsfont = NULL;
 	}
-	if( ptextsprite != NULL ){ ptextsprite->Release(); }
+	if( ptextsprite != NULL ){
+		ptextsprite->Release();
+		ptextsprite = NULL;
+	}
 
 	CleanupMapdata();
 

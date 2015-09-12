@@ -38,6 +38,8 @@ InputControl::InputControl()
 	pDI = NULL;
 	pDIDevice = NULL;
 	pMouse = NULL;
+#else
+	InitFlag = false;
 #endif
 
 	//キーボード設定値初期化
@@ -58,31 +60,7 @@ InputControl::InputControl()
 //! @brief ディストラクタ
 InputControl::~InputControl()
 {
-#ifdef INPUT_DIRECTINPUT
-	//キーボードデバイスを開放
-	if( pDIDevice != NULL ){
-		pDIDevice->Unacquire();
-		pDIDevice->Release();
-	}
-
-	//マウスデバイスを開放
-	if( pMouse != NULL ){
-		pMouse->Unacquire();
-		pMouse->Release();
-	}
-
-	//DirectInputを開放
-	if( pDI != NULL) pDI->Release();
-#endif
-
-#ifdef ENABLE_DEBUGLOG
-	//ログに出力
- #ifdef INPUT_DIRECTINPUT
-	OutputLog.WriteLog(LOG_CLEANUP, "入力", "DirectInput");
- #else
-	OutputLog.WriteLog(LOG_CLEANUP, "入力", "WinAPI");
- #endif
-#endif
+	DestroyInput();
 }
 
 //! @brief 初期化
@@ -127,12 +105,60 @@ int InputControl::InitInput(WindowControl *WindowCtrl)
 	//カーソルを非表示
 	ShowCursor(false);
 
+#ifndef INPUT_DIRECTINPUT
+	InitFlag = true;
+#endif
+
 #ifdef ENABLE_DEBUGLOG
 	//ログに出力
 	OutputLog.WriteLog(LOG_COMPLETE, "", "");
 #endif
 
 	return 0;
+}
+
+//! @brief 解放
+//! @attention 本関数は自動的に呼び出されますが、明示的に呼び出すことも可能です。
+void InputControl::DestroyInput()
+{
+#ifdef INPUT_DIRECTINPUT
+	if( (pDI == NULL)&&(pDIDevice == NULL)&&(pMouse == NULL) ){ return; }
+#else
+	if( InitFlag == false ){ return; }
+#endif
+
+#ifdef INPUT_DIRECTINPUT
+	//キーボードデバイスを開放
+	if( pDIDevice != NULL ){
+		pDIDevice->Unacquire();
+		pDIDevice->Release();
+		pDIDevice = NULL;
+	}
+
+	//マウスデバイスを開放
+	if( pMouse != NULL ){
+		pMouse->Unacquire();
+		pMouse->Release();
+		pMouse = NULL;
+	}
+
+	//DirectInputを開放
+	if( pDI != NULL){
+		pDI->Release();
+		pDI = NULL;
+	}
+#else
+	InitFlag = false;
+#endif
+
+#ifdef ENABLE_DEBUGLOG
+	//ログに出力
+ #ifdef INPUT_DIRECTINPUT
+	OutputLog.WriteLog(LOG_CLEANUP, "入力", "DirectInput");
+ #else
+	OutputLog.WriteLog(LOG_CLEANUP, "入力", "WinAPI");
+ #endif
+#endif
 }
 
 //! @brief 入力デバイスの状態を更新

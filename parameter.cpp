@@ -55,18 +55,7 @@ ParameterInfo::ParameterInfo()
 //! @brief ディストラクタ
 ParameterInfo::~ParameterInfo()
 {
-	//CleanupModelTextureWeapon();
-	//CleanupModelTextureSmallObject();
-
-	if( Human != NULL ){ delete [] Human; }
-	if( Weapon != NULL ){ delete [] Weapon; }
-	if( SmallObject != NULL ){ delete [] SmallObject; }
-	if( AIlevel != NULL ){ delete [] AIlevel; }
-
-#ifdef ENABLE_DEBUGLOG
-	//ログに出力
-	OutputLog.WriteLog(LOG_CLEANUP, "設定値", "");
-#endif
+	DestroyInfo();
 }
 
 //! @brief 初期化（パラメータの設定）
@@ -1546,6 +1535,38 @@ void ParameterInfo::InitInfo()
 #ifdef ENABLE_DEBUGLOG
 	//ログに出力
 	OutputLog.WriteLog(LOG_COMPLETE, "", "");
+#endif
+}
+
+//! @brief 解放
+//! @attention 本関数は自動的に呼び出されますが、明示的に呼び出すことも可能です。
+void ParameterInfo::DestroyInfo()
+{
+	//CleanupModelTextureWeapon();
+	//CleanupModelTextureSmallObject();
+
+	if( (Human == NULL)&&(Weapon == NULL)&&(SmallObject == NULL)&&(AIlevel == NULL) ){ return; }
+
+	if( Human != NULL ){
+		delete [] Human;
+		Human = NULL;
+	}
+	if( Weapon != NULL ){
+		delete [] Weapon;
+		Weapon = NULL;
+	}
+	if( SmallObject != NULL ){
+		delete [] SmallObject;
+		SmallObject = NULL;
+	}
+	if( AIlevel != NULL ){
+		delete [] AIlevel;
+		AIlevel = NULL;
+	}
+
+#ifdef ENABLE_DEBUGLOG
+	//ログに出力
+	OutputLog.WriteLog(LOG_CLEANUP, "設定値", "");
 #endif
 }
 

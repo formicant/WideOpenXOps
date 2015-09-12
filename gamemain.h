@@ -68,6 +68,7 @@
 #include "main.h"
 
 int InitGame(WindowControl *WindowCtrl);
+void CleanupGame();
 
 //! ƒQ[ƒ€‚Ìó‘Ô‚ğó‚¯“n‚µ‚·‚é\‘¢‘Ì
 struct GameInfo{

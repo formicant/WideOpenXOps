@@ -89,6 +89,7 @@ public:
 	void SetParameterInfo(ParameterInfo *_ParamInfo);
 	void SetD3DGraphics(D3DGraphics *_d3dg);
 	void SetSoundControl(SoundControl *_SoundCtrl);
+	void DestroyResource();
 
 	int LoadHumanModel();
 	void GetHumanModel(int out_upmodel[], int out_armmodel[], int *legmodel, int out_walkmodel[], int out_runmodel[]);

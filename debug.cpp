@@ -43,7 +43,23 @@ DebugLog::DebugLog()
 
 //! @brief ディストラクタ
 DebugLog::~DebugLog()
-{}
+{
+	//出力フラグを有効ならば、ファイルにフッターを追加
+	if( OutputFlag == true ){
+		FILE *fp;
+
+		fp = fopen(fname, "a");
+		if( fp == NULL ){
+			return;
+		}
+
+		fprintf(fp, "</table>\n");
+		fprintf(fp, "</body>\n");
+		fprintf(fp, "</html>\n");
+
+		fclose(fp);
+	}
+}
 
 //! @brief ログファイルのファイル名を変更
 //! @param name ファイル名

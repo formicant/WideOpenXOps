@@ -86,15 +86,7 @@ ResourceManager::ResourceManager()
 //! @brief ディストラクタ
 ResourceManager::~ResourceManager()
 {
-	CleanupHumanModel();
-	CleanupHumanTexture();
-	CleanupWeaponModelTexture();
-	CleanupSmallObjectModelTexture();
-
-	CleanupScopeTexture();
-	CleanupSkyModelTexture();
-	CleanupBulletModelTexture();
-	CleanupEffectTexture();
+	DestroyResource();
 }
 
 //! @brief 参照するParameterInfoクラスを設定
@@ -119,6 +111,21 @@ void ResourceManager::SetD3DGraphics(D3DGraphics *_d3dg)
 void ResourceManager::SetSoundControl(SoundControl *_SoundCtrl)
 {
 	SoundCtrl = _SoundCtrl;
+}
+
+//! @brief 解放
+//! @attention 本関数は自動的に呼び出されますが、明示的に呼び出すことも可能です。
+void ResourceManager::DestroyResource()
+{
+	CleanupHumanModel();
+	CleanupHumanTexture();
+	CleanupWeaponModelTexture();
+	CleanupSmallObjectModelTexture();
+
+	CleanupScopeTexture();
+	CleanupSkyModelTexture();
+	CleanupBulletModelTexture();
+	CleanupEffectTexture();
 }
 
 //! @brief 人のモデルを読み込み
