@@ -246,6 +246,7 @@ public:
 	~D3DGraphics();
 	int InitD3D(WindowControl *WindowCtrl, char *TextureFontFilename, bool fullscreen);
 	int ResetD3D(WindowControl *WindowCtrl);
+	void DestroyD3D();
 	int LoadModel(char* filename);
 	int MorphingModel(int idA, int idB);
 	void CleanupModel(int id);

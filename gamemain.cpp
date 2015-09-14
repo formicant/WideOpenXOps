@@ -158,14 +158,14 @@ void CleanupGame()
 	GameParamInfo.DestroyInfo();
 
 
-	//D3DGraphicsクラス解放
-	d3dg.DestroyD3D();
+	//SoundControlクラス解放
+	SoundCtrl.DestroySound();
 
 	//InputControlクラス解放
 	inputCtrl.DestroyInput();
 
-	//SoundControlクラス解放
-	SoundCtrl.DestroySound();
+	//D3DGraphicsクラス解放
+	d3dg.DestroyD3D();
 }
 
 //! @brief コンストラクタ
