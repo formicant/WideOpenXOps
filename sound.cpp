@@ -514,6 +514,12 @@ int SoundControl::InitSound(WindowControl *WindowCtrl)
 	DSrelease = (FARPROCI)GetProcAddress(lib, "DSrelease");
 
 	//DLL初期化を実行
+	if( DSinit == NULL ){
+		//DLLを開放
+		FreeLibrary(lib);
+		lib = NULL;
+		//return 1;
+	}
 	if( DSinit(WindowCtrl->GethWnd()) == 0 ){
 		//DLLを開放
 		FreeLibrary(lib);
@@ -542,8 +548,8 @@ void SoundControl::DestroySound()
 	}
 
 	//サウンドデータを開放し、DLLを終了
-	DSrelease(total);
-	DSend();
+	if( DSrelease != NULL ){ DSrelease(total); }
+	if( DSend != NULL ){ DSend(); }
 
 	//DLLを開放
 	FreeLibrary(lib);
@@ -598,6 +604,7 @@ int SoundControl::LoadSound(char* filename)
 #endif
 
 			//読み込みを試みる
+			if( DSload == NULL ){ return -1; }
 			if( DSload(filename, i) == 0 ){ return -1; }
 
 			//使用中を新たすフラグをセット
@@ -627,6 +634,7 @@ int SoundControl::PlaySound(int id, int volume, int pan)
 	if( useflag[id] == false ){ return 0; }
 
 	//サウンドを再生
+	if( DSplay == NULL ){ return 0; }
 	return DSplay(id, (int)(mastervolume * volume), pan);
 }
 
@@ -676,7 +684,7 @@ void SoundControl::CleanupSound(int id)
 	if( useflag[id] == false ){ return; }
 
 	//読み込みを意図的に失敗させ、強制的に初期化
-	DSload("", id);
+	if( DSload != NULL ){ DSload("", id); }
 
 	//使用中フラグを解除
 	useflag[id] = false;
