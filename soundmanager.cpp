@@ -162,9 +162,10 @@ bool SoundManager::HitSmallObject(float x, float y, float z, int id)
 //! @param move_x 音源のX軸移動量
 //! @param move_y 音源のY軸移動量
 //! @param move_z 音源のZ軸移動量
+//! @param teamID チーム番号
 //! @return 成功：true　失敗：false
 //! @attention move_x・move_y・move_zの移動量は、1フレーム分を指定してください。実際に座標が移動するわけではありません。
-bool SoundManager::PassingBullet(float x, float y, float z, float move_x, float move_y, float move_z)
+bool SoundManager::PassingBullet(float x, float y, float z, float move_x, float move_y, float move_z, int teamID)
 {
 	soundlist *plist = NULL;
 	if( GetNewList(&plist) == false ){ return false; }
@@ -176,6 +177,7 @@ bool SoundManager::PassingBullet(float x, float y, float z, float move_x, float 
 	plist->move_x = move_x;
 	plist->move_y = move_y;
 	plist->move_z = move_z;
+	plist->teamid = teamID;
 
 	return true;
 }
@@ -342,8 +344,9 @@ int SoundManager::GetWorldSound(float pos_x, float pos_y, float pos_z, int teamI
 //! @param camera_y カメラのY座標
 //! @param camera_z カメラのZ座標
 //! @param camera_rx カメラのX軸角度　（予約）
+//! @param teamID チーム番号
 //! @warning 毎フレーム呼び出してください。
-void SoundManager::PlayWorldSound(float camera_x, float camera_y, float camera_z, float camera_rx)
+void SoundManager::PlayWorldSound(float camera_x, float camera_y, float camera_z, float camera_rx, int teamID)
 {
 	int lists;
 	soundlist *getlist = NULL;
@@ -371,7 +374,7 @@ void SoundManager::PlayWorldSound(float camera_x, float camera_y, float camera_z
 
 		//範囲内の音源ならば再生を試みる
 		if( x*x + y*y + z*z < MAX_SOUNDDIST*MAX_SOUNDDIST ){
-			PlaySound( &(getlist[i]), camera_x, camera_y, camera_z );
+			PlaySound( &(getlist[i]), camera_x, camera_y, camera_z, teamID );
 		}
 	}
 }
@@ -474,7 +477,8 @@ bool SoundManager::CheckApproach(soundlist *plist, float camera_x, float camera_
 //! @param camera_x カメラのX座標
 //! @param camera_y カメラのY座標
 //! @param camera_z カメラのZ座標
-void SoundManager::PlaySound(soundlist *plist, float camera_x, float camera_y, float camera_z)
+//! @param teamID チーム番号
+void SoundManager::PlaySound(soundlist *plist, float camera_x, float camera_y, float camera_z, int teamID)
 {
 	WeaponParameter WParam;
 	int hitsoundA, hitsoundB;
@@ -530,6 +534,9 @@ void SoundManager::PlaySound(soundlist *plist, float camera_x, float camera_y, f
 			int passingsound;
 
 			if( CheckApproach(plist, camera_x, camera_y, camera_z, &new_x, &new_y, &new_z) == false ){ return; }
+
+			//味方の弾なら何もせず終了
+			if( plist->teamid == teamID ){ return; }
 
 			//そのまま再生して終了
 			Resource->GetBulletSound(NULL, NULL, NULL, &passingsound, NULL, NULL);

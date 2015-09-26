@@ -229,15 +229,13 @@ void D3Dscene::SetClass(StateMachine *in_GameState, D3DGraphics *in_d3dg, InputC
 
 //! @brief 3Dシーン主計算処理
 void D3Dscene::Process()
-{
-	GameSound->PlayWorldSound(camera_x, camera_y, camera_z, camera_rx);
-}
+{}
 
 //! @brief 3Dシーンサウンド再生処理
 void D3Dscene::Sound()
 {
 	//サウンドを再生
-	GameSound->PlayWorldSound(camera_x, camera_y, camera_z, camera_rx);
+	GameSound->PlayWorldSound(camera_x, camera_y, camera_z, camera_rx, 1);
 }
 
 //! @brief 3Dシーン描画処理（3D）

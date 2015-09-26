@@ -1894,8 +1894,13 @@ void maingame::Sound()
 {
 	time = GetTimeMS();
 
+	//プレイヤーのチーム番号取得
+	int teamid;
+	human *myHuman = ObjMgr.GetPlayerHumanObject();
+	myHuman->GetParamData(NULL, NULL, NULL, &teamid);
+
 	//サウンドを再生
-	GameSound->PlayWorldSound(camera_x, camera_y, camera_z, camera_rx);
+	GameSound->PlayWorldSound(camera_x, camera_y, camera_z, camera_rx, teamid);
 
 	time_sound = GetTimeMS() - time;
 }

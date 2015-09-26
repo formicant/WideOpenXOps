@@ -2271,7 +2271,7 @@ int ObjectManager::Process(int cmdF5id, bool demomode, float camera_rx, float ca
 		//弾オブジェクトの処理
 		for(int i=0; i<MAX_BULLET; i++){
 			float bx, by, bz, brx, bry;
-			int speed;
+			int speed, teamid;
 			float mx, my, mz;
 
 			CollideBullet(&BulletIndex[i]);		//当たり判定を実行
@@ -2279,12 +2279,12 @@ int ObjectManager::Process(int cmdF5id, bool demomode, float camera_rx, float ca
 
 			if( BulletIndex[i].GetEnableFlag() == true ){
 				//弾の座標と角度を取得
-				BulletIndex[i].GetParamData(NULL, NULL, &speed, NULL, NULL);
+				BulletIndex[i].GetParamData(NULL, NULL, &speed, &teamid, NULL);
 				BulletIndex[i].GetPosData(&bx, &by, &bz, &brx, &bry);
 				mx = cos(brx)*cos(bry)*speed;
 				my = sin(bry)*speed;
 				mz = sin(brx)*cos(bry)*speed;
-				GameSound->PassingBullet(bx, by, bz, mx, my, mz);
+				GameSound->PassingBullet(bx, by, bz, mx, my, mz, teamid);
 			}
 		}
 	}

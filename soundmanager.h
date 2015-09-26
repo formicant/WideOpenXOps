@@ -89,7 +89,7 @@ class SoundManager
 	bool GetNewList(soundlist **plist);
 	int GetTargetList(soundlist **plist);
 	bool CheckApproach(soundlist *plist, float camera_x, float camera_y, float camera_z, float *min_x, float *min_y, float *min_z);
-	void PlaySound(soundlist *plist, float camera_x, float camera_y, float camera_z);
+	void PlaySound(soundlist *plist, float camera_x, float camera_y, float camera_z, int teamID);
 
 public:
 	SoundManager(SoundControl *in_SoundCtrl = NULL, ResourceManager *in_Resource = NULL, ParameterInfo *in_Param = NULL);
@@ -100,13 +100,13 @@ public:
 	bool HitMap(float x, float y, float z);
 	bool HitHuman(float x, float y, float z);
 	bool HitSmallObject(float x, float y, float z, int id);
-	bool PassingBullet(float x, float y, float z, float move_x, float move_y, float move_z);
+	bool PassingBullet(float x, float y, float z, float move_x, float move_y, float move_z, int teamID);
 	bool GrenadeBound(float x, float y, float z);
 	bool GrenadeExplosion(float x, float y, float z);
 	bool SetFootsteps(float x, float y, float z, int teamID);
 	bool ReloadWeapon(float x, float y, float z, int teamID);
 	int GetWorldSound(float pos_x, float pos_y, float pos_z, int teamID, soundlist *psoundlist);
-	void PlayWorldSound(float camera_x, float camera_y, float camera_z, float camera_rx);
+	void PlayWorldSound(float camera_x, float camera_y, float camera_z, float camera_rx, int teamID);
 };
 
 #endif
