@@ -114,7 +114,7 @@ void ObjectManager::SetClass(ParameterInfo *in_GameParamInfo, D3DGraphics *in_d3
 	int bulletmodel, bullettexture;
 	Resource->GetBulletModelTexture(&bulletmodel, &bullettexture);
 	for(int i=0; i<MAX_BULLET; i++){
-		BulletIndex[i].SetModel(bulletmodel, 1.0f);
+		BulletIndex[i].SetModel(bulletmodel, BULLET_SCALE);
 		BulletIndex[i].SetTexture(bullettexture);
 	}
 
@@ -413,20 +413,20 @@ int ObjectManager::AddSmallObjectIndex(pointdata data)
 		return -1;
 	}
 
-	for(int j=0; j<MAX_SMALLOBJECT; j++){
-		if( SmallObjectIndex[j].GetEnableFlag() == false ){
+	for(int i=0; i<MAX_SMALLOBJECT; i++){
+		if( SmallObjectIndex[i].GetEnableFlag() == false ){
 			//初期化
-			SmallObjectIndex[j].SetPosData(data.x, data.y, data.z, data.r);
-			SmallObjectIndex[j].SetParamData(data.p2, data.p4, true);
-			SmallObjectIndex[j].SetModel(model, 5.0f);
-			SmallObjectIndex[j].SetTexture(texture);
-			SmallObjectIndex[j].SetEnableFlag(true);
+			SmallObjectIndex[i].SetPosData(data.x, data.y, data.z, data.r);
+			SmallObjectIndex[i].SetParamData(data.p2, data.p4, true);
+			SmallObjectIndex[i].SetModel(model, SMALLOBJECT_SCALE);
+			SmallObjectIndex[i].SetTexture(texture);
+			SmallObjectIndex[i].SetEnableFlag(true);
 
 			//位置修正フラグが有効ならば、マップと判定
 			if( data.p3 !=0 ){
-				SmallObjectIndex[j].CollisionMap(CollD);
+				SmallObjectIndex[i].CollisionMap(CollD);
 			}
-			return j;
+			return i;
 		}
 	}
 	return -1;
@@ -453,7 +453,7 @@ int ObjectManager::AddSmallObjectIndex(float px, float py, float pz, float rx, i
 			//初期化
 			SmallObjectIndex[j].SetPosData(px, py, pz, rx);
 			SmallObjectIndex[j].SetParamData(paramID, 0, true);
-			SmallObjectIndex[j].SetModel(model, 5.0f);
+			SmallObjectIndex[j].SetModel(model, SMALLOBJECT_SCALE);
 			SmallObjectIndex[j].SetTexture(texture);
 			SmallObjectIndex[j].SetEnableFlag(true);
 
@@ -715,12 +715,12 @@ bool ObjectManager::CollideBullet(bullet *in_bullet)
 
 			//当たり判定の大きさを取得
 			if( id == TOTAL_PARAMETERINFO_SMALLOBJECT+1 -1 ){
-				decide = (float)MIFdata->GetAddSmallobjectDecide()*SMALLOBJECT_SCALE;
+				decide = (float)MIFdata->GetAddSmallobjectDecide()*SMALLOBJECT_COLLISIONSCALE;
 			}
 			else{
 				SmallObjectParameter Param;
 				GameParamInfo->GetSmallObject(id, &Param);
-				decide = (float)Param.decide*SMALLOBJECT_SCALE;
+				decide = (float)Param.decide*SMALLOBJECT_COLLISIONSCALE;
 			}
 
 			//当たり判定
@@ -807,12 +807,12 @@ bool ObjectManager::CollideBullet(bullet *in_bullet)
 
 			//当たり判定の大きさを取得
 			if( id == TOTAL_PARAMETERINFO_SMALLOBJECT+1 -1 ){
-				decide = (int)( (float)MIFdata->GetAddSmallobjectDecide()*SMALLOBJECT_SCALE );
+				decide = (int)( (float)MIFdata->GetAddSmallobjectDecide()*SMALLOBJECT_COLLISIONSCALE );
 			}
 			else{
 				SmallObjectParameter Param;
 				GameParamInfo->GetSmallObject(id, &Param);
-				decide = (int)( (float)Param.decide*SMALLOBJECT_SCALE );
+				decide = (int)( (float)Param.decide*SMALLOBJECT_COLLISIONSCALE );
 			}	
 
 			//貫通力を計算
@@ -1281,6 +1281,118 @@ void ObjectManager::LoadPointData()
 		//小物ならば
 		if( data.p1 == 5 ){
 			AddSmallObjectIndex(data);
+		}
+	}
+}
+
+//! @brief リソースの回復
+//! @todo 全てのエフェクトが無効化する。
+void ObjectManager::Recovery()
+{
+	//人のモデル番号を取得
+	int upmodel[TOTAL_UPMODE];
+	int armmodel[TOTAL_ARMMODE];
+	int legmodel;
+	int walkmodel[TOTAL_WALKMODE];
+	int runmodel[TOTAL_RUNMODE];
+	Resource->GetHumanModel(upmodel, armmodel, &legmodel, walkmodel, runmodel);
+
+	//人
+	int HumanID;
+	int GetHumanFlag;
+	HumanParameter HumanParam;
+	for(int i=0; i<MAX_HUMAN; i++){
+		if( HumanIndex[i].GetEnableFlag() == true ){
+			HumanIndex[i].GetParamData(&HumanID, NULL, NULL, NULL);
+
+			GetHumanFlag = GameParamInfo->GetHuman(HumanID, &HumanParam);
+
+			if( GetHumanFlag == 0 ){
+				//人のテクスチャを登録
+				Resource->AddHumanTexture(HumanID);
+
+				//読み込めなければ、前回読み込んだテクスチャ番号を利用
+				//読み込めれば、今回読み込むテクスチャ番号を上書き
+				int id = Resource->GetHumanTexture(HumanID);
+				if( id == -1 ){
+					id = AddHumanIndex_TextureID;
+				}
+				else{
+					AddHumanIndex_TextureID = id;
+				}
+
+				HumanIndex[i].SetTexture(id);
+				HumanIndex[i].SetModel(upmodel[ HumanParam.model ], armmodel, legmodel, walkmodel, runmodel);
+			}
+			else{
+				//今回読み込むテクスチャ番号を上書き
+				AddHumanIndex_TextureID = d3dg->GetMapTextureID(0);
+
+				HumanIndex[i].SetTexture(AddHumanIndex_TextureID);
+				HumanIndex[i].SetModel(upmodel[0], armmodel, legmodel, walkmodel, runmodel);
+			}
+		}
+	}
+
+	//武器
+	int WeaponID;
+	int Weaponmodel, Weapontexture;
+	for(int i=0; i<MAX_WEAPON; i++){
+		if( WeaponIndex[i].GetEnableFlag() == true ){
+			//設定値を取得
+			WeaponParameter WeaponParam;
+			WeaponIndex[i].GetParamData(&WeaponID, NULL, NULL);
+			if( Resource->GetWeaponModelTexture(WeaponID, &Weaponmodel, &Weapontexture) == 1 ){ continue; }
+			if( GameParamInfo->GetWeapon(WeaponID, &WeaponParam) == 1 ){ continue; }
+
+			//適用
+			WeaponIndex[i].SetModel(Weaponmodel, WeaponParam.size);
+			WeaponIndex[i].SetTexture(Weapontexture);
+		}
+	}
+
+	//小物
+	int SmallObjectID;
+	int SmallObjectmodel, SmallObjecttexture;
+	for(int i=0; i<MAX_SMALLOBJECT; i++){
+		if( SmallObjectIndex[i].GetEnableFlag() == true ){
+			//設定値を取得
+			SmallObjectIndex[i].GetParamData(&SmallObjectID, NULL);
+			if( Resource->GetSmallObjectModelTexture(SmallObjectID, &SmallObjectmodel, &SmallObjecttexture) == 1 ){ continue; }
+
+			//適用
+			SmallObjectIndex[i].SetModel(SmallObjectmodel, SMALLOBJECT_SCALE);
+			SmallObjectIndex[i].SetTexture(SmallObjecttexture);
+		}
+	}
+
+	//銃弾適用
+	int bulletmodel, bullettexture;
+	Resource->GetBulletModelTexture(&bulletmodel, &bullettexture);
+	for(int i=0; i<MAX_BULLET; i++){
+		BulletIndex[i].SetModel(bulletmodel, BULLET_SCALE);
+		BulletIndex[i].SetTexture(bullettexture);
+	}
+
+	//手榴弾のリソースとモデルサイズを取得
+	int grenademodel, grenadetexture;
+	float model_size = 1.0f;
+	WeaponParameter ParamData;
+	Resource->GetWeaponModelTexture(ID_WEAPON_GRENADE, &grenademodel, &grenadetexture);
+	if( GameParamInfo->GetWeapon(ID_WEAPON_GRENADE, &ParamData) == 0 ){
+		model_size = ParamData.size;
+	}
+
+	//手榴弾適用
+	for(int i=0; i<MAX_GRENADE; i++){
+		GrenadeIndex[i].SetModel(grenademodel, model_size);
+		GrenadeIndex[i].SetTexture(grenadetexture);
+	}
+
+	//全てのエフェクトを無効化
+	for(int i=0; i<MAX_EFFECT; i++){
+		if( EffectIndex[i].GetEnableFlag() == true ){
+			EffectIndex[i].SetEnableFlag(false);
 		}
 	}
 }

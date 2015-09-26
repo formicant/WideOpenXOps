@@ -102,6 +102,7 @@ public:
 	opening();
 	~opening();
 	int Create();
+	int Recovery();
 	void Input();
 	void Process();
 	void Destroy();
@@ -111,6 +112,7 @@ public:
 //! @details メニュー画面を管理します。
 class mainmenu : public D3Dscene
 {
+	char demopath[MAX_PATH];		//!< デモファイルのパス
 	int mainmenu_mouseX;		//!< メニュー画面マウスX座標
 	int mainmenu_mouseY;		//!< メニュー画面マウスY座標
 	int mainmenu_scrollitems_official;	//!< メニュー画面のスクロールしたアイテム数
@@ -130,6 +132,7 @@ public:
 	mainmenu();
 	~mainmenu();
 	int Create();
+	int Recovery();
 	void Input();
 	void Process();
 	void Destroy();
@@ -148,6 +151,7 @@ public:
 	briefing();
 	~briefing();
 	int Create();
+	int Recovery();
 	void Destroy();
 };
 
@@ -214,6 +218,7 @@ public:
 	maingame();
 	~maingame();
 	int Create();
+	int Recovery();
 	void Input();
 	void Process();
 	void Sound();

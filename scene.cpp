@@ -61,6 +61,12 @@ int scene::Create()
 	return 0;
 }
 
+//! @brief シーン描画回復
+int scene::Recovery()
+{
+	return 0;
+}
+
 //! @brief シーン入力処理
 void scene::Input()
 {
@@ -160,6 +166,15 @@ int D2Dscene::Create()
 {
 	gametitle = d3dg->LoadTexture("data\\title.dds", false, false);
 	GameState->NextState();
+	if( gametitle == -1 ){ return 1; }
+	return 0;
+}
+
+//! @brief シーン描画回復
+int D2Dscene::Recovery()
+{
+	//初期化
+	gametitle = d3dg->LoadTexture("data\\title.dds", false, false);
 	if( gametitle == -1 ){ return 1; }
 	return 0;
 }

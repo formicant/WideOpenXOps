@@ -119,10 +119,13 @@ int InitGame(WindowControl *WindowCtrl)
 }
 
 //! @brief リソースをリセットする
-//! @return 失敗：1　それ以外：0
+//! @return 成功：0　失敗：-1　待機：1
 //! @attention 通常は、描画処理に失敗した場合に限り呼び出してください。
 int ResetGame(WindowControl *WindowCtrl)
 {
+	//リストを正しく解放するため、予め呼ぶ。
+	Resource.CleanupHumanTexture();
+
 	int rtn = d3dg.ResetD3D(WindowCtrl);
 
 	if( rtn == 0 ){
@@ -134,18 +137,17 @@ int ResetGame(WindowControl *WindowCtrl)
 		Resource.LoadBulletModelTexture();
 		Resource.LoadEffectTexture();
 
-		//現在の画面を再スタートさせる
-		GameState.PushF12Key();
+		//WindowCtrl->ErrorInfo("Recovery...");
+		return 0;
 	}
 	if( rtn == 1 ){
-		//
-	}
-	if( rtn == 2 ){
-		WindowCtrl->ErrorInfo("Resetに失敗しました");
-		WindowCtrl->CloseWindow();
 		return 1;
 	}
-	return 0;
+	//if( rtn == 2 ){
+		WindowCtrl->ErrorInfo("Resetに失敗しました");
+		WindowCtrl->CloseWindow();
+		return -1;
+	//}
 }
 
 //! @brief 基本的な解放処理
@@ -221,6 +223,22 @@ int opening::Create()
 	framecnt = 0;
 
 	GameState->NextState();
+	return 0;
+}
+
+int opening::Recovery()
+{
+	//ブロックデータ初期化
+	d3dg->LoadMapdata(&BlockData, "data\\map10\\");
+
+	//ポイントデータ初期化
+	ObjMgr.Recovery();
+
+	//背景空読み込み
+	Resource.LoadSkyModelTexture(1);
+
+	//opening_banner = d3dg->LoadTexture("banner.png", true, false);
+
 	return 0;
 }
 
@@ -392,6 +410,7 @@ void opening::Destroy()
 //! @brief コンストラクタ
 mainmenu::mainmenu()
 {
+	demopath[0] = 0x00;
 	mainmenu_scrollitems_official = 0;
 	mainmenu_scrollitems_addon = 0;
 }
@@ -402,7 +421,6 @@ mainmenu::~mainmenu()
 
 int mainmenu::Create()
 {
-	char path[MAX_PATH];
 	char bdata[MAX_PATH];
 	char pdata[MAX_PATH];
 	int blockflag, pointflag;
@@ -410,27 +428,27 @@ int mainmenu::Create()
 	//デモを決定し読み込む
 	switch( GetRand(6) ){
 		case 0:
-			strcpy(path, "data\\map2\\");
+			strcpy(demopath, "data\\map2\\");
 			break;
 		case 1:
-			strcpy(path, "data\\map4\\");
+			strcpy(demopath, "data\\map4\\");
 			break;
 		case 2:
-			strcpy(path, "data\\map5\\");
+			strcpy(demopath, "data\\map5\\");
 			break;
 		case 3:
-			strcpy(path, "data\\map7\\");
+			strcpy(demopath, "data\\map7\\");
 			break;
 		case 4:
-			strcpy(path, "data\\map8\\");
+			strcpy(demopath, "data\\map8\\");
 			break;
 		case 5:
-			strcpy(path, "data\\map16\\");
+			strcpy(demopath, "data\\map16\\");
 			break;
 	}
-	strcpy(bdata, path);
+	strcpy(bdata, demopath);
 	strcat(bdata, "temp.bd1");
-	strcpy(pdata, path);
+	strcpy(pdata, demopath);
 	strcat(pdata, "demo.pd1");
 
 	//ブロックデータ読み込み
@@ -448,7 +466,7 @@ int mainmenu::Create()
 
 	//ブロックデータ初期化
 	BlockData.CalculationBlockdata(false);
-	d3dg->LoadMapdata(&BlockData, path);
+	d3dg->LoadMapdata(&BlockData, demopath);
 	CollD.InitCollision(&BlockData);
 
 	//ポイントデータ初期化
@@ -495,6 +513,19 @@ int mainmenu::Create()
 	framecnt = 0;
 
 	GameState->NextState();
+	return 0;
+}
+
+int mainmenu::Recovery()
+{
+	//ブロックデータ初期化
+	d3dg->LoadMapdata(&BlockData, demopath);
+
+	//ポイントデータ初期化
+	ObjMgr.Recovery();
+
+	gametitle = d3dg->LoadTexture("data\\title.dds", false, false);
+
 	return 0;
 }
 
@@ -905,6 +936,32 @@ int briefing::Create()
 	return 0;
 }
 
+int briefing::Recovery()
+{
+	char PictureA[MAX_PATH];
+	char PictureB[MAX_PATH];
+
+	//背景画像を取得
+	gametitle = d3dg->LoadTexture("data\\title.dds", false, false);
+
+	//ブリーフィング画像のファイルパス取得
+	MIFdata.GetPicturefilePath(PictureA, PictureB);
+
+	//ブリーフィング画像読み込み
+	if( strcmp(PictureB, "!") == 0 ){
+		TwoTexture = false;
+		TextureA = d3dg->LoadTexture(PictureA, true, false);
+		TextureB = -1;
+	}
+	else{
+		TwoTexture = true;
+		TextureA = d3dg->LoadTexture(PictureA, true, false);
+		TextureB = d3dg->LoadTexture(PictureB, true, false);
+	}
+
+	return 0;
+}
+
 void briefing::Render2D()
 {
 	float effectA = GetEffectAlphaLoop(framecnt, 0.8f, 0.7f, true);
@@ -947,7 +1004,8 @@ void briefing::Render2D()
 	d3dg->Draw2DMSFontText(230, 180, MIFdata.GetBriefingText(), d3dg->GetColorCode(1.0f,1.0f,1.0f,1.0f));
 }
 
-void briefing::Destroy(){
+void briefing::Destroy()
+{
 	//ブリーフィング画像を開放
 	d3dg->CleanupTexture(TextureA);
 	d3dg->CleanupTexture(TextureB);
@@ -1102,6 +1160,43 @@ int maingame::Create()
 	inputCtrl->MoveMouseCenter();
 
 	GameState->NextState();
+	return 0;
+}
+
+int maingame::Recovery()
+{
+	char path[MAX_PATH];
+	char bdata[MAX_PATH];	//ダミー
+	char pdata[MAX_PATH];	//ダミー
+
+	//.bd1と.pd1のファイルパスを求める
+	if( MIFdata.GetFiletype() == false ){
+		GameParamInfo.GetOfficialMission(MainGameInfo.selectmission_id, NULL, NULL, path, NULL);
+	}
+	else{
+		MIFdata.GetDatafilePath(bdata, pdata);
+
+		strcpy(path, bdata);
+		for(int i=strlen(path)-1; i>0; i--){
+			if( path[i] == '\\' ){
+				path[i+1] = 0x00;
+				break;
+			}
+		}
+	}
+
+	//追加小物を読み込む
+	Resource.LoadAddSmallObject(MIFdata.GetAddSmallobjectModelPath(), MIFdata.GetAddSmallobjectTexturePath(), MIFdata.GetAddSmallobjectSoundPath());
+
+	//ブロックデータ初期化
+	d3dg->LoadMapdata(&BlockData, path);
+
+	//ポイントデータ初期化
+	ObjMgr.Recovery();
+
+	//背景空読み込み
+	Resource.LoadSkyModelTexture(MIFdata.GetSkynumber());
+
 	return 0;
 }
 
@@ -3111,7 +3206,12 @@ void ProcessScreen(WindowControl *WindowCtrl, opening *Opening, mainmenu *MainMe
 			Opening->Sound();
 			if( (GameConfig.GetFrameskipFlag() == false)||(framecnt%2 == 0) ){
 				if( Opening->RenderMain() == true ){
-					ResetGame(WindowCtrl);
+					if( ResetGame(WindowCtrl) == 0 ){
+						Opening->Recovery();
+
+						//現在の画面を再スタートさせる
+						//GameState.PushF12Key();
+					}
 				}
 			}
 			break;
@@ -3142,7 +3242,12 @@ void ProcessScreen(WindowControl *WindowCtrl, opening *Opening, mainmenu *MainMe
 			MainMenu->Sound();
 			if( (GameConfig.GetFrameskipFlag() == false)||(framecnt%2 == 0) ){
 				if( MainMenu->RenderMain() == true ){
-					ResetGame(WindowCtrl);
+					if( ResetGame(WindowCtrl) == 0 ){
+						MainMenu->Recovery();
+
+						//現在の画面を再スタートさせる
+						//GameState.PushF12Key();
+					}
 				}
 			}
 			break;
@@ -3167,7 +3272,12 @@ void ProcessScreen(WindowControl *WindowCtrl, opening *Opening, mainmenu *MainMe
 			Briefing->Process();
 			if( (GameConfig.GetFrameskipFlag() == false)||(framecnt%2 == 0) ){
 				if( Briefing->RenderMain() == true ){
-					ResetGame(WindowCtrl);
+					if( ResetGame(WindowCtrl) == 0 ){
+						Briefing->Recovery();
+
+						//現在の画面を再スタートさせる
+						//GameState.PushF12Key();
+					}
 				}
 			}
 			break;
@@ -3198,7 +3308,12 @@ void ProcessScreen(WindowControl *WindowCtrl, opening *Opening, mainmenu *MainMe
 			MainGame->Sound();
 			if( (GameConfig.GetFrameskipFlag() == false)||(framecnt%2 == 0) ){
 				if( MainGame->RenderMain() == true ){
-					ResetGame(WindowCtrl);
+					if( ResetGame(WindowCtrl) == 0 ){
+						MainGame->Recovery();
+
+						//現在の画面を再スタートさせる
+						//GameState.PushF12Key();
+					}
 				}
 			}
 			break;
@@ -3219,7 +3334,12 @@ void ProcessScreen(WindowControl *WindowCtrl, opening *Opening, mainmenu *MainMe
 			Result->Process();
 			if( (GameConfig.GetFrameskipFlag() == false)||(framecnt%2 == 0) ){
 				if( Result->RenderMain() == true ){
-					ResetGame(WindowCtrl);
+					if( ResetGame(WindowCtrl) == 0 ){
+						Result->Recovery();
+
+						//現在の画面を再スタートさせる
+						//GameState.PushF12Key();
+					}
 				}
 			}
 			break;

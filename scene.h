@@ -50,6 +50,7 @@ public:
 	~scene();
 	virtual void SetClass(StateMachine *in_GameState, D3DGraphics *in_d3dg, InputControl *in_inputCtrl);
 	virtual int Create();
+	virtual int Recovery();
 	virtual void Input();
 	virtual void Process();
 	virtual bool RenderMain();
@@ -70,6 +71,7 @@ public:
 	D2Dscene();
 	~D2Dscene();
 	virtual int Create();
+	virtual int Recovery();
 	virtual bool RenderMain();
 	virtual void Destroy();
 };

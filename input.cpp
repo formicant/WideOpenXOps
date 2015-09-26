@@ -539,7 +539,7 @@ int OriginalkeycodeToDinputdef(int code)
 //! @param id Shiftキー：0　Ctrlキー：1
 //! @param *CodeL 左側キーのキーコードを受け取るポインタ
 //! @param *CodeR 右側キーのキーコードを受け取るポインタ
-//! @return 成功：ture　失敗：false　
+//! @return 成功：true　失敗：false　
 bool GetDoubleKeyCode(int id, int *CodeL, int *CodeR)
 {
 #ifdef INPUT_DIRECTINPUT

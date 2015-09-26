@@ -40,6 +40,9 @@
 #define MAX_GRENADE 32			//!< ŽèžÖ’e‚ÌÅ‘å”
 #define MAX_EFFECT 256			//!< ƒGƒtƒFƒNƒg‚ÌÅ‘å”
 
+#define SMALLOBJECT_SCALE 5.0f				//!< ¬•¨‚Ì•\Ž¦”{—¦
+#define BULLET_SCALE 1.0f				//!< e’e‚Ì•\Ž¦”{—¦
+
 #define WEAPONSHOT_HEIGHT (VIEW_HEIGHT)	//!< ’e‚ð”­ŽË‚·‚é‚‚³
 
 #define TOTAL_WEAPON_AUTOBULLET 3	//!< ‰Šú‰»Žž‚ÉŽ©“®“I‚É•â‚Ä‚ñ‚³‚ê‚é’e”i‘•’e”‚Ì‰½”{‚©j
@@ -51,7 +54,7 @@
 #define HUMAN_BULLETCOLLISION_LEG_H 10.0f	//!< ‘«‚Ì“–‚½‚è”»’è‚Ì‚‚³
 #define HUMAN_BULLETCOLLISION_LEG_R 2.5f	//!< ‘«‚Ì“–‚½‚è”»’è‚Ì”¼Œa
 
-#define SMALLOBJECT_SCALE 0.13f	//!< ¬•¨“–‚½‚è”»’è‚Ì”{—¦
+#define SMALLOBJECT_COLLISIONSCALE 0.13f	//!< ¬•¨“–‚½‚è”»’è‚Ì”{—¦
 
 #ifndef H_LAYERLEVEL
  #define H_LAYERLEVEL 3		//!< Select include file.
@@ -124,6 +127,7 @@ public:
 	int AddEffect(float pos_x, float pos_y, float pos_z, float move_x, float move_y, float move_z, float size, float rotation, int count, int texture, int settype);
 	int AddMapEffect(int id, int face, float pos_x, float pos_y, float pos_z, float size, float rotation, int count, int texture);
 	void LoadPointData();
+	void Recovery();
 	bool GetFriendlyFireFlag();
 	void SetFriendlyFireFlag(bool flag);
 	int GetPlayerID();
