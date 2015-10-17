@@ -1488,8 +1488,8 @@ void D3DGraphics::DrawMapdata(bool wireframe)
 					ColorAry[1 + cnt*24] = data.material[j].shadow;
 					ColorAry[2 + cnt*24] = data.material[j].shadow;
 					ColorAry[3 + cnt*24] = 1.0f;
-					for(int i=1; i<6; i++){
-						memcpy(&(ColorAry[i*4 + cnt*24]), ColorAry, sizeof(float)*4);
+					for(int k=1; k<6; k++){
+						memcpy(&(ColorAry[k*4 + cnt*24]), &(ColorAry[cnt*24]), sizeof(float)*4);
 					}
 
 					//UVÀ•W”z—ñ‚ð—pˆÓ
