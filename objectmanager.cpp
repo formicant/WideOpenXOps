@@ -1548,13 +1548,6 @@ void ObjectManager::MoveForward(int human_id)
 
 	//オブジェクトにフラグを設定
 	HumanIndex[human_id].SetMoveForward();
-
-	//走る足音追加
-	float posx, posy, posz;
-	int teamid;
-	HumanIndex[human_id].GetPosData(&posx, &posy, &posz, NULL);
-	HumanIndex[human_id].GetParamData(NULL, NULL, NULL, &teamid);
-	GameSound->SetFootsteps(posx, posy, posz, teamid);
 }
 
 //! @brief 後退を実行
@@ -1566,13 +1559,6 @@ void ObjectManager::MoveBack(int human_id)
 
 	//オブジェクトにフラグを設定
 	HumanIndex[human_id].SetMoveBack();
-
-	//走る足音追加
-	float posx, posy, posz;
-	int teamid;
-	HumanIndex[human_id].GetPosData(&posx, &posy, &posz, NULL);
-	HumanIndex[human_id].GetParamData(NULL, NULL, NULL, &teamid);
-	GameSound->SetFootsteps(posx, posy, posz, teamid);
 }
 
 //! @brief 左走りを実行
@@ -1584,13 +1570,6 @@ void ObjectManager::MoveLeft(int human_id)
 
 	//オブジェクトにフラグを設定
 	HumanIndex[human_id].SetMoveLeft();
-
-	//走る足音追加
-	float posx, posy, posz;
-	int teamid;
-	HumanIndex[human_id].GetPosData(&posx, &posy, &posz, NULL);
-	HumanIndex[human_id].GetParamData(NULL, NULL, NULL, &teamid);
-	GameSound->SetFootsteps(posx, posy, posz, teamid);
 }
 
 //! @brief 右走りを実行
@@ -1602,13 +1581,6 @@ void ObjectManager::MoveRight(int human_id)
 
 	//オブジェクトにフラグを設定
 	HumanIndex[human_id].SetMoveRight();
-
-	//走る足音追加
-	float posx, posy, posz;
-	int teamid;
-	HumanIndex[human_id].GetPosData(&posx, &posy, &posz, NULL);
-	HumanIndex[human_id].GetParamData(NULL, NULL, NULL, &teamid);
-	GameSound->SetFootsteps(posx, posy, posz, teamid);
 }
 
 //! @brief 歩きを実行
@@ -2254,6 +2226,16 @@ int ObjectManager::Process(int cmdF5id, bool demomode, float camera_rx, float ca
 		if( HumanIndex[i].RunFrame(CollD, BlockData, cmdF5) == 2 ){
 			//死亡時のエフェクト
 			DeadEffect(&(HumanIndex[i]));
+		}
+
+		//足音
+		if( HumanIndex[i].GetMovemode(false) == 2 ){
+			//走る足音追加
+			float posx, posy, posz;
+			int teamid;
+			HumanIndex[i].GetPosData(&posx, &posy, &posz, NULL);
+			HumanIndex[i].GetParamData(NULL, NULL, NULL, &teamid);
+			GameSound->SetFootsteps(posx, posy, posz, teamid);
 		}
 	}
 
