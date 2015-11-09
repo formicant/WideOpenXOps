@@ -166,6 +166,7 @@ bool AIcontrol::SearchTarget(bool next)
 	//人なら座標を取得
 	if( (pdata.p1 == 1)||(pdata.p1 == 6) ){
 		SearchHumanPos(pdata.p4, &target_posx, &target_posz);
+		movemode = AI_TRACKING;
 		return true;
 	}
 
@@ -1836,6 +1837,12 @@ void AIcontrol::Process()
 		battlemode = AI_DEAD;
 		movemode = AI_DEAD;
 		return;
+	}
+
+	//HPが0でないのに 死亡したことになってる　・・・生き返った？
+	if( battlemode == AI_DEAD ){
+		battlemode = AI_NORMAL;
+		SearchTarget(false);
 	}
 
 	//座標と角度を取得
