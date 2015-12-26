@@ -182,6 +182,7 @@ class maingame : public D3Dscene
 	int start_framecnt;			//!< メインゲーム開始時のカウント
 	int end_framecnt;			//!< メインゲーム終了のカウント
 	bool EventStop;				//!< イベント処理を停止する
+	int GameSpeed;				//!< ゲームの実行速度（1以上の整数値）
 	int message_id;				//!< 表示中のイベントメッセージ番号
 	int message_cnt;			//!< 表示中のイベントメッセージカウント
 	bool redflash_flag;		//!< レッドフラッシュ描画フラグ
@@ -217,6 +218,7 @@ class maingame : public D3Dscene
 public:
 	maingame();
 	~maingame();
+	int GetGameSpeed();
 	int Create();
 	int Recovery();
 	void Input();

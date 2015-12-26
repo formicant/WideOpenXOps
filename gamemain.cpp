@@ -1034,6 +1034,12 @@ maingame::maingame()
 maingame::~maingame()
 {}
 
+//! @brief ゲームの実行速度を取得
+int maingame::GetGameSpeed()
+{
+	return GameSpeed;
+}
+
 int maingame::Create()
 {
 	MainGameInfo = GameInfoData;
@@ -1130,6 +1136,7 @@ int maingame::Create()
 	start_framecnt = 0;
 	end_framecnt = 0;
 	EventStop = false;
+	GameSpeed = 1;
 	message_id = -1;
 	message_cnt = 0;
 	redflash_flag = false;
@@ -1353,9 +1360,11 @@ void maingame::Input()
 
 	if( inputCtrl->CheckKeyDown(GetEscKeycode()) ){					//ゲーム終了操作かチェック
 		GameState->PushBackSpaceKey();
+		GameSpeed = 1;
 	}
 	else if( inputCtrl->CheckKeyDown( GetFunctionKeycode(12) ) ){	//リセット操作かチェック
 		GameState->PushF12Key();
+		GameSpeed = 1;
 	}
 
 	//カメラ表示モード変更操作かチェック
@@ -1886,6 +1895,7 @@ void maingame::Process()
 			GameInfoData.headshot = MainGameInfo.headshot;	//敵の頭部に命中した数
 
 			GameState->PushMouseButton();
+			GameSpeed = 1;
 		}
 	}
 }
@@ -2676,7 +2686,7 @@ void maingame::ProcessConsole()
 		AddInfoConsole(d3dg->GetColorCode(1.0f,1.0f,1.0f,1.0f), "revive      treat <NUM>  nodamage <NUM>");
 		AddInfoConsole(d3dg->GetColorCode(1.0f,1.0f,1.0f,1.0f), "kill <NUM>  break <NUM>  newobj <NUM>  ff");
 		AddInfoConsole(d3dg->GetColorCode(1.0f,1.0f,1.0f,1.0f), "bot         nofight      caution     stop");
-		AddInfoConsole(d3dg->GetColorCode(1.0f,1.0f,1.0f,1.0f), "estop       ss           clear");
+		AddInfoConsole(d3dg->GetColorCode(1.0f,1.0f,1.0f,1.0f), "estop       speed        ss          clear");
 	}
 
 	//人の統計情報
@@ -3029,6 +3039,16 @@ void maingame::ProcessConsole()
 		AddInfoConsole(d3dg->GetColorCode(1.0f,1.0f,1.0f,1.0f), str);
 	}
 
+	//ゲームの実行速度
+	if( strcmp(NewCommand, "speed") == 0 ){
+		if( GameSpeed == 1 ){ GameSpeed = 2; }
+		else if( GameSpeed == 2 ){ GameSpeed = 4; }
+		else{ GameSpeed = 1; }
+
+		sprintf(str, "Set GameSpeed x%d", GameSpeed);
+		AddInfoConsole(d3dg->GetColorCode(1.0f,1.0f,1.0f,1.0f), str);
+	}
+
 	//スクリーンショットを撮影
 	//　※コンソール画面を削除するため、撮影を1フレーム遅らせる。
 	if( ScreenShot == 2 ){
@@ -3067,6 +3087,7 @@ void maingame::ProcessConsole()
 	//リセット操作
 	if( strcmp(NewCommand, "f12") == 0 ){
 		GameState->PushF12Key();
+		GameSpeed = 1;
 	}
 #endif
 }
@@ -3308,9 +3329,11 @@ void ProcessScreen(WindowControl *WindowCtrl, opening *Opening, mainmenu *MainMe
 
 		//メインゲーム実行
 		case STATE_NOW_MAINGAME:
-			MainGame->Input();
-			MainGame->Process();
-			MainGame->Sound();
+			for(int i=0; i<MainGame->GetGameSpeed(); i++){
+				MainGame->Input();
+				MainGame->Process();
+				MainGame->Sound();
+			}
 			if( (GameConfig.GetFrameskipFlag() == false)||(framecnt%2 == 0) ){
 				if( MainGame->RenderMain() == true ){
 					if( ResetGame(WindowCtrl) == 0 ){
