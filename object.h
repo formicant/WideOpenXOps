@@ -75,7 +75,7 @@
 #define BULLET_SPEEDSCALE 3				//!< ’e‘¬‚Ì”{—¦
 #define BULLET_DESTROYFRAME 40			//!< ’e‚ÌÁ–ÅƒtƒŒ[ƒ€”
 #define GRENADE_DESTROYFRAME 100		//!< ŽèžÖ’e‚Ì”š”­ƒtƒŒ[ƒ€”
-#define GRENADE_BOUND_ACCELERATION ((0.63662f * 0.4f - 0.7f) * -1)	//!< ŽèžÖ’e‚Ì”½ŽËŒ¸Š—¦
+#define GRENADE_BOUND_ACCELERATION 0.565f 	//!< ŽèžÖ’e‚Ì”½ŽËŒ¸Š—¦
 
 #ifndef H_LAYERLEVEL
  #define H_LAYERLEVEL 2		//!< Select include file.
@@ -323,6 +323,7 @@ protected:
 	float move_z;		//!< ZŽ²ˆÚ“®—Ê
 	float rotation_texture;	//!< ‰ñ“]Šp“x
 	float alpha;			//!< “§–¾“x
+	float set_alpha;		//!< ƒXƒ^[ƒgŽž‚Ì“§–¾“x
 	int cnt;			//!< ƒJƒEƒ“ƒg
 	int setcnt;			//!< Ý’è‚³‚ê‚½ƒJƒEƒ“ƒg
 
@@ -358,10 +359,11 @@ enum Effect_Type {
 	EFFECT_NORMAL = 0x00,			//!< ƒm[ƒ}ƒ‹
 	EFFECT_DISAPPEAR = 0x01,		//!< Á‚·
 	EFFECT_DISAPPEARHALF = 0x02,	//!< ”¼•ª‚ÌŽžŠÔ‚ÅÁ‚·
-	EFFECT_MAGNIFY = 0x04,			//!< Šg‘å
-	EFFECT_ROTATION = 0x08,			//!< ‰ñ“]
-	EFFECT_FALL = 0x10,				//!< —Ž‰º
-	EFFECT_NOBILLBOARD = 0x20		//!< ƒrƒ‹ƒ{[ƒh‰»‚µ‚È‚¢
+	EFFECT_TRANSLUCENT = 0x04,		//!< ”¼“§–¾
+	EFFECT_MAGNIFY = 0x08,			//!< Šg‘å
+	EFFECT_ROTATION = 0x10,			//!< ‰ñ“]
+	EFFECT_FALL = 0x20,				//!< —Ž‰º
+	EFFECT_NOBILLBOARD = 0x40		//!< ƒrƒ‹ƒ{[ƒh‰»‚µ‚È‚¢
 };
 
 #endif

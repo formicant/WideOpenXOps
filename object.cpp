@@ -2558,7 +2558,14 @@ void effect::SetParamData(float in_move_x, float in_move_y, float in_move_z, flo
 	setcnt = count;
 	id_texture = texture;
 	type = settype;
-	alpha = 1.0f;
+
+	if( type & EFFECT_TRANSLUCENT ){
+		set_alpha = 0.5f;
+	}
+	else{
+		set_alpha = 1.0f;
+	}
+	alpha = set_alpha;
 
 	if( init == true ){
 		rotation_x = 0.0f;
@@ -2621,11 +2628,11 @@ int effect::RunFrame(float camera_rx, float camera_ry)
 
 	//“ÁŽêˆ—‚ðŽÀs
 	if( type & EFFECT_DISAPPEAR ){	//Á‚·
-		alpha -= 1.0f/setcnt;
+		alpha -= set_alpha/setcnt;
 	}
 	if( type & EFFECT_DISAPPEARHALF ){	//”¼•ª‚ÌŽžŠÔ‚ÅÁ‚·
 		if( setcnt/2 > cnt ){
-			alpha -= 1.0f/(setcnt/2);
+			alpha -= set_alpha/(setcnt/2);
 		}
 	}
 	if( type & EFFECT_MAGNIFY ){	//Šg‘å

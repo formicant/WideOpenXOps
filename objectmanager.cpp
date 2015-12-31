@@ -539,12 +539,14 @@ int ObjectManager::AddMapEffect(int id, int face, float pos_x, float pos_y, floa
 //! @param x X座標
 //! @param y Y座標
 //! @param z Z座標
-void ObjectManager::SetHumanBlood(float x, float y, float z)
+//! @param damage ダメージ
+void ObjectManager::SetHumanBlood(float x, float y, float z, int damage)
 {
 	if( GameConfig.GetBloodFlag() == true ){
-		for(int i=0; i<2; i++){
+		AddEffect(x, y, z, 0.0f, 0.0f, 0.0f, 10.0f, DegreeToRadian(10)*GetRand(18), (int)(GAMEFPS * 0.4f), Resource->GetEffectBloodTexture(), EFFECT_DISAPPEAR | EFFECT_MAGNIFY | EFFECT_TRANSLUCENT);
+		for(int i=0; i<(damage/10); i++){
 			float rx = DegreeToRadian(10)*GetRand(36);
-			AddEffect(x + cos(rx)*1.0f, y + (float)(GetRand(20)-10)/10, z + sin(rx)*1.0f, cos(rx)*0.5f, 0.5f, sin(rx)*0.5f, 10.0f, DegreeToRadian(10)*GetRand(18), (int)(GAMEFPS * 0.5f), Resource->GetEffectBloodTexture(), EFFECT_FALL);
+			AddEffect(x + cos(rx)*1.0f, y + (float)(GetRand(20)-10)/10, z + sin(rx)*1.0f, cos(rx)*0.5f, GetRand(5)*0.1f + 0.5f, sin(rx)*0.5f, 5.0f, DegreeToRadian(10)*GetRand(18), (int)(GAMEFPS * 0.5f), Resource->GetEffectBloodTexture(), EFFECT_FALL | EFFECT_TRANSLUCENT);
 		}
 	}
 }
@@ -854,6 +856,8 @@ void ObjectManager::HitBulletMap(float x, float y, float z)
 //! @param Shothuman_id 発射した人の番号
 void ObjectManager::HitBulletHuman(int HitHuman_id, int Hit_id, float x, float y, float z, float brx, int attacks, int Shothuman_id)
 {
+	int damage = 0;
+
 	//使用されていないか、死亡していれば処理しない。
 	if( HumanIndex[HitHuman_id].GetEnableFlag() == false ){ return; }
 	if( HumanIndex[HitHuman_id].GetHP() <= 0 ){ return; }
@@ -865,7 +869,10 @@ void ObjectManager::HitBulletHuman(int HitHuman_id, int Hit_id, float x, float y
 	HumanIndex[HitHuman_id].AddPosOrder(brx, 0.0f, 1.0f);
 
 	//エフェクト（血）を表示
-	SetHumanBlood(x, y, z);
+	if( Hit_id == 0 ){ damage = (int)((float)attacks * HUMAN_DAMAGE_HEAD); }
+	if( Hit_id == 1 ){ damage = (int)((float)attacks * HUMAN_DAMAGE_UP); }
+	if( Hit_id == 2 ){ damage = (int)((float)attacks * HUMAN_DAMAGE_LEG); }
+	SetHumanBlood(x, y, z, damage);
 
 	//効果音を再生
 	GameSound->HitHuman(x, y, z);
@@ -982,7 +989,7 @@ bool ObjectManager::GrenadeExplosion(grenade *in_grenade)
 			}
 
 			//エフェクト（血）を表示
-			SetHumanBlood(hx, hy+15.0f, hz);
+			SetHumanBlood(hx, hy+15.0f, hz, total_damage);
 
 			//人と手榴弾の距離を算出
 			x = gx - hx;
@@ -1048,10 +1055,10 @@ bool ObjectManager::GrenadeExplosion(grenade *in_grenade)
 
 	//エフェクト（煙）の表示
 	float rnd = DegreeToRadian(10)*GetRand(18);
-	AddEffect(gx+1.0f, gy+1.0f, gz+1.0f, 0.0f, 0.05f, 0.0f, 10.0f, rnd, (int)GAMEFPS * 3, Resource->GetEffectSmokeTexture(), EFFECT_DISAPPEAR | EFFECT_MAGNIFY | EFFECT_ROTATION);
-	AddEffect(gx-1.0f, gy-1.0f, gz-1.0f, 0.0f, 0.05f, 0.0f, 10.0f, rnd*-1, (int)GAMEFPS * 3, Resource->GetEffectSmokeTexture(), EFFECT_DISAPPEAR | EFFECT_MAGNIFY | EFFECT_ROTATION);
-	AddEffect(gx-1.0f, gy-1.0f, gz+1.0f, 0.0f, 0.05f, 0.0f, 10.0f, rnd, (int)GAMEFPS * 3, Resource->GetEffectSmokeTexture(), EFFECT_DISAPPEAR | EFFECT_MAGNIFY | EFFECT_ROTATION);
-	AddEffect(gx+1.0f, gy+1.0f, gz-1.0f, 0.0f, 0.05f, 0.0f, 10.0f, rnd*-1, (int)GAMEFPS * 3, Resource->GetEffectSmokeTexture(), EFFECT_DISAPPEAR | EFFECT_MAGNIFY | EFFECT_ROTATION);
+	AddEffect(gx+1.0f, gy+1.0f, gz+1.0f, 0.1f, 0.2f, 0.1f, 50.0f, rnd, (int)GAMEFPS * 3, Resource->GetEffectSmokeTexture(), EFFECT_DISAPPEAR | EFFECT_ROTATION | EFFECT_TRANSLUCENT);
+	AddEffect(gx-1.0f, gy-1.0f, gz-1.0f, -0.1f, 0.2, -0.1f, 50.0f, rnd*-1, (int)GAMEFPS * 3, Resource->GetEffectSmokeTexture(), EFFECT_DISAPPEAR | EFFECT_ROTATION | EFFECT_TRANSLUCENT);
+	AddEffect(gx-1.0f, gy-1.0f, gz+1.0f, -0.1f, 0.2f, 0.1f, 50.0f, rnd, (int)GAMEFPS * 3, Resource->GetEffectSmokeTexture(), EFFECT_DISAPPEAR | EFFECT_ROTATION | EFFECT_TRANSLUCENT);
+	AddEffect(gx+1.0f, gy+1.0f, gz-1.0f, 0.1f, 0.2f, -0.1f, 50.0f, rnd*-1, (int)GAMEFPS * 3, Resource->GetEffectSmokeTexture(), EFFECT_DISAPPEAR | EFFECT_ROTATION | EFFECT_TRANSLUCENT);
 
 	//効果音を再生
 	GameSound->GrenadeExplosion(gx, gy, gz);
@@ -2021,7 +2028,7 @@ void ObjectManager::HitZombieAttack(human* EnemyHuman)
 	EnemyHuman->HitZombieAttack();
 
 	//エフェクト（血）を表示
-	SetHumanBlood(tx, ty, tz);
+	SetHumanBlood(tx, ty, tz, HUMAN_DAMAGE_ZOMBIEU);
 
 	//効果音を再生
 	GameSound->HitHuman(tx, ty, tz);
