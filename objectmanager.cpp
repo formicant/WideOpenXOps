@@ -1056,7 +1056,7 @@ bool ObjectManager::GrenadeExplosion(grenade *in_grenade)
 	//エフェクト（煙）の表示
 	float rnd = DegreeToRadian(10)*GetRand(18);
 	AddEffect(gx+1.0f, gy+1.0f, gz+1.0f, 0.1f, 0.2f, 0.1f, 50.0f, rnd, (int)GAMEFPS * 3, Resource->GetEffectSmokeTexture(), EFFECT_DISAPPEAR | EFFECT_ROTATION | EFFECT_TRANSLUCENT);
-	AddEffect(gx-1.0f, gy-1.0f, gz-1.0f, -0.1f, 0.2, -0.1f, 50.0f, rnd*-1, (int)GAMEFPS * 3, Resource->GetEffectSmokeTexture(), EFFECT_DISAPPEAR | EFFECT_ROTATION | EFFECT_TRANSLUCENT);
+	AddEffect(gx-1.0f, gy-1.0f, gz-1.0f, -0.1f, 0.2f, -0.1f, 50.0f, rnd*-1, (int)GAMEFPS * 3, Resource->GetEffectSmokeTexture(), EFFECT_DISAPPEAR | EFFECT_ROTATION | EFFECT_TRANSLUCENT);
 	AddEffect(gx-1.0f, gy-1.0f, gz+1.0f, -0.1f, 0.2f, 0.1f, 50.0f, rnd, (int)GAMEFPS * 3, Resource->GetEffectSmokeTexture(), EFFECT_DISAPPEAR | EFFECT_ROTATION | EFFECT_TRANSLUCENT);
 	AddEffect(gx+1.0f, gy+1.0f, gz-1.0f, 0.1f, 0.2f, -0.1f, 50.0f, rnd*-1, (int)GAMEFPS * 3, Resource->GetEffectSmokeTexture(), EFFECT_DISAPPEAR | EFFECT_ROTATION | EFFECT_TRANSLUCENT);
 

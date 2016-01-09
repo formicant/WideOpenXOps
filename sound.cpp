@@ -611,7 +611,7 @@ int SoundControl::LoadSound(char* filename)
 			if( DSplay == NULL ){ return -1; }
 			DSplay(i, -255, 0);
 
-			//使用中を新たすフラグをセット
+			//使用中を表すフラグをセット
 			useflag[i] = true;
 
 #ifdef ENABLE_DEBUGLOG
