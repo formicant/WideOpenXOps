@@ -609,7 +609,7 @@ int SoundControl::LoadSound(char* filename)
 
 			//小さい音量で一度再生しておく
 			if( DSplay == NULL ){ return -1; }
-			DSplay(i, -255, 0);
+			DSplay(i, -99, 0);
 
 			//使用中を表すフラグをセット
 			useflag[i] = true;
