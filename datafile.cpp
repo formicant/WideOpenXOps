@@ -365,7 +365,7 @@ PointDataInterface::PointDataInterface()
 	//イベントメッセージ初期化
 	for(int i=0; i<MAX_POINTMESSAGES; i++){
 		text[i] = new char[MAX_POINTMESSAGEBYTE];
-		text[i][0] = NULL;
+		text[i][0] = '\0';
 	}
 }
 
@@ -453,7 +453,7 @@ int PointDataInterface::LoadFiledata(char *fname)
 	//PathRemoveExtension(fname2);
 	for(int i=strlen(fname2)-1; i>0; i--){
 		if( fname2[i] == '.' ){
-			fname2[i] = 0x00;
+			fname2[i] = '\0';
 			break;
 		}
 	}
@@ -1069,7 +1069,7 @@ void AddonList::Sort()
 		for(int j=0; j<(int)strlen(mission_name[i]); j++){
 			mission_name_c[i][j] = (char)tolower(mission_name[i][j]);
 		}
-		mission_name_c[i][strlen(mission_name[i])] = 0x00;
+		mission_name_c[i][strlen(mission_name[i])] = '\0';
 	}
 
 	//低速なバブルソート　（＾＾；

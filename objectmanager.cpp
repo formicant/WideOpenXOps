@@ -2124,7 +2124,7 @@ bool ObjectManager::GetObjectInfoTag(float camera_x, float camera_y, float camer
 	int Player_teamID;
 
 	//文字を初期化
-	infostr[0] = NULL;
+	infostr[0] = '\0';
 
 	//プレイヤーのチーム番号を取得
 	HumanIndex[Player_HumanID].GetParamData(NULL, NULL, NULL, &Player_teamID);

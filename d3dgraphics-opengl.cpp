@@ -309,7 +309,7 @@ int D3DGraphics::LoadModel(char* filename)
 
 	//マジックコード取得
 	fgets(buf, 256, fp);
-	buf[ strlen("xof 0302txt") ] = 0x00;
+	buf[ strlen("xof 0302txt") ] = '\0';
 	if( strcmp(buf, "xof 0302txt") != 0 ){
 		fclose( fp );
 		return -1;		//Xファイルでない
@@ -317,7 +317,7 @@ int D3DGraphics::LoadModel(char* filename)
 
 	while( fgets(buf, 256, fp) != NULL ){
 		strcpy(str, buf);
-		str[ strlen("Mesh") ] = 0x00;
+		str[ strlen("Mesh") ] = '\0';
 		if( strcmp(str, "Mesh") == 0 ){
 			
 			fgets(buf, 256, fp);
@@ -369,7 +369,7 @@ int D3DGraphics::LoadModel(char* filename)
 
 			while( fgets(buf, 256, fp) != NULL ){
 				strcpy(str, buf);
-				str[ strlen(" MeshTextureCoords") ] = 0x00;
+				str[ strlen(" MeshTextureCoords") ] = '\0';
 				if( strcmp(str, " MeshTextureCoords") == 0 ){
 
 					fgets(buf, 256, fp);
@@ -606,7 +606,7 @@ int D3DGraphics::LoadTexture(char* filename, bool texturefont, bool BlackTranspa
 	for(int i=0; i<strlen(filename); i++){
 		filename2[i] = (char)tolower(filename[i]);
 	}
-	filename2[ strlen(filename) ] = NULL;
+	filename2[ strlen(filename) ] = '\0';
 
 	//拡張子でファイルフォーマットを判定
 	for(int i=strlen(filename2)-1; i>0; i--){

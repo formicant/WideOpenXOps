@@ -39,15 +39,15 @@ ParameterInfo::ParameterInfo()
 {
 	Human = NULL;
 	for(int i=0; i<TOTAL_HUMANTEXTURE; i++){
-		HumanTexturePath[i] = NULL;
+		HumanTexturePath[i] = '\0';
 	}
 	Weapon = NULL;
 	SmallObject = NULL;
 	for(int i=0; i<TOTAL_OFFICIALMISSION; i++){
-		missionname[i] = NULL;
-		missionfullname[i] = NULL;
-		missiondirectory[i] = NULL;
-		missiontxt[i] = NULL;
+		missionname[i] = '\0';
+		missionfullname[i] = '\0';
+		missiondirectory[i] = '\0';
+		missiontxt[i] = '\0';
 	}
 	AIlevel = NULL;
 }

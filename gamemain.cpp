@@ -410,7 +410,7 @@ void opening::Destroy()
 //! @brief コンストラクタ
 mainmenu::mainmenu()
 {
-	demopath[0] = 0x00;
+	demopath[0] = '\0';
 	mainmenu_scrollitems_official = 0;
 	mainmenu_scrollitems_addon = 0;
 }
@@ -1065,7 +1065,7 @@ int maingame::Create()
 		strcpy(path, bdata);
 		for(int i=strlen(path)-1; i>0; i--){
 			if( path[i] == '\\' ){
-				path[i+1] = 0x00;
+				path[i+1] = '\0';
 				break;
 			}
 		}
@@ -1155,10 +1155,10 @@ int maingame::Create()
 	InputConsoleData = new ConsoleData;
 	for(int i=0; i<MAX_CONSOLELINES; i++){
 		InfoConsoleData[i].color = d3dg->GetColorCode(1.0f,1.0f,1.0f,1.0f);
-		InfoConsoleData[i].textdata[0] = NULL;
+		InfoConsoleData[i].textdata[0] = '\0';
 	}
 	InputConsoleData->color = d3dg->GetColorCode(1.0f,1.0f,0.0f,1.0f);
-	InputConsoleData->textdata[0] = NULL;
+	InputConsoleData->textdata[0] = '\0';
 	AddInfoConsole(d3dg->GetColorCode(1.0f,1.0f,1.0f,1.0f), "Game Debug Console.");
 	AddInfoConsole(d3dg->GetColorCode(1.0f,1.0f,1.0f,1.0f), "        Command list >help");
 #endif
@@ -1186,7 +1186,7 @@ int maingame::Recovery()
 		strcpy(path, bdata);
 		for(int i=strlen(path)-1; i>0; i--){
 			if( path[i] == '\\' ){
-				path[i+1] = 0x00;
+				path[i+1] = '\0';
 				break;
 			}
 		}
@@ -2128,14 +2128,14 @@ void maingame::Render2D()
 		//左下エリア描画
 		//"ｳｴｴｴｴｴｴｵ"
 		stru[0] = 0xB3;		stru[1] = 0xB4;		stru[2] = 0xB4;		stru[3] = 0xB4;		stru[4] = 0xB4;
-		stru[5] = 0xB4;		stru[6] = 0xB4;		stru[7] = 0xB5;		stru[8] = 0x00;
+		stru[5] = 0xB4;		stru[6] = 0xB4;		stru[7] = 0xB5;		stru[8] = '\0';
 		d3dg->Draw2DTextureFontText(15, SCREEN_HEIGHT - 105, (char*)stru, d3dg->GetColorCode(1.0f,1.0f,1.0f,0.5f), 32, 32);
 		//"ﾃﾄﾄﾄﾄﾄﾄﾅ"
 		for(int i=0; stru[i] != 0x00; i++){ stru[i] += 0x10; }
 		d3dg->Draw2DTextureFontText(15, SCREEN_HEIGHT - 105 +32, (char*)stru, d3dg->GetColorCode(1.0f,1.0f,1.0f,0.5f), 32, 32);
 		//"ｳｴｴｶｷｷｷｸｹ"
 		stru[0] = 0xB3;		stru[1] = 0xB4;		stru[2] = 0xB4;		stru[3] = 0xB6;		stru[4] = 0xB7;
-		stru[5] = 0xB7;		stru[6] = 0xB7;		stru[7] = 0xB8;		stru[8] = 0xB9;		stru[9] = 0x00;
+		stru[5] = 0xB7;		stru[6] = 0xB7;		stru[7] = 0xB8;		stru[8] = 0xB9;		stru[9] = '\0';
 		d3dg->Draw2DTextureFontText(15, SCREEN_HEIGHT - 55, (char*)stru, d3dg->GetColorCode(1.0f,1.0f,1.0f,0.5f), 32, 32);
 		//"ﾃﾄﾄﾆﾇﾇﾇﾈﾉ"
 		for(int i=0; stru[i] != 0x00; i++){ stru[i] += 0x10; }
@@ -2147,7 +2147,7 @@ void maingame::Render2D()
 			stru[i] = 0xB1;//'ｱ';
 		}
 		stru[HUDA_WEAPON_SIZEW-1] = 0xB2;//'ｲ';
-		stru[HUDA_WEAPON_SIZEW] = 0x00;
+		stru[HUDA_WEAPON_SIZEW] = '\0';
 
 		//右下エリア描画
 		d3dg->Draw2DTextureFontText(HUDA_WEAPON_POSX, HUDA_WEAPON_POSY, (char*)stru, d3dg->GetColorCode(1.0f,1.0f,1.0f,0.5f), 32, 32);
@@ -2267,9 +2267,9 @@ void maingame::Render2D()
 					d3dg->Draw2DLine(SCREEN_WIDTH/2, SCREEN_HEIGHT/2-13, SCREEN_WIDTH/2, SCREEN_HEIGHT/2-3, d3dg->GetColorCode(1.0f,0.0f,0.0f,1.0f));
 					d3dg->Draw2DLine(SCREEN_WIDTH/2, SCREEN_HEIGHT/2+13, SCREEN_WIDTH/2, SCREEN_HEIGHT/2+3, d3dg->GetColorCode(1.0f,0.0f,0.0f,1.0f));
 
-					stru[0] = 0xBD;		stru[1] = 0x00;	//"ｽ"
+					stru[0] = 0xBD;		stru[1] = '\0';	//"ｽ"
 					d3dg->Draw2DTextureFontText(SCREEN_WIDTH/2 - 16 - ErrorRange, SCREEN_HEIGHT/2 - 16, (char*)stru, d3dg->GetColorCode(1.0f,0.0f,0.0f,0.5f), 32, 32);
-					stru[0] = 0xBE;		stru[1] = 0x00;	//"ｾ"
+					stru[0] = 0xBE;		stru[1] = '\0';	//"ｾ"
 					d3dg->Draw2DTextureFontText(SCREEN_WIDTH/2 - 16 + ErrorRange, SCREEN_HEIGHT/2 - 16, (char*)stru, d3dg->GetColorCode(1.0f,0.0f,0.0f,0.5f), 32, 32);
 				}
 			}
@@ -2586,9 +2586,9 @@ void maingame::AddInfoConsole(int color, char *str)
 void maingame::ConsoleInputText(char inchar)
 {
 	for(int i=0; i<MAX_CONSOLELEN; i++){
-		if( InputConsoleData->textdata[i] == NULL ){
+		if( InputConsoleData->textdata[i] == '\0' ){
 			InputConsoleData->textdata[i] = inchar;
-			InputConsoleData->textdata[i+1] = NULL;
+			InputConsoleData->textdata[i+1] = '\0';
 			return;
 		}
 	}
@@ -2599,7 +2599,7 @@ void maingame::ConsoleDeleteText()
 {
 	int s = strlen(InputConsoleData->textdata);
 	if( s == (int)strlen(CONSOLE_PROMPT) ){ return; }
-	InputConsoleData->textdata[ s-1 ] = NULL;
+	InputConsoleData->textdata[ s-1 ] = '\0';
 }
 
 //! @brief コマンドの判定および引数（整数値）を取得
@@ -2612,7 +2612,7 @@ bool maingame::GetCommandNum(char *cmd, int *num)
 
 	//コマンド名を調べる
 	strcpy(str, NewCommand);
-	str[ strlen(cmd) ] = NULL;
+	str[ strlen(cmd) ] = '\0';
 	if( strcmp(str, cmd) != 0 ){ return false; }
 
 	//「コマンド名_X」分の文字数に達しているかどうか
@@ -2626,7 +2626,7 @@ bool maingame::GetCommandNum(char *cmd, int *num)
 //! @brief デバック用コンソールの入力処理
 void maingame::InputConsole()
 {
-	NewCommand[0] = NULL;
+	NewCommand[0] = '\0';
 
 	if( inputCtrl->CheckKeyDown(OriginalkeycodeToDinputdef(0x0F)) ){		// [ENTER]
 		//何か入力されていれば～
@@ -3079,7 +3079,7 @@ void maingame::ProcessConsole()
 	if( strcmp(NewCommand, "clear") == 0 ){
 		for(int i=0; i<MAX_CONSOLELINES; i++){
 			InfoConsoleData[i].color = d3dg->GetColorCode(1.0f,1.0f,1.0f,1.0f);
-			InfoConsoleData[i].textdata[0] = NULL;
+			InfoConsoleData[i].textdata[0] = '\0';
 		}
 	}
 
