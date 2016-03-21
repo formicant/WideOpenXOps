@@ -501,6 +501,7 @@ bool Collision::CheckBlockIntersectRay(int blockid, float RayPos_x, float RayPos
 {
 	if( blockdata == NULL ){ return false; }
 	if( (blockid < 0)||(blockdata->GetTotaldatas() <= blockid) ){ return false; }
+	if( (RayDir_x == 0.0f)&&(RayDir_y == 0.0f)&&(RayDir_z == 0.0f) ){ return false; }
 
 	float pDist;
 	float min_pDist = FLT_MAX;
@@ -615,6 +616,7 @@ bool Collision::CheckBlockIntersectRay(int blockid, float RayPos_x, float RayPos
 bool Collision::CheckALLBlockIntersectRay(float RayPos_x, float RayPos_y, float RayPos_z, float RayDir_x, float RayDir_y, float RayDir_z, int *id, int *face, float *Dist, float maxDist)
 {
 	if( blockdata == NULL ){ return false; }
+	if( (RayDir_x == 0.0f)&&(RayDir_y == 0.0f)&&(RayDir_z == 0.0f) ){ return false; }
 
 	int bs = blockdata->GetTotaldatas();
 	float pDist;

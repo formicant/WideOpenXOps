@@ -1125,6 +1125,9 @@ bool ObjectManager::CollideBlood(effect *in_effect, int *id, int *face, float *p
 	in_effect->GetPosData(&x, &y, &z, NULL);
 	in_effect->GetMove(&move_x, &move_y, &move_z);
 
+	//エフェクトが移動しないなら処理しない
+	if( (move_x == 0.0f)&&(move_y == 0.0f)&&(move_z == 0.0f) ){ return false; }
+
 	//ベクトルを求める
 	dist = sqrt(move_x*move_x + move_y*move_y + move_z*move_z);
 	vx = move_x / dist;
