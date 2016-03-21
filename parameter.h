@@ -39,12 +39,15 @@
 #define TOTAL_HUMANTEXTURE 30					//!< 人のテクスチャの合計枚数
 #define TOTAL_PARAMETERINFO_WEAPON 23			//!< 武器の設定数
 #define TOTAL_PARAMETERINFO_SMALLOBJECT 12	//!< 小物の設定数
+#define TOTAL_PARAMETERINFO_BULLET 2		//!< 銃弾オブジェクトの設定数
 #define TOTAL_OFFICIALMISSION 58			//!< 標準ミッションの数
 #define TOTAL_PARAMETERINFO_AILEVEL 6		//!< AIレベルの設定数
 
 #define ID_WEAPON_NONE 0		//!< 武器：なし として取り扱う武器番号
 #define ID_WEAPON_GRENADE 13	//!< 手榴弾として取り扱う武器番号
 #define ID_WEAPON_CASE 15		//!< ケースとして取り扱う武器番号
+
+#define SMALLOBJECT_SCALE 5.0f				//!< 小物の表示倍率
 
 #ifndef H_LAYERLEVEL
  #define H_LAYERLEVEL 1		//!< Select include file.
@@ -107,6 +110,13 @@ struct SmallObjectParameter{
 	int jump;		//!< 飛び具合
 };
 
+//! 銃弾オブジェクト用の構造体
+struct BulletParameter{
+	char *model;	//!< モデル名
+	char *texture;	//!< テクスチャ名
+	float size;		//!< 表示倍率
+};
+
 //! AIレベルによる設定（性能値）用構造体
 struct AIParameter{
 	int aiming;			//!< エイミング能力
@@ -124,6 +134,7 @@ class ParameterInfo
 	char *HumanTexturePath[TOTAL_HUMANTEXTURE];		//!< 人のテクスチャを格納するポインタ
 	WeaponParameter *Weapon;						//!< 武器の情報を格納するポインタ
 	SmallObjectParameter *SmallObject;			//!< 小物の情報を格納するポインタ
+	BulletParameter *Bullet;						//!< 銃弾オブジェクトの情報を格納するポインタ
 	char *missionname[TOTAL_OFFICIALMISSION];		//!< 標準ミッションのミッション識別名
 	char *missionfullname[TOTAL_OFFICIALMISSION];	//!< 標準ミッションのミッション正式名称
 	char *missiondirectory[TOTAL_OFFICIALMISSION];	//!< 標準ミッションのデータディレクトリ
@@ -139,6 +150,7 @@ public:
 	int GetHumanTexturePath(int id, char *out_str);
 	int GetWeapon(int id, WeaponParameter *out_data);
 	int GetSmallObject(int id, SmallObjectParameter *out_data);
+	int GetBullet(int id, BulletParameter *out_data);
 	int GetOfficialMission(int id, char *name, char *fullname, char* directory, char *txt);
 	int GetAIlevel(int level, AIParameter **out_AIlevel);
 };

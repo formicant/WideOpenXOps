@@ -40,9 +40,6 @@
 #define MAX_GRENADE 32			//!< ŽèžÖ’e‚ÌÅ‘å”
 #define MAX_EFFECT 256			//!< ƒGƒtƒFƒNƒg‚ÌÅ‘å”
 
-#define SMALLOBJECT_SCALE 5.0f				//!< ¬•¨‚Ì•\Ž¦”{—¦
-#define BULLET_SCALE 1.0f				//!< e’e‚Ì•\Ž¦”{—¦
-
 #define WEAPONSHOT_HEIGHT (VIEW_HEIGHT)	//!< ’e‚ð”­ŽË‚·‚é‚‚³
 
 #define TOTAL_WEAPON_AUTOBULLET 3	//!< ‰Šú‰»Žž‚ÉŽ©“®“I‚É•â‚Ä‚ñ‚³‚ê‚é’e”i‘•’e”‚Ì‰½”{‚©j

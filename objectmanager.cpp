@@ -112,26 +112,24 @@ void ObjectManager::SetClass(ParameterInfo *in_GameParamInfo, D3DGraphics *in_d3
 	}
 
 	int bulletmodel, bullettexture;
-	Resource->GetBulletModelTexture(&bulletmodel, &bullettexture);
-	for(int i=0; i<MAX_BULLET; i++){
-		BulletIndex[i].SetModel(bulletmodel, BULLET_SCALE);
-		BulletIndex[i].SetTexture(bullettexture);
+	BulletParameter data;
+
+	if( Resource->GetBulletModelTexture(0, &bulletmodel, &bullettexture) == 0 ){
+		if( GameParamInfo->GetBullet(0, &data) == 0 ){
+			for(int i=0; i<MAX_BULLET; i++){
+				BulletIndex[i].SetModel(bulletmodel, data.size);
+				BulletIndex[i].SetTexture(bullettexture);
+			}
+		}
 	}
 
-	int grenademodel, grenadetexture;
-	float model_size = 1.0f;
-	WeaponParameter ParamData;
-
-	//リソースとモデルサイズを取得
-	Resource->GetWeaponModelTexture(ID_WEAPON_GRENADE, &grenademodel, &grenadetexture);
-	if( GameParamInfo->GetWeapon(ID_WEAPON_GRENADE, &ParamData) == 0 ){
-		model_size = ParamData.size;
-	}
-
-	//適用
-	for(int i=0; i<MAX_GRENADE; i++){
-		GrenadeIndex[i].SetModel(grenademodel, model_size);
-		GrenadeIndex[i].SetTexture(grenadetexture);
+	if( Resource->GetBulletModelTexture(1, &bulletmodel, &bullettexture) == 0 ){
+		if( GameParamInfo->GetBullet(1, &data) == 0 ){
+			for(int i=0; i<MAX_GRENADE; i++){
+				GrenadeIndex[i].SetModel(bulletmodel, data.size);
+				GrenadeIndex[i].SetTexture(bullettexture);
+			}
+		}
 	}
 }
 
@@ -1376,27 +1374,27 @@ void ObjectManager::Recovery()
 		}
 	}
 
-	//銃弾適用
 	int bulletmodel, bullettexture;
-	Resource->GetBulletModelTexture(&bulletmodel, &bullettexture);
-	for(int i=0; i<MAX_BULLET; i++){
-		BulletIndex[i].SetModel(bulletmodel, BULLET_SCALE);
-		BulletIndex[i].SetTexture(bullettexture);
-	}
+	BulletParameter data;
 
-	//手榴弾のリソースとモデルサイズを取得
-	int grenademodel, grenadetexture;
-	float model_size = 1.0f;
-	WeaponParameter ParamData;
-	Resource->GetWeaponModelTexture(ID_WEAPON_GRENADE, &grenademodel, &grenadetexture);
-	if( GameParamInfo->GetWeapon(ID_WEAPON_GRENADE, &ParamData) == 0 ){
-		model_size = ParamData.size;
+	//銃弾適用
+	if( Resource->GetBulletModelTexture(0, &bulletmodel, &bullettexture) == 0 ){
+		if( GameParamInfo->GetBullet(0, &data) == 0 ){
+			for(int i=0; i<MAX_BULLET; i++){
+				BulletIndex[i].SetModel(bulletmodel, data.size);
+				BulletIndex[i].SetTexture(bullettexture);
+			}
+		}
 	}
 
 	//手榴弾適用
-	for(int i=0; i<MAX_GRENADE; i++){
-		GrenadeIndex[i].SetModel(grenademodel, model_size);
-		GrenadeIndex[i].SetTexture(grenadetexture);
+	if( Resource->GetBulletModelTexture(1, &bulletmodel, &bullettexture) == 0 ){
+		if( GameParamInfo->GetBullet(1, &data) == 0 ){
+			for(int i=0; i<MAX_GRENADE; i++){
+				GrenadeIndex[i].SetModel(bulletmodel, data.size);
+				GrenadeIndex[i].SetTexture(bullettexture);
+			}
+		}
 	}
 
 	//全てのエフェクトを無効化

@@ -43,6 +43,7 @@ ParameterInfo::ParameterInfo()
 	}
 	Weapon = NULL;
 	SmallObject = NULL;
+	Bullet = NULL;
 	for(int i=0; i<TOTAL_OFFICIALMISSION; i++){
 		missionname[i] = '\0';
 		missionfullname[i] = '\0';
@@ -70,6 +71,7 @@ void ParameterInfo::InitInfo()
 	Human = new HumanParameter[TOTAL_PARAMETERINFO_HUMAN];
 	Weapon = new WeaponParameter[TOTAL_PARAMETERINFO_WEAPON];
 	SmallObject = new SmallObjectParameter[TOTAL_PARAMETERINFO_SMALLOBJECT];
+	Bullet = new BulletParameter[TOTAL_PARAMETERINFO_BULLET];
 	AIlevel = new AIParameter[TOTAL_PARAMETERINFO_AILEVEL];
 
 	//特殊 黒 A
@@ -1273,6 +1275,16 @@ void ParameterInfo::InitInfo()
 	SmallObject[11].jump = 7;
 
 
+	//銃弾オブジェクト
+	Bullet[0].model = "./data/model/bullet.x";
+	Bullet[0].texture = "./data/model/bullet.bmp";
+	Bullet[0].size = 1.0f;
+	//手榴弾オブジェクト
+	Bullet[1].model = Weapon[ID_WEAPON_GRENADE].model;
+	Bullet[1].texture = Weapon[ID_WEAPON_GRENADE].texture;
+	Bullet[1].size = Weapon[ID_WEAPON_GRENADE].size;
+
+
 	missionname[0]		= "TRAINING YARD";
 	missionfullname[0]	= "TRAINING YARD training";
 	missiondirectory[0]	= "data\\map0\\";
@@ -1559,6 +1571,10 @@ void ParameterInfo::DestroyInfo()
 		delete [] SmallObject;
 		SmallObject = NULL;
 	}
+	if( Bullet != NULL ){
+		delete [] Bullet;
+		Bullet = NULL;
+	}
 	if( AIlevel != NULL ){
 		delete [] AIlevel;
 		AIlevel = NULL;
@@ -1616,6 +1632,18 @@ int ParameterInfo::GetSmallObject(int id, SmallObjectParameter *out_data)
 	if( (id < 0)||((TOTAL_PARAMETERINFO_SMALLOBJECT -1) < id ) ){ return 1; }
 
 	*out_data = SmallObject[id];
+	return 0;
+}
+
+//! @brief 銃弾オブジェクトの設定を取得
+//! @param id 番号
+//! @param out_data 受け取るBulletParameter型ポインタ
+//! @return 成功：0　失敗：1
+int ParameterInfo::GetBullet(int id, BulletParameter *out_data)
+{
+	if( (id < 0)||((TOTAL_PARAMETERINFO_BULLET -1) < id ) ){ return 1; }
+
+	*out_data = Bullet[id];
 	return 0;
 }
 

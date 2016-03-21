@@ -65,12 +65,14 @@ ResourceManager::ResourceManager()
 		smallobject_texture[i] = -1;
 		smallobject_sound[i] = -1;
 	}
+	for(int i=0; i<TOTAL_PARAMETERINFO_BULLET; i++){
+		bullet_model[i] = -1;
+		bullet_texture[i] = -1;
+	}
 
 	scopetexture = -1;
 	skymodel = -1;
 	skytexture = -1;
-	bulletmodel = -1;
-	bullettexture = -1;
 	bullet_hitsoundA = -1;
 	bullet_hitsoundB = -1;
 	bullet_humanhitsound = -1;
@@ -529,6 +531,58 @@ int ResourceManager::LoadAddSmallObject(char *modelpath, char *texturepath, char
 	return cnt;
 }
 
+//! @brief 弾のモデルとテクスチャを読み込む
+//! @return 成功：0　失敗：1以上
+int ResourceManager::LoadBulletModelTexture()
+{
+	int cnt = 0;
+
+	if( d3dg == NULL ){ return 1; }
+
+	for(int i=0; i<TOTAL_PARAMETERINFO_BULLET; i++){
+		BulletParameter data;
+		if( ParamInfo->GetBullet(i, &data) == 0 ){
+			//モデルとテクスチャを読み込み、エラーが出ればカウントする。
+			bullet_model[i] = d3dg->LoadModel(data.model);
+			bullet_texture[i] = d3dg->LoadTexture(data.texture, false, false);
+			if( bullet_model[i] == -1 ){ cnt += 1; }
+			if( bullet_texture[i] == -1 ){ cnt += 1; }
+		}
+		else{
+			//設定データがおかしければ、モデルとテクスチャ 2つともエラー。
+			cnt += 2;
+		}
+	}
+
+	return cnt;
+}
+
+//! @brief 弾のモデルとテクスチャを取得
+//! @return 成功：0　失敗：1
+int ResourceManager::GetBulletModelTexture(int id, int *model, int *texture)
+{
+	if( (id < 0)||((TOTAL_PARAMETERINFO_BULLET -1) < id ) ){ return 1; }
+
+	*model = bullet_model[id];
+	*texture = bullet_texture[id];
+
+	return 0;
+}
+
+//! @brief 弾のモデルとテクスチャを解放
+void ResourceManager::CleanupBulletModelTexture()
+{
+	if( d3dg == NULL ){ return; }
+
+	for(int i=0; i<TOTAL_PARAMETERINFO_BULLET; i++){
+		d3dg->CleanupModel(bullet_model[i]);
+		bullet_model[i] = -1;
+
+		d3dg->CleanupTexture(bullet_texture[i]);
+		bullet_texture[i] = -1;
+	}
+}
+
 //! @brief スコープテクスチャを読み込む
 //! @return 成功：0　失敗：1
 int ResourceManager::LoadScopeTexture()
@@ -593,43 +647,6 @@ void ResourceManager::CleanupSkyModelTexture()
 	d3dg->CleanupTexture(skytexture);
 	skymodel = -1;
 	skytexture = -1;
-}
-
-//! @brief 弾のモデルとテクスチャを読み込む
-//! @return 成功：0　失敗：1
-int ResourceManager::LoadBulletModelTexture()
-{
-	if( d3dg == NULL ){ return 1; }
-
-	bulletmodel = d3dg->LoadModel("data\\model\\bullet.x");
-	bullettexture = d3dg->LoadTexture("data\\model\\bullet.bmp", false, false);
-
-	if( bulletmodel == -1 ){ return 1; }
-	if( bullettexture == -1 ){ return 1; }
-	return 0;
-}
-
-//! @brief 弾のモデルとテクスチャを取得
-//! @return 成功：0　失敗：1
-void ResourceManager::GetBulletModelTexture(int *model, int *texture)
-{
-	*model = bulletmodel;
-	*texture = bullettexture;
-}
-
-//! @brief 弾のモデルとテクスチャを解放
-void ResourceManager::CleanupBulletModelTexture()
-{
-	if( d3dg == NULL ){ return; }
-
-	if( bulletmodel != -1 ){
-		d3dg->CleanupModel(bulletmodel);
-		bulletmodel = -1;
-	}
-	if( bullettexture == -1 ){
-		d3dg->CleanupTexture(bullettexture);
-		bullettexture = -1;
-	}
 }
 
 //! @brief 弾・手榴弾のサウンドを読み込む

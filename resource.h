@@ -66,12 +66,12 @@ class ResourceManager
 	int smallobject_model[TOTAL_PARAMETERINFO_SMALLOBJECT+1];		//!< 小物のモデル認識番号
 	int smallobject_texture[TOTAL_PARAMETERINFO_SMALLOBJECT+1];		//!< 小物のテクスチャ認識番号
 	int smallobject_sound[TOTAL_PARAMETERINFO_SMALLOBJECT+1];		//!< 小物のサウンド認識番号
+	int bullet_model[TOTAL_PARAMETERINFO_BULLET];		//!< 弾のモデル
+	int bullet_texture[TOTAL_PARAMETERINFO_BULLET];		//!< 弾のテクスチャ
 
 	int scopetexture;		//!< スコープのテクスチャ
 	int skymodel;			//!< 空背景のモデル
 	int skytexture;			//!< 空背景のテクスチャ
-	int bulletmodel;		//!< 弾のモデル
-	int bullettexture;		//!< 弾のテクスチャ
 	int bullet_hitsoundA;		//!< 弾のヒットサウンド（A）
 	int bullet_hitsoundB;		//!< 弾のヒットサウンド（B）
 	int bullet_humanhitsound;	//!< 弾のヒットサウンド（人）
@@ -108,6 +108,9 @@ public:
 	int LoadSmallObjectSound();
 	int GetSmallObjectSound(int id);
 	int LoadAddSmallObject(char *modelpath, char *texturepath, char *soundpath);
+	int LoadBulletModelTexture();
+	int GetBulletModelTexture(int id, int *model, int *texture);
+	void CleanupBulletModelTexture();
 
 	int LoadScopeTexture();
 	int GetScopeTexture();
@@ -115,9 +118,6 @@ public:
 	int LoadSkyModelTexture(int id);
 	void GetSkyModelTexture(int *model, int *texture);
 	void CleanupSkyModelTexture();
-	int LoadBulletModelTexture();
-	void GetBulletModelTexture(int *model, int *texture);
-	void CleanupBulletModelTexture();
 	int LoadBulletSound();
 	void GetBulletSound(int *hitsoundA, int *hitsoundB, int *humanhitsound, int *passingsound, int *grenadebang, int *grenadecco);
 	int LoadEffectTexture();
