@@ -516,8 +516,8 @@ int ObjectManager::AddMapEffect(int id, int face, float pos_x, float pos_y, floa
 	vz = data.material[face].vz;
 
 	//角度を求める
-	rx = atan2(vz, vx) + (float)M_PI;
-	ry = atan2(vy, sqrt(vx*vx + vz*vz)) + (float)M_PI;
+	rx = atan2(vz, vx)*-1 + (float)M_PI;
+	ry = atan2(vy, sqrt(vx*vx + vz*vz))*-1;
 
 	//エフェクト作成
 	for(int i=0; i<MAX_EFFECT; i++){
@@ -538,13 +538,23 @@ int ObjectManager::AddMapEffect(int id, int face, float pos_x, float pos_y, floa
 //! @param y Y座標
 //! @param z Z座標
 //! @param damage ダメージ
-void ObjectManager::SetHumanBlood(float x, float y, float z, int damage)
+//! @param CollideMap マップへの付着
+void ObjectManager::SetHumanBlood(float x, float y, float z, int damage, bool CollideMap)
 {
+	int addtype;
+
+	if( CollideMap == false ){
+		addtype = EFFECT_NORMAL;
+	}
+	else{
+		addtype = EFFECT_COLLIDEMAP;
+	}
+
 	if( GameConfig.GetBloodFlag() == true ){
-		AddEffect(x, y, z, 0.0f, 0.0f, 0.0f, 10.0f, DegreeToRadian(10)*GetRand(18), (int)(GAMEFPS * 0.4f), Resource->GetEffectBloodTexture(), EFFECT_DISAPPEAR | EFFECT_MAGNIFY | EFFECT_TRANSLUCENT);
+		AddEffect(x, y, z, 0.0f, 0.0f, 0.0f, 10.0f, DegreeToRadian(10)*GetRand(18), (int)(GAMEFPS * 0.4f), Resource->GetEffectBloodTexture(), EFFECT_DISAPPEAR | EFFECT_MAGNIFY | EFFECT_TRANSLUCENT | addtype);
 		for(int i=0; i<(damage/10); i++){
 			float rx = DegreeToRadian(10)*GetRand(36);
-			AddEffect(x + cos(rx)*1.0f, y + (float)(GetRand(20)-10)/10, z + sin(rx)*1.0f, cos(rx)*0.5f, GetRand(5)*0.1f + 0.5f, sin(rx)*0.5f, 5.0f, DegreeToRadian(10)*GetRand(18), (int)(GAMEFPS * 0.5f), Resource->GetEffectBloodTexture(), EFFECT_FALL | EFFECT_TRANSLUCENT);
+			AddEffect(x + cos(rx)*1.0f, y + (float)(GetRand(20)-10)/10, z + sin(rx)*1.0f, cos(rx)*0.5f, GetRand(5)*0.1f + 0.5f, sin(rx)*0.5f, 5.0f, DegreeToRadian(10)*GetRand(18), (int)(GAMEFPS * 0.5f), Resource->GetEffectBloodTexture(), EFFECT_FALL | EFFECT_TRANSLUCENT | addtype);
 		}
 	}
 }
@@ -855,6 +865,9 @@ void ObjectManager::HitBulletMap(float x, float y, float z)
 void ObjectManager::HitBulletHuman(int HitHuman_id, int Hit_id, float x, float y, float z, float brx, int attacks, int Shothuman_id)
 {
 	int damage = 0;
+	int paramid;
+	HumanParameter Paraminfo;
+	bool NotRobot;
 
 	//使用されていないか、死亡していれば処理しない。
 	if( HumanIndex[HitHuman_id].GetEnableFlag() == false ){ return; }
@@ -866,11 +879,21 @@ void ObjectManager::HitBulletHuman(int HitHuman_id, int Hit_id, float x, float y
 	if( Hit_id == 2 ){ HumanIndex[HitHuman_id].HitBulletLeg(attacks); }
 	HumanIndex[HitHuman_id].AddPosOrder(brx, 0.0f, 1.0f);
 
+	//ロボットかどうか判定
+	HumanIndex[HitHuman_id].GetParamData(&paramid, NULL, NULL, NULL);
+	GameParamInfo->GetHuman(paramid, &Paraminfo);
+	if( Paraminfo.type == 1 ){
+		NotRobot = false;
+	}
+	else{
+		NotRobot = true;
+	}
+
 	//エフェクト（血）を表示
 	if( Hit_id == 0 ){ damage = (int)((float)attacks * HUMAN_DAMAGE_HEAD); }
 	if( Hit_id == 1 ){ damage = (int)((float)attacks * HUMAN_DAMAGE_UP); }
 	if( Hit_id == 2 ){ damage = (int)((float)attacks * HUMAN_DAMAGE_LEG); }
-	SetHumanBlood(x, y, z, damage);
+	SetHumanBlood(x, y, z, damage, NotRobot);
 
 	//効果音を再生
 	GameSound->HitHuman(x, y, z);
@@ -987,7 +1010,7 @@ bool ObjectManager::GrenadeExplosion(grenade *in_grenade)
 			}
 
 			//エフェクト（血）を表示
-			SetHumanBlood(hx, hy+15.0f, hz, total_damage);
+			SetHumanBlood(hx, hy+15.0f, hz, total_damage, false);
 
 			//人と手榴弾の距離を算出
 			x = gx - hx;
@@ -1110,6 +1133,7 @@ bool ObjectManager::CollideBlood(effect *in_effect, int *id, int *face, float *p
 {
 	//無効なエフェクトならば処理しない
 	if( in_effect->GetEnableFlag() == false ){ return false; }
+	if( in_effect->GetCollideMapFlag() == false ){ return false; }
 	if( in_effect->GetTextureID() != Resource->GetEffectBloodTexture() ){ return false; }
 
 	//血が出ない設定なら処理しない
@@ -2021,15 +2045,28 @@ void ObjectManager::HitZombieAttack(human* EnemyHuman)
 	if( EnemyHuman->GetHP() <= 0 ){ return; }
 
 	float tx, ty, tz;
+	int paramid;
+	HumanParameter Paraminfo;
+	bool NotRobot;
 
 	EnemyHuman->GetPosData(&tx, &ty, &tz, NULL);
 	ty += VIEW_HEIGHT;
+
+	//ロボットかどうか判定
+	EnemyHuman->GetParamData(&paramid, NULL, NULL, NULL);
+	GameParamInfo->GetHuman(paramid, &Paraminfo);
+	if( Paraminfo.type == 1 ){
+		NotRobot = false;
+	}
+	else{
+		NotRobot = true;
+	}
 
 	//ダメージなどを計算
 	EnemyHuman->HitZombieAttack();
 
 	//エフェクト（血）を表示
-	SetHumanBlood(tx, ty, tz, HUMAN_DAMAGE_ZOMBIEU);
+	SetHumanBlood(tx, ty, tz, HUMAN_DAMAGE_ZOMBIEU, NotRobot);
 
 	//効果音を再生
 	GameSound->HitHuman(tx, ty, tz);

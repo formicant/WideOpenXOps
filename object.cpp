@@ -2600,6 +2600,18 @@ void effect::GetMove(float *mx, float *my, float *mz)
 	*mz = move_z;
 }
 
+//! エフェクトのマップあたり判定フラグ取得
+//! @return 有効：true　無効：false
+bool effect::GetCollideMapFlag()
+{
+	if( type&EFFECT_COLLIDEMAP ){
+		return true;
+	}
+	//else{
+		return false;
+	//}
+}
+
 //! @brief 計算を実行（ビルボード化）
 //! @param camera_rx カメラの横軸角度
 //! @param camera_ry カメラの縦軸角度

@@ -100,7 +100,7 @@ class ObjectManager
 	int AddHumanIndex(pointdata data, pointdata infodata);
 	int AddWeaponIndex(pointdata data);
 	int AddSmallObjectIndex(pointdata data);
-	void SetHumanBlood(float x, float y, float z, int damage);
+	void SetHumanBlood(float x, float y, float z, int damage, bool CollideMap);
 	bool CollideHuman(human *in_humanA, human *in_humanB);
 	bool CollideBullet(bullet *in_bullet);
 	void HitBulletMap(float x, float y, float z);

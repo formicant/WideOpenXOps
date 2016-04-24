@@ -334,6 +334,7 @@ public:
 	virtual void SetRxRy(float rx, float ry);
 	virtual int GetTextureID();
 	virtual void GetMove(float *mx, float *my, float *mz);
+	virtual bool GetCollideMapFlag();
 	virtual int RunFrame(float camera_rx, float camera_ry);
 	virtual void Render(class D3DGraphics *d3dg);
 };
@@ -363,7 +364,8 @@ enum Effect_Type {
 	EFFECT_MAGNIFY = 0x08,			//!< 拡大
 	EFFECT_ROTATION = 0x10,			//!< 回転
 	EFFECT_FALL = 0x20,				//!< 落下
-	EFFECT_NOBILLBOARD = 0x40		//!< ビルボード化しない
+	EFFECT_NOBILLBOARD = 0x40,		//!< ビルボード化しない
+	EFFECT_COLLIDEMAP = 0x80		//!< マップとのあたり判定
 };
 
 #endif
