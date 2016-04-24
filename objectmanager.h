@@ -81,6 +81,7 @@ class ObjectManager
 	int *Human_kill;		//!< 倒した敵の数
 	int *Human_headshot;	//!< 敵の頭部に命中した数
 	bool *Human_ShotFlag;	//!< 発砲フラグ（マズルフラッシュ用）
+	class BulletObjectHumanIndex *BulletObj_HumanIndex;		//!< 弾対人判定用オブジェクト
 
 	bool FriendlyFire;		//!< FF（同士討ち）有効化
 
@@ -134,6 +135,7 @@ public:
 	weapon* GetWeaponObject(int id);
 	smallobject* GetSmallObject(int id);
 	bullet* GetBulletObject(int id);
+	int GetBulletObjectID(bullet* object);
 	bullet* GetNewBulletObject();
 	grenade* GetNewGrenadeObject();
 	human* SearchHuman(signed char p4);
@@ -161,6 +163,20 @@ public:
 	bool GetHumanShotInfo(int id, int *ontarget, int *kill, int *headshot);
 	void Render(float camera_x, float camera_y, float camera_z, int HidePlayer);
 	void Cleanup();
+};
+
+//! @brief 弾対人判定用クラス
+//! @details 弾と人の当たり判定の有無を管理するクラスです。ObjectManagerクラス内で使用します。
+class BulletObjectHumanIndex
+{
+	bool *HumanIndex;		//!< リスト
+
+public:
+	BulletObjectHumanIndex();
+	~BulletObjectHumanIndex();
+	void Init();
+	bool GetIndexFlag(int id);
+	void SetIndexFlag(int id);
 };
 
 #endif

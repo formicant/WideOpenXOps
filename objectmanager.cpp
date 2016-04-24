@@ -46,6 +46,7 @@ ObjectManager::ObjectManager()
 	Human_kill = new int[MAX_HUMAN];
 	Human_headshot = new int[MAX_HUMAN];
 	Human_ShotFlag = new bool[MAX_HUMAN];
+	BulletObj_HumanIndex = new BulletObjectHumanIndex[MAX_BULLET];
 	FriendlyFire = false;
 	Player_HumanID = 0;
 	AddHumanIndex_TextureID = -1;
@@ -74,6 +75,7 @@ ObjectManager::~ObjectManager()
 	if( Human_kill != NULL ){ delete [] Human_kill; }
 	if( Human_headshot != NULL ){ delete [] Human_headshot; }
 	if( Human_ShotFlag != NULL ){ delete [] Human_ShotFlag; }
+	if( BulletObj_HumanIndex != NULL ){ delete [] BulletObj_HumanIndex; }
 }
 
 //! @brief 参照するクラスを設定
@@ -603,6 +605,7 @@ bool ObjectManager::CollideBullet(bullet *in_bullet)
 	//使用されていない弾丸ならば、処理せずに返す。
 	if( in_bullet->GetEnableFlag() == false ){ return false; }
 
+	int objectID;
 	float bx, by, bz;
 	float brx, bry;
 	int attacks;
@@ -625,6 +628,9 @@ bool ObjectManager::CollideBullet(bullet *in_bullet)
 
 	int id, face;
 	float Dist;
+
+	//弾オブジェクトのデータ番号を取得
+	objectID = GetBulletObjectID(in_bullet);
 
 	//弾丸の座標を取得し、ベクトルを算出。
 	in_bullet->GetPosData(&bx, &by, &bz, &brx, &bry);
@@ -674,6 +680,9 @@ bool ObjectManager::CollideBullet(bullet *in_bullet)
 			//使用されていないか、死亡していれば処理しない。
 			if( HumanIndex[i].GetEnableFlag() == false ){ continue; }
 			if( HumanIndex[i].GetHP() <= 0 ){ continue; }
+
+			//既に当たった人なら、処理しない。
+			if( BulletObj_HumanIndex[objectID].GetIndexFlag(i) == true ){ continue; }
 
 			//座標を取得
 			float ox, oy, oz;
@@ -774,6 +783,9 @@ bool ObjectManager::CollideBullet(bullet *in_bullet)
 			//人に当たった処理
 			HitBulletHuman(HumanHead_id, 0, bx + vx*(HumanHead_Dist+TotalDist), by + vy*(HumanHead_Dist+TotalDist), bz + vz*(HumanHead_Dist+TotalDist), brx, attacks, humanid);
 
+			//対人判定用リスト設定
+			BulletObj_HumanIndex[objectID].SetIndexFlag(HumanHead_id);
+
 			//攻撃力と貫通力を計算
 			attacks = (int)((float)attacks * 0.6f);
 			penetration -= 1;
@@ -786,6 +798,9 @@ bool ObjectManager::CollideBullet(bullet *in_bullet)
 			//人に当たった処理
 			HitBulletHuman(HumanUp_id, 1, bx + vx*(HumanUp_Dist+TotalDist), by + vy*(HumanUp_Dist+TotalDist), bz + vz*(HumanUp_Dist+TotalDist), brx, attacks, humanid);
 
+			//対人判定用リスト設定
+			BulletObj_HumanIndex[objectID].SetIndexFlag(HumanUp_id);
+
 			//攻撃力と貫通力を計算
 			attacks = (int)((float)attacks * 0.6f);
 			penetration -= 1;
@@ -797,6 +812,9 @@ bool ObjectManager::CollideBullet(bullet *in_bullet)
 		if( (HumanLeg_Dist <= speed)&&(HumanLeg_Dist < map_Dist)&&(HumanLeg_Dist < HumanHead_Dist)&&(HumanLeg_Dist < HumanUp_Dist)&&(HumanLeg_Dist < SmallObject_Dist) ){
 			//人に当たった処理
 			HitBulletHuman(HumanLeg_id, 2, bx + vx*(HumanLeg_Dist+TotalDist), by + vy*(HumanLeg_Dist+TotalDist), bz + vz*(HumanLeg_Dist+TotalDist), brx, attacks, humanid);
+
+			//対人判定用リスト設定
+			BulletObj_HumanIndex[objectID].SetIndexFlag(HumanLeg_id);
 
 			//攻撃力と貫通力を計算
 			attacks = (int)((float)attacks * 0.7f);
@@ -1500,6 +1518,20 @@ bullet* ObjectManager::GetBulletObject(int id)
 	return &(BulletIndex[id]);
 }
 
+//! @brief 指定したbulletポインタのデータ番号を取得
+//! @param object 弾オブジェクトのポインタ
+//! @return データ番号　（エラー：-1）
+int ObjectManager::GetBulletObjectID(bullet* object)
+{
+	for(int i=0; i<MAX_BULLET; i++){
+		if( &(BulletIndex[i]) == object ){
+			return i;
+		}
+	}
+
+	return -1;
+}
+
 //! @brief 使用されていないbulletクラスを取得
 //! @return 現在未使用の弾オブジェクトのポインタ　（失敗すると NULL）
 bullet* ObjectManager::GetNewBulletObject()
@@ -1722,6 +1754,9 @@ int ObjectManager::ShotWeapon(int human_id)
 			newbullet->SetPosData(pos_x, pos_y + WEAPONSHOT_HEIGHT, pos_z, rx, ry);
 			newbullet->SetParamData(attacks, ParamData.penetration, ParamData.speed * BULLET_SPEEDSCALE, teamid, human_id, true);
 			newbullet->SetEnableFlag(true);
+
+			//対人判定用リスト初期化
+			BulletObj_HumanIndex[ GetBulletObjectID(newbullet) ].Init();
 		}
 		else{
 			//発射する未使用のオブジェクトを取得
@@ -2550,4 +2585,43 @@ void ObjectManager::Cleanup()
 {
 	//ポイントデータ解放
 	CleanupPointDataToObject();
+}
+
+//! @brief コンストラクタ
+BulletObjectHumanIndex::BulletObjectHumanIndex()
+{
+	HumanIndex = new bool[MAX_HUMAN];
+
+	Init();
+}
+
+//! @brief ディストラクタ
+BulletObjectHumanIndex::~BulletObjectHumanIndex()
+{
+	if( HumanIndex == NULL ){ delete [] HumanIndex; }
+}
+
+//! @brief 初期化
+void BulletObjectHumanIndex::Init()
+{
+	for(int i=0; i<MAX_HUMAN; i++){
+		HumanIndex[i] = false;
+	}
+}
+
+//! @brief フラグを取得
+//! @param id 人のデータ番号
+//! @return フラグ値
+bool BulletObjectHumanIndex::GetIndexFlag(int id)
+{
+	if( (id < 0)||(MAX_HUMAN <= id) ){ return false; }
+	return HumanIndex[id];
+}
+
+//! @brief フラグを有効化
+//! @param id 人のデータ番号
+void BulletObjectHumanIndex::SetIndexFlag(int id)
+{
+	if( (id < 0)||(MAX_HUMAN <= id) ){ return; }
+	HumanIndex[id] = true;
 }

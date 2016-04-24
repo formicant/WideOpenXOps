@@ -1292,7 +1292,6 @@ bool maingame::CheckInputControl(int CheckKey, int mode)
 void maingame::Input()
 {
 	time = GetTimeMS();
-	static unsigned int bullettime = 0;
 
 	//プレイヤーのクラスを取得
 	human *myHuman = ObjMgr.GetPlayerHumanObject();
@@ -1438,34 +1437,7 @@ void maingame::Input()
 			}
 
 			if( Camera_Debugmode == true ){		//デバックモードならば
-				//発砲操作かチェック
-				if( CheckInputControl(KEY_Shot, 0) ){
-					//前回の発射より、4フレーム分よりも時間が経っていれば
-					if( bullettime + 4*((int)GAMEFPS) < GetTimeMS() ){
-						float x, y, z, rx, ry;
-						x = camera_x;
-						y = camera_y;
-						z = camera_z;
-						rx = camera_rx;
-						ry = camera_ry;
-
-						//未使用の弾オブジェクトを取得
-						bullet* newbullet = ObjMgr.GetNewBulletObject();
-						if( newbullet != NULL ){
-							//弾オブジェクトを設定
-							newbullet->SetPosData(x, y, z, rx, ry);
-							newbullet->SetParamData(40, 5, 10, 1024, ObjMgr.GetPlayerID(), true);
-							newbullet->SetEnableFlag(true);
-							GameSound->ShotWeapon(x, y, z, 0, 1024, true);
-
-							//スコアに加算
-							MainGameInfo.fire += 1;
-
-							//発射時間を記憶（連射間隔判定用）
-							bullettime = GetTimeMS();
-						}
-					}
-				}
+				//
 			}
 			else{		//デバックモードでなければ
 				HumanParameter humandata;
