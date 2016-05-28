@@ -1348,24 +1348,32 @@ bool human::MapCollisionDetection(class Collision *CollD, class BlockDataInterfa
 
 		//腰付近を当たり判定
 		for(int i=0; i<MAX_BLOCKS; i++){
-			surface = -1;
-			CollD->CheckBlockInside(i, pos_x, pos_y + HUMAN_MAPCOLLISION_HEIGTH, pos_z, false, &surface);
+			float min_x, min_y, min_z, max_x, max_y, max_z;
+			CollD->GetBlockPosMINMAX(i, &min_x, &min_y, &min_z, &max_x, &max_y, &max_z);
 
-			if( surface != -1 ){
-				//HUMAN_MAPCOLLISION_R 分の先を調べる
-				if( CollD->CheckBlockInside(i, pos_x + cos(ang)*HUMAN_MAPCOLLISION_R, pos_y + HUMAN_MAPCOLLISION_HEIGTH, pos_z + sin(ang)*HUMAN_MAPCOLLISION_R, true, NULL) == true ){
-					CollD->ScratchVector(i, surface, move_x, vy, move_z, &move_x, &vy, &move_z);
-				}
+			//腰付近をAABBで荒削り
+			if( CollideBoxAABB(min_x, min_y, min_z, max_x, max_y, max_z,
+				pos_x - HUMAN_MAPCOLLISION_R - 1.0f, pos_y + HUMAN_MAPCOLLISION_HEIGTH - 1.0f, pos_z - HUMAN_MAPCOLLISION_R - 1.0f, pos_x + HUMAN_MAPCOLLISION_R + 1.0f, pos_y + HUMAN_MAPCOLLISION_HEIGTH + 1.0f, pos_z + HUMAN_MAPCOLLISION_R + 1.0f) == true
+			){
+				surface = -1;
+				CollD->CheckBlockInside(i, pos_x, pos_y + HUMAN_MAPCOLLISION_HEIGTH, pos_z, false, &surface);
 
-				//左右90度づつを調べる
-				if( CollD->CheckBlockInside(i, pos_x + cos(ang + (float)M_PI/2)*HUMAN_MAPCOLLISION_R, pos_y + HUMAN_MAPCOLLISION_HEIGTH, pos_z + sin(ang + (float)M_PI/2)*HUMAN_MAPCOLLISION_R, true, NULL) == true ){
-					if( CollD->CheckPolygonFrontRx(i, surface, ang) == true ){		//進行方向に対して表向きなら～
+				if( surface != -1 ){
+					//HUMAN_MAPCOLLISION_R 分の先を調べる
+					if( CollD->CheckBlockInside(i, pos_x + cos(ang)*HUMAN_MAPCOLLISION_R, pos_y + HUMAN_MAPCOLLISION_HEIGTH, pos_z + sin(ang)*HUMAN_MAPCOLLISION_R, true, NULL) == true ){
 						CollD->ScratchVector(i, surface, move_x, vy, move_z, &move_x, &vy, &move_z);
 					}
-				}
-				if( CollD->CheckBlockInside(i, pos_x + cos(ang - (float)M_PI/2)*HUMAN_MAPCOLLISION_R, pos_y + HUMAN_MAPCOLLISION_HEIGTH, pos_z + sin(ang - (float)M_PI/2)*HUMAN_MAPCOLLISION_R, true, NULL) == true ){
-					if( CollD->CheckPolygonFrontRx(i, surface, ang) == true ){		//進行方向に対して表向きなら～
-						CollD->ScratchVector(i, surface, move_x, vy, move_z, &move_x, &vy, &move_z);
+
+					//左右90度づつを調べる
+					if( CollD->CheckBlockInside(i, pos_x + cos(ang + (float)M_PI/2)*HUMAN_MAPCOLLISION_R, pos_y + HUMAN_MAPCOLLISION_HEIGTH, pos_z + sin(ang + (float)M_PI/2)*HUMAN_MAPCOLLISION_R, true, NULL) == true ){
+						if( CollD->CheckPolygonFrontRx(i, surface, ang) == true ){		//進行方向に対して表向きなら～
+							CollD->ScratchVector(i, surface, move_x, vy, move_z, &move_x, &vy, &move_z);
+						}
+					}
+					if( CollD->CheckBlockInside(i, pos_x + cos(ang - (float)M_PI/2)*HUMAN_MAPCOLLISION_R, pos_y + HUMAN_MAPCOLLISION_HEIGTH, pos_z + sin(ang - (float)M_PI/2)*HUMAN_MAPCOLLISION_R, true, NULL) == true ){
+						if( CollD->CheckPolygonFrontRx(i, surface, ang) == true ){		//進行方向に対して表向きなら～
+							CollD->ScratchVector(i, surface, move_x, vy, move_z, &move_x, &vy, &move_z);
+						}
 					}
 				}
 			}
