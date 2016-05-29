@@ -1706,77 +1706,100 @@ int ObjectManager::ShotWeapon(int human_id)
 	//武器の情報を取得
 	if( GameParamInfo->GetWeapon(weapon_paramid, &ParamData) != 0 ){ return 0; }
 
+	//手榴弾か判定
+	if( weapon_paramid == ID_WEAPON_GRENADE ){ grenadeflag = true; }
+	else{ grenadeflag = false; }
+
 	//誤差の範囲を計算
 	int ErrorRange;
 	ErrorRange = GunsightErrorRange;
 	if( ErrorRange < ParamData.ErrorRangeMIN ){ ErrorRange = ParamData.ErrorRangeMIN; }
 
-	//手榴弾か判定
-	if( weapon_paramid == ID_WEAPON_GRENADE ){ grenadeflag = true; }
-	else{ grenadeflag = false; }
+	//発射角度（誤差ゼロのベース）を決定
+	float rx, ry;
+	rx = rotation_x*-1 + (float)M_PI/2;
+	ry = armrotation_y;
 
-	class bullet* newbullet;
-	class grenade* newgrenade;
+	//誤差を決定
+	int ErrorRange_x, ErrorRange_y;
+	if( (ErrorRange - ParamData.ErrorRangeMIN) == 0 ){
+		ErrorRange_x = ErrorRange;
+		ErrorRange_y = ErrorRange;
+	}
+	else{
+		ErrorRange_x = GetRand(ErrorRange - ParamData.ErrorRangeMIN) + ParamData.ErrorRangeMIN;
+		ErrorRange_y = GetRand(ErrorRange - ParamData.ErrorRangeMIN) + ParamData.ErrorRangeMIN;
+	}
+	if( GetRand(2) == 0 ){ ErrorRange_x *= -1; }
+	if( GetRand(2) == 0 ){ ErrorRange_y *= -1; }
 
-	//（ショットガンなど）発射する弾の数分繰り返す
-	for(int i=0; i<ParamData.burst; i++){
-		//発射角度を決定
-		float rx, ry;
-		rx = rotation_x*-1 + (float)M_PI/2;
-		ry = armrotation_y;
+	//発射誤差の角度を求める
+	float a, r;
+	a = atan2((float)ErrorRange_y, (float)ErrorRange_x);
+	r = sqrt((float)(ErrorRange_x*ErrorRange_x + ErrorRange_y*ErrorRange_y));
 
-		//誤差分 加算する
-		float a;
-		a = DegreeToRadian(1) * GetRand(360);
-		rx += cos(a)*ErrorRange * DegreeToRadian(0.15f);
-		ry += sin(a)*ErrorRange * DegreeToRadian(0.15f);
+	//誤差分　角度に加算
+	rx += cos(a)*r * DegreeToRadian(0.15f);
+	ry += sin(a)*r * DegreeToRadian(0.15f);
 
-		//手榴弾でなければ
-		if( grenadeflag == false ){
+	//手榴弾でなければ
+	if( grenadeflag == false ){
+		class bullet* newbullet;
+
+		//（ショットガンなど）発射する弾の数分繰り返す
+		for(int i=0; i<ParamData.burst; i++){
 			int attacks;
+			float rx2, ry2;
 
 			//（ショットガンなど）発射する弾が複数あれば
 			if( ParamData.burst > 1 ){
 				//1個の弾当たりの攻撃力を算出
 				//　　全弾合わせて、攻撃力の2倍になるようにする。
 				attacks = (int)( (float)ParamData.attacks / ((float)ParamData.burst/2) );
+
+				//さらに誤差を増やして拡散させる
+				int len;
+				a = DegreeToRadian(10) * GetRand(36);
+				len = GetRand(5)*2+5;
+				rx2 = rx + cos(a)*len * DegreeToRadian(0.15f);
+				ry2 = ry + sin(a)*len * DegreeToRadian(0.15f);
 			}
 			else{
 				//そのまま攻撃力へ反映
 				attacks = ParamData.attacks;
+
+				//発射誤差はそのまま
+				rx2 = rx;
+				ry2 = ry;
 			}
 
 			//発射する未使用のオブジェクトを取得
 			newbullet = GetNewBulletObject();
-			if( newbullet == NULL ){ break; }
+			if( newbullet == NULL ){ return 0; }
 
 			//銃弾を発射
-			newbullet->SetPosData(pos_x, pos_y + WEAPONSHOT_HEIGHT, pos_z, rx, ry);
+			newbullet->SetPosData(pos_x, pos_y + WEAPONSHOT_HEIGHT, pos_z, rx2, ry2);
 			newbullet->SetParamData(attacks, ParamData.penetration, ParamData.speed * BULLET_SPEEDSCALE, teamid, human_id, true);
 			newbullet->SetEnableFlag(true);
 
 			//対人判定用リスト初期化
 			BulletObj_HumanIndex[ GetBulletObjectID(newbullet) ].Init();
 		}
-		else{
-			//発射する未使用のオブジェクトを取得
-			newgrenade = GetNewGrenadeObject();
-			if( newgrenade == NULL ){ break; }
 
-			//手榴弾発射
-			newgrenade->SetPosData(pos_x, pos_y + WEAPONSHOT_HEIGHT, pos_z, rx, ry);
-			newgrenade->SetParamData(8.0f, human_id, true);
-			newgrenade->SetEnableFlag(true);
-		}
-
-		//誤差を加算（ショットガン用）
-		ErrorRange += ParamData.ErrorRangeMIN;
-	}
-
-	//手榴弾でなければ
-	if( grenadeflag == false ){
 		//発砲フラグを設定
 		Human_ShotFlag[human_id] = true;
+	}
+	else{
+		class grenade* newgrenade;
+
+		//発射する未使用のオブジェクトを取得
+		newgrenade = GetNewGrenadeObject();
+		if( newgrenade == NULL ){ return 0; }
+
+		//手榴弾発射
+		newgrenade->SetPosData(pos_x, pos_y + WEAPONSHOT_HEIGHT, pos_z, rx, ry);
+		newgrenade->SetParamData(8.0f, human_id, true);
+		newgrenade->SetEnableFlag(true);
 	}
 
 	if( ParamData.soundvolume > 0 ){
