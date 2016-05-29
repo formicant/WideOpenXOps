@@ -1333,7 +1333,7 @@ bool Get2DLineInBox(int line_x1, int line_y1, int line_x2, int line_y2, int box_
 	if( (line_x1 < box_x1)&&(line_x2 < box_x1) ){ return false; }
 	if( (line_y1 < box_y1)&&(line_y2 < box_y1) ){ return false; }
 	if( (box_x2 < line_x1)&&(box_x2 < line_x2) ){ return false; }
-	if( (box_y2 < line_x1)&&(box_y2 < line_x2) ){ return false; }
+	if( (box_y2 < line_y1)&&(box_y2 < line_y2) ){ return false; }
 
 	//Šù‚ÉlŠpŒ`‚Éû‚Ü‚é
 	if( (box_x1 <= line_x1)&&(line_x1 <= box_x2)&&(box_y1 <= line_y1)&&(line_y1 <= box_y2) ){
