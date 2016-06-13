@@ -2621,7 +2621,7 @@ BulletObjectHumanIndex::BulletObjectHumanIndex()
 //! @brief ディストラクタ
 BulletObjectHumanIndex::~BulletObjectHumanIndex()
 {
-	if( HumanIndex == NULL ){ delete [] HumanIndex; }
+	if( HumanIndex != NULL ){ delete [] HumanIndex; }
 }
 
 //! @brief 初期化
