@@ -56,6 +56,10 @@ WindowControl MainWindow;
 //! @brief WinMain()ŠÖ”
 int WINAPI WinMain(HINSTANCE hInstance,	HINSTANCE hPrevInstance, LPSTR lpCmdLine, int nCmdShow)
 {
+	//–¢g—pˆø”‘Îô
+	UNREFERENCED_PARAMETER(hInstance);
+	UNREFERENCED_PARAMETER(lpCmdLine);
+
 	//—”‰Šú‰»
 	InitRand();
 

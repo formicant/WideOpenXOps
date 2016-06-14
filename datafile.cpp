@@ -46,6 +46,9 @@ DataInterface::~DataInterface()
 //! @return 成功：0　失敗：1
 int DataInterface::LoadFiledata(char *fname)
 {
+	//未使用引数対策
+	UNREFERENCED_PARAMETER(fname);
+
 	return 0;
 }
 
@@ -62,6 +65,10 @@ int DataInterface::GetTotaldatas()
 //! @return 成功：0　失敗：0以外
 int DataInterface::Getdata(void *out_data, int id)
 {
+	//未使用引数対策
+	UNREFERENCED_PARAMETER(out_data);
+	UNREFERENCED_PARAMETER(id);
+
 	return 0;
 }
 

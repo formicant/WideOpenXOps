@@ -81,6 +81,11 @@
  int _matherr(struct _exception  *__e) { return 1; }
 #endif
 
+//未使用引数の対策用マクロ
+#ifndef MAIN_H
+ #define UNREFERENCED_PARAMETER(P) ((P)=(P))
+#endif
+
 #define SetFlag(value, bit) value = value | bit		//!< ビットによるフラグ 設定
 #define DelFlag(value, bit) value = value & (~bit)	//!< ビットによるフラグ 解除
 #define GetFlag(value, bit) (value & bit)			//!< ビットによるフラグ 取得

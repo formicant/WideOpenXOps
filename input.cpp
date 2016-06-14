@@ -553,6 +553,9 @@ bool GetDoubleKeyCode(int id, int *CodeL, int *CodeR)
 		*CodeR = DIK_RCONTROL;
 		return true;
 	}
+#else
+	//未使用引数対策
+	UNREFERENCED_PARAMETER(id);
 #endif
 
 	//エラー
