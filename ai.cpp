@@ -38,30 +38,31 @@ AIcontrol::AIcontrol(class ObjectManager *in_ObjMgr, int in_ctrlid, class BlockD
 	ctrlid = in_ctrlid;
 	ctrlhuman = in_ObjMgr->GeHumanObject(in_ctrlid);
 	blocks = in_blocks;
-	Points = in_Points;
 	Param = in_Param;
 	CollD = in_CollD;
 	GameSound = in_GameSound;
 
 	battlemode = AI_NORMAL;
-	movemode = AI_WAIT;
-	addrx = 0.0f;
-	addry = 0.0f;
-	target_pointid = -1;
-	target_posx = 0.0f;
-	target_posz = 0.0f;
-	target_rx = 0.0f;
+	cautionback_posx = 0.0f;
+	cautionback_posz = 0.0f;
 	total_move = 0.0f;
 	waitcnt = 0;
 	movejumpcnt = 1*((int)GAMEFPS);
 	gotocnt = 0;
-	moveturn_mode = 0;
 	longattack = false;
+
+	MoveNavi = new AIMoveNavi;
+	ObjDriver = new AIObjectDriver;
+	MoveNavi->SetClass(in_ObjMgr, in_ctrlid, in_Points);
+	ObjDriver->SetClass(in_ObjMgr, in_ctrlid);
 }
 
 //! @brief ディストラクタ
 AIcontrol::~AIcontrol()
-{}
+{
+	delete MoveNavi;
+	delete ObjDriver;
+}
 
 //! @brief 対象クラスを設定
 //! @attention この関数で設定を行わないと、クラス自体が正しく機能しません。
@@ -71,43 +72,35 @@ void AIcontrol::SetClass(class ObjectManager *in_ObjMgr, int in_ctrlid, class Bl
 	ctrlid = in_ctrlid;
 	ctrlhuman = in_ObjMgr->GeHumanObject(in_ctrlid);
 	blocks = in_blocks;
-	Points = in_Points;
 	Param = in_Param;
 	CollD = in_CollD;
 	GameSound = in_GameSound;
-}
 
-//! @brief 人を検索
-//! @param in_p4 検索する人の第4パラメータ（認識番号）
-//! @param out_x X座標を受け取るポインタ
-//! @param out_z Z座標を受け取るポインタ
-//! @return 成功：1　失敗：0
-int AIcontrol::SearchHumanPos(signed char in_p4, float *out_x, float *out_z)
-{
-	float x, z;
-	human* thuman;
-
-	//人を検索してクラスを取得
-	thuman = ObjMgr->SearchHuman(in_p4);
-	if( thuman == NULL ){ return 0; }
-
-	//X・Z座標を取得
-	thuman->GetPosData(&x, NULL, &z, NULL);
-	*out_x = x;
-	*out_z = z;
-	return 1;
+	MoveNavi->SetClass(in_ObjMgr, in_ctrlid, in_Points);
+	ObjDriver->SetClass(in_ObjMgr, in_ctrlid);
 }
 
 //! @brief 目標地点に移動しているか確認
 //! @return 到達：true　非到達：false
-bool AIcontrol::CheckTargetPos()
+bool AIcontrol::CheckTargetPos(bool back)
 {
+	float target_posx, target_posz;
+	int movemode;
+	if( back == false ){
+		MoveNavi->GetTargetPos(&target_posx, &target_posz, NULL, &movemode, NULL);
+	}
+	else{
+		target_posx = cautionback_posx;
+		target_posz = cautionback_posz;
+		movemode = AI_NAVI_MOVE_RUN;
+	}
+
 	//距離を算出
 	float x = posx - target_posx;
 	float z = posz - target_posz;
 	float r = x * x + z * z;
 
-	if( movemode == AI_TRACKING ){	//追尾中なら
+	if( movemode == AI_NAVI_MOVE_TRACKING ){	//追尾中なら
 		if( r < AI_ARRIVALDIST_TRACKING * AI_ARRIVALDIST_TRACKING ){
 			return true;
 		}
@@ -121,104 +114,24 @@ bool AIcontrol::CheckTargetPos()
 	return false;
 }
 
-//! @brief 目標地点を検索
-//! @param next 次を検索する
-//! @return 完了：true　失敗：false
-bool AIcontrol::SearchTarget(bool next)
-{
-	//ポイントの情報を取得
-	pointdata pdata;
-	if( Points->Getdata(&pdata, target_pointid) != 0 ){
-		movemode = AI_NULL;
-		return false;
-	}
-
-	signed char nextpointp4;
-
-	//次のポイントを検索するなら
-	if( next == true ){
-		nextpointp4 = pdata.p3;
-
-		//ランダムパス処理
-		if( pdata.p1 == 8 ){
-			if( GetRand(2) == 0 ){
-				nextpointp4 = pdata.p2;
-			}
-			else{
-				nextpointp4 = pdata.p3;
-			}
-			movemode = AI_RANDOM;
-		}
-
-		//ポイントを検索
-		if( Points->SearchPointdata(&pdata, 0x08, 0, 0, 0, nextpointp4, 0) == 0 ){
-			return false;
-		}
-	}
-
-	//ランダムパスなら次へ
-	if( pdata.p1 == 8 ){
-		target_pointid = pdata.id;
-		movemode = AI_RANDOM;
-		return false;
-	}
-
-	//人なら座標を取得
-	if( (pdata.p1 == 1)||(pdata.p1 == 6) ){
-		SearchHumanPos(pdata.p4, &target_posx, &target_posz);
-		movemode = AI_TRACKING;
-		return true;
-	}
-
-	//移動パスなら～
-	if( pdata.p1 == 3 ){
-		//情報適用
-		target_pointid = pdata.id;
-		target_posx = pdata.x;
-		target_posz = pdata.z;
-		target_rx = pdata.r;
-
-		//移動ステート設定
-		switch(pdata.p2){
-			case 0: movemode = AI_WALK; break;
-			case 1: movemode = AI_RUN; break;
-			case 2: movemode = AI_WAIT; break;
-			case 3:
-				movemode = AI_TRACKING;
-				if( next == true ){
-					nextpointp4 = pdata.p3;
-
-					//ポイント（人）の情報を取得
-					if( Points->SearchPointdata(&pdata, 0x08, 0, 0, 0, nextpointp4, 0) == 0 ){
-						return false;
-					}
-
-					//情報保存
-					target_pointid = pdata.id;
-					target_posx = pdata.x;
-					target_posz = pdata.z;
-				}
-				break;
-			case 4: movemode = AI_WAIT; break;
-			case 5: movemode = AI_STOP; break;
-			case 6: movemode = AI_GRENADE; break;
-			case 7: movemode = AI_RUN2; break;
-			default: break;
-		}
-		return true;
-	}
-	
-	movemode = AI_NULL;
-	return false;
-}
-
 //! @brief 目標地点に移動
-void AIcontrol::MoveTarget()
+void AIcontrol::MoveTarget(bool back)
 {
 	float r, atan;
 	int paramid;
 	HumanParameter Paraminfo;
 	bool zombie;
+
+	float target_posx, target_posz;	
+	int movemode;
+	if( back == false ){
+		MoveNavi->GetTargetPos(&target_posx, &target_posz, NULL, &movemode, NULL);
+	}
+	else{
+		target_posx = cautionback_posx;
+		target_posz = cautionback_posz;
+		movemode = AI_NAVI_MOVE_RUN;
+	}
 
 	//ゾンビかどうか判定
 	ctrlhuman->GetParamData(&paramid, NULL, NULL, NULL);
@@ -231,52 +144,47 @@ void AIcontrol::MoveTarget()
 	}
 
 	//一度全ての動きを止める
-	moveturn_mode = 0;
+	ObjDriver->ResetMode();
 
 	//目標地点への角度を求める
 	CheckTargetAngle(posx, 0.0f, posz, rx*-1 + (float)M_PI/2, 0.0f, target_posx, 0.0f, target_posz, 0.0f, &atan, NULL, &r);
 
 	//旋回
 	if( atan > DegreeToRadian(0.5f) ){
-		SetFlag(moveturn_mode, AI_CTRL_TURNLEFT);
+		ObjDriver->SetModeFlag(AI_CTRL_TURNLEFT);
 	}
 	if( atan < DegreeToRadian(-0.5f) ){
-		SetFlag(moveturn_mode, AI_CTRL_TURNRIGHT);
+		ObjDriver->SetModeFlag(AI_CTRL_TURNRIGHT);
 	}
 
 	//前進する
 	if( zombie == true ){
 		if( fabs(atan) < DegreeToRadian(20) ){
-			SetFlag(moveturn_mode, AI_CTRL_MOVEWALK);
+			ObjDriver->SetModeFlag(AI_CTRL_MOVEWALK);
 		}
 	}
-	else if( battlemode == AI_CAUTION ){
+	else if( movemode == AI_NAVI_MOVE_RUN ){
 		if( fabs(atan) < DegreeToRadian(50) ){
-			SetFlag(moveturn_mode, AI_CTRL_MOVEFORWARD);
+			ObjDriver->SetModeFlag(AI_CTRL_MOVEFORWARD);
 		}
 	}
-	else if( movemode == AI_WALK ){
-		if( fabs(atan) < DegreeToRadian(6) ){
-			SetFlag(moveturn_mode, AI_CTRL_MOVEWALK);
-		}
-	}
-	else if( (movemode == AI_RUN)||(movemode == AI_RUN2) ){
+	else if( movemode == AI_NAVI_MOVE_RUN2 ){
 		if( fabs(atan) < DegreeToRadian(50) ){
-			SetFlag(moveturn_mode, AI_CTRL_MOVEFORWARD);
+			ObjDriver->SetModeFlag(AI_CTRL_MOVEFORWARD);
 		}
 	}
-	else if( (movemode == AI_WAIT)||(movemode == AI_STOP) ){
+	else if( movemode == AI_NAVI_MOVE_WALK ){
 		if( fabs(atan) < DegreeToRadian(6) ){
-			SetFlag(moveturn_mode, AI_CTRL_MOVEWALK);
+			ObjDriver->SetModeFlag(AI_CTRL_MOVEWALK);
 		}
 	}
-	else{	//movemode == AI_TRACKING
+	else if( movemode == AI_NAVI_MOVE_TRACKING ){
 		if( fabs(atan) < DegreeToRadian(20) ){
 			if( r < (AI_ARRIVALDIST_WALKTRACKING * AI_ARRIVALDIST_WALKTRACKING) ){
-				SetFlag(moveturn_mode, AI_CTRL_MOVEWALK);
+				ObjDriver->SetModeFlag(AI_CTRL_MOVEWALK);
 			}
 			else{
-				SetFlag(moveturn_mode, AI_CTRL_MOVEFORWARD);
+				ObjDriver->SetModeFlag(AI_CTRL_MOVEFORWARD);
 			}
 		}
 	}
@@ -290,8 +198,8 @@ void AIcontrol::MoveTarget()
 	if( GetRand(28) == 0 ){
 		if( ctrlhuman->GetMovemode(true) != 0 ){
 			if( ctrlhuman->GetTotalMove() - total_move < 0.1f ){
-				if( GetRand(2) == 0 ){ SetFlag(moveturn_mode, AI_CTRL_TURNRIGHT); }
-				else{ SetFlag(moveturn_mode, AI_CTRL_TURNLEFT); }
+				if( GetRand(2) == 0 ){ ObjDriver->SetModeFlag(AI_CTRL_TURNRIGHT); }
+				else{ ObjDriver->SetModeFlag(AI_CTRL_TURNLEFT); }
 			}
 		}
 	}
@@ -299,27 +207,36 @@ void AIcontrol::MoveTarget()
 }
 
 //! @brief 目標地点に移動（優先的な走り用）
-void AIcontrol::MoveTarget2()
+void AIcontrol::MoveTarget2(bool back)
 {
 	float atan;
+
+	float target_posx, target_posz;	
+	if( back == false ){
+		MoveNavi->GetTargetPos(&target_posx, &target_posz, NULL, NULL, NULL);
+	}
+	else{
+		target_posx = cautionback_posx;
+		target_posz = cautionback_posz;
+	}
 
 	//目標地点への角度を求める
 	CheckTargetAngle(posx, 0.0f, posz, rx*-1 + (float)M_PI/2, 0.0f, target_posx, 0.0f, target_posz, 0.0f, &atan, NULL, NULL);
 
 	//前後移動の処理
 	if( fabs(atan) < DegreeToRadian(56) ){
-		SetFlag(moveturn_mode, AI_CTRL_MOVEFORWARD);
+		ObjDriver->SetModeFlag(AI_CTRL_MOVEFORWARD);
 	}
 	if( fabs(atan) > DegreeToRadian(123.5f) ){
-		SetFlag(moveturn_mode, AI_CTRL_MOVEBACKWARD);
+		ObjDriver->SetModeFlag(AI_CTRL_MOVEBACKWARD);
 	}
 
 	//左右移動の処理
 	if( (DegreeToRadian(-146) < atan)&&(atan < DegreeToRadian(-33)) ){
-		SetFlag(moveturn_mode, AI_CTRL_TURNRIGHT);
+		ObjDriver->SetModeFlag(AI_CTRL_TURNRIGHT);
 	}
 	if( (DegreeToRadian(33) < atan)&&(atan < DegreeToRadian(146)) ){
-		SetFlag(moveturn_mode, AI_CTRL_TURNLEFT);
+		ObjDriver->SetModeFlag(AI_CTRL_TURNLEFT);
 	}
 
 	//ジャンプ
@@ -331,8 +248,8 @@ void AIcontrol::MoveTarget2()
 	if( GetRand(28) == 0 ){
 		if( ctrlhuman->GetMovemode(true) != 0 ){
 			if( ctrlhuman->GetTotalMove() - total_move < 0.1f ){
-				if( GetRand(2) == 0 ){ SetFlag(moveturn_mode, AI_CTRL_TURNRIGHT); }
-				else{ SetFlag(moveturn_mode, AI_CTRL_TURNLEFT); }
+				if( GetRand(2) == 0 ){ ObjDriver->SetModeFlag(AI_CTRL_TURNRIGHT); }
+				else{ ObjDriver->SetModeFlag(AI_CTRL_TURNLEFT); }
 			}
 		}
 	}
@@ -357,28 +274,28 @@ void AIcontrol::MoveRandom()
 
 	//ランダムに移動を始める
 	if( GetRand(forwardstart) == 0 ){
-		SetFlag(moveturn_mode, AI_CTRL_MOVEFORWARD);
+		ObjDriver->SetModeFlag(AI_CTRL_MOVEFORWARD);
 	}
 	if( GetRand(backstart) == 0 ){
-		SetFlag(moveturn_mode, AI_CTRL_MOVEBACKWARD);
+		ObjDriver->SetModeFlag(AI_CTRL_MOVEBACKWARD);
 	}
 	if( GetRand(sidestart) == 0 ){
-		SetFlag(moveturn_mode, AI_CTRL_MOVELEFT);
+		ObjDriver->SetModeFlag(AI_CTRL_MOVELEFT);
 	}
 	if( GetRand(sidestart) == 0 ){
-		SetFlag(moveturn_mode, AI_CTRL_MOVERIGHT);
+		ObjDriver->SetModeFlag(AI_CTRL_MOVERIGHT);
 	}
 
 	//武器を持っておらず、手ぶらならば
 	if( ctrlhuman->GetMainWeaponTypeNO() == ID_WEAPON_NONE ){
 		// 1/80の確率で下がり始める
 		if( GetRand(80) == 0 ){
-			SetFlag(moveturn_mode, AI_CTRL_MOVEBACKWARD);
+			ObjDriver->SetModeFlag(AI_CTRL_MOVEBACKWARD);
 		}
 	}
 
 	// 1/3の確率か、移動フラグが設定されていたら
-	if( (GetRand(3) == 0)||(GetFlag(moveturn_mode, (AI_CTRL_MOVEFORWARD | AI_CTRL_MOVEBACKWARD | AI_CTRL_MOVELEFT | AI_CTRL_MOVERIGHT))) ){
+	if( (GetRand(3) == 0)||(ObjDriver->GetModeFlag(AI_CTRL_MOVEFORWARD | AI_CTRL_MOVEBACKWARD | AI_CTRL_MOVELEFT | AI_CTRL_MOVERIGHT)) ){
 		float vx, vz;
 		float Dist;
 
@@ -391,8 +308,8 @@ void AIcontrol::MoveRandom()
 				(CollD->CheckALLBlockIntersectDummyRay(posx, posy - 1.0f, posz, vx, 0, vz, NULL, NULL, &Dist, HUMAN_MAPCOLLISION_R) == false)							//足元にブロックがない（落ちる）
 			){
 				//前進フラグを削除し、後退フラグを設定
-				DelFlag(moveturn_mode, AI_CTRL_MOVEFORWARD);
-				SetFlag(moveturn_mode, AI_CTRL_MOVEBACKWARD);
+				ObjDriver->DelModeFlag(AI_CTRL_MOVEFORWARD);
+				ObjDriver->SetModeFlag(AI_CTRL_MOVEBACKWARD);
 			}
 
 			//後方向のベクトルを計算
@@ -403,8 +320,8 @@ void AIcontrol::MoveRandom()
 				(CollD->CheckALLBlockIntersectDummyRay(posx, posy - 1.0f, posz, vx, 0, vz, NULL, NULL, &Dist, HUMAN_MAPCOLLISION_R) == false)							//足元にブロックがない（落ちる）
 			){
 				//後退フラグを削除し、前進フラグを設定
-				DelFlag(moveturn_mode, AI_CTRL_MOVEBACKWARD);
-				SetFlag(moveturn_mode, AI_CTRL_MOVEFORWARD);
+				ObjDriver->DelModeFlag(AI_CTRL_MOVEBACKWARD);
+				ObjDriver->SetModeFlag(AI_CTRL_MOVEFORWARD);
 			}
 		}
 		else{
@@ -416,8 +333,8 @@ void AIcontrol::MoveRandom()
 				(CollD->CheckALLBlockIntersectDummyRay(posx, posy - 1.0f, posz, vx, 0, vz, NULL, NULL, &Dist, HUMAN_MAPCOLLISION_R) == false)							//足元にブロックがない（落ちる）
 			){
 				//右移動フラグを削除し、左移動フラグを設定
-				DelFlag(moveturn_mode, AI_CTRL_MOVERIGHT);
-				SetFlag(moveturn_mode, AI_CTRL_MOVELEFT);
+				ObjDriver->DelModeFlag(AI_CTRL_MOVERIGHT);
+				ObjDriver->SetModeFlag(AI_CTRL_MOVELEFT);
 			}
 
 			vx = cos(rx*-1 + (float)M_PI);
@@ -427,8 +344,8 @@ void AIcontrol::MoveRandom()
 				(CollD->CheckALLBlockIntersectDummyRay(posx, posy - 1.0f, posz, vx, 0, vz, NULL, NULL, &Dist, HUMAN_MAPCOLLISION_R) == false)							//足元にブロックがない（落ちる）
 			){
 				//左移動フラグを削除し、右移動フラグを設定
-				DelFlag(moveturn_mode, AI_CTRL_MOVELEFT);
-				SetFlag(moveturn_mode, AI_CTRL_MOVERIGHT);
+				ObjDriver->DelModeFlag(AI_CTRL_MOVELEFT);
+				ObjDriver->SetModeFlag(AI_CTRL_MOVERIGHT);
 			}
 		}
 	}
@@ -446,9 +363,9 @@ void AIcontrol::MoveRandom()
 
 		//敵に近づきすぎたなら後退する
 		if( r < 20.0f * 20.0f ){
-			DelFlag(moveturn_mode, AI_CTRL_MOVEFORWARD);
+			ObjDriver->DelModeFlag(AI_CTRL_MOVEFORWARD);
 			if( GetRand(70) == 0 ){
-				SetFlag(moveturn_mode, AI_CTRL_MOVEBACKWARD);
+				ObjDriver->SetModeFlag(AI_CTRL_MOVEBACKWARD);
 			}
 		}
 	}
@@ -459,6 +376,10 @@ void AIcontrol::TurnSeen()
 {
 	int turnstart, turnstop;
 
+	float target_rx;
+	int pointmode;
+	MoveNavi->GetTargetPos(NULL, NULL, &target_rx, NULL, &pointmode);
+
 	//回転の開始・終了確率を設定
 	if( battlemode == AI_ACTION ){
 		return;
@@ -468,20 +389,20 @@ void AIcontrol::TurnSeen()
 		turnstop = 20;
 	}
 	else{
-		if( movemode == AI_TRACKING ){ turnstart = 65; }
+		if( pointmode == AI_NAVI_POINT_TRACKING ){ turnstart = 65; }
 		else{ turnstart = 85; }
 		turnstop = 18;
 	}
 
 	//ランダムに回転を始める
 	if( GetRand(turnstart) == 0 ){
-		SetFlag(moveturn_mode, AI_CTRL_TURNRIGHT);
+		ObjDriver->SetModeFlag(AI_CTRL_TURNRIGHT);
 	}
 	if( GetRand(turnstart) == 0 ){
-		SetFlag(moveturn_mode, AI_CTRL_TURNLEFT);
+		ObjDriver->SetModeFlag(AI_CTRL_TURNLEFT);
 	}
 
-	if( (battlemode == AI_NORMAL)&&(movemode == AI_WAIT) ){
+	if( (battlemode == AI_NORMAL)&&(pointmode == AI_NAVI_POINT_WAIT) ){
 		//ランダムにポイントの方を向こうとする
 		//「ポイントの方向を少し重視する」の再現 
 		if( GetRand(80) == 0 ){
@@ -491,20 +412,20 @@ void AIcontrol::TurnSeen()
 			for(; tr < (float)M_PI*-1; tr += (float)M_PI*2){}
 
 			if( tr > 0.0f ){
-				SetFlag(moveturn_mode, AI_CTRL_TURNRIGHT);
+				ObjDriver->SetModeFlag(AI_CTRL_TURNRIGHT);
 			}
 			if( tr < 0.0f ){
-				SetFlag(moveturn_mode, AI_CTRL_TURNLEFT);
+				ObjDriver->SetModeFlag(AI_CTRL_TURNLEFT);
 			}
 		}
 	}
 
 	//回転をランダムに止める
 	if( GetRand(turnstop) == 0 ){
-		DelFlag(moveturn_mode, AI_CTRL_TURNRIGHT);
+		ObjDriver->DelModeFlag(AI_CTRL_TURNRIGHT);
 	}
 	if( GetRand(turnstop) == 0 ){
-		DelFlag(moveturn_mode, AI_CTRL_TURNLEFT);
+		ObjDriver->DelModeFlag(AI_CTRL_TURNLEFT);
 	}
 }
 
@@ -514,20 +435,23 @@ bool AIcontrol::StopSeen()
 	float tr;
 	bool returnflag = false;
 
+	float target_rx;
+	MoveNavi->GetTargetPos(NULL, NULL, &target_rx, NULL, NULL);
+
 	tr = target_rx - rx;
 	for(; tr > (float)M_PI; tr -= (float)M_PI*2){}
 	for(; tr < (float)M_PI*-1; tr += (float)M_PI*2){}
 
-	DelFlag(moveturn_mode, AI_CTRL_TURNRIGHT);
-	DelFlag(moveturn_mode, AI_CTRL_TURNLEFT);
+	ObjDriver->DelModeFlag(AI_CTRL_TURNRIGHT);
+	ObjDriver->DelModeFlag(AI_CTRL_TURNLEFT);
 
 	//旋回
 	if( tr > DegreeToRadian(2.5f) ){
-		SetFlag(moveturn_mode, AI_CTRL_TURNRIGHT);
+		ObjDriver->SetModeFlag(AI_CTRL_TURNRIGHT);
 		returnflag = false;
 	}
 	if( tr < DegreeToRadian(-2.5f) ){
-		SetFlag(moveturn_mode, AI_CTRL_TURNLEFT);
+		ObjDriver->SetModeFlag(AI_CTRL_TURNLEFT);
 		returnflag = false;
 	}
 
@@ -650,12 +574,12 @@ void AIcontrol::Action()
 	if( randr != 0 ){
 		//旋回
 		if( atanx > 0.0f ){
-			SetFlag(moveturn_mode, AI_CTRL_TURNLEFT);
-			DelFlag(moveturn_mode, AI_CTRL_TURNRIGHT);
+			ObjDriver->SetModeFlag(AI_CTRL_TURNLEFT);
+			ObjDriver->DelModeFlag(AI_CTRL_TURNRIGHT);
 		}
 		if( atanx < 0.0f ){
-			SetFlag(moveturn_mode, AI_CTRL_TURNRIGHT);
-			DelFlag(moveturn_mode, AI_CTRL_TURNLEFT);
+			ObjDriver->SetModeFlag(AI_CTRL_TURNRIGHT);
+			ObjDriver->DelModeFlag(AI_CTRL_TURNLEFT);
 		}
 
 		//腕の角度
@@ -664,12 +588,12 @@ void AIcontrol::Action()
 
 			//旋回
 			if( ry < 0.0f ){
-				SetFlag(moveturn_mode, AI_CTRL_TURNUP);
-				DelFlag(moveturn_mode, AI_CTRL_TURNDOWN);
+				ObjDriver->SetModeFlag(AI_CTRL_TURNUP);
+				ObjDriver->DelModeFlag(AI_CTRL_TURNDOWN);
 			}
 			if( ry > 0.0f ){
-				SetFlag(moveturn_mode, AI_CTRL_TURNDOWN);
-				DelFlag(moveturn_mode, AI_CTRL_TURNUP);
+				ObjDriver->SetModeFlag(AI_CTRL_TURNDOWN);
+				ObjDriver->DelModeFlag(AI_CTRL_TURNUP);
 			}
 		}
 		else{
@@ -677,24 +601,24 @@ void AIcontrol::Action()
 			if( weaponid == ID_WEAPON_NONE ){
 				if( EnemyHuman->GetMainWeaponTypeNO() == ID_WEAPON_NONE ){	//敵も手ぶらならば～
 					//下に向け続ける
-					SetFlag(moveturn_mode, AI_CTRL_TURNDOWN);
-					DelFlag(moveturn_mode, AI_CTRL_TURNUP);
+					ObjDriver->SetModeFlag(AI_CTRL_TURNDOWN);
+					ObjDriver->DelModeFlag(AI_CTRL_TURNUP);
 				}
 				else{														//敵が武器を持っていれば～
 					//上に向け続ける
-					SetFlag(moveturn_mode, AI_CTRL_TURNUP);
-					DelFlag(moveturn_mode, AI_CTRL_TURNDOWN);
+					ObjDriver->SetModeFlag(AI_CTRL_TURNUP);
+					ObjDriver->DelModeFlag(AI_CTRL_TURNDOWN);
 				}
 			}
 			else{
 				//旋回
 				if( atany > 0.0f ){
-					SetFlag(moveturn_mode, AI_CTRL_TURNUP);
-					DelFlag(moveturn_mode, AI_CTRL_TURNDOWN);
+					ObjDriver->SetModeFlag(AI_CTRL_TURNUP);
+					ObjDriver->DelModeFlag(AI_CTRL_TURNDOWN);
 				}
 				if( atany < 0.0f ){
-					SetFlag(moveturn_mode, AI_CTRL_TURNDOWN);
-					DelFlag(moveturn_mode, AI_CTRL_TURNUP);
+					ObjDriver->SetModeFlag(AI_CTRL_TURNDOWN);
+					ObjDriver->DelModeFlag(AI_CTRL_TURNUP);
 				}
 			}
 		}
@@ -705,7 +629,7 @@ void AIcontrol::Action()
 		if( weaponid == ID_WEAPON_NONE ){
 			//一定の確率で後退する
 			if( GetRand(80) == 0 ){
-				SetFlag(moveturn_mode, AI_CTRL_MOVEBACKWARD);
+				ObjDriver->SetModeFlag(AI_CTRL_MOVEBACKWARD);
 			}
 		}
 	}
@@ -715,20 +639,20 @@ void AIcontrol::Action()
 		float y = posy2 - ty;
 
 		//もし走っていれば、一度歩きに切り替える
-		if( GetFlag(moveturn_mode, AI_CTRL_MOVEFORWARD) ){
-			DelFlag(moveturn_mode, AI_CTRL_MOVEFORWARD);
-			SetFlag(moveturn_mode, AI_CTRL_MOVEWALK);
+		if( ObjDriver->GetModeFlag(AI_CTRL_MOVEFORWARD) ){
+			ObjDriver->DelModeFlag(AI_CTRL_MOVEFORWARD);
+			ObjDriver->SetModeFlag(AI_CTRL_MOVEWALK);
 		}
 
 		//敵に向かって前進する
 		if( fabs(atanx) <= DegreeToRadian(25) ){
 			if( (fabs(atanx) <= DegreeToRadian(15)) && (r < 24.0f*24.0f) && (actioncnt%50 > 20) ){
 				//歩きを取り消し、走る
-				SetFlag(moveturn_mode, AI_CTRL_MOVEFORWARD);
-				DelFlag(moveturn_mode, AI_CTRL_MOVEWALK);
+				ObjDriver->SetModeFlag(AI_CTRL_MOVEFORWARD);
+				ObjDriver->DelModeFlag(AI_CTRL_MOVEWALK);
 			}
 			else{
-				SetFlag(moveturn_mode, AI_CTRL_MOVEWALK);
+				ObjDriver->SetModeFlag(AI_CTRL_MOVEWALK);
 			}
 		}
 
@@ -787,7 +711,7 @@ void AIcontrol::Action()
 			//AIレベルごとに調整
 			ShotAngle += DegreeToRadian(0.5f) * LevelParam->limitserror;
 
-			if( movemode == AI_RUN2 ){
+			if( MoveNavi->GetRun2() == true ){
 				ShotAngle *= 1.5f;
 			}
 		}
@@ -827,7 +751,7 @@ void AIcontrol::Action()
 	if( r < 200.0f * 200.0f ){
 		longattack = false;
 	}
-	if( (r > 200.0f * 200.0f)&&(movemode != AI_RUN2) ){
+	if( (r > 200.0f * 200.0f)&&(MoveNavi->GetRun2() == false) ){
 		longattack = true;
 	}
 
@@ -943,17 +867,17 @@ void AIcontrol::CancelMoveTurn()
 	int forward, back, side, updown, rightleft;
 
 	if( battlemode == AI_ACTION ){			//攻撃中
-		if( movemode == AI_RUN2 ){				//優先的な走り
-			DelFlag(moveturn_mode, AI_CTRL_MOVEFORWARD);
-			DelFlag(moveturn_mode, AI_CTRL_MOVEBACKWARD);
-			DelFlag(moveturn_mode, AI_CTRL_MOVELEFT);
-			DelFlag(moveturn_mode, AI_CTRL_MOVERIGHT);
-			DelFlag(moveturn_mode, AI_CTRL_TURNUP);
-			DelFlag(moveturn_mode, AI_CTRL_TURNDOWN);
-			DelFlag(moveturn_mode, AI_CTRL_TURNLEFT);
-			DelFlag(moveturn_mode, AI_CTRL_TURNRIGHT);
+		if( MoveNavi->GetRun2() == true ){	//優先的な走り
+			ObjDriver->DelModeFlag(AI_CTRL_MOVEFORWARD);
+			ObjDriver->DelModeFlag(AI_CTRL_MOVEBACKWARD);
+			ObjDriver->DelModeFlag(AI_CTRL_MOVELEFT);
+			ObjDriver->DelModeFlag(AI_CTRL_MOVERIGHT);
+			ObjDriver->DelModeFlag(AI_CTRL_TURNUP);
+			ObjDriver->DelModeFlag(AI_CTRL_TURNDOWN);
+			ObjDriver->DelModeFlag(AI_CTRL_TURNLEFT);
+			ObjDriver->DelModeFlag(AI_CTRL_TURNRIGHT);
 			if( GetRand(3) == 0 ){
-				DelFlag(moveturn_mode, AI_CTRL_MOVEWALK);
+				ObjDriver->DelModeFlag(AI_CTRL_MOVEWALK);
 			}
 			return;
 		}
@@ -991,85 +915,34 @@ void AIcontrol::CancelMoveTurn()
 
 	//移動をランダムに止める
 	if( GetRand(forward) == 0 ){
-		DelFlag(moveturn_mode, AI_CTRL_MOVEFORWARD);
+		ObjDriver->DelModeFlag(AI_CTRL_MOVEFORWARD);
 	}
 	if( GetRand(back) == 0 ){
-		DelFlag(moveturn_mode, AI_CTRL_MOVEBACKWARD);
+		ObjDriver->DelModeFlag(AI_CTRL_MOVEBACKWARD);
 	}
 	if( GetRand(side) == 0 ){
-		DelFlag(moveturn_mode, AI_CTRL_MOVELEFT);
+		ObjDriver->DelModeFlag(AI_CTRL_MOVELEFT);
 	}
 	if( GetRand(side) == 0 ){
-		DelFlag(moveturn_mode, AI_CTRL_MOVERIGHT);
+		ObjDriver->DelModeFlag(AI_CTRL_MOVERIGHT);
 	}
 	if( GetRand(3) == 0 ){
-		DelFlag(moveturn_mode, AI_CTRL_MOVEWALK);
+		ObjDriver->DelModeFlag(AI_CTRL_MOVEWALK);
 	}
 
 	//回転をランダムに止める
 	if( GetRand(updown) == 0 ){
-		DelFlag(moveturn_mode, AI_CTRL_TURNUP);
+		ObjDriver->DelModeFlag(AI_CTRL_TURNUP);
 	}
 	if( GetRand(updown) == 0 ){
-		DelFlag(moveturn_mode, AI_CTRL_TURNDOWN);
+		ObjDriver->DelModeFlag(AI_CTRL_TURNDOWN);
 	}
 	if( GetRand(rightleft) == 0 ){
-		DelFlag(moveturn_mode, AI_CTRL_TURNLEFT);
+		ObjDriver->DelModeFlag(AI_CTRL_TURNLEFT);
 	}
 	if( GetRand(rightleft) == 0 ){
-		DelFlag(moveturn_mode, AI_CTRL_TURNRIGHT);
+		ObjDriver->DelModeFlag(AI_CTRL_TURNRIGHT);
 	}
-}
-
-//! @brief 移動や方向転換を実行
-void AIcontrol::ControlMoveTurn()
-{
-	//移動の実行
-	if( GetFlag(moveturn_mode, AI_CTRL_MOVEFORWARD) ){
-		ObjMgr->MoveForward(ctrlid);
-	}
-	if( GetFlag(moveturn_mode, AI_CTRL_MOVEBACKWARD) ){
-		ObjMgr->MoveBack(ctrlid);
-	}
-	if( GetFlag(moveturn_mode, AI_CTRL_MOVELEFT) ){
-		ObjMgr->MoveLeft(ctrlid);
-	}
-	if( GetFlag(moveturn_mode, AI_CTRL_MOVERIGHT) ){
-		ObjMgr->MoveRight(ctrlid);
-	}
-	if( GetFlag(moveturn_mode, AI_CTRL_MOVEWALK) ){
-		ObjMgr->MoveWalk(ctrlid);
-	}
-
-	//方向転換の実行（回転速度の加算）
-	if( GetFlag(moveturn_mode, AI_CTRL_TURNUP) ){
-		addry += AI_ADDTURNRAD;
-	}
-	if( GetFlag(moveturn_mode, AI_CTRL_TURNDOWN) ){
-		addry -= AI_ADDTURNRAD;
-	}
-	if( GetFlag(moveturn_mode, AI_CTRL_TURNLEFT) ){
-		addrx -= AI_ADDTURNRAD;
-	}
-	if( GetFlag(moveturn_mode, AI_CTRL_TURNRIGHT) ){
-		addrx += AI_ADDTURNRAD;
-	}
-
-	//角度に加算
-	rx += addrx;
-	ry += addry;
-
-	//回転速度の減衰
-	addrx *= 0.8f;
-	addry *= 0.8f;
-
-	//0.0fへ補正
-	if( fabs(addrx) < DegreeToRadian(0.2f) ){ addrx = 0.0f; }
-	if( fabs(addry) < DegreeToRadian(0.2f) ){ addry = 0.0f; }
-
-	//縦の回転範囲を収める
-	if( ry > DegreeToRadian(70) ){ ry = DegreeToRadian(70); }
-	if( ry < DegreeToRadian(-70) ){ ry = DegreeToRadian(-70); }
 }
 
 //! @brief 武器をリロード・捨てる
@@ -1250,27 +1123,27 @@ int AIcontrol::ThrowGrenade()
 	float atan_rx, atan_ry;
 
 	//パスと人の高さを取得
-	Points->Getdata(&pdata, target_pointid);
+	MoveNavi->GetPathPointData(&pdata);
 	posy2 = posy + VIEW_HEIGHT;
 
 	//一度全ての動きを止める
-	moveturn_mode = 0;
+	ObjDriver->ResetMode();
 
 	//目標地点への角度を求める
 	CheckTargetAngle(posx, posy2, posz, rx*-1 + (float)M_PI/2, ry, pdata.x, pdata.y, pdata.z, 0.0f, &atan_rx, &atan_ry, NULL);
 
 	//旋回
 	if( atan_rx > 0.0f ){
-		SetFlag(moveturn_mode, AI_CTRL_TURNLEFT);
+		ObjDriver->SetModeFlag(AI_CTRL_TURNLEFT);
 	}
 	if( atan_rx < 0.0f ){
-		SetFlag(moveturn_mode, AI_CTRL_TURNRIGHT);
+		ObjDriver->SetModeFlag(AI_CTRL_TURNRIGHT);
 	}
 	if( atan_ry > 0.0f ){
-		SetFlag(moveturn_mode, AI_CTRL_TURNUP);
+		ObjDriver->SetModeFlag(AI_CTRL_TURNUP);
 	}
 	if( atan_ry < 0.0f ){
-		SetFlag(moveturn_mode, AI_CTRL_TURNDOWN);
+		ObjDriver->SetModeFlag(AI_CTRL_TURNDOWN);
 	}
 
 	//投げる
@@ -1289,31 +1162,31 @@ int AIcontrol::ThrowGrenade()
 //! @brief 腕の角度を設定
 void AIcontrol::ArmAngle()
 {
-	DelFlag(moveturn_mode, AI_CTRL_TURNUP);
-	DelFlag(moveturn_mode, AI_CTRL_TURNDOWN);
+	ObjDriver->DelModeFlag(AI_CTRL_TURNUP);
+	ObjDriver->DelModeFlag(AI_CTRL_TURNDOWN);
 
 	if( ctrlhuman->GetMainWeaponTypeNO() == ID_WEAPON_NONE ){	//手ぶら
 		//下に向け続ける
-		SetFlag(moveturn_mode, AI_CTRL_TURNDOWN);
+		ObjDriver->SetModeFlag(AI_CTRL_TURNDOWN);
 	}
 	else if( (battlemode == AI_CAUTION)&&(cautioncnt > 0) ){	//警戒中
 		float addry2 = 0.0f - ry;
 
 		//旋回
 		if( addry2 > DegreeToRadian(1.0f) ){
-			SetFlag(moveturn_mode, AI_CTRL_TURNUP);
+			ObjDriver->SetModeFlag(AI_CTRL_TURNUP);
 		}
 		if( addry2 < DegreeToRadian(-1.0f) ){
-			SetFlag(moveturn_mode, AI_CTRL_TURNDOWN);
+			ObjDriver->SetModeFlag(AI_CTRL_TURNDOWN);
 		}
 	}
 	else{									//平常時で武器所有中
 		//旋回
 		if( ry < DegreeToRadian(-32) ){
-			SetFlag(moveturn_mode, AI_CTRL_TURNUP);
+			ObjDriver->SetModeFlag(AI_CTRL_TURNUP);
 		}
 		if( ry > DegreeToRadian(-28) ){
-			SetFlag(moveturn_mode, AI_CTRL_TURNDOWN);
+			ObjDriver->SetModeFlag(AI_CTRL_TURNDOWN);
 		}
 	}
 }
@@ -1379,7 +1252,7 @@ int AIcontrol::SearchEnemy()
 
 		if( CheckLookEnemy(targetid, B_rx, B_ry, maxDist, NULL) == true ){
 			if( GetRand(4) == 0 ){
-				if( movemode == AI_RUN2 ){ longattack = false; }
+				if( MoveNavi->GetRun2() == true ){ longattack = false; }
 				else{ longattack = true; }
 				return 2;
 			}
@@ -1512,29 +1385,41 @@ bool AIcontrol::CheckCorpse(int id)
 //! @brief パスによる移動
 void AIcontrol::MovePath()
 {
-	if( movemode == AI_NULL ){			//異常なパス
-		//
+	int movemode, pointmode;
+	MoveNavi->GetTargetPos(NULL, NULL, NULL, &movemode, &pointmode);
+
+	if( movemode == AI_NAVI_MOVE_NULL ){			//異常なパス
+		return;
 	}
-	else if( movemode == AI_GRENADE ){	//手榴弾パス
-		if( ThrowGrenade() != 0 ){
-			SearchTarget(true);
-		}
+
+	if( CheckTargetPos(false) == false ){
+		MoveTarget(false);
 	}
-	else{								//その他パス
-		if( CheckTargetPos() == false ){
-			MoveTarget();
-		}
-		else if( (movemode == AI_WAIT)||(movemode == AI_TRACKING) ){
+	else{
+		if( (pointmode == AI_NAVI_POINT_WAIT)||(pointmode == AI_NAVI_POINT_TRACKING) ){
 			TurnSeen();
 		}
-		else if( (movemode == AI_STOP)&&(waitcnt < ((int)GAMEFPS)*5) ){
-			if( StopSeen() == true ){
+		else if( pointmode == AI_NAVI_POINT_STOP ){
+			/*
+			if( (StopSeen() == true)&&(waitcnt < ((int)GAMEFPS)*5) ){
 				waitcnt += 1;
 			}
+			*/
+			if( waitcnt < ((int)GAMEFPS)*5 ){
+				if( StopSeen() == true ){
+					waitcnt += 1;
+				}
+			}
+			else{
+				waitcnt = 0;
+				MoveNavi->MovePathNextState();
+				MoveNavi->MovePathNowState();
+			}
 		}
-		else{
+		else{	//pointmode == AI_NAVI_POINT_NULL
 			waitcnt = 0;
-			SearchTarget(true);
+			MoveNavi->MovePathNextState();
+			MoveNavi->MovePathNowState();
 		}
 	}
 }
@@ -1548,14 +1433,15 @@ bool AIcontrol::ActionMain()
 	//攻撃処理
 	Action();
 
-	if( movemode == AI_RUN2 ){				//優先的な走り
+	if( MoveNavi->GetRun2() == true ){				//優先的な走り
 		//目標地点へ移動
-		if( CheckTargetPos() == true ){
+		if( CheckTargetPos(false) == true ){
 			newbattlemode = AI_NORMAL;
-			SearchTarget(true);
+			MoveNavi->MovePathNextState();
+			MoveNavi->MovePathNowState();
 		}
 		else{
-			MoveTarget2();
+			MoveTarget2(false);
 		}
 	}
 	else{									//優先的な走り 以外
@@ -1569,7 +1455,7 @@ bool AIcontrol::ActionMain()
 	if( ActionCancel() == true ){
 		enemyhuman = NULL;
 
-		if( movemode == AI_RUN2 ){
+		if( MoveNavi->GetRun2() == true ){
 			newbattlemode = AI_NORMAL;
 		}
 		else{
@@ -1623,17 +1509,18 @@ bool AIcontrol::CautionMain()
 		cautioncnt = 160;			//警戒を再開
 	}
 	else if( cautioncnt == 0 ){		//警戒を終了するなら
-		if( CheckTargetPos() == false ){				//警戒開始地点より離れているか
-			MoveTarget();				//警戒開始地点に近づく
+		if( CheckTargetPos(true) == false ){				//警戒開始地点より離れているか
+			MoveTarget(true);				//警戒開始地点に近づく
 		}
 		else{
 			newbattlemode = AI_NORMAL;
 
 			//警戒待ちパスなら次へ進める
 			pointdata pdata;
-			Points->Getdata(&pdata, target_pointid);
+			MoveNavi->GetPathPointData(&pdata);
 			if( (pdata.p1 == 3)&&(pdata.p2 == 4) ){
-				SearchTarget(true);
+				MoveNavi->MovePathNextState();
+				MoveNavi->MovePathNowState();
 			}
 		}
 	}
@@ -1643,12 +1530,11 @@ bool AIcontrol::CautionMain()
 	else{ cautioncnt -= 1; }
 
 	//追尾中で対象から離れすぎたら、ランダムに警戒終了
-	if( (movemode == AI_TRACKING)&&(GetRand(3) == 0) ){
-		pointdata pdata;
+	if( (MoveNavi->GetMoveMode() == AI_TRACKING)&&(GetRand(3) == 0) ){
 		float x, z;
 		float tx, tz;
-		Points->Getdata(&pdata, target_pointid);
-		SearchHumanPos(pdata.p4, &tx, &tz);
+		class human *targethuman = ObjMgr->GeHumanObject(MoveNavi->GetTargetHumanID());
+		targethuman->GetPosData(&tx, NULL, &tz, NULL);
 		x = posx - tx;
 		z = posz - tz;
 		if( (x*x + z*z) > 25.0f*25.0f ){
@@ -1670,9 +1556,7 @@ bool AIcontrol::NormalMain()
 {
 	int newbattlemode = AI_NORMAL;
 
-	if( hold == false ){
-		SearchTarget(false);
-	}
+	MoveNavi->MovePathNowState();
 	enemyhuman = NULL;
 
 	//座標とチーム番号を取得
@@ -1690,14 +1574,25 @@ bool AIcontrol::NormalMain()
 	}
 
 	//ランダムパスなら処理実行
-	if( movemode == AI_RANDOM ){
-		SearchTarget(true);
+	if( MoveNavi->GetMoveMode() == AI_RANDOM ){
+		MoveNavi->MovePathNextState();
+		MoveNavi->MovePathNowState();
 	}
 
-	if( movemode == AI_RUN2 ){		//優先的な走りの処理
+	//手榴弾パス
+	if( MoveNavi->GetMoveMode() == AI_GRENADE ){
+		if( ThrowGrenade() != 0 ){
+			MoveNavi->MovePathNextState();
+			MoveNavi->MovePathNowState();
+		}
+	}
+
+	if( MoveNavi->GetMoveMode() == AI_RUN2 ){		//優先的な走りの処理
 		//敵を見つけたら攻撃に入る
 		if( SearchEnemy() != 0 ){
 			newbattlemode = AI_ACTION;
+			//cautionback_posx = posx;
+			//cautionback_posz = posz;
 		}
 		else{
 			MovePath();		//移動実行
@@ -1712,8 +1607,8 @@ bool AIcontrol::NormalMain()
 		){
 			newbattlemode = AI_CAUTION;
 			cautioncnt = 160;
-			target_posx = posx;
-			target_posz = posz;
+			cautionback_posx = posx;
+			cautionback_posz = posz;
 		}
 		else{
 			MovePath();		//移動実行
@@ -1721,7 +1616,7 @@ bool AIcontrol::NormalMain()
 	}
 
 	//腕の角度を設定
-	if( movemode != AI_GRENADE ){
+	if( MoveNavi->GetMoveMode() != AI_GRENADE ){
 		ArmAngle();
 	}
 
@@ -1739,38 +1634,35 @@ void AIcontrol::Init()
 	//クラス設定がおかしければ処理しない
 	if( ctrlhuman == NULL ){ return; }
 	if( blocks == NULL ){ return; }
-	if( Points == NULL ){ return; }
 	if( CollD == NULL ){ return; }
 
 	//使用されていない人なら処理しない
 	if( ctrlhuman->GetEnableFlag() == false ){ return; }
 
 	//ステートを初期化
-	hold = false;
 	NoFight = false;
 	battlemode = AI_NORMAL;
-	movemode = AI_NULL;
 	enemyhuman = NULL;
-	addrx = 0.0f;
-	addry = 0.0f;
 	waitcnt = 0;
 	gotocnt = 0;
-	moveturn_mode = 0x00;
 	cautioncnt = 0;
 	actioncnt = 0;
 	longattack = false;
 
+	MoveNavi->Init();
+	ObjDriver->Init();
+
 	//AIレベルと設定値を取得
 	int paramid;
 	HumanParameter paramdata;
-	//target_pointid = in_target_pointid;
-	ctrlhuman->GetParamData(&paramid, &target_pointid, NULL, NULL);
+	ctrlhuman->GetParamData(&paramid, NULL, NULL, NULL);
 	Param->GetHuman(paramid, &paramdata);
 	AIlevel = paramdata.AIlevel;
 	Param->GetAIlevel(AIlevel, &LevelParam);
 
 	//次のポイントを検索
-	SearchTarget(true);
+	//MoveNavi->MovePathNextState();
+	MoveNavi->MovePathNowState();
 }
 
 //! @brief 指定した場所へ待機させる
@@ -1780,11 +1672,7 @@ void AIcontrol::Init()
 //! @attention 移動パスに関わらず、指定した座標への待機を強制します。Init()関数を再度実行するまで元に戻せません。
 void AIcontrol::SetHoldWait(float px, float pz, float rx)
 {
-	movemode = AI_WAIT;
-	hold = true;
-	target_posx = px;
-	target_posz = pz;
-	target_rx = rx;
+	MoveNavi->SetHoldWait(px, pz, rx);
 }
 
 //! @brief 指定した人を追尾させる
@@ -1792,9 +1680,7 @@ void AIcontrol::SetHoldWait(float px, float pz, float rx)
 //! @attention 移動パスに関わらず、指定した人への追尾を強制します。Init()関数を再度実行するまで元に戻せません。
 void AIcontrol::SetHoldTracking(int id)
 {
-	movemode = AI_TRACKING;
-	hold = false;
-	target_pointid = id;
+	MoveNavi->SetHoldTracking(id);
 }
 
 //! @brief 強制的に警戒させる
@@ -1802,11 +1688,11 @@ void AIcontrol::SetHoldTracking(int id)
 void AIcontrol::SetCautionMode()
 {
 	//優先的な走りならば何もしない
-	if( movemode == AI_RUN2 ){ return; }
+	if( MoveNavi->GetRun2() == true ){ return; }
 
 	if( battlemode == AI_NORMAL ){
-		target_posx = posx;
-		target_posz = posz;
+		cautionback_posx = posx;
+		cautionback_posz = posz;
 	}
 	battlemode = AI_CAUTION;
 	cautioncnt = 160;
@@ -1820,13 +1706,59 @@ void AIcontrol::SetNoFightFlag(bool flag)
 	NoFight = flag;
 }
 
+//! @brief 戦闘モード取得
+//! @param *mode 戦闘モード（数字）を受け取るポインタ
+//! @param *modestr 戦闘モード名の文字列を受け取るポインタ
+void AIcontrol::GetBattleMode(int *mode, char *modestr)
+{
+	if( mode != NULL ){
+		*mode = battlemode;
+	}
+	if( modestr != NULL ){
+		switch(battlemode){
+			case 0: strcpy(modestr, "AI_DEAD"); break;
+			case 1: strcpy(modestr, "AI_ACTION"); break;
+			case 2: strcpy(modestr, "AI_CAUTION"); break;
+			case 3: strcpy(modestr, "AI_NORMAL"); break;
+			default: strcpy(modestr, "");
+		}
+	}
+}
+
+//! @brief 攻撃対象の人データ番号
+//! @return 人データ番号（ターゲットがいない場合は -1）
+int AIcontrol::GetEnemyHumanID()
+{
+	if( enemyhuman == NULL ){
+		return -1;
+	}
+	//else{
+		return ObjMgr->GetHumanObjectID(enemyhuman);
+	//}
+}
+
+//! @brief 移動する目標地点（ターゲット）を取得
+//! @param posx 目標地点のX座標を受け取るポインタ
+//! @param posz 目標地点のZ座標を受け取るポインタ
+//! @param movemode 目標地点への移動モードを受け取るポインタ
+void AIcontrol::GetMoveTargetPos(float *posx, float *posz, int *movemode)
+{
+	MoveNavi->GetTargetPos(posx, posz, NULL, movemode, NULL);
+}
+
+//! @brief 現在読み込んでいるポイントデータパス
+//! @param out_data ポイントデータを受け取るポインタ
+void AIcontrol::GetPathPointData(pointdata *out_data)
+{
+	MoveNavi->GetPathPointData(out_data);
+}
+
 //! @brief 処理系関数
 void AIcontrol::Process()
 {
 	//クラス設定がおかしければ処理しない
 	if( ctrlhuman == NULL ){ return; }
 	if( blocks == NULL ){ return; }
-	if( Points == NULL ){ return; }
 	if( CollD == NULL ){ return; }
 
 	//無効な人クラスなら処理しない
@@ -1835,14 +1767,13 @@ void AIcontrol::Process()
 	//死亡したら
 	if( ctrlhuman->GetHP() <= 0 ){
 		battlemode = AI_DEAD;
-		movemode = AI_DEAD;
 		return;
 	}
 
 	//HPが0でないのに 死亡したことになってる　・・・生き返った？
 	if( battlemode == AI_DEAD ){
 		battlemode = AI_NORMAL;
-		SearchTarget(false);
+		MoveNavi->MovePathNowState();
 	}
 
 	//座標と角度を取得
@@ -1870,11 +1801,392 @@ void AIcontrol::Process()
 	}
 
 	//移動・方向転換処理
-	ControlMoveTurn();
+	ObjDriver->ControlObject();
 
 	//武器を取り扱い
 	ControlWeapon();
+}
 
-	//角度を適用
-	ctrlhuman->SetRxRy(rx, ry);
+//! @brief コンストラクタ
+AIMoveNavi::AIMoveNavi(class ObjectManager *in_ObjMgr, int in_ctrlid, class PointDataInterface *in_Points)
+{
+	ObjMgr = in_ObjMgr;
+	ctrlid = in_ctrlid;
+	Points = in_Points;
+
+	movemode = AI_WAIT;
+	hold = false;
+	path_pointid = 0;
+	target_humanid = -1;
+	target_posx = 0.0f;
+	target_posz = 0.0f;
+	target_rx = 0.0f;
+}
+
+//! @brief ディストラクタ
+AIMoveNavi::~AIMoveNavi()
+{}
+
+//! @brief 対象クラスを設定
+//! @attention この関数で設定を行わないと、クラス自体が正しく機能しません。
+void AIMoveNavi::SetClass(class ObjectManager *in_ObjMgr, int in_ctrlid, class PointDataInterface *in_Points)
+{
+	ObjMgr = in_ObjMgr;
+	ctrlid = in_ctrlid;
+	Points = in_Points;
+}
+
+//! @brief 初期化系関数
+void AIMoveNavi::Init()
+{
+	movemode = AI_NULL;
+	hold = false;
+	path_pointid = 0;
+
+	ObjMgr->GeHumanObject(ctrlid)->GetParamData(NULL, &path_pointid, NULL, NULL);
+	MovePathNextState();
+}
+
+//! @brief 移動する目標地点を適用
+//! @return 完了：true　失敗：false
+//! @attention 追尾時に対象人物の座標を反映させるため、本関数を毎フレーム呼び出して、最新の位置情報を計算する必要があります。
+bool AIMoveNavi::MovePathNowState()
+{
+	if( hold == true ){
+		if( movemode == AI_TRACKING ){
+			class human *targethuman;
+			targethuman = ObjMgr->GeHumanObject(target_humanid);
+			targethuman->GetPosData(&target_posx, NULL, &target_posz, &target_rx);
+		}
+		return true;
+	}
+
+
+	//ポイントの情報を取得
+	pointdata pdata;
+	if( Points->Getdata(&pdata, path_pointid) != 0 ){
+		movemode = AI_NULL;
+		return false;
+	}
+
+	//移動パスなら～
+	if( pdata.p1 == 3 ){
+		//移動ステート設定
+		switch(pdata.p2){
+			case 0: movemode = AI_WALK; break;
+			case 1: movemode = AI_RUN; break;
+			case 2: movemode = AI_WAIT; break;
+			case 3: movemode = AI_TRACKING; break;
+			case 4: movemode = AI_WAIT; break;
+			case 5: movemode = AI_STOP; break;
+			case 6: movemode = AI_GRENADE; break;
+			case 7: movemode = AI_RUN2; break;
+			default: break;
+		}
+
+		if( movemode == AI_TRACKING ){
+			class human *targethuman;
+
+			if( target_humanid == -1 ){
+				signed char nextpointp4 = pdata.p3;
+
+				//ポイント（人）の情報を取得
+				if( Points->SearchPointdata(&pdata, 0x08, 0, 0, 0, nextpointp4, 0) == 0 ){
+					return false;
+				}
+
+				//人を検索してクラスを取得
+				targethuman = ObjMgr->SearchHuman(pdata.p4);
+				if( targethuman == NULL ){ return false; }
+
+				//人のデータ番号を取得
+				target_humanid = ObjMgr->GetHumanObjectID(targethuman);
+			}
+
+			targethuman = ObjMgr->GeHumanObject(target_humanid);
+			targethuman->GetPosData(&target_posx, NULL, &target_posz, &target_rx);
+		}
+		else{
+			//情報適用
+			target_posx = pdata.x;
+			target_posz = pdata.z;
+			target_rx = pdata.r;
+		}
+
+		return true;
+	}
+
+	//ランダムパスなら
+	if( pdata.p1 == 8 ){
+		movemode = AI_RANDOM;
+		return false;
+	}
+
+	movemode = AI_NULL;
+	return false;
+}
+
+//! @brief 次の目標地点を検索
+//! @return 完了：true　失敗：false
+bool AIMoveNavi::MovePathNextState()
+{
+	//ポイントの情報を取得
+	pointdata pdata;
+	if( Points->Getdata(&pdata, path_pointid) != 0 ){
+		movemode = AI_NULL;
+		return false;
+	}
+
+	signed char nextpointp4 = pdata.p3;
+
+	//ランダムパス処理
+	if( pdata.p1 == 8 ){
+		if( GetRand(2) == 0 ){
+			nextpointp4 = pdata.p2;
+		}
+		else{
+			nextpointp4 = pdata.p3;
+		}
+		movemode = AI_RANDOM;
+	}
+
+	//ポイントを検索
+	if( Points->SearchPointdata(&pdata, 0x08, 0, 0, 0, nextpointp4, 0) == 0 ){
+		return false;
+	}
+
+	path_pointid = pdata.id;
+
+	return true;
+}
+
+//! @brief 指定した場所へ待機させる
+//! @param px X座標
+//! @param pz Z座標
+//! @param rx 重視する向き
+//! @attention 移動パスに関わらず、指定した座標への待機を強制します。Init()関数を再度実行するまで元に戻せません。
+void AIMoveNavi::SetHoldWait(float px, float pz, float rx)
+{
+	movemode = AI_WAIT;
+	hold = true;
+	target_posx = px;
+	target_posz = pz;
+	target_rx = rx;
+}
+
+//! @brief 指定した人を追尾させる
+//! @param id 人のデータ番号
+//! @attention 移動パスに関わらず、指定した人への追尾を強制します。Init()関数を再度実行するまで元に戻せません。
+void AIMoveNavi::SetHoldTracking(int id)
+{
+	movemode = AI_TRACKING;
+	hold = true;
+	target_humanid = id;
+}
+
+//! @brief 移動モードを取得
+//! @return 移動モード
+int AIMoveNavi::GetMoveMode()
+{
+	return movemode;
+}
+
+//! @brief 優先的な走りフラグを取得
+//! @return 優先的な走りである：true　優先的な走りでない：false
+bool AIMoveNavi::GetRun2()
+{
+	if( movemode == AI_RUN2 ){
+		return true;
+	}
+	//else{
+		return false;
+	//}
+}
+
+//! @brief ターゲット（人）のデータ番号を取得
+//! @return 人のデータ番号
+int AIMoveNavi::GetTargetHumanID()
+{
+	return target_humanid;
+}
+
+//! @brief 現在読み込んでいるポイントデータパス
+//! @param out_data ポイントデータを受け取るポインタ
+void AIMoveNavi::GetPathPointData(pointdata *out_data)
+{
+	Points->Getdata(out_data, path_pointid);
+}
+
+//! @brief 移動する目標地点（ターゲット）を取得
+//! @param posx 目標地点のX座標を受け取るポインタ
+//! @param posz 目標地点のZ座標を受け取るポインタ
+//! @param rx 目標地点の水平角度を受け取るポインタ
+//! @param out_movemode 目標地点への移動モードを受け取るポインタ
+//! @param out_pointmode 目標地点のポイントモードを受け取るポインタ
+//! @warning 本関数では座標は更新されません。先に MovePathNowState() 関数で座標を更新した後、本関数を呼び出してください。
+void AIMoveNavi::GetTargetPos(float *posx, float *posz, float *rx, int *out_movemode, int *out_pointmode)
+{
+	if( posx != NULL ){ *posx = target_posx; }
+	if( posz != NULL ){ *posz = target_posz; }
+	if( rx != NULL ){ *rx = target_rx; }
+
+	if( out_movemode != NULL ){
+		if( (movemode == AI_WALK)||(movemode == AI_WAIT)||(movemode == AI_STOP) ){
+			*out_movemode = AI_NAVI_MOVE_WALK;
+		}
+		else if( movemode == AI_RUN ){
+			*out_movemode = AI_NAVI_MOVE_RUN;
+		}
+		else if( movemode == AI_RUN2 ){
+			*out_movemode = AI_NAVI_MOVE_RUN2;
+		}
+		else if( movemode == AI_TRACKING ){
+			*out_movemode = AI_NAVI_MOVE_TRACKING;
+		}
+		else{
+			*out_movemode = AI_NAVI_MOVE_NULL;
+		}
+	}
+
+	if( out_pointmode != NULL ){
+		if( movemode == AI_WAIT ){
+			*out_pointmode = AI_NAVI_POINT_WAIT;
+		}
+		else if( movemode == AI_STOP ){
+			*out_pointmode = AI_NAVI_POINT_STOP;
+		}
+		else if( movemode == AI_TRACKING ){
+			*out_pointmode = AI_NAVI_POINT_TRACKING;
+		}
+		else if( movemode == AI_GRENADE ){	//手榴弾パス
+			*out_pointmode = AI_NAVI_POINT_GRENADE;
+		}
+		else{								//移動パス・異常なパス
+			*out_pointmode = AI_NAVI_POINT_NULL;
+		}
+	}
+}
+
+//! @brief コンストラクタ
+AIObjectDriver::AIObjectDriver(class ObjectManager *in_ObjMgr, int in_ctrlid)
+{
+	ObjMgr = in_ObjMgr;
+	ctrlid = in_ctrlid;
+
+	moveturn_mode = 0;
+	addrx = 0.0f;
+	addry = 0.0f;
+}
+
+//! @brief ディストラクタ
+AIObjectDriver::~AIObjectDriver()
+{}
+
+//! @brief 対象クラスを設定
+//! @attention この関数で設定を行わないと、クラス自体が正しく機能しません。
+void AIObjectDriver::SetClass(class ObjectManager *in_ObjMgr, int in_ctrlid)
+{
+	ObjMgr = in_ObjMgr;
+	ctrlid = in_ctrlid;
+}
+
+//! @brief 初期化系関数
+void AIObjectDriver::Init()
+{
+	addrx = 0.0f;
+	addry = 0.0f;
+
+	ResetMode();
+}
+
+//! @brief 移動回転制御フラグをクリア（一度全ての動きを止める）
+void AIObjectDriver::ResetMode()
+{
+	moveturn_mode = 0;
+}
+
+//! @brief 移動回転制御フラグ 設定
+//! @param flag 操作モードを表す定数（AIcontrolFlag列挙型）
+void AIObjectDriver::SetModeFlag(int flag)
+{
+	SetFlag(moveturn_mode, flag);
+}
+
+//! @brief 移動回転制御フラグ 解除
+//! @param flag 操作モードを表す定数（AIcontrolFlag列挙型）
+void AIObjectDriver::DelModeFlag(int flag)
+{
+	DelFlag(moveturn_mode, flag);
+}
+
+//! @brief 移動回転制御フラグ 取得
+//! @param flag 操作モードを表す定数（AIcontrolFlag列挙型）
+bool AIObjectDriver::GetModeFlag(int flag)
+{
+	if( GetFlag(moveturn_mode, flag) == 0 ){
+		return false;
+	}
+	//else{
+		return true;
+	//}
+}
+
+//! @brief 移動回転制御を実行
+//! @attention 毎フレーム1回だけ呼び出してください。
+void AIObjectDriver::ControlObject()
+{
+	float rx, ry;
+
+	//移動の実行
+	if( GetFlag(moveturn_mode, AI_CTRL_MOVEFORWARD) ){
+		ObjMgr->MoveForward(ctrlid);
+	}
+	if( GetFlag(moveturn_mode, AI_CTRL_MOVEBACKWARD) ){
+		ObjMgr->MoveBack(ctrlid);
+	}
+	if( GetFlag(moveturn_mode, AI_CTRL_MOVELEFT) ){
+		ObjMgr->MoveLeft(ctrlid);
+	}
+	if( GetFlag(moveturn_mode, AI_CTRL_MOVERIGHT) ){
+		ObjMgr->MoveRight(ctrlid);
+	}
+	if( GetFlag(moveturn_mode, AI_CTRL_MOVEWALK) ){
+		ObjMgr->MoveWalk(ctrlid);
+	}
+
+	//方向転換の実行（回転速度の加算）
+	if( GetFlag(moveturn_mode, AI_CTRL_TURNUP) ){
+		addry += AI_ADDTURNRAD;
+	}
+	if( GetFlag(moveturn_mode, AI_CTRL_TURNDOWN) ){
+		addry -= AI_ADDTURNRAD;
+	}
+	if( GetFlag(moveturn_mode, AI_CTRL_TURNLEFT) ){
+		addrx -= AI_ADDTURNRAD;
+	}
+	if( GetFlag(moveturn_mode, AI_CTRL_TURNRIGHT) ){
+		addrx += AI_ADDTURNRAD;
+	}
+
+	//角度を取得
+	ObjMgr->GeHumanObject(ctrlid)->GetRxRy(&rx, &ry);
+
+	//角度に加算
+	rx += addrx;
+	ry += addry;
+
+	//縦の回転範囲を収める
+	if( ry > DegreeToRadian(70) ){ ry = DegreeToRadian(70); }
+	if( ry < DegreeToRadian(-70) ){ ry = DegreeToRadian(-70); }
+
+	//角度を設定
+	ObjMgr->GeHumanObject(ctrlid)->SetRxRy(rx, ry);
+
+	//回転速度の減衰
+	addrx *= 0.8f;
+	addry *= 0.8f;
+
+	//0.0fへ補正
+	if( fabs(addrx) < DegreeToRadian(0.2f) ){ addrx = 0.0f; }
+	if( fabs(addry) < DegreeToRadian(0.2f) ){ addry = 0.0f; }
 }

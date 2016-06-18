@@ -1132,6 +1132,7 @@ int maingame::Create()
 	PlayerAI = false;
 	AIstop = false;
 	AINoFight = false;
+	AIdebuginfoID = -1;
 	framecnt = 0;
 	start_framecnt = 0;
 	end_framecnt = 0;
@@ -1656,7 +1657,7 @@ void maingame::Input()
 						//AIを設定
 						HumanAI[id].Init();
 						if( inputCtrl->CheckKeyDown(OriginalkeycodeToDinputdef(0x00)) ){		// [↑]
-							HumanAI[id].SetHoldTracking(dataid);
+							HumanAI[id].SetHoldTracking(PlayerID);
 						}
 						if( inputCtrl->CheckKeyDown(OriginalkeycodeToDinputdef(0x01)) ){		// [↓]
 							HumanAI[id].SetHoldWait(x, z, r);
@@ -1941,6 +1942,49 @@ void maingame::Render3D()
 	}
 	//オブジェクトを描画
 	ObjMgr.Render(camera_x, camera_y, camera_z, DrawPlayer);
+
+	//AIデバック情報表示
+	if( AIdebuginfoID != -1 ){
+		if( (0 <= AIdebuginfoID)&&(AIdebuginfoID < MAX_HUMAN) ){
+			float posx, posy, posz, rx;
+			int EnemyID;
+			float mposx, mposz;
+			int movemode;
+			ObjMgr.GeHumanObject(AIdebuginfoID)->GetPosData(&posx, &posy, &posz, &rx);
+			EnemyID = HumanAI[AIdebuginfoID].GetEnemyHumanID();
+			HumanAI[AIdebuginfoID].GetMoveTargetPos(&mposx, &mposz, &movemode);
+
+			d3dg->ResetWorldTransform();
+
+			//本人
+			d3dg->Drawline(posx+10.0f, posy, posz, posx-10.0f, posy, posz, d3dg->GetColorCode(0.0f,0.0f,1.0f,1.0f));
+			d3dg->Drawline(posx, posy+10.0f, posz, posx, posy-10.0f, posz, d3dg->GetColorCode(0.0f,0.0f,1.0f,1.0f));
+			d3dg->Drawline(posx, posy, posz+10.0f, posx, posy, posz-10.0f, d3dg->GetColorCode(0.0f,0.0f,1.0f,1.0f));
+
+			//移動先
+			d3dg->Drawline(mposx+10.0f, posy, mposz, mposx-10.0f, posy, mposz, d3dg->GetColorCode(1.0f,1.0f,0.0f,1.0f));
+			d3dg->Drawline(mposx, 5000.0f, mposz, mposx, -500.0f,mposz, d3dg->GetColorCode(1.0f,1.0f,0.0f,1.0f));
+			d3dg->Drawline(mposx, posy, mposz+10.0f, mposx, posy, mposz-10.0f, d3dg->GetColorCode(1.0f,1.0f,0.0f,1.0f));
+
+			if( EnemyID != -1 ){
+				ObjMgr.GeHumanObject(EnemyID)->GetPosData(&posx, &posy, &posz, &rx);
+
+				//攻撃対象
+				d3dg->Drawline(posx+3.0f, posy, posz+3.0f, posx+3.0f, posy, posz-3.0f, d3dg->GetColorCode(1.0f,0.0f,0.0f,1.0f));
+				d3dg->Drawline(posx+3.0f, posy, posz-3.0f, posx-3.0f, posy, posz-3.0f, d3dg->GetColorCode(1.0f,0.0f,0.0f,1.0f));
+				d3dg->Drawline(posx-3.0f, posy, posz-3.0f, posx-3.0f, posy, posz+3.0f, d3dg->GetColorCode(1.0f,0.0f,0.0f,1.0f));
+				d3dg->Drawline(posx-3.0f, posy, posz+3.0f, posx+3.0f, posy, posz+3.0f, d3dg->GetColorCode(1.0f,0.0f,0.0f,1.0f));
+				d3dg->Drawline(posx+3.0f, posy+HUMAN_HEIGTH, posz+3.0f, posx+3.0f, posy+HUMAN_HEIGTH, posz-3.0f, d3dg->GetColorCode(1.0f,0.0f,0.0f,1.0f));
+				d3dg->Drawline(posx+3.0f, posy+HUMAN_HEIGTH, posz-3.0f, posx-3.0f, posy+HUMAN_HEIGTH, posz-3.0f, d3dg->GetColorCode(1.0f,0.0f,0.0f,1.0f));
+				d3dg->Drawline(posx-3.0f, posy+HUMAN_HEIGTH, posz-3.0f, posx-3.0f, posy+HUMAN_HEIGTH, posz+3.0f, d3dg->GetColorCode(1.0f,0.0f,0.0f,1.0f));
+				d3dg->Drawline(posx-3.0f, posy+HUMAN_HEIGTH, posz+3.0f, posx+3.0f, posy+HUMAN_HEIGTH, posz+3.0f, d3dg->GetColorCode(1.0f,0.0f,0.0f,1.0f));
+				d3dg->Drawline(posx+3.0f, posy, posz+3.0f, posx+3.0f, posy+HUMAN_HEIGTH, posz+3.0f, d3dg->GetColorCode(1.0f,0.0f,0.0f,1.0f));
+				d3dg->Drawline(posx+3.0f, posy, posz-3.0f, posx+3.0f, posy+HUMAN_HEIGTH, posz-3.0f, d3dg->GetColorCode(1.0f,0.0f,0.0f,1.0f));
+				d3dg->Drawline(posx-3.0f, posy, posz-3.0f, posx-3.0f, posy+HUMAN_HEIGTH, posz-3.0f, d3dg->GetColorCode(1.0f,0.0f,0.0f,1.0f));
+				d3dg->Drawline(posx-3.0f, posy, posz+3.0f, posx-3.0f, posy+HUMAN_HEIGTH, posz+3.0f, d3dg->GetColorCode(1.0f,0.0f,0.0f,1.0f));
+			}
+		}
+	}
 }
 
 void maingame::Render2D()
@@ -2256,6 +2300,41 @@ void maingame::Render2D()
 		}
 	}
 
+	//AIデバック情報表示
+	if( AIdebuginfoID != -1 ){
+		if( (0 <= AIdebuginfoID)&&(AIdebuginfoID < MAX_HUMAN) ){
+			float posx, posy, posz, rx;
+			int hp;
+			char modestr[32];
+			int EnemyID;
+			float mposx, mposz;
+			int movemode;
+			pointdata ppdata;
+			ObjMgr.GeHumanObject(AIdebuginfoID)->GetPosData(&posx, &posy, &posz, &rx);
+			hp = ObjMgr.GeHumanObject(AIdebuginfoID)->GetHP();
+			HumanAI[AIdebuginfoID].GetBattleMode(NULL, modestr);
+			EnemyID = HumanAI[AIdebuginfoID].GetEnemyHumanID();
+			HumanAI[AIdebuginfoID].GetMoveTargetPos(&mposx, &mposz, &movemode);
+			HumanAI[AIdebuginfoID].GetPathPointData(&ppdata);
+
+			sprintf(str, "AI debug info [ID:%d]", AIdebuginfoID);
+			d3dg->Draw2DTextureFontText(20 +1, 130 +1, str, d3dg->GetColorCode(0.0f,0.0f,0.0f,1.0f), 12, 16);
+			d3dg->Draw2DTextureFontText(20, 130, str, d3dg->GetColorCode(1.0f,1.0f,0.0f,1.0f), 12, 16);
+			sprintf(str, "(X:%.2f Y:%.2f Z:%.2f RX:%.2f HP:%d)", posx, posy, posz, rx, hp);
+			d3dg->Draw2DTextureFontText(20 +1, 150 +1, str, d3dg->GetColorCode(0.0f,0.0f,0.0f,1.0f), 10, 14);
+			d3dg->Draw2DTextureFontText(20, 150, str, d3dg->GetColorCode(1.0f,1.0f,0.0f,1.0f), 10, 14);
+			sprintf(str, "Mode:%s  TargetEnemyID:%d", modestr, EnemyID);
+			d3dg->Draw2DTextureFontText(20 +1, 170 +1, str, d3dg->GetColorCode(0.0f,0.0f,0.0f,1.0f), 12, 16);
+			d3dg->Draw2DTextureFontText(20, 170, str, d3dg->GetColorCode(1.0f,1.0f,0.0f,1.0f), 12, 16);
+			sprintf(str, "PointPath:[%d][%d][%d][%d]", ppdata.p1, ppdata.p2, ppdata.p3, ppdata.p4);
+			d3dg->Draw2DTextureFontText(20 +1, 190 +1, str, d3dg->GetColorCode(0.0f,0.0f,0.0f,1.0f), 12, 16);
+			d3dg->Draw2DTextureFontText(20, 190, str, d3dg->GetColorCode(1.0f,1.0f,0.0f,1.0f), 12, 16);
+			sprintf(str, "MovePosX:%.2f  MovePosZ:%.2f", mposx, mposz);
+			d3dg->Draw2DTextureFontText(20 +1, 210 +1, str, d3dg->GetColorCode(0.0f,0.0f,0.0f,1.0f), 12, 16);
+			d3dg->Draw2DTextureFontText(20, 210, str, d3dg->GetColorCode(1.0f,1.0f,0.0f,1.0f), 12, 16);
+		}
+	}
+
 
 	//-----------------------------------
 
@@ -2389,10 +2468,10 @@ bool maingame::GetRadarPos(float in_x, float in_y, float in_z, int RadarPosX, in
 //! @brief 簡易レーダー表示
 void maingame::RenderRadar()
 {
-	int RadarPosX = 10;				//レーダーの描画 X座標（左上基準）
-	int RadarPosY = 130;			//レーダーの描画 Y座標（左上基準）
-	int RadarSize = 200;			//レーダーの描画サイズ
-	float RadarWorldR = 300.0f;		//レーダーにポイントする距離
+	int RadarSize = 200;							//レーダーの描画サイズ
+	int RadarPosX = SCREEN_WIDTH - RadarSize - 10;	//レーダーの描画 X座標（左上基準）
+	int RadarPosY = 130;							//レーダーの描画 Y座標（左上基準）
+	float RadarWorldR = 300.0f;						//レーダーにポイントする距離
 
 	float ecr = DISTANCE_CHECKPOINT / RadarWorldR * (RadarSize/2);
 
@@ -2651,14 +2730,14 @@ void maingame::ProcessConsole()
 
 	//コマンドリスト
 	if( strcmp(NewCommand, "help") == 0 ){
-		AddInfoConsole(d3dg->GetColorCode(1.0f,1.0f,1.0f,1.0f), "help        human        result      event");
+		AddInfoConsole(d3dg->GetColorCode(1.0f,1.0f,1.0f,1.0f), "help          human       result     event");
 		AddInfoConsole(d3dg->GetColorCode(1.0f,1.0f,1.0f,1.0f), "ver");
-		AddInfoConsole(d3dg->GetColorCode(1.0f,1.0f,1.0f,1.0f), "info        view         center      map");
-		AddInfoConsole(d3dg->GetColorCode(1.0f,1.0f,1.0f,1.0f), "tag         radar        inmap");
-		AddInfoConsole(d3dg->GetColorCode(1.0f,1.0f,1.0f,1.0f), "revive      treat <NUM>  nodamage <NUM>");
-		AddInfoConsole(d3dg->GetColorCode(1.0f,1.0f,1.0f,1.0f), "kill <NUM>  break <NUM>  newobj <NUM>  ff");
-		AddInfoConsole(d3dg->GetColorCode(1.0f,1.0f,1.0f,1.0f), "bot         nofight      caution     stop");
-		AddInfoConsole(d3dg->GetColorCode(1.0f,1.0f,1.0f,1.0f), "estop       speed        ss          clear");
+		AddInfoConsole(d3dg->GetColorCode(1.0f,1.0f,1.0f,1.0f), "info          view        center     map");
+		AddInfoConsole(d3dg->GetColorCode(1.0f,1.0f,1.0f,1.0f), "aiinfo <NUM>  tag         radar      inmap");
+		AddInfoConsole(d3dg->GetColorCode(1.0f,1.0f,1.0f,1.0f), "revive       treat <NUM>  nodamage <NUM>");
+		AddInfoConsole(d3dg->GetColorCode(1.0f,1.0f,1.0f,1.0f), "kill <NUM>   break <NUM>  newobj <NUM>   ff");
+		AddInfoConsole(d3dg->GetColorCode(1.0f,1.0f,1.0f,1.0f), "bot          nofight      caution    stop");
+		AddInfoConsole(d3dg->GetColorCode(1.0f,1.0f,1.0f,1.0f), "estop        speed        ss         clear");
 	}
 
 	//人の統計情報
@@ -2783,6 +2862,23 @@ void maingame::ProcessConsole()
 		else{
 			wireframe = false;
 			AddInfoConsole(d3dg->GetColorCode(1.0f,1.0f,1.0f,1.0f), "Draw map on the Normal.");
+		}
+	}
+
+	//AI情報表示
+	if( GetCommandNum("aiinfo", &id) == true ){
+		if( (0 <= id)&&(id < MAX_HUMAN) ){
+			if( AIdebuginfoID == id ){
+				//同じ番号が指定されたらなら、無効化
+				AIdebuginfoID = -1;
+				AddInfoConsole(d3dg->GetColorCode(1.0f,1.0f,1.0f,1.0f), "Disable AI Debug information.");
+			}
+			else{
+				//新たに人を指定
+				AIdebuginfoID = id;
+				sprintf(str, "Enable AI Debug information. Human[%d].", id);
+				AddInfoConsole(d3dg->GetColorCode(1.0f,1.0f,1.0f,1.0f), str);
+			}
 		}
 	}
 

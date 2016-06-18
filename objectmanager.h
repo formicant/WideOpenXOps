@@ -132,6 +132,7 @@ public:
 	void SetPlayerID(int id);
 	human* GeHumanObject(int id);
 	human* GetPlayerHumanObject();
+	int GetHumanObjectID(human* object);
 	weapon* GetWeaponObject(int id);
 	smallobject* GetSmallObject(int id);
 	bullet* GetBulletObject(int id);

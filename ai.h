@@ -57,42 +57,35 @@ class AIcontrol
 {
 	class ObjectManager *ObjMgr;		//!< ObjectManagerクラスのポインタ
 	class BlockDataInterface *blocks;	//!< ブロックデータを管理するクラスへのポインタ
-	class PointDataInterface *Points;	//!< ポイントデータを管理するクラスへのポインタ
 	class ParameterInfo *Param;		//!< 設定値を管理するクラスへのポインタ
 	class Collision *CollD;				//!< 当たり判定を管理するクラスへのポインタ
 	class SoundManager *GameSound;		//!< ゲーム効果音再生クラスへのポインタ
 
+	class AIMoveNavi *MoveNavi;			//!< 人移動管理クラスのポインタ
+	class AIObjectDriver *ObjDriver;	//!< 人移動回転制御クラスのポインタ
+
 	int AIlevel;		//!< AIレベル
 	int battlemode;		//!< 戦闘モード
-	int movemode;		//!< 移動モード
-	bool hold;		//!< 移動パスを読まない
-	bool NoFight;	//!< 非戦闘化フラグ
-	float posx;		//!< X座標
-	float posy;		//!< Y座標
-	float posz;		//!< Z座標
-	float rx;		//!< X軸回転角度
-	float ry;		//!< Y軸回転角度
-	float addrx;	//!< X軸回転角加速度
-	float addry;	//!< Y軸回転角加速度
-	int target_pointid;		//!< パス系　ターゲットのデータ番号
-	float target_posx;		//!< パス系　ターゲットのX座標
-	float target_posz;		//!< パス系　ターゲットのZ座標
-	float target_rx;		//!< パス系　ターゲットの水平角度
-	float total_move;		//!< 合計移動量
+	bool NoFight;		//!< 非戦闘化フラグ
+	float posx;			//!< X座標
+	float posy;			//!< Y座標
+	float posz;			//!< Z座標
+	float rx;			//!< X軸回転角度
+	float ry;			//!< Y軸回転角度
+	float cautionback_posx;		//!< 警戒後に戻るX座標
+	float cautionback_posz;		//!< 警戒後に戻るZ座標
+	float total_move;			//!< 合計移動量
 	int waitcnt;		//!< 時間待ちカウント
 	int movejumpcnt;	//!< ジャンプ判定カウント
 	int gotocnt;		//!< 移動カウント
-	int moveturn_mode;	//!< 移動方向や回転方向のフラグ
 	int cautioncnt;		//!< 警戒中カウント
 	int actioncnt;		//!< 攻撃中カウント
 	bool longattack;	//!< 近距離・遠距離フラグ
 	AIParameter *LevelParam;	//!< AIの性能値
 
-	int SearchHumanPos(signed char in_p4, float *out_x, float *out_z);
-	bool CheckTargetPos();
-	bool SearchTarget(bool next);
-	void MoveTarget();
-	void MoveTarget2();
+	bool CheckTargetPos(bool back);
+	void MoveTarget(bool back);
+	void MoveTarget2(bool back);
 	void MoveRandom();
 	void TurnSeen();
 	bool StopSeen();
@@ -101,7 +94,6 @@ class AIcontrol
 	bool ActionCancel();
 	int HaveWeapon();
 	void CancelMoveTurn();
-	void ControlMoveTurn();
 	int ControlWeapon();
 	int ThrowGrenade();
 	void ArmAngle();
@@ -128,10 +120,70 @@ public:
 	void SetHoldTracking(int id);
 	void SetCautionMode();
 	void SetNoFightFlag(bool flag);
+	void GetBattleMode(int *mode, char *modestr);
+	int GetEnemyHumanID();
+	void GetMoveTargetPos(float *posx, float *posz, int *movemode);
+	void GetPathPointData(pointdata *out_data);
 	void Process();
 };
 
+//! @brief 人移動管理クラス
+//! @details 通常モードにおいて、人の移動先を決定するクラスです。AIcontrolクラス内で使用します。
+class AIMoveNavi
+{
+	class ObjectManager *ObjMgr;		//!< ObjectManagerクラスのポインタ
+	int ctrlid;							//!< 自分自身（制御対象）の人番号
+	class PointDataInterface *Points;	//!< ポイントデータを管理するクラスへのポインタ
+
+	int movemode;			//!< 移動モード
+	bool hold;				//!< 移動パスを読まない
+	int path_pointid;		//!< パスのポイントデータ番号
+	int target_humanid;		//!< ターゲットにする人のデータ番号
+	float target_posx;		//!< ターゲットのX座標
+	float target_posz;		//!< ターゲットのZ座標
+	float target_rx;		//!< ターゲットの水平角度
+
+public:
+	AIMoveNavi(class ObjectManager *in_ObjMgr = NULL, int in_ctrlid = -1, class PointDataInterface *in_Points = NULL);
+	~AIMoveNavi();
+	void SetClass(class ObjectManager *in_ObjMgr, int in_ctrlid, class PointDataInterface *in_Points);
+	void Init();
+	bool MovePathNowState();
+	bool MovePathNextState();
+	void SetHoldWait(float px, float pz, float rx);
+	void SetHoldTracking(int id);
+	int GetMoveMode();
+	bool GetRun2();
+	int GetTargetHumanID();
+	void GetPathPointData(pointdata *out_data);
+	void GetTargetPos(float *posx, float *posz, float *rx, int *out_movemode, int *out_pointmode);
+};
+
+//! @brief 人移動回転制御クラス
+//! @details 人の移動制御と回転制御をフラグ管理するクラスです。AIcontrolクラス内で使用します。
+class AIObjectDriver
+{
+	class ObjectManager *ObjMgr;		//!< ObjectManagerクラスのポインタ
+	int ctrlid;				//!< 自分自身（制御対象）の人番号
+
+	int moveturn_mode;		//!< 移動方向や回転方向のフラグ
+	float addrx;			//!< X軸回転角加速度
+	float addry;			//!< Y軸回転角加速度
+
+public:
+	AIObjectDriver(class ObjectManager *in_ObjMgr = NULL, int in_ctrlid = -1);
+	~AIObjectDriver();
+	void SetClass(class ObjectManager *in_ObjMgr, int in_ctrlid);
+	void Init();
+	void ResetMode();
+	void SetModeFlag(int flag);
+	void DelModeFlag(int flag);
+	bool GetModeFlag(int flag);
+	void ControlObject();
+};
+
 //! AIの制御モードを表す定数
+//! @warning 定数を変更する場合、必要に応じてGetBattleMode()関数の文字列出力処理も変更すること。
 enum AImode {
 	AI_DEAD = 0,	//!< 死亡している人
 	AI_ACTION,		//!< 戦闘中の人
@@ -147,6 +199,21 @@ enum AImode {
 	AI_RUN2,		//!< 優先的な走り
 	AI_RANDOM,		//!< ランダムパス処理中
 	AI_NULL			//!< パスなし
+};
+
+//! AIの移動モードを表す定数
+enum AIMoveNaviFlag {
+	AI_NAVI_MOVE_NULL,
+	AI_NAVI_MOVE_WALK,
+	AI_NAVI_MOVE_RUN,
+	AI_NAVI_MOVE_RUN2,
+	AI_NAVI_MOVE_TRACKING,
+
+	AI_NAVI_POINT_NULL,
+	AI_NAVI_POINT_WAIT,
+	AI_NAVI_POINT_STOP,
+	AI_NAVI_POINT_TRACKING,
+	AI_NAVI_POINT_GRENADE
 };
 
 //! AIの操作モードを表す定数

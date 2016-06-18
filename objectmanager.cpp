@@ -1491,6 +1491,20 @@ human* ObjectManager::GetPlayerHumanObject()
 	return GeHumanObject(Player_HumanID);
 }
 
+//! @brief 指定したhumanポインタのデータ番号を取得
+//! @param object 人オブジェクトのポインタ
+//! @return データ番号　（エラー：-1）
+int ObjectManager::GetHumanObjectID(human* object)
+{
+	for(int i=0; i<MAX_HUMAN; i++){
+		if( &(HumanIndex[i]) == object ){
+			return i;
+		}
+	}
+
+	return -1;
+}
+
 //! @brief 指定したデータ番号のweaponクラスを取得
 //! @param id データ番号
 //! @return 武器オブジェクトのポインタ　（無効なデータ番号で NULL）
