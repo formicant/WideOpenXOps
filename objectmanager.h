@@ -87,7 +87,7 @@ class ObjectManager
 
 	int Player_HumanID;		//!< プレイヤーが操作する人オブジェクトのID
 
-	int AddHumanIndex_TextureID;		//!< 前回読み込んだテクスチャID
+	bool *Human_FrameTextureRefresh;	//!< 人のテクスチャリフレッシュフラグ（テクスチャ偽造人間（謎人間）用）
 
 	ParameterInfo *GameParamInfo;		//!< ゲームの設定値
 	D3DGraphics *d3dg;					//!< 描画クラス

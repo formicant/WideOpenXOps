@@ -133,6 +133,7 @@ class ParameterInfo
 	HumanParameter *Human;						//!< 人の情報を格納するポインタ
 	char *HumanTexturePath[TOTAL_HUMANTEXTURE];		//!< 人のテクスチャを格納するポインタ
 	WeaponParameter *Weapon;						//!< 武器の情報を格納するポインタ
+	WeaponParameter *BugWeapon;						//!< バグ武器の情報を格納するポインタ
 	SmallObjectParameter *SmallObject;			//!< 小物の情報を格納するポインタ
 	BulletParameter *Bullet;						//!< 銃弾オブジェクトの情報を格納するポインタ
 	char *missionname[TOTAL_OFFICIALMISSION];		//!< 標準ミッションのミッション識別名
@@ -149,6 +150,7 @@ public:
 	int GetHuman(int id, HumanParameter *out_data);
 	int GetHumanTexturePath(int id, char *out_str);
 	int GetWeapon(int id, WeaponParameter *out_data);
+	int GetBugWeapon(int id, WeaponParameter *out_data);
 	int GetSmallObject(int id, SmallObjectParameter *out_data);
 	int GetBullet(int id, BulletParameter *out_data);
 	int GetOfficialMission(int id, char *name, char *fullname, char* directory, char *txt);

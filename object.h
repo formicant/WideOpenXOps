@@ -109,7 +109,9 @@ public:
 	virtual void SetEnableFlag(bool flag);
 	virtual bool GetEnableFlag();
 	virtual void SetModel(int id, float size);
+	virtual void GetModel(int *id, float *size);
 	virtual void SetTexture(int id);
+	virtual int GetTexture();
 	virtual int RunFrame();
 	virtual void Render(class D3DGraphics *d3dg);
 };
@@ -160,7 +162,7 @@ protected:
 	void GunsightErrorRange();
 	int CheckAndProcessDead(class Collision *CollD);
 	void ControlProcess();
-	bool MapCollisionDetection(class Collision *CollD, class BlockDataInterface *inblockdata, float *FallDist);
+	bool MapCollisionDetection(class Collision *CollD, class BlockDataInterface *inblockdata, float *FallDist, float *nowmove_x, float *nowmove_z);
 
 public:
 	human(class ParameterInfo *in_Param = NULL, float x = 0.0f, float y = 0.0f, float z = 0.0f, float rx = 0.0f, int id_param = -1, int dataid = 0, signed char p4 = 0, int team = 0, bool flag = false);

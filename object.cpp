@@ -107,11 +107,27 @@ void object::SetModel(int id, float size)
 	model_size = size;
 }
 
+//! @brief モデルデータを取得
+//! @param id モデル認識番号を受け取るポインタ（NULL可）
+//! @param size 表示倍率を受け取るポインタ（NULL可）
+void object::GetModel(int *id, float *size)
+{
+	if( id != NULL ){ *id = id_model; }
+	if( size != NULL ){ *size = model_size; }
+}
+
 //! @brief テクスチャを設定
 //! @param id テクスチャ認識番号
 void object::SetTexture(int id)
 {
 	id_texture = id;
+}
+
+//! @brief テクスチャを取得
+//! @return テクスチャ認識番号
+int object::GetTexture()
+{
+	return id_texture;
 }
 
 //! @brief 計算を実行（自由落下など）
@@ -1254,8 +1270,10 @@ void human::ControlProcess()
 //! @param CollD Collisionクラスのポインタ
 //! @param inblockdata BlockDataInterfaceクラスのポインタ
 //! @param FallDist Y軸の移動量を取得するポインタ
+//! @param nowmove_x X軸の移動量を取得するポインタ
+//! @param nowmove_z Z軸の移動量を取得するポインタ
 //! @return ブロックに埋まっている：true　埋まっていない：false
-bool human::MapCollisionDetection(class Collision *CollD, class BlockDataInterface *inblockdata, float *FallDist)
+bool human::MapCollisionDetection(class Collision *CollD, class BlockDataInterface *inblockdata, float *FallDist, float *nowmove_x, float *nowmove_z)
 {
 	bool inside = false;
 	int id;
@@ -1470,6 +1488,9 @@ bool human::MapCollisionDetection(class Collision *CollD, class BlockDataInterfa
 		}
 	}
 
+	*nowmove_x = move_x;
+	*nowmove_z = move_z;
+
 	*FallDist = FallDistance;
 	return inside;
 }
@@ -1495,6 +1516,7 @@ int human::RunFrame(class Collision *CollD, class BlockDataInterface *inblockdat
 #endif
 
 	float FallDistance;
+	float nowmove_x, nowmove_z;
 	int CheckDead;
 
 	//武器切り替えカウント
@@ -1552,16 +1574,16 @@ int human::RunFrame(class Collision *CollD, class BlockDataInterface *inblockdat
 	ControlProcess();
 
 	//マップとの当たり判定
-	MapCollisionDetection(CollD, inblockdata, &FallDistance);
+	MapCollisionDetection(CollD, inblockdata, &FallDistance, &nowmove_x, &nowmove_z);
 
 	//移動するなら
-	if( (move_x*move_x + move_z*move_z) > 0.0f * 0.0f ){
-		totalmove += sqrt(move_x*move_x + move_z*move_z);
+	if( (nowmove_x*nowmove_x + nowmove_z*nowmove_z) > 0.0f * 0.0f ){
+		totalmove += sqrt(nowmove_x*nowmove_x + nowmove_z*nowmove_z);
 	}
 
 	//座標移動
-	pos_x += move_x;
-	pos_z += move_z;
+	pos_x += nowmove_x;
+	pos_z += nowmove_z;
 
 	//移動量を減衰
 	move_x *= HUMAN_ATTENUATION;

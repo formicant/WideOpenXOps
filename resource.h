@@ -99,6 +99,7 @@ public:
 	void CleanupHumanTexture();
 	int LoadWeaponModelTexture();
 	int GetWeaponModelTexture(int id, int *model, int *texture);
+	int GetBugWeaponModelTexture(int id, int *model, int *texture);
 	void CleanupWeaponModelTexture();
 	int LoadWeaponSound();
 	int GetWeaponSound(int id);

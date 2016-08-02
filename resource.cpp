@@ -330,11 +330,43 @@ int ResourceManager::LoadWeaponModelTexture()
 //! @return 成功：0　失敗：1
 int ResourceManager::GetWeaponModelTexture(int id, int *model, int *texture)
 {
-	if( (id < 0)||((TOTAL_PARAMETERINFO_WEAPON -1) < id ) ){ return 1; }
+	if( (id < 0)||((TOTAL_PARAMETERINFO_WEAPON -1) < id ) ){
+		return GetBugWeaponModelTexture(id, model, texture);
+	}
 
 	*model = weapon_model[id];
 	*texture = weapon_texture[id];
 	return 0;
+}
+
+//! @brief バグ武器のモデルとテクスチャを取得
+//! @return 成功：0　失敗：1
+//! @warning 先に GetWeaponModelTexture()関数 を実行して取得に失敗した時に限り、この関数を使ってください。
+//! @attention バグ武器を追加する場合は、ParameterInfoクラスの GetBugWeapon() 関数も編集してください。
+int ResourceManager::GetBugWeaponModelTexture(int id, int *model, int *texture)
+{
+	if( id == 23 ){
+		*model = human_upmodel[0];
+		*texture = d3dg->GetMapTextureID(0);
+		return 0;
+	}
+	if( id == 24 ){
+		*model = human_upmodel[0];
+		*texture = d3dg->GetMapTextureID(3);
+		return 0;
+	}
+	if( id == 30 ){
+		*model = human_upmodel[0];
+		*texture = d3dg->GetMapTextureID(2);
+		return 0;
+	}
+	if( id == 53 ){
+		*model = human_upmodel[0];
+		*texture = d3dg->GetMapTextureID(8);
+		return 0;
+	}
+
+	return 1;
 }
 
 //! @brief 武器のモデルやテクスチャを一括解放

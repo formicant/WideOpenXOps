@@ -42,6 +42,7 @@ ParameterInfo::ParameterInfo()
 		HumanTexturePath[i] = '\0';
 	}
 	Weapon = NULL;
+	BugWeapon = NULL;
 	SmallObject = NULL;
 	Bullet = NULL;
 	for(int i=0; i<TOTAL_OFFICIALMISSION; i++){
@@ -70,6 +71,7 @@ void ParameterInfo::InitInfo()
 
 	Human = new HumanParameter[TOTAL_PARAMETERINFO_HUMAN];
 	Weapon = new WeaponParameter[TOTAL_PARAMETERINFO_WEAPON];
+	BugWeapon = new WeaponParameter[1];
 	SmallObject = new SmallObjectParameter[TOTAL_PARAMETERINFO_SMALLOBJECT];
 	Bullet = new BulletParameter[TOTAL_PARAMETERINFO_BULLET];
 	AIlevel = new AIParameter[TOTAL_PARAMETERINFO_AILEVEL];
@@ -1188,6 +1190,40 @@ void ParameterInfo::InitInfo()
 	Weapon[22].ChangeWeapon = -1;
 	Weapon[22].burst = 1;
 
+	//特殊なバグ武器用データ
+	BugWeapon[0].name = "BugWeapon";
+	BugWeapon[0].model = "";
+	BugWeapon[0].texture= "";
+	BugWeapon[0].attacks = 0;
+	BugWeapon[0].penetration = 0;
+	BugWeapon[0].blazings = 0;
+	BugWeapon[0].speed = 0;
+	BugWeapon[0].nbsmax = 0;
+	BugWeapon[0].reloads = 0;
+	BugWeapon[0].reaction = 0;
+	BugWeapon[0].ErrorRangeMIN = 0;
+	BugWeapon[0].ErrorRangeMAX = 0;
+	BugWeapon[0].mx = 0.0f;
+	BugWeapon[0].my = 0.0f;
+	BugWeapon[0].mz = 0.0f;
+	BugWeapon[0].flashx = 0.0f;
+	BugWeapon[0].flashy = 0.0f;
+	BugWeapon[0].flashz = 0.0f;
+	BugWeapon[0].yakkyou_px = 0.0f;
+	BugWeapon[0].yakkyou_py = 0.0f;
+	BugWeapon[0].yakkyou_pz = 0.0f;
+	BugWeapon[0].yakkyou_sx = 0.0f;
+	BugWeapon[0].yakkyou_sy = 0.0f;
+	BugWeapon[0].blazingmode = true;
+	BugWeapon[0].scopemode = 0;
+	BugWeapon[0].size = 9.0f;
+	BugWeapon[0].soundid = 0;
+	BugWeapon[0].soundvolume = 0;
+	BugWeapon[0].silencer = false;
+	BugWeapon[0].WeaponP = 1;
+	BugWeapon[0].ChangeWeapon = -1;
+	BugWeapon[0].burst = 0;
+
 
 	//缶
 	SmallObject[0].model = "./data/article/can.x";
@@ -1567,6 +1603,10 @@ void ParameterInfo::DestroyInfo()
 		delete [] Weapon;
 		Weapon = NULL;
 	}
+	if( BugWeapon != NULL ){
+		delete [] BugWeapon;
+		BugWeapon = NULL;
+	}
 	if( SmallObject != NULL ){
 		delete [] SmallObject;
 		SmallObject = NULL;
@@ -1616,11 +1656,30 @@ int ParameterInfo::GetHumanTexturePath(int id, char *out_str)
 //! @return 成功：0　失敗：1
 int ParameterInfo::GetWeapon(int id, WeaponParameter *out_data)
 {
-	if( (id < 0)||((TOTAL_PARAMETERINFO_WEAPON -1) < id ) ){ return 1; }
+	if( (id < 0)||((TOTAL_PARAMETERINFO_WEAPON -1) < id ) ){
+		return GetBugWeapon(id, out_data);
+	}
 
 	*out_data = Weapon[id];
 	return 0;
 }
+
+//! @brief 武器の設定を取得
+//! @param id 番号
+//! @param out_data 受け取るWeaponParameter型ポインタ
+//! @return 成功：0　失敗：1
+//! @warning 先に GetWeapon()関数 を実行して取得に失敗した時に限り、この関数を使ってください。
+//! @attention バグ武器を追加する場合は、ResourceManagerクラスの GetBugWeaponModelTexture() 関数も編集してください。
+int ParameterInfo::GetBugWeapon(int id, WeaponParameter *out_data)
+{
+	if( (id == 23)||(id == 24)||(id == 30)||(id == 53) ){
+		*out_data = BugWeapon[0];
+		return 0;
+	}
+
+	return 1;
+}
+
 
 //! @brief 小物の設定を取得
 //! @param id 番号

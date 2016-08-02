@@ -49,7 +49,7 @@ ObjectManager::ObjectManager()
 	BulletObj_HumanIndex = new BulletObjectHumanIndex[MAX_BULLET];
 	FriendlyFire = false;
 	Player_HumanID = 0;
-	AddHumanIndex_TextureID = -1;
+	Human_FrameTextureRefresh = new bool[MAX_HUMAN];
 
 	GameParamInfo = NULL;
 	d3dg = NULL;
@@ -76,6 +76,7 @@ ObjectManager::~ObjectManager()
 	if( Human_headshot != NULL ){ delete [] Human_headshot; }
 	if( Human_ShotFlag != NULL ){ delete [] Human_ShotFlag; }
 	if( BulletObj_HumanIndex != NULL ){ delete [] BulletObj_HumanIndex; }
+	if( Human_FrameTextureRefresh != NULL ){ delete [] Human_FrameTextureRefresh; }
 }
 
 //! @brief 参照するクラスを設定
@@ -168,19 +169,15 @@ int ObjectManager::AddHumanIndex(pointdata data, pointdata infodata)
 			if( GetHumanFlag == 0 ){
 				int id = Resource->GetHumanTexture(infodata.p2);
 				if( id == -1 ){
-					id = AddHumanIndex_TextureID;
-				}
-				else{
-					AddHumanIndex_TextureID = id;
+					//テクスチャが取得できなければ、リフレッシュフラグを有効にして毎フレーム取得
+					Human_FrameTextureRefresh[j] = true;
 				}
 
 				HumanIndex[j].SetTexture(id);
 				HumanIndex[j].SetModel(upmodel[ HumanParam.model ], armmodel, legmodel, walkmodel, runmodel);
 			}
 			else{
-				AddHumanIndex_TextureID = d3dg->GetMapTextureID(0);
-
-				HumanIndex[j].SetTexture(AddHumanIndex_TextureID);
+				HumanIndex[j].SetTexture(d3dg->GetMapTextureID(0));
 				HumanIndex[j].SetModel(upmodel[0], armmodel, legmodel, walkmodel, runmodel);
 			}
 			HumanIndex[j].SetEnableFlag(true);
@@ -262,24 +259,17 @@ int ObjectManager::AddHumanIndex(float px, float py, float pz, float rx, int par
 			HumanIndex[i].SetPosData(px, py, pz, rx);
 			HumanIndex[i].SetParamData(paramID, -1, 0, TeamID, true);
 			if( GetHumanFlag == 0 ){
-				//読み込めなければ、前回読み込んだテクスチャ番号を利用
-				//読み込めれば、今回読み込むテクスチャ番号を上書き
 				int id = Resource->GetHumanTexture(paramID);
 				if( id == -1 ){
-					id = AddHumanIndex_TextureID;
-				}
-				else{
-					AddHumanIndex_TextureID = id;
+					//テクスチャが取得できなければ、リフレッシュフラグを有効にして毎フレーム取得
+					Human_FrameTextureRefresh[i] = true;
 				}
 
 				HumanIndex[i].SetTexture(id);
 				HumanIndex[i].SetModel(upmodel[ HumanParam.model ], armmodel, legmodel, walkmodel, runmodel);
 			}
 			else{
-				//今回読み込むテクスチャ番号を上書き
-				AddHumanIndex_TextureID = d3dg->GetMapTextureID(0);
-
-				HumanIndex[i].SetTexture(AddHumanIndex_TextureID);
+				HumanIndex[i].SetTexture(d3dg->GetMapTextureID(0));
 				HumanIndex[i].SetModel(upmodel[0], armmodel, legmodel, walkmodel, runmodel);
 			}
 			HumanIndex[i].SetEnableFlag(true);
@@ -1263,6 +1253,11 @@ void ObjectManager::LoadPointData()
 	FriendlyFire = false;
 	Player_HumanID = 0;
 
+	//人のテクスチャリフレッシュフラグ初期化
+	for(int i=0; i<MAX_HUMAN; i++){
+		Human_FrameTextureRefresh[i] = false;
+	}
+
 	/*
 	//人情報ポイントを探す
 	for(int i=0; i<PointData->GetTotaldatas(); i++){
@@ -1361,24 +1356,17 @@ void ObjectManager::Recovery()
 				//人のテクスチャを登録
 				Resource->AddHumanTexture(HumanID);
 
-				//読み込めなければ、前回読み込んだテクスチャ番号を利用
-				//読み込めれば、今回読み込むテクスチャ番号を上書き
 				int id = Resource->GetHumanTexture(HumanID);
 				if( id == -1 ){
-					id = AddHumanIndex_TextureID;
-				}
-				else{
-					AddHumanIndex_TextureID = id;
+					//テクスチャが取得できなければ、リフレッシュフラグを有効にして毎フレーム取得
+					Human_FrameTextureRefresh[i] = true;
 				}
 
 				HumanIndex[i].SetTexture(id);
 				HumanIndex[i].SetModel(upmodel[ HumanParam.model ], armmodel, legmodel, walkmodel, runmodel);
 			}
 			else{
-				//今回読み込むテクスチャ番号を上書き
-				AddHumanIndex_TextureID = d3dg->GetMapTextureID(0);
-
-				HumanIndex[i].SetTexture(AddHumanIndex_TextureID);
+				HumanIndex[i].SetTexture(d3dg->GetMapTextureID(0));
 				HumanIndex[i].SetModel(upmodel[0], armmodel, legmodel, walkmodel, runmodel);
 			}
 		}
@@ -2543,6 +2531,26 @@ void ObjectManager::Render(float camera_x, float camera_y, float camera_z, int H
 	//人描画
 	for(int i=0; i<MAX_HUMAN; i++){
 		bool DrawArm, player;
+
+		//人のテクスチャリフレッシュフラグが有効なら
+		if( Human_FrameTextureRefresh[i] == true ){
+			if( i > 0 ){
+				//前の人が持っている武器を取得
+				int WeaponType = HumanIndex[i-1].GetMainWeaponTypeNO();
+
+				if( WeaponType != ID_WEAPON_NONE ){
+					int model, texture;
+
+					//武器を持っていれば、その武器のテクスチャを適用
+					Resource->GetWeaponModelTexture(WeaponType, &model, &texture);
+					HumanIndex[i].SetTexture(texture);
+				}
+				else{
+					//手ぶらなら、人のテクスチャをそのまま反映
+					HumanIndex[i].SetTexture( HumanIndex[i-1].GetTexture() );
+				}
+			}
+		}
 
 		//腕の表示
 		if( HidePlayer == 0 ){
