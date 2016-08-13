@@ -1284,6 +1284,8 @@ bool human::MapCollisionDetection(class Collision *CollD, class BlockDataInterfa
 	float Dist;
 	float FallDistance;
 	float offset;
+	float move_x2 = move_x;
+	float move_z2 = move_z;
 
 	//足元ギリギリは当たり判定から除外する
 	offset = 0.1f;
@@ -1335,9 +1337,20 @@ bool human::MapCollisionDetection(class Collision *CollD, class BlockDataInterfa
 					//地面と認めない　（ジャンプ対策）
 					move_y_flag = true;
 
+					float angvx = atan2(bdata.material[face].vz, bdata.material[face].vx);
+					float angvy = acos(bdata.material[face].vy);
+
+					//押し出す力の決定
+					//y = -0.6*x*x + 1.9*x - 0.2
+					float force = -0.6f*angvy*angvy + 1.9f*angvy - 0.2f;
+
 					//押し出す
-					move_x += bdata.material[face].vx * HUMAN_MAPCOLLISION_SLOPEFORCE;
-					move_z += bdata.material[face].vz * HUMAN_MAPCOLLISION_SLOPEFORCE;
+					move_x = cos(angvx) * cos(HUMAN_MAPCOLLISION_SLOPEFORCEANGLE) * force;
+					move_y = sin(HUMAN_MAPCOLLISION_SLOPEFORCEANGLE) * force;
+					move_z = sin(angvx) * cos(HUMAN_MAPCOLLISION_SLOPEFORCEANGLE) * force;
+
+					move_x2 = move_x;
+					move_z2 = move_z;
 				}
 				else{
 					move_y_flag = false;
@@ -1359,9 +1372,9 @@ bool human::MapCollisionDetection(class Collision *CollD, class BlockDataInterfa
 	//　水平方向のあたり判定（移動）
 	//--------------------------------------------------
 
-	if( (move_x*move_x + move_z*move_z) ){
+	if( (move_x2*move_x2 + move_z2*move_z2) ){
 		int surface;
-		float ang = atan2(move_z, move_x);
+		float ang = atan2(move_z2, move_x2);
 		float newpos_x, newpos_y, newpos_z;
 
 		//腰付近を当たり判定
@@ -1379,18 +1392,18 @@ bool human::MapCollisionDetection(class Collision *CollD, class BlockDataInterfa
 				if( surface != -1 ){
 					//HUMAN_MAPCOLLISION_R 分の先を調べる
 					if( CollD->CheckBlockInside(i, pos_x + cos(ang)*HUMAN_MAPCOLLISION_R, pos_y + HUMAN_MAPCOLLISION_HEIGTH, pos_z + sin(ang)*HUMAN_MAPCOLLISION_R, true, NULL) == true ){
-						CollD->ScratchVector(i, surface, move_x, vy, move_z, &move_x, &vy, &move_z);
+						CollD->ScratchVector(i, surface, move_x2, vy, move_z2, &move_x2, &vy, &move_z2);
 					}
 
 					//左右90度づつを調べる
 					if( CollD->CheckBlockInside(i, pos_x + cos(ang + (float)M_PI/2)*HUMAN_MAPCOLLISION_R, pos_y + HUMAN_MAPCOLLISION_HEIGTH, pos_z + sin(ang + (float)M_PI/2)*HUMAN_MAPCOLLISION_R, true, NULL) == true ){
 						if( CollD->CheckPolygonFrontRx(i, surface, ang) == true ){		//進行方向に対して表向きなら～
-							CollD->ScratchVector(i, surface, move_x, vy, move_z, &move_x, &vy, &move_z);
+							CollD->ScratchVector(i, surface, move_x2, vy, move_z2, &move_x2, &vy, &move_z2);
 						}
 					}
 					if( CollD->CheckBlockInside(i, pos_x + cos(ang - (float)M_PI/2)*HUMAN_MAPCOLLISION_R, pos_y + HUMAN_MAPCOLLISION_HEIGTH, pos_z + sin(ang - (float)M_PI/2)*HUMAN_MAPCOLLISION_R, true, NULL) == true ){
 						if( CollD->CheckPolygonFrontRx(i, surface, ang) == true ){		//進行方向に対して表向きなら～
-							CollD->ScratchVector(i, surface, move_x, vy, move_z, &move_x, &vy, &move_z);
+							CollD->ScratchVector(i, surface, move_x2, vy, move_z2, &move_x2, &vy, &move_z2);
 						}
 					}
 				}
@@ -1398,8 +1411,8 @@ bool human::MapCollisionDetection(class Collision *CollD, class BlockDataInterfa
 		}
 
 		//進行方向を示すベクトルを算出
-		vx = move_x;
-		vz = move_z;
+		vx = move_x2;
+		vz = move_z2;
 		speed = sqrt(vx*vx + vz*vz);
 		if( speed > 0.0f ){
 			vx = vx / speed;
@@ -1409,15 +1422,15 @@ bool human::MapCollisionDetection(class Collision *CollD, class BlockDataInterfa
 		//頭を当たり判定
 		if( CollD->CheckALLBlockIntersectDummyRay(pos_x, pos_y + HUMAN_HEIGTH, pos_z, vx, 0, vz, NULL, NULL, &Dist, speed) == true ){
 			CollD->CheckALLBlockIntersectRay(pos_x, pos_y + FallDistance + HUMAN_HEIGTH, pos_z, vx, 0, vz, &id, &face, &Dist, speed);
-			CollD->ScratchVector(id, face, move_x, vy, move_z, &move_x, &vy, &move_z);
+			CollD->ScratchVector(id, face, move_x2, vy, move_z2, &move_x2, &vy, &move_z2);
 		}
 
 		//足元がブロックに埋まっていなければ
 		if( CollD->CheckALLBlockInside(pos_x, pos_y + offset, pos_z) == false ){
 
 			//進行方向を示すベクトルを算出
-			vx = move_x;
-			vz = move_z;
+			vx = move_x2;
+			vz = move_z2;
 			speed = sqrt(vx*vx + vz*vz);
 			if( speed > 0.0f ){
 				vx = vx / speed;
@@ -1440,16 +1453,16 @@ bool human::MapCollisionDetection(class Collision *CollD, class BlockDataInterfa
 					}
 
 					//足元を当たり判定
-					CollD->ScratchVector(id, face, move_x, vy, move_z, &move_x, &vy, &move_z);
+					CollD->ScratchVector(id, face, move_x2, vy, move_z2, &move_x2, &vy, &move_z2);
 				}
 				else{																	//水平～斜面なら
 					//地面と認めない　（ジャンプ対策）
 					move_y_flag = true;
 
 					//移動先の位置を計算
-					newpos_x = pos_x + move_x;
+					newpos_x = pos_x + move_x2;
 					newpos_y = pos_y + FallDistance;
-					newpos_z = pos_z + move_z;
+					newpos_z = pos_z + move_z2;
 
 					//移動先の高さを調べる
 					if( CollD->CheckALLBlockInside(newpos_x, newpos_y + HUMAN_HEIGTH, newpos_z) == false ){
@@ -1464,7 +1477,9 @@ bool human::MapCollisionDetection(class Collision *CollD, class BlockDataInterfa
 								FallDistance = height;
 							}
 
+							//move_x2 = 0.0f;
 							move_y = 0.0f;
+							//move_z2 = 0.0f;
 						}
 					}
 				}
@@ -1472,9 +1487,9 @@ bool human::MapCollisionDetection(class Collision *CollD, class BlockDataInterfa
 		}
 
 		//移動先の位置を計算
-		newpos_x = pos_x + move_x;
+		newpos_x = pos_x + move_x2;
 		newpos_y = pos_y + FallDistance;
-		newpos_z = pos_z + move_z;
+		newpos_z = pos_z + move_z2;
 
 		//全身を改めて確認
 		if(
@@ -1482,16 +1497,15 @@ bool human::MapCollisionDetection(class Collision *CollD, class BlockDataInterfa
 			(CollD->CheckALLBlockIntersectRay(newpos_x, newpos_y + offset, newpos_z, 0, 1, 0, NULL, NULL, &Dist, HUMAN_HEIGTH - offset - 1.0f) == true)
 		){
 			//めり込むなら移動しない
-			move_x = 0.0f;
-			move_z = 0.0f;
+			move_x2 = 0.0f;
+			move_z2 = 0.0f;
 			inside = true;
 		}
 	}
 
-	*nowmove_x = move_x;
-	*nowmove_z = move_z;
-
 	*FallDist = FallDistance;
+	*nowmove_x = move_x2;
+	*nowmove_z = move_z2;
 	return inside;
 }
 

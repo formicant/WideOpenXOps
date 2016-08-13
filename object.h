@@ -68,7 +68,7 @@
 #define HUMAN_MAPCOLLISION_R 5.0f							//!< 人とマップの当たり判定　半径
 #define HUMAN_MAPCOLLISION_HEIGTH 10.2f						//!< 人とマップの当たり判定　高さ（注：腰程度）
 #define HUMAN_MAPCOLLISION_SLOPEANGLE DegreeToRadian(50)	//!< 人とマップの当たり判定　登れない斜面の角度
-#define HUMAN_MAPCOLLISION_SLOPEFORCE 1.0f					//!< 人とマップの当たり判定　登れない斜面が人を押し出す力
+#define HUMAN_MAPCOLLISION_SLOPEFORCEANGLE DegreeToRadian(22.62f)		//!< 人とマップの当たり判定　登れない斜面が人を押し出す角度
 #define HUMAN_DEADLINE -100.0f						//!< 人が死亡するY座標（デッドライン）
 #define HUMAN_DEADADDRY DegreeToRadian(0.75f)		//!< 死体の倒れる加速度
 
