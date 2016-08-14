@@ -97,12 +97,12 @@ public:
 	void SetClass(SoundControl *in_SoundCtrl, ResourceManager *in_Resource, ParameterInfo *in_Param);
 	void InitWorldSound();
 	bool ShotWeapon(float x, float y, float z, int id, int teamID, bool player);
-	bool HitMap(float x, float y, float z);
-	bool HitHuman(float x, float y, float z);
-	bool HitSmallObject(float x, float y, float z, int id);
+	bool HitMap(float x, float y, float z, int teamID);
+	bool HitHuman(float x, float y, float z, int teamID);
+	bool HitSmallObject(float x, float y, float z, int id, int teamID);
 	bool PassingBullet(float x, float y, float z, float move_x, float move_y, float move_z, int teamID);
-	bool GrenadeBound(float x, float y, float z);
-	bool GrenadeExplosion(float x, float y, float z);
+	bool GrenadeBound(float x, float y, float z, int teamID);
+	bool GrenadeExplosion(float x, float y, float z, int teamID);
 	bool SetFootsteps(float x, float y, float z, int teamID);
 	bool ReloadWeapon(float x, float y, float z, int teamID);
 	int GetWorldSound(float pos_x, float pos_y, float pos_z, int teamID, soundlist *psoundlist);

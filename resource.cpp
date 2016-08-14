@@ -331,7 +331,11 @@ int ResourceManager::LoadWeaponModelTexture()
 int ResourceManager::GetWeaponModelTexture(int id, int *model, int *texture)
 {
 	if( (id < 0)||((TOTAL_PARAMETERINFO_WEAPON -1) < id ) ){
+#ifdef ENABLE_BUG_HUMANWEAPON
 		return GetBugWeaponModelTexture(id, model, texture);
+#else
+		return 1;
+#endif
 	}
 
 	*model = weapon_model[id];
@@ -339,6 +343,7 @@ int ResourceManager::GetWeaponModelTexture(int id, int *model, int *texture)
 	return 0;
 }
 
+#ifdef ENABLE_BUG_HUMANWEAPON
 //! @brief バグ武器のモデルとテクスチャを取得
 //! @return 成功：0　失敗：1
 //! @warning 先に GetWeaponModelTexture()関数 を実行して取得に失敗した時に限り、この関数を使ってください。
@@ -368,6 +373,7 @@ int ResourceManager::GetBugWeaponModelTexture(int id, int *model, int *texture)
 
 	return 1;
 }
+#endif
 
 //! @brief 武器のモデルやテクスチャを一括解放
 void ResourceManager::CleanupWeaponModelTexture()

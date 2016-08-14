@@ -688,7 +688,7 @@ void AIcontrol::Action()
 
 		if( actioncnt%50 == 0){
 			if( ObjMgr->CheckZombieAttack(ctrlhuman, EnemyHuman) == true ){
-				ObjMgr->HitZombieAttack(EnemyHuman);
+				ObjMgr->HitZombieAttack(ctrlhuman, EnemyHuman);
 			}
 		}
 	}

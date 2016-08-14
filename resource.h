@@ -99,7 +99,9 @@ public:
 	void CleanupHumanTexture();
 	int LoadWeaponModelTexture();
 	int GetWeaponModelTexture(int id, int *model, int *texture);
+#ifdef ENABLE_BUG_HUMANWEAPON
 	int GetBugWeaponModelTexture(int id, int *model, int *texture);
+#endif
 	void CleanupWeaponModelTexture();
 	int LoadWeaponSound();
 	int GetWeaponSound(int id);

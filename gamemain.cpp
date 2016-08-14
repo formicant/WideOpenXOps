@@ -1484,7 +1484,7 @@ void maingame::Input()
 						for(int i=0; i<MAX_HUMAN; i++){
 							human *EnemyHuman = ObjMgr.GeHumanObject(i);
 							if( ObjMgr.CheckZombieAttack(myHuman, EnemyHuman) == true ){
-								ObjMgr.HitZombieAttack(EnemyHuman);
+								ObjMgr.HitZombieAttack(myHuman, EnemyHuman);
 							}
 						}
 					}

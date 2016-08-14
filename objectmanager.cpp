@@ -153,6 +153,12 @@ int ObjectManager::AddHumanIndex(pointdata data, pointdata infodata)
 		Weapon[i] = NULL;
 	}
 
+#ifndef ENABLE_BUG_HUMANWEAPON
+	if( GetHumanFlag != 0 ){
+		return -1;
+	}
+#endif
+
 	//人のモデル番号を取得
 	int upmodel[TOTAL_UPMODE];
 	int armmodel[TOTAL_ARMMODE];
@@ -177,8 +183,10 @@ int ObjectManager::AddHumanIndex(pointdata data, pointdata infodata)
 				HumanIndex[j].SetModel(upmodel[ HumanParam.model ], armmodel, legmodel, walkmodel, runmodel);
 			}
 			else{
+#ifdef ENABLE_BUG_HUMANWEAPON
 				HumanIndex[j].SetTexture(d3dg->GetMapTextureID(0));
 				HumanIndex[j].SetModel(upmodel[0], armmodel, legmodel, walkmodel, runmodel);
+#endif
 			}
 			HumanIndex[j].SetEnableFlag(true);
 			Humanindexid = j;
@@ -245,6 +253,12 @@ int ObjectManager::AddHumanIndex(float px, float py, float pz, float rx, int par
 		Weapon[i] = NULL;
 	}
 
+#ifndef ENABLE_BUG_HUMANWEAPON
+	if( GetHumanFlag != 0 ){
+		return -1;
+	}
+#endif
+
 	//人のモデル番号を取得
 	int upmodel[TOTAL_UPMODE];
 	int armmodel[TOTAL_ARMMODE];
@@ -269,8 +283,10 @@ int ObjectManager::AddHumanIndex(float px, float py, float pz, float rx, int par
 				HumanIndex[i].SetModel(upmodel[ HumanParam.model ], armmodel, legmodel, walkmodel, runmodel);
 			}
 			else{
+#ifdef ENABLE_BUG_HUMANWEAPON
 				HumanIndex[i].SetTexture(d3dg->GetMapTextureID(0));
 				HumanIndex[i].SetModel(upmodel[0], armmodel, legmodel, walkmodel, runmodel);
+#endif
 			}
 			HumanIndex[i].SetEnableFlag(true);
 			Humanindexid = i;
@@ -744,7 +760,7 @@ bool ObjectManager::CollideBullet(bullet *in_bullet)
 		//マップとの衝突距離が最短ならば～
 		if( (map_Dist <= speed)&&(map_Dist < HumanHead_Dist)&&(map_Dist < HumanUp_Dist)&&(map_Dist < HumanLeg_Dist)&&(map_Dist < SmallObject_Dist) ){
 			//弾がマップに当たった処理
-			HitBulletMap(bx + vx*(map_Dist+TotalDist), by + vy*(map_Dist+TotalDist), bz + vz*(map_Dist+TotalDist));
+			HitBulletMap(bx + vx*(map_Dist+TotalDist), by + vy*(map_Dist+TotalDist), bz + vz*(map_Dist+TotalDist), teamid);
 
 			int Penetration_Dist;
 
@@ -816,7 +832,7 @@ bool ObjectManager::CollideBullet(bullet *in_bullet)
 		//小物との衝突距離が最短ならば～
 		if( (SmallObject_Dist <= speed)&&(SmallObject_Dist < map_Dist)&&(SmallObject_Dist < HumanHead_Dist)&&(SmallObject_Dist < HumanUp_Dist)&&(SmallObject_Dist < HumanLeg_Dist) ){
 			//小物に当たった処理
-			HitBulletSmallObject(SmallObject_id, bx + vx*(SmallObject_Dist+TotalDist), by + vy*(SmallObject_Dist+TotalDist), bz + vz*(SmallObject_Dist+TotalDist), attacks);
+			HitBulletSmallObject(SmallObject_id, bx + vx*(SmallObject_Dist+TotalDist), by + vy*(SmallObject_Dist+TotalDist), bz + vz*(SmallObject_Dist+TotalDist), attacks, teamid);
 
 			//小物の種類番号を取得
 			int id;
@@ -852,13 +868,14 @@ bool ObjectManager::CollideBullet(bullet *in_bullet)
 //! @param x 着弾X座標
 //! @param y 着弾Y座標
 //! @param z 着弾Z座標
-void ObjectManager::HitBulletMap(float x, float y, float z)
+//! @param teamID 発射元のチーム番号
+void ObjectManager::HitBulletMap(float x, float y, float z, int teamID)
 {
 	//エフェクト（煙）を表示
 	AddEffect(x, y, z, 0.0f, 0.05f, 0.0f, 5.0f, DegreeToRadian(10)*GetRand(18), (int)(GAMEFPS * 0.5f), Resource->GetEffectSmokeTexture(), EFFECT_DISAPPEAR | EFFECT_MAGNIFY);
 
 	//効果音を再生
-	GameSound->HitMap(x, y, z);
+	GameSound->HitMap(x, y, z, teamID);
 }
 
 //! @brief 弾が人に当たった処理
@@ -872,6 +889,7 @@ void ObjectManager::HitBulletMap(float x, float y, float z)
 //! @param Shothuman_id 発射した人の番号
 void ObjectManager::HitBulletHuman(int HitHuman_id, int Hit_id, float x, float y, float z, float brx, int attacks, int Shothuman_id)
 {
+	int Shothuman_TeamID;
 	int damage = 0;
 	int paramid;
 	HumanParameter Paraminfo;
@@ -881,11 +899,33 @@ void ObjectManager::HitBulletHuman(int HitHuman_id, int Hit_id, float x, float y
 	if( HumanIndex[HitHuman_id].GetEnableFlag() == false ){ return; }
 	if( HumanIndex[HitHuman_id].GetHP() <= 0 ){ return; }
 
+	//発射元のチーム番号取得
+	HumanIndex[Shothuman_id].GetParamData(NULL, NULL, NULL, &Shothuman_TeamID);
+
 	//人にダメージと衝撃を与える
 	if( Hit_id == 0 ){ HumanIndex[HitHuman_id].HitBulletHead(attacks); }
 	if( Hit_id == 1 ){ HumanIndex[HitHuman_id].HitBulletUp(attacks); }
 	if( Hit_id == 2 ){ HumanIndex[HitHuman_id].HitBulletLeg(attacks); }
 	HumanIndex[HitHuman_id].AddPosOrder(brx, 0.0f, 1.0f);
+
+#ifdef ENABLE_BUG_TEAMID
+	int HitHuman_TeamID;
+	bool flag = true;
+	HumanIndex[HitHuman_id].GetParamData(NULL, NULL, NULL, &HitHuman_TeamID);
+
+	//チーム番号が負数、かつチーム番号が大きいなら、フラグ無効
+	if( (HitHuman_TeamID < 0)&&(Shothuman_TeamID < 0) ){
+		if( HitHuman_TeamID < Shothuman_TeamID ){
+			flag = false;
+		}
+	}
+
+	if( flag == true ){
+		HumanIndex[HitHuman_id].SetHitFlag();
+	}
+#else
+	HumanIndex[HitHuman_id].SetHitFlag();
+#endif
 
 	//ロボットかどうか判定
 	HumanIndex[HitHuman_id].GetParamData(&paramid, NULL, NULL, NULL);
@@ -904,7 +944,7 @@ void ObjectManager::HitBulletHuman(int HitHuman_id, int Hit_id, float x, float y
 	SetHumanBlood(x, y, z, damage, NotRobot);
 
 	//効果音を再生
-	GameSound->HitHuman(x, y, z);
+	GameSound->HitHuman(x, y, z, Shothuman_TeamID);
 
 	//弾を発射した人の成果に加算
 	Human_ontarget[Shothuman_id] += 1;
@@ -920,7 +960,8 @@ void ObjectManager::HitBulletHuman(int HitHuman_id, int Hit_id, float x, float y
 //! @param y 着弾Y座標
 //! @param z 着弾Z座標
 //! @param attacks 攻撃力
-void ObjectManager::HitBulletSmallObject(int HitSmallObject_id, float x, float y, float z, int attacks)
+//! @param teamID 発射元のチーム番号
+void ObjectManager::HitBulletSmallObject(int HitSmallObject_id, float x, float y, float z, int attacks, int teamID)
 {
 	int hp;
 
@@ -940,7 +981,7 @@ void ObjectManager::HitBulletSmallObject(int HitSmallObject_id, float x, float y
 	//効果音を再生
 	int id;
 	SmallObjectIndex[HitSmallObject_id].GetParamData(&id, NULL);
-	GameSound->HitSmallObject(x, y, z, id);
+	GameSound->HitSmallObject(x, y, z, id, teamID);
 }
 
 //! @brief 手榴弾のダメージ判定と処理
@@ -954,9 +995,9 @@ bool ObjectManager::GrenadeExplosion(grenade *in_grenade)
 
 	//座標を取得
 	float gx, gy, gz;
-	int humanid;
+	int teamid, humanid;
 	in_grenade->GetPosData(&gx, &gy, &gz, NULL, NULL);
-	in_grenade->GetParamData(NULL, NULL, NULL, NULL, &humanid);
+	in_grenade->GetParamData(NULL, &teamid, &humanid);
 
 	//人に爆風の当たり判定
 	for(int i=0; i<MAX_HUMAN; i++){
@@ -1008,6 +1049,25 @@ bool ObjectManager::GrenadeExplosion(grenade *in_grenade)
 		if( total_damage > 0 ){
 			//ダメージを反映
 			HumanIndex[i].HitGrenadeExplosion(total_damage);
+
+#ifdef ENABLE_BUG_TEAMID
+			int HitHuman_TeamID;
+			bool flag = true;
+			HumanIndex[i].GetParamData(NULL, NULL, NULL, &HitHuman_TeamID);
+
+			//チーム番号が負数、かつチーム番号が大きいなら、フラグ無効
+			if( (HitHuman_TeamID < 0)&&(teamid < 0) ){
+				if( HitHuman_TeamID < teamid ){
+					flag = false;
+				}
+			}
+
+			if( flag == true ){
+				HumanIndex[i].SetHitFlag();
+			}
+#else
+			HumanIndex[i].SetHitFlag();
+#endif
 
 			float y2;
 			float arx, ary;
@@ -1073,7 +1133,7 @@ bool ObjectManager::GrenadeExplosion(grenade *in_grenade)
 			SmallObjectIndex[i].HitGrenadeExplosion(damage);
 
 			//小物から効果音を発する
-			GameSound->HitSmallObject(sx, sy, sz, id);
+			GameSound->HitSmallObject(sx, sy, sz, id, teamid);
 
 			returnflag = true;
 		}
@@ -1090,7 +1150,7 @@ bool ObjectManager::GrenadeExplosion(grenade *in_grenade)
 	AddEffect(gx+1.0f, gy+1.0f, gz-1.0f, 0.1f, 0.2f, -0.1f, 50.0f, rnd*-1, (int)GAMEFPS * 3, Resource->GetEffectSmokeTexture(), EFFECT_DISAPPEAR | EFFECT_ROTATION | EFFECT_TRANSLUCENT);
 
 	//効果音を再生
-	GameSound->GrenadeExplosion(gx, gy, gz);
+	GameSound->GrenadeExplosion(gx, gy, gz, teamid);
 
 	return returnflag;
 }
@@ -1352,6 +1412,13 @@ void ObjectManager::Recovery()
 
 			GetHumanFlag = GameParamInfo->GetHuman(HumanID, &HumanParam);
 
+#ifndef ENABLE_BUG_HUMANWEAPON
+			if( GetHumanFlag != 0 ){
+				HumanIndex[i].SetEnableFlag(false);
+				continue;
+			}
+#endif
+
 			if( GetHumanFlag == 0 ){
 				//人のテクスチャを登録
 				Resource->AddHumanTexture(HumanID);
@@ -1366,8 +1433,10 @@ void ObjectManager::Recovery()
 				HumanIndex[i].SetModel(upmodel[ HumanParam.model ], armmodel, legmodel, walkmodel, runmodel);
 			}
 			else{
+#ifdef ENABLE_BUG_HUMANWEAPON
 				HumanIndex[i].SetTexture(d3dg->GetMapTextureID(0));
 				HumanIndex[i].SetModel(upmodel[0], armmodel, legmodel, walkmodel, runmodel);
+#endif
 			}
 		}
 	}
@@ -1800,7 +1869,7 @@ int ObjectManager::ShotWeapon(int human_id)
 
 		//手榴弾発射
 		newgrenade->SetPosData(pos_x, pos_y + WEAPONSHOT_HEIGHT, pos_z, rx, ry);
-		newgrenade->SetParamData(8.0f, human_id, true);
+		newgrenade->SetParamData(8.0f, teamid, human_id, true);
 		newgrenade->SetEnableFlag(true);
 	}
 
@@ -2095,8 +2164,9 @@ bool ObjectManager::CheckZombieAttack(human* MyHuman, human* EnemyHuman)
 }
 
 //! @brief ゾンビの攻撃を受けた処理
+//! @param MyHuman 攻撃する人オブジェクト（ゾンビ側）のポインタ
 //! @param EnemyHuman 攻撃を受けた人オブジェクトのポインタ
-void ObjectManager::HitZombieAttack(human* EnemyHuman)
+void ObjectManager::HitZombieAttack(human* MyHuman, human* EnemyHuman)
 {
 	if( EnemyHuman == NULL ){ return; }
 
@@ -2104,10 +2174,14 @@ void ObjectManager::HitZombieAttack(human* EnemyHuman)
 	if( EnemyHuman->GetEnableFlag() == false ){ return; }
 	if( EnemyHuman->GetHP() <= 0 ){ return; }
 
+	int MyHuman_TeamID;
 	float tx, ty, tz;
 	int paramid;
 	HumanParameter Paraminfo;
 	bool NotRobot;
+
+	//ゾンビ側のチーム番号取得
+	MyHuman->GetParamData(NULL, NULL, NULL, &MyHuman_TeamID);
 
 	EnemyHuman->GetPosData(&tx, &ty, &tz, NULL);
 	ty += VIEW_HEIGHT;
@@ -2125,11 +2199,30 @@ void ObjectManager::HitZombieAttack(human* EnemyHuman)
 	//ダメージなどを計算
 	EnemyHuman->HitZombieAttack();
 
+#ifdef ENABLE_BUG_TEAMID
+	int EnemyHuman_TeamID;
+	bool flag = true;
+	EnemyHuman->GetParamData(NULL, NULL, NULL, &EnemyHuman_TeamID);
+
+	//チーム番号が負数、かつチーム番号が大きいなら、フラグ無効
+	if( (EnemyHuman_TeamID < 0)&&(MyHuman_TeamID < 0) ){
+		if( EnemyHuman_TeamID < MyHuman_TeamID ){
+			flag = false;
+		}
+	}
+
+	if( flag == true ){
+		EnemyHuman->SetHitFlag();
+	}
+#else
+	EnemyHuman->SetHitFlag();
+#endif
+
 	//エフェクト（血）を表示
 	SetHumanBlood(tx, ty, tz, HUMAN_DAMAGE_ZOMBIEU, NotRobot);
 
 	//効果音を再生
-	GameSound->HitHuman(tx, ty, tz);
+	GameSound->HitHuman(tx, ty, tz, MyHuman_TeamID);
 }
 
 //! @brief 死者を蘇生する
@@ -2418,8 +2511,10 @@ int ObjectManager::Process(int cmdF5id, bool demomode, float camera_rx, float ca
 				if( speed > 3.4f ){
 					//座標を取得し、効果音再生
 					float x, y, z;
+					int teamid;
 					GrenadeIndex[i].GetPosData(&x, &y, &z, NULL, NULL);
-					GameSound->GrenadeBound(x, y, z);
+					GrenadeIndex[i].GetParamData(NULL, &teamid, NULL);
+					GameSound->GrenadeBound(x, y, z, teamid);
 				}
 			}
 

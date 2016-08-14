@@ -103,8 +103,9 @@ bool SoundManager::ShotWeapon(float x, float y, float z, int id, int teamID, boo
 //! @param x 音源のX座標
 //! @param y 音源のY座標
 //! @param z 音源のZ座標
+//! @param teamID チーム番号
 //! @return 成功：true　失敗：false
-bool SoundManager::HitMap(float x, float y, float z)
+bool SoundManager::HitMap(float x, float y, float z, int teamID)
 {
 	soundlist *plist = NULL;
 	if( GetNewList(&plist) == false ){ return false; }
@@ -113,6 +114,7 @@ bool SoundManager::HitMap(float x, float y, float z)
 	plist->x = x;
 	plist->y = y;
 	plist->z = z;
+	plist->teamid = teamID;
 
 	return true;
 }
@@ -121,8 +123,9 @@ bool SoundManager::HitMap(float x, float y, float z)
 //! @param x 音源のX座標
 //! @param y 音源のY座標
 //! @param z 音源のZ座標
+//! @param teamID チーム番号
 //! @return 成功：true　失敗：false
-bool SoundManager::HitHuman(float x, float y, float z)
+bool SoundManager::HitHuman(float x, float y, float z, int teamID)
 {
 	soundlist *plist = NULL;
 	if( GetNewList(&plist) == false ){ return false; }
@@ -131,6 +134,7 @@ bool SoundManager::HitHuman(float x, float y, float z)
 	plist->x = x;
 	plist->y = y;
 	plist->z = z;
+	plist->teamid = teamID;
 
 	return true;
 }
@@ -140,8 +144,9 @@ bool SoundManager::HitHuman(float x, float y, float z)
 //! @param y 音源のY座標
 //! @param z 音源のZ座標
 //! @param id 小物の種類番号
+//! @param teamID チーム番号
 //! @return 成功：true　失敗：false
-bool SoundManager::HitSmallObject(float x, float y, float z, int id)
+bool SoundManager::HitSmallObject(float x, float y, float z, int id, int teamID)
 {
 	soundlist *plist = NULL;
 	if( GetNewList(&plist) == false ){ return false; }
@@ -151,6 +156,7 @@ bool SoundManager::HitSmallObject(float x, float y, float z, int id)
 	plist->x = x;
 	plist->y = y;
 	plist->z = z;
+	plist->teamid = teamID;
 
 	return true;
 }
@@ -186,8 +192,9 @@ bool SoundManager::PassingBullet(float x, float y, float z, float move_x, float 
 //! @param x 音源のX座標
 //! @param y 音源のY座標
 //! @param z 音源のZ座標
+//! @param teamID チーム番号
 //! @return 成功：true　失敗：false
-bool SoundManager::GrenadeBound(float x, float y, float z)
+bool SoundManager::GrenadeBound(float x, float y, float z, int teamID)
 {
 	soundlist *plist = NULL;
 	if( GetNewList(&plist) == false ){ return false; }
@@ -196,6 +203,7 @@ bool SoundManager::GrenadeBound(float x, float y, float z)
 	plist->x = x;
 	plist->y = y;
 	plist->z = z;
+	plist->teamid = teamID;
 
 	return true;
 }
@@ -204,8 +212,9 @@ bool SoundManager::GrenadeBound(float x, float y, float z)
 //! @param x 音源のX座標
 //! @param y 音源のY座標
 //! @param z 音源のZ座標
+//! @param teamID チーム番号
 //! @return 成功：true　失敗：false
-bool SoundManager::GrenadeExplosion(float x, float y, float z)
+bool SoundManager::GrenadeExplosion(float x, float y, float z, int teamID)
 {
 	soundlist *plist = NULL;
 	if( GetNewList(&plist) == false ){ return false; }
@@ -214,6 +223,7 @@ bool SoundManager::GrenadeExplosion(float x, float y, float z)
 	plist->x = x;
 	plist->y = y;
 	plist->z = z;
+	plist->teamid = teamID;
 
 	return true;
 }
@@ -297,6 +307,15 @@ int SoundManager::GetWorldSound(float pos_x, float pos_y, float pos_z, int teamI
 		if( getlist[i].paramid == WEAPON_RELOAD ){
 			continue;
 		}
+
+#ifdef ENABLE_BUG_TEAMID
+		//チーム番号が負数、かつ音源のチーム番号が大きいなら、音源を無視
+		if( (teamID < 0)&&(getlist[i].teamid < 0) ){
+			if( teamID < getlist[i].teamid ){
+				continue;
+			}
+		}
+#endif
 
 		//銃弾ならば
 		if( getlist[i].paramid == BULLET ){

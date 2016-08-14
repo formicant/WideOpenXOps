@@ -207,6 +207,7 @@ public:
 	virtual void HitBulletLeg(int attacks);
 	virtual void HitZombieAttack();
 	virtual void HitGrenadeExplosion(int attacks);
+	virtual void SetHitFlag();
 	virtual bool CheckHit();
 	virtual float GetTotalMove();
 	virtual int RunFrame(class Collision *CollD, class BlockDataInterface *inblockdata, bool F5mode);
@@ -308,7 +309,8 @@ class grenade : public bullet
 public:
 	grenade(int modelid = -1, int textureid = -1);
 	~grenade();
-	void SetParamData(float speed, int _humanid, bool init);
+	void SetParamData(float speed, int _teamid, int _humanid, bool init);
+	void GetParamData(float *_speed, int *_teamid, int *_humanid);
 	float GetSpeed();
 	int RunFrame(class Collision *CollD);
 	virtual void Render(D3DGraphics *d3dg);

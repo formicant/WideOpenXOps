@@ -816,7 +816,6 @@ void human::HitBulletHead(int attacks)
 	if( Invincible == false ){
 		hp -= (int)((float)attacks * HUMAN_DAMAGE_HEAD);
 	}
-	HitFlag = true;
 	ReactionGunsightErrorRange = 15;
 }
 
@@ -827,7 +826,6 @@ void human::HitBulletUp(int attacks)
 	if( Invincible == false ){
 		hp -= (int)((float)attacks * HUMAN_DAMAGE_UP);
 	}
-	HitFlag = true;
 	ReactionGunsightErrorRange = 12;
 }
 
@@ -838,7 +836,6 @@ void human::HitBulletLeg(int attacks)
 	if( Invincible == false ){
 		hp -= (int)((float)attacks * HUMAN_DAMAGE_LEG);
 	}
-	HitFlag = true;
 	ReactionGunsightErrorRange = 8;
 }
 
@@ -848,7 +845,6 @@ void human::HitZombieAttack()
 	if( Invincible == false ){
 		hp -= HUMAN_DAMAGE_ZOMBIEU + GetRand(HUMAN_DAMAGE_ZOMBIEA);
 	}
-	HitFlag = true;
 	ReactionGunsightErrorRange = 10;
 }
 
@@ -860,8 +856,13 @@ void human::HitGrenadeExplosion(int attacks)
 	if( Invincible == false ){
 		hp -= attacks;
 	}
-	HitFlag = true;
 	ReactionGunsightErrorRange = 10;
+}
+
+//! @brief 被弾フラグをセット
+void human::SetHitFlag()
+{
+	HitFlag = true;
 }
 
 //! @brief 被弾したかチェックする
@@ -2451,19 +2452,32 @@ grenade::~grenade()
 
 //! @brief 座標と情報を設定
 //! @param speed 初速
+//! @param _teamid チーム番号
 //! @param _humanid 人のデータ番号
 //! @param init オブジェクトを初期化
 //! @attention 先に SetPosData() を実行してください。
-void grenade::SetParamData(float speed, int _humanid, bool init)
+void grenade::SetParamData(float speed, int _teamid, int _humanid, bool init)
 {
 	move_x = cos(rotation_x) * cos(rotation_y) * speed;
 	move_y = sin(rotation_y) * speed;
 	move_z = sin(rotation_x) * cos(rotation_y) * speed;
+	teamid = _teamid;
 	humanid = _humanid;
 
 	if( init == true ){
 		cnt = 0;
 	}
+}
+
+//! @brief 設定値を取得
+//! @param _speed 速度を受け取るポインタ（NULL可）
+//! @param _teamid チーム番号を受け取るポインタ（NULL可）
+//! @param _humanid 人のデータ番号を受け取るポインタ（NULL可）
+void grenade::GetParamData(float *_speed, int *_teamid, int *_humanid)
+{
+	if( _speed != NULL ){ *_speed = GetSpeed(); }
+	if( _teamid != NULL ){ *_teamid = teamid; }
+	if( _humanid != NULL ){ *_humanid = humanid; }
 }
 
 //! @brief 速度を取得

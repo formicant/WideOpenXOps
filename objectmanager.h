@@ -104,9 +104,9 @@ class ObjectManager
 	void SetHumanBlood(float x, float y, float z, int damage, bool CollideMap);
 	bool CollideHuman(human *in_humanA, human *in_humanB);
 	bool CollideBullet(bullet *in_bullet);
-	void HitBulletMap(float x, float y, float z);
+	void HitBulletMap(float x, float y, float z, int teamID);
 	void HitBulletHuman(int HitHuman_id, int Hit_id, float x, float y, float z, float brx, int attacks, int humanid);
-	void HitBulletSmallObject(int HitSmallObject_id, float x, float y, float z, int attacks);
+	void HitBulletSmallObject(int HitSmallObject_id, float x, float y, float z, int attacks, int teamID);
 	bool GrenadeExplosion(grenade *in_grenade);
 	void DeadEffect(human *in_human);
 	bool CollideBlood(effect *in_effect, int *id, int *face, float *pos_x, float *pos_y, float *pos_z);
@@ -156,7 +156,7 @@ public:
 	bool CheatAddBullet(int human_id);
 	bool CheatNewWeapon(int human_id, int new_weaponID);
 	bool CheckZombieAttack(human* MyHuman, human* EnemyHuman);
-	void HitZombieAttack(human* EnemyHuman);
+	void HitZombieAttack(human* MyHuman, human* EnemyHuman);
 	bool HumanResuscitation(int id);
 	int CheckGameOverorComplete();
 	bool GetObjectInfoTag(float camera_x, float camera_y, float camera_z, float camera_rx, float camera_ry, int *color, char *infostr);

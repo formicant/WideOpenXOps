@@ -42,7 +42,9 @@ ParameterInfo::ParameterInfo()
 		HumanTexturePath[i] = '\0';
 	}
 	Weapon = NULL;
+#ifdef ENABLE_BUG_HUMANWEAPON
 	BugWeapon = NULL;
+#endif
 	SmallObject = NULL;
 	Bullet = NULL;
 	for(int i=0; i<TOTAL_OFFICIALMISSION; i++){
@@ -71,7 +73,9 @@ void ParameterInfo::InitInfo()
 
 	Human = new HumanParameter[TOTAL_PARAMETERINFO_HUMAN];
 	Weapon = new WeaponParameter[TOTAL_PARAMETERINFO_WEAPON];
+#ifdef ENABLE_BUG_HUMANWEAPON
 	BugWeapon = new WeaponParameter[1];
+#endif
 	SmallObject = new SmallObjectParameter[TOTAL_PARAMETERINFO_SMALLOBJECT];
 	Bullet = new BulletParameter[TOTAL_PARAMETERINFO_BULLET];
 	AIlevel = new AIParameter[TOTAL_PARAMETERINFO_AILEVEL];
@@ -1190,6 +1194,7 @@ void ParameterInfo::InitInfo()
 	Weapon[22].ChangeWeapon = -1;
 	Weapon[22].burst = 1;
 
+#ifdef ENABLE_BUG_HUMANWEAPON
 	//特殊なバグ武器用データ
 	BugWeapon[0].name = "BugWeapon";
 	BugWeapon[0].model = "";
@@ -1223,6 +1228,7 @@ void ParameterInfo::InitInfo()
 	BugWeapon[0].WeaponP = 1;
 	BugWeapon[0].ChangeWeapon = -1;
 	BugWeapon[0].burst = 0;
+#endif
 
 
 	//缶
@@ -1603,10 +1609,12 @@ void ParameterInfo::DestroyInfo()
 		delete [] Weapon;
 		Weapon = NULL;
 	}
+#ifdef ENABLE_BUG_HUMANWEAPON
 	if( BugWeapon != NULL ){
 		delete [] BugWeapon;
 		BugWeapon = NULL;
 	}
+#endif
 	if( SmallObject != NULL ){
 		delete [] SmallObject;
 		SmallObject = NULL;
@@ -1657,13 +1665,18 @@ int ParameterInfo::GetHumanTexturePath(int id, char *out_str)
 int ParameterInfo::GetWeapon(int id, WeaponParameter *out_data)
 {
 	if( (id < 0)||((TOTAL_PARAMETERINFO_WEAPON -1) < id ) ){
+#ifdef ENABLE_BUG_HUMANWEAPON
 		return GetBugWeapon(id, out_data);
+#else
+		return 1;
+#endif
 	}
 
 	*out_data = Weapon[id];
 	return 0;
 }
 
+#ifdef ENABLE_BUG_HUMANWEAPON
 //! @brief 武器の設定を取得
 //! @param id 番号
 //! @param out_data 受け取るWeaponParameter型ポインタ
@@ -1679,6 +1692,7 @@ int ParameterInfo::GetBugWeapon(int id, WeaponParameter *out_data)
 
 	return 1;
 }
+#endif
 
 
 //! @brief 小物の設定を取得
