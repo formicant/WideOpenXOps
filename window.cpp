@@ -216,11 +216,11 @@ bool ControlFps()
 {
 	static unsigned int ptimec = 0;
 	unsigned int nowtime;
-	int waittime;
+	unsigned int waittime;
 
 	nowtime = GetTimeMS();
 	waittime = GAMEFRAMEMS - (nowtime - ptimec);
-	if( waittime > 0 ){
+	if( (0 < waittime)&&(waittime <= GAMEFRAMEMS) ){
 		Sleep(waittime);
 		ptimec = GetTimeMS();
 		return true;
