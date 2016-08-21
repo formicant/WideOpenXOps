@@ -203,6 +203,21 @@ void BlockDataInterface::CalculationBlockdata(bool screen)
 			//ブロック頂点データの関連付けを取得
 			blockdataface(j, vID, uvID);
 
+			//中心点初期化
+			data[i].material[j].center_x = 0.0f;
+			data[i].material[j].center_y = 0.0f;
+			data[i].material[j].center_z = 0.0f;
+
+			//4頂点の中心点を算出
+			for(int k=0; k<4; k++){
+				data[i].material[j].center_x += data[i].x[ vID[k] ];
+				data[i].material[j].center_y += data[i].y[ vID[k] ];
+				data[i].material[j].center_z += data[i].z[ vID[k] ];
+			}
+			data[i].material[j].center_x /= 4;
+			data[i].material[j].center_y /= 4;
+			data[i].material[j].center_z /= 4;
+
 			//面の法線（ベクトル）と、その長さを求める
 			xs1 = ((data[i].y[ vID[3] ] - data[i].y[ vID[2] ]) * (data[i].z[ vID[0] ] - data[i].z[ vID[2] ])) - ((data[i].y[ vID[0] ] - data[i].y[ vID[2] ]) * (data[i].z[ vID[3] ] - data[i].z[ vID[2] ]));
 			ys1 = ((data[i].z[ vID[3] ] - data[i].z[ vID[2] ]) * (data[i].x[ vID[0] ] - data[i].x[ vID[2] ])) - ((data[i].z[ vID[0] ] - data[i].z[ vID[2] ]) * (data[i].x[ vID[3] ] - data[i].x[ vID[2] ]));

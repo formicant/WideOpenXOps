@@ -1311,7 +1311,6 @@ bool human::MapCollisionDetection(class Collision *CollD, class BlockDataInterfa
 			else{
 				FallDistance = move_y;
 			}
-			FallDistance = move_y;
 			move_y_flag = true;
 		}
 		else{
@@ -1320,7 +1319,11 @@ bool human::MapCollisionDetection(class Collision *CollD, class BlockDataInterfa
 
 			//下方向へ当たり判定
 			if( CollD->CheckALLBlockIntersectDummyRay(pos_x, pos_y + offset, pos_z, 0, -1, 0, NULL, NULL, &Dist, move_y*-1 + offset) == true ){
-				CollD->CheckALLBlockIntersectRay(pos_x, pos_y + offset, pos_z, 0, -1, 0, &id, &face, &Dist, move_y + offset);
+				if( CollD->CheckALLBlockIntersectRay(pos_x, pos_y + offset, pos_z, 0, -1, 0, &id, &face, &Dist, move_y*-1 + offset) == false ){
+					//もし、-DummyRay()関数ではブロックが見つかるのに -Ray()関数で見つからないなら、おそらくブロックが歪んでいる。
+					//とりあず適当な値で誤魔化し、微振動を防ぐ。
+					Dist = offset;
+				}
 
 				if( Invincible == false ){
 					//ダメージ計算

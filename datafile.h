@@ -55,6 +55,9 @@ struct b_material{
 	int textureID;				//!< textureID
 	float u[4];					//!< textureUV-U
 	float v[4];					//!< textureUV-V
+	float center_x;				//!< center
+	float center_y;				//!< center
+	float center_z;				//!< center
 	float vx;					//!< normal vector 
 	float vy;					//!< normal vector 
 	float vz;					//!< normal vector 

@@ -253,10 +253,10 @@ bool Collision::CheckPolygonFront(int id, int face, float x, float y, float z)
 
 	blockdata->Getdata(&bdata, id);
 
-	//面の中心を基準点に、座標のベクトルを求める
-	vx = cbdata[id].polygon_center_x[face] - x;
-	vy = cbdata[id].polygon_center_y[face] - y;
-	vz = cbdata[id].polygon_center_z[face] - z;
+	//面の中心を基準点に、座標のベクトルを求める　※正確な中心点を使うこと
+	vx = bdata.material[face].center_x - x;
+	vy = bdata.material[face].center_y - y;
+	vz = bdata.material[face].center_z - z;
 
 	//内積
 	d = bdata.material[face].vx*vx + bdata.material[face].vy*vy + bdata.material[face].vz*vz;
@@ -330,10 +330,10 @@ bool Collision::CheckIntersectTri(int blockid, int face, float RayPos_x, float R
 		return false;		//面とレイが平行か、面に対してレイが逆向き
 	}
 
-	//面の中心を基準点に、座標のベクトルを求める
-	vx1 = RayPos_x - cbdata[blockid].polygon_center_x[face];
-	vy1 = RayPos_y - cbdata[blockid].polygon_center_y[face];
-	vz1 = RayPos_z - cbdata[blockid].polygon_center_z[face];
+	//面の中心を基準点に、座標のベクトルを求める　※正確な中心点を使うこと
+	vx1 = RayPos_x - data.material[face].center_x;
+	vy1 = RayPos_y - data.material[face].center_y;
+	vz1 = RayPos_z - data.material[face].center_z;
 
 	//内積
 	d2 = data.material[face].vx*vx1 + data.material[face].vy*vy1 + data.material[face].vz*vz1;		//面までの最短距離が求まる
@@ -355,9 +355,9 @@ bool Collision::CheckIntersectTri(int blockid, int face, float RayPos_x, float R
 	//　　面を形成する各4辺との位置関係を算出し、面の法線と比較する。
 
 	//外積
-	vx2 = ((cbdata[blockid].y[ vID[1] ] - cbdata[blockid].y[ vID[0] ]) * (z - cbdata[blockid].z[ vID[0] ])) - ((y - cbdata[blockid].y[ vID[0] ]) * (cbdata[blockid].z[ vID[1] ] - cbdata[blockid].z[ vID[0] ]));
-	vy2 = ((cbdata[blockid].z[ vID[1] ] - cbdata[blockid].z[ vID[0] ]) * (x - cbdata[blockid].x[ vID[0] ])) - ((z - cbdata[blockid].z[ vID[0] ]) * (cbdata[blockid].x[ vID[1] ] - cbdata[blockid].x[ vID[0] ]));
-	vz2 = ((cbdata[blockid].x[ vID[1] ] - cbdata[blockid].x[ vID[0] ]) * (y - cbdata[blockid].y[ vID[0] ])) - ((x - cbdata[blockid].x[ vID[0] ]) * (cbdata[blockid].y[ vID[1] ] - cbdata[blockid].y[ vID[0] ]));
+	vx2 = ((data.y[ vID[1] ] - data.y[ vID[0] ]) * (z - data.z[ vID[0] ])) - ((y - data.y[ vID[0] ]) * (data.z[ vID[1] ] - data.z[ vID[0] ]));
+	vy2 = ((data.z[ vID[1] ] - data.z[ vID[0] ]) * (x - data.x[ vID[0] ])) - ((z - data.z[ vID[0] ]) * (data.x[ vID[1] ] - data.x[ vID[0] ]));
+	vz2 = ((data.x[ vID[1] ] - data.x[ vID[0] ]) * (y - data.y[ vID[0] ])) - ((x - data.x[ vID[0] ]) * (data.y[ vID[1] ] - data.y[ vID[0] ]));
 
 	//内積
 	d1 = data.material[face].vx*vx2 + data.material[face].vy*vy2 + data.material[face].vz*vz2;		//ブロック面の法線との関係を算出
@@ -368,9 +368,9 @@ bool Collision::CheckIntersectTri(int blockid, int face, float RayPos_x, float R
 
 
 	//外積
-	vx2 = ((cbdata[blockid].y[ vID[2] ] - cbdata[blockid].y[ vID[1] ]) * (z - cbdata[blockid].z[ vID[1] ])) - ((y - cbdata[blockid].y[ vID[1] ]) * (cbdata[blockid].z[ vID[2] ] - cbdata[blockid].z[ vID[1] ]));
-	vy2 = ((cbdata[blockid].z[ vID[2] ] - cbdata[blockid].z[ vID[1] ]) * (x - cbdata[blockid].x[ vID[1] ])) - ((z - cbdata[blockid].z[ vID[1] ]) * (cbdata[blockid].x[ vID[2] ] - cbdata[blockid].x[ vID[1] ]));
-	vz2 = ((cbdata[blockid].x[ vID[2] ] - cbdata[blockid].x[ vID[1] ]) * (y - cbdata[blockid].y[ vID[1] ])) - ((x - cbdata[blockid].x[ vID[1] ]) * (cbdata[blockid].y[ vID[2] ] - cbdata[blockid].y[ vID[1] ]));
+	vx2 = ((data.y[ vID[2] ] - data.y[ vID[1] ]) * (z - data.z[ vID[1] ])) - ((y - data.y[ vID[1] ]) * (data.z[ vID[2] ] - data.z[ vID[1] ]));
+	vy2 = ((data.z[ vID[2] ] - data.z[ vID[1] ]) * (x - data.x[ vID[1] ])) - ((z - data.z[ vID[1] ]) * (data.x[ vID[2] ] - data.x[ vID[1] ]));
+	vz2 = ((data.x[ vID[2] ] - data.x[ vID[1] ]) * (y - data.y[ vID[1] ])) - ((x - data.x[ vID[1] ]) * (data.y[ vID[2] ] - data.y[ vID[1] ]));
 
 	//内積
 	d1 = data.material[face].vx*vx2 + data.material[face].vy*vy2 + data.material[face].vz*vz2;		//ブロック面の法線との関係を算出
@@ -381,9 +381,9 @@ bool Collision::CheckIntersectTri(int blockid, int face, float RayPos_x, float R
 
 
 	//外積
-	vx2 = ((cbdata[blockid].y[ vID[3] ] - cbdata[blockid].y[ vID[2] ]) * (z - cbdata[blockid].z[ vID[2] ])) - ((y - cbdata[blockid].y[ vID[2] ]) * (cbdata[blockid].z[ vID[3] ] - cbdata[blockid].z[ vID[2] ]));
-	vy2 = ((cbdata[blockid].z[ vID[3] ] - cbdata[blockid].z[ vID[2] ]) * (x - cbdata[blockid].x[ vID[2] ])) - ((z - cbdata[blockid].z[ vID[2] ]) * (cbdata[blockid].x[ vID[3] ] - cbdata[blockid].x[ vID[2] ]));
-	vz2 = ((cbdata[blockid].x[ vID[3] ] - cbdata[blockid].x[ vID[2] ]) * (y - cbdata[blockid].y[ vID[2] ])) - ((x - cbdata[blockid].x[ vID[2] ]) * (cbdata[blockid].y[ vID[3] ] - cbdata[blockid].y[ vID[2] ]));
+	vx2 = ((data.y[ vID[3] ] - data.y[ vID[2] ]) * (z - data.z[ vID[2] ])) - ((y - data.y[ vID[2] ]) * (data.z[ vID[3] ] - data.z[ vID[2] ]));
+	vy2 = ((data.z[ vID[3] ] - data.z[ vID[2] ]) * (x - data.x[ vID[2] ])) - ((z - data.z[ vID[2] ]) * (data.x[ vID[3] ] - data.x[ vID[2] ]));
+	vz2 = ((data.x[ vID[3] ] - data.x[ vID[2] ]) * (y - data.y[ vID[2] ])) - ((x - data.x[ vID[2] ]) * (data.y[ vID[3] ] - data.y[ vID[2] ]));
 
 	//内積
 	d1 = data.material[face].vx*vx2 + data.material[face].vy*vy2 + data.material[face].vz*vz2;		//ブロック面の法線との関係を算出
@@ -394,9 +394,9 @@ bool Collision::CheckIntersectTri(int blockid, int face, float RayPos_x, float R
 
 
 	//外積
-	vx2 = ((cbdata[blockid].y[ vID[0] ] - cbdata[blockid].y[ vID[3] ]) * (z - cbdata[blockid].z[ vID[3] ])) - ((y - cbdata[blockid].y[ vID[3] ]) * (cbdata[blockid].z[ vID[0] ] - cbdata[blockid].z[ vID[3] ]));
-	vy2 = ((cbdata[blockid].z[ vID[0] ] - cbdata[blockid].z[ vID[3] ]) * (x - cbdata[blockid].x[ vID[3] ])) - ((z - cbdata[blockid].z[ vID[3] ]) * (cbdata[blockid].x[ vID[0] ] - cbdata[blockid].x[ vID[3] ]));
-	vz2 = ((cbdata[blockid].x[ vID[0] ] - cbdata[blockid].x[ vID[3] ]) * (y - cbdata[blockid].y[ vID[3] ])) - ((x - cbdata[blockid].x[ vID[3] ]) * (cbdata[blockid].y[ vID[0] ] - cbdata[blockid].y[ vID[3] ]));
+	vx2 = ((data.y[ vID[0] ] - data.y[ vID[3] ]) * (z - data.z[ vID[3] ])) - ((y - data.y[ vID[3] ]) * (data.z[ vID[0] ] - data.z[ vID[3] ]));
+	vy2 = ((data.z[ vID[0] ] - data.z[ vID[3] ]) * (x - data.x[ vID[3] ])) - ((z - data.z[ vID[3] ]) * (data.x[ vID[0] ] - data.x[ vID[3] ]));
+	vz2 = ((data.x[ vID[0] ] - data.x[ vID[3] ]) * (y - data.y[ vID[3] ])) - ((x - data.x[ vID[3] ]) * (data.y[ vID[0] ] - data.y[ vID[3] ]));
 
 	//内積
 	d1 = data.material[face].vx*vx2 + data.material[face].vy*vy2 + data.material[face].vz*vz2;		//ブロック面の法線との関係を算出
