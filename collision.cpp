@@ -1124,6 +1124,7 @@ bool CollideCylinderRay(float c_x, float c_y, float c_z, float c_r, float c_h, f
 {
 	float x, z, d;
 	float cMinDist, cRayDist, cRDist;
+	float RayXZ_min, RayXZ_max;
 	float Ray_min[2];
 	float Ray_max[2];
 	float Ray_tmin, Ray_tmax;
@@ -1148,10 +1149,10 @@ bool CollideCylinderRay(float c_x, float c_y, float c_z, float c_r, float c_h, f
 	cRDist = sqrt(c_r*c_r - cMinDist*cMinDist);	//i“_”¼Œa‚©‚çj“_‚ÉÅ‚à‹ß‚Ã‚­‹——£
 
 	if( d < c_r ){
-		Ray_min[0] = 0;		//n“_‚ª‰~‚Ì’†‚È‚ç‹——£ƒ[ƒ
+		RayXZ_min = 0;		//n“_‚ª‰~‚Ì’†‚È‚ç‹——£ƒ[ƒ
 	}
 	else{
-		Ray_min[0] = cRayDist - cRDist;	//ƒŒƒC‹“_Å’Z - ”¼ŒaÅ’Z = ƒŒƒC‹“_‚©‚ç”¼Œa‚Ü‚Å‚ÌÅ’Z
+		RayXZ_min = cRayDist - cRDist;	//ƒŒƒC‹“_Å’Z - ”¼ŒaÅ’Z = ƒŒƒC‹“_‚©‚ç”¼Œa‚Ü‚Å‚ÌÅ’Z
 	}
 
 	//“_‚ÆƒŒƒCI“_‚Ì‹——£
@@ -1160,11 +1161,16 @@ bool CollideCylinderRay(float c_x, float c_y, float c_z, float c_r, float c_h, f
 	d = sqrt(x*x + z*z);
 
 	if( d < c_r ){
-		Ray_max[0] = maxDist;		//I“_‚ª‰~‚Ì’†‚È‚çÅ‘å‹——£
+		RayXZ_max = maxDist;		//I“_‚ª‰~‚Ì’†‚È‚çÅ‘å‹——£
 	}
 	else{
-		Ray_max[0] = cRayDist + cRDist;
+		RayXZ_max = cRayDist + cRDist;
 	}
+
+	//Y²‚Æ”ä‚×‚é‘O‚ÉAY²‚Æ”äŠr‚Å‚«‚é‚æ‚¤•ÏŠ·@i’ê•Ó‚Ì’l‚ğÎ•Ó‚Ö•ÏŠ·j
+	float Ray_ry = atan2(RayDir_y, sqrt(RayDir_x*RayDir_x + RayDir_z*RayDir_z));
+	Ray_min[0] = RayXZ_min / cos(Ray_ry);
+	Ray_max[0] = RayXZ_max / cos(Ray_ry);
 
 
 	//Y²‚Ì‚İAABB‚Æ“¯—l‚Ìˆ—
