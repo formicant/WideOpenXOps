@@ -58,6 +58,7 @@ D3DGraphics::D3DGraphics()
 	now_SystemFontUStr[0] = NULL;
 	SystemFontListIdx = 0;
 	SystemFontListIdxSize = 0;
+	SystemFont_posz = 1.0f;
 	now_textureid = -1;
 
 	camera_x = 0.0f;
@@ -1161,6 +1162,9 @@ int D3DGraphics::StartRender()
 	glAlphaFunc(GL_GREATER, 0.0f);
 	glEnable(GL_ALPHA_TEST);
 
+	//2DシステムフォントZ座標初期化
+	SystemFont_posz = 1.0f;
+
 	return 0;
 }
 
@@ -1707,22 +1711,53 @@ void D3DGraphics::Drawline(float x1, float y1, float z1, float x2, float y2, flo
 	glDisableClientState(GL_COLOR_ARRAY);
 }
 
+//! @brief 最も長い行の文字数を取得
+//! @param str 文字列　（改行コード：可）
+//! @return 文字数
+//! @attention マルチバイト文字は 1文字あたり 2 としてカウントされます。
+int D3DGraphics::StrMaxLineLen(char *str)
+{
+	int maxlen = 0;
+	int cnt = 0;
+
+	for(int i=0; i<strlen(str); i++){
+		if( str[i] == '\n' ){
+			if( maxlen < cnt ){
+				maxlen = cnt;
+			}
+			cnt = 0;
+		}
+		else{
+			cnt += 1;
+		}
+	}
+
+	if( maxlen < cnt ){
+		maxlen = cnt;
+	}
+
+	return maxlen;
+}
+
 //! @brief 文字を描画（システムフォント使用）
 //! @param x x座標
 //! @param y y座標
 //! @param str 文字列　（改行コード：可）
 //! @param color 色
+//! @warning 本関数は1フレーム間で100回までしか呼び出せません。（OpenGLコアのみ）
 //! @warning <b>描画は非常に低速です。</b>画面内で何度も呼び出すとパフォーマンスに影響します。
 //! @warning「改行コードを活用し一度に描画する」「日本語が必要ない文字はテクスチャフォントを活用する」などの対応を講じてください。
 //! @attention フォントの種類やサイズは固定です。　文字を二重に重ねて立体感を出さないと見にくくなります。
-//! @todo 文字を二重に重ねると、上下関係が正しく処理されない。
 //! @todo 1文字目が欠ける場合がある。
 void D3DGraphics::Draw2DMSFontText(int x, int y, char *str, int color)
 {
 	int len = strlen(str);
 	WCHAR *ustr;
 
+	y += 18;
+
 	Start2DRender();
+	glEnable(GL_DEPTH_TEST);
 
 	//テクスチャ無効
 	glDisable(GL_TEXTURE_2D);
@@ -1764,14 +1799,14 @@ void D3DGraphics::Draw2DMSFontText(int x, int y, char *str, int color)
 
 	//座標と色を設定
 	glBitmap(0, 0, 0, 0, 10, 0, NULL);
-	glRasterPos2i(x, y);
+	glRasterPos3f((float)x, (float)y, SystemFont_posz);
 	glColor4ub((color>>24)&0xFF, (color>>16)&0xFF, (color>>8)&0xFF, color&0xFF);
 
 	for(int i=0; i<lstrlenW(ustr); i++){
 		if( ustr[i] == '\n' ){
 			//改行する
 			y += 19;
-			glRasterPos2i(x, y);
+			glRasterPos3f((float)x, (float)y, SystemFont_posz);
 		}
 		else{
 			//ディスプレイリスト描画
@@ -1779,9 +1814,12 @@ void D3DGraphics::Draw2DMSFontText(int x, int y, char *str, int color)
 		}
 	}
 
+	SystemFont_posz -= 0.01f;
+
 	//Unicode文字列の廃棄
 	delete [] ustr;
 
+	//glDisable(GL_DEPTH_TEST);
 	End2DRender();
 }
 
@@ -1792,10 +1830,9 @@ void D3DGraphics::Draw2DMSFontText(int x, int y, char *str, int color)
 //! @param h 縦の大きさ
 //! @param str 文字列　（改行コード：可）
 //! @param color 色
-//! @warning <b>正しく中央揃えになりません。</b>
 void D3DGraphics::Draw2DMSFontTextCenter(int x, int y, int w, int h, char *str, int color)
 {
-	Draw2DMSFontText(x, y, str, color);
+	Draw2DMSFontText(x + (SCREEN_WIDTH/2 - (StrMaxLineLen(str)*9/2)), y, str, color);
 }
 
 //! @brief 2D描画用設定

@@ -208,6 +208,7 @@ class D3DGraphics
 	WCHAR *now_SystemFontUStr;		//!< 現在表示中のシステムフォントによる文字列（Unicode）
 	GLuint SystemFontListIdx;		//!< システムフォントのディスプレイリスト
 	int SystemFontListIdxSize;		//!< システムフォントのディスプレイリストのサイズ
+	float SystemFont_posz;				//!< システムフォントのZ座標
 	int now_textureid;		//!< 現在設定中のテクスチャ番号
 
 	float camera_x;			//!< カメラ座標
@@ -236,6 +237,7 @@ class D3DGraphics
 	bool LoadJPEGTexture(char* filename, bool BlackTransparent, TEXTUREDATA *ptexture);
 	bool LoadPNGTexture(char* filename, bool BlackTransparent, TEXTUREDATA *ptexture);
 	void SetTexture(int TextureID);
+	int StrMaxLineLen(char *str);
 	void Start2DRender();
 	void End2DRender();
 
