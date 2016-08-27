@@ -619,7 +619,7 @@ int D3DGraphics::CheckFileExtension(char* filename, int nowformat)
 	return nowformat;
 }
 
-//! @brief テクスチャフォーマットを拡張子で判定
+//! @brief テクスチャフォーマットをファイルヘッダーで判定
 //! @param filename ファイル名
 //! @param nowformat 現在の判別値
 //! @return 新たな判別値
@@ -1365,13 +1365,22 @@ void D3DGraphics::ResetZbuffer()
 //! @brief ワールド空間を原点（0,0,0）に戻す　など
 void D3DGraphics::ResetWorldTransform()
 {
+	float camera_y_flag;
+
+	if( fabs(camera_ry) <= (float)M_PI/2 ){
+		camera_y_flag = 1.0f;
+	}
+	else{
+		camera_y_flag = -1.0f;
+	}
+
 	glMatrixMode(GL_PROJECTION);
 	glLoadIdentity();
 	gluPerspective(viewangle*(180.0f/(float)M_PI), (float)width/height, CLIPPINGPLANE_NEAR, CLIPPINGPLANE_FAR);
 
 	glMatrixMode(GL_MODELVIEW);
 	glLoadIdentity();
-	gluLookAt(camera_x*-1, camera_y, camera_z, camera_x*-1 + cos(camera_rx*-1 + (float)M_PI)*cos(camera_ry), camera_y + sin(camera_ry), camera_z + sin(camera_rx*-1 + (float)M_PI)*cos(camera_ry), 0.0f, 1.0f, 0.0f);
+	gluLookAt(camera_x*-1, camera_y, camera_z, camera_x*-1 + cos(camera_rx*-1 + (float)M_PI)*cos(camera_ry), camera_y + sin(camera_ry), camera_z + sin(camera_rx*-1 + (float)M_PI)*cos(camera_ry), 0.0f, camera_y_flag, 0.0f);
 }
 
 //! @brief ワールド空間の座標・角度・拡大率を設定
@@ -1531,7 +1540,7 @@ void D3DGraphics::SetFog(int skynumber)
 //! @param in_camera_y カメラのY座標
 //! @param in_camera_z カメラのZ座標
 //! @param in_camera_rx カメラの横軸角度
-//! @param in_camera_ry カメラの縦軸角度
+//! @param in_camera_ry カメラの縦軸角度（-π～π以内）
 //! @param in_viewangle 視野角
 void D3DGraphics::SetCamera(float in_camera_x, float in_camera_y, float in_camera_z, float in_camera_rx, float in_camera_ry, float in_viewangle)
 {
