@@ -578,6 +578,84 @@ void D3DGraphics::CleanupModel(int id)
 #endif
 }
 
+//! @brief テクスチャフォーマットを拡張子で判定
+//! @param filename ファイル名
+//! @param nowformat 現在の判別値
+//! @return 新たな判別値
+int D3DGraphics::CheckFileExtension(char* filename, int nowformat)
+{
+	char filename2[MAX_PATH];
+
+	//ファイル名を小文字へ変換（拡張子判定用）
+	for(int i=0; i<strlen(filename); i++){
+		filename2[i] = (char)tolower(filename[i]);
+	}
+	filename2[ strlen(filename) ] = '\0';
+
+	//拡張子でファイルフォーマットを判定
+	for(int i=strlen(filename2)-1; i>0; i--){
+		if( filename2[i] == '.' ){
+			if( strcmp(&(filename2[i]), ".bmp") == 0 ){
+				return 1;
+			}
+			if( strcmp(&(filename2[i]), ".dds") == 0 ){
+				return 2;
+			}
+			if( strcmp(&(filename2[i]), ".jpeg") == 0 ){
+				return 3;
+			}
+			if( strcmp(&(filename2[i]), ".jpg") == 0 ){
+				return 3;
+			}
+			if( strcmp(&(filename2[i]), ".jpe") == 0 ){
+				return 3;
+			}
+			if( strcmp(&(filename2[i]), ".png") == 0 ){
+				return 4;
+			}
+		}
+	}
+
+	return nowformat;
+}
+
+//! @brief テクスチャフォーマットを拡張子で判定
+//! @param filename ファイル名
+//! @param nowformat 現在の判別値
+//! @return 新たな判別値
+int D3DGraphics::CheckFileTypeFlag(char* filename, int nowformat)
+{
+	FILE *fp;
+	unsigned char header[4];
+
+	//ファイルを読み込む
+	fp = fopen(filename, "rb");
+	if( fp == NULL ){
+		return false;		//ファイルが読めない
+	}
+
+	//ヘッダーを読む
+	fread(header, 1, 4, fp);
+
+	//ファイルハンドルを解放
+	fclose( fp );
+
+	if( (header[0x00] == 'B')&&(header[0x01] == 'M') ){															//.bmp
+		return 1;
+	}
+	if( (header[0x00] == 'D')&&(header[0x01] == 'D')&&(header[0x02] == 'S') ){									//.dds
+		return 2;
+	}
+	if( (header[0x00] == 0xFF)&&(header[0x01] == 0xD8) ){														//.jpg
+		return 3;
+	}
+	if( (header[0x00] == 0x89)&&(header[0x01] == 'P')&&(header[0x02] == 'N')&&(header[0x03] == 'G') ){			//.png　※本当は8バイト
+		return 4;
+	}
+
+	return nowformat;
+}
+
 //! @brief テクスチャを読み込む
 //! @param filename ファイル名
 //! @param texturefont テクスチャフォントフラグ
@@ -586,7 +664,6 @@ void D3DGraphics::CleanupModel(int id)
 int D3DGraphics::LoadTexture(char* filename, bool texturefont, bool BlackTransparent)
 {
 	int id = -1;
-	char filename2[MAX_PATH];
 	int format = 0;
 
 #ifdef ENABLE_DEBUGLOG
@@ -603,33 +680,11 @@ int D3DGraphics::LoadTexture(char* filename, bool texturefont, bool BlackTranspa
 	}
 	if( id == -1 ){ return -1; }
 
-	//ファイル名を小文字へ変換（拡張子判定用）
-	for(int i=0; i<strlen(filename); i++){
-		filename2[i] = (char)tolower(filename[i]);
-	}
-	filename2[ strlen(filename) ] = '\0';
+	//まず拡張子でファイルフォーマットを判定
+	format = CheckFileExtension(filename, format);
 
-	//拡張子でファイルフォーマットを判定
-	for(int i=strlen(filename2)-1; i>0; i--){
-		if( filename2[i] == '.' ){
-			if( strcmp(&(filename2[i]), ".bmp") == 0 ){
-				format = 1;
-			}
-			if( strcmp(&(filename2[i]), ".dds") == 0 ){
-				format = 2;
-			}
-			if( strcmp(&(filename2[i]), ".jpeg") == 0 ){
-				format = 3;
-			}
-			if( strcmp(&(filename2[i]), ".jpg") == 0 ){
-				format = 3;
-			}
-			if( strcmp(&(filename2[i]), ".png") == 0 ){
-				format = 4;
-			}
-			break;
-		}
-	}
+	//ファイルヘッダーの情報でも確認
+	format = CheckFileTypeFlag(filename, format);
 
 	//対応してないフォーマット
 	if( format == 0 ){ return -1; }
@@ -760,6 +815,45 @@ bool D3DGraphics::LoadBMPTexture(char* filename, bool BlackTransparent, TEXTURED
 
 	unsigned char *data = new unsigned char [width*height*4];
 
+	//各ピクセル4ビットなら、16色パレットモード
+	if( index == 4 ){
+		unsigned char pixel;
+		unsigned char pixelH;
+		unsigned char pixelL;
+		unsigned char *pallet = new unsigned char [16*4];
+		fread(pallet, 1, 16*4, fp);
+
+		for(int h=height-1; h>=0; h--){
+			for(int w=0; w<(width/2); w++){
+				fread(&pixel, 1, 1, fp);
+				pixelH = (pixel >> 4)&0x0F;
+				pixelL = pixel&0x0F;
+
+				data[(h*width+w*2)*4 + 0] = pallet[pixelH*4 + 2];
+				data[(h*width+w*2)*4 + 1] = pallet[pixelH*4 + 1];
+				data[(h*width+w*2)*4 + 2] = pallet[pixelH*4 + 0];
+				data[(h*width+w*2)*4 + 3] = 255;
+
+				data[(h*width+w*2+1)*4 + 0] = pallet[pixelL*4 + 2];
+				data[(h*width+w*2+1)*4 + 1] = pallet[pixelL*4 + 1];
+				data[(h*width+w*2+1)*4 + 2] = pallet[pixelL*4 + 0];
+				data[(h*width+w*2+1)*4 + 3] = 255;
+
+				if( BlackTransparent == true ){
+					//黒ならば透過する
+					if( (data[(h*width+w*2)*4 + 0] == 0)&&(data[(h*width+w*2)*4 + 1] == 0)&&(data[(h*width+w*2)*4 + 2] == 0) ){
+						data[(h*width+w*2)*4 + 3] = 0;
+					}
+					if( (data[(h*width+w*2+1)*4 + 0] == 0)&&(data[(h*width+w*2+1)*4 + 1] == 0)&&(data[(h*width+w*2+1)*4 + 2] == 0) ){
+						data[(h*width+w*2+1)*4 + 3] = 0;
+					}
+				}
+			}
+		}
+
+		delete []pallet;
+	}
+
 	//各ピクセル8ビットなら、256色パレットモード
 	if( index == 8 ){
 		unsigned char pixel;
@@ -809,6 +903,28 @@ bool D3DGraphics::LoadBMPTexture(char* filename, bool BlackTransparent, TEXTURED
 		}
 	}
 
+	//各ピクセル32ビットなら、フルカラー
+	if( index == 32 ){
+		unsigned char pixel[4];
+		for(int h=height-1; h>=0; h--){
+			for(int w=0; w<width; w++){
+				fread(&pixel, 1, 4, fp);
+
+				data[(h*width+w)*4 + 0] = pixel[2];
+				data[(h*width+w)*4 + 1] = pixel[1];
+				data[(h*width+w)*4 + 2] = pixel[0];
+				data[(h*width+w)*4 + 3] = 255;
+
+				if( BlackTransparent == true ){
+					//黒ならば透過する
+					if( (data[(h*width+w)*4 + 0] == 0)&&(data[(h*width+w)*4 + 1] == 0)&&(data[(h*width+w)*4 + 2] == 0) ){
+						data[(h*width+w)*4 + 3] = 0;
+					}
+				}
+			}
+		}
+	}
+
 	//ファイルハンドルを解放
 	fclose( fp );
 
@@ -834,6 +950,7 @@ bool D3DGraphics::LoadDDSTexture(char* filename, bool BlackTransparent, TEXTURED
 	unsigned char header[124+4];
 	unsigned int width, height;
 	unsigned int index;
+	unsigned int flag;
 
 	//ファイルを読み込む
 	fp = fopen(filename, "rb");
@@ -1000,6 +1117,7 @@ bool D3DGraphics::LoadPNGTexture(char* filename, bool BlackTransparent, TEXTURED
 	png_structp pPng;
     png_infop pInfo;
 	unsigned int width, height;
+	bool pallet;
 
 	//ファイルを読み込む
 	fp = fopen(filename, "rb");
@@ -1034,40 +1152,96 @@ bool D3DGraphics::LoadPNGTexture(char* filename, bool BlackTransparent, TEXTURED
 		return false;	//インターレスには対応しない。
 	}
 
-	//アルファチャンネルを初期化
-	png_set_add_alpha(pPng, 0xff, PNG_FILLER_AFTER);
+	//ビット深度判定
+	if( png_get_bit_depth(pPng, pInfo) != 8 ){
+		png_destroy_read_struct(&pPng, &pInfo, (png_infopp)NULL);
+		fclose(fp);
+		return false;	//深度が8ビット以外は対応してない。
+	}
 
-	// tRNSチャンクがあれば、アルファチャンネルに変換
-	if (png_get_valid(pPng, pInfo, PNG_INFO_tRNS)) {
-		png_set_tRNS_to_alpha(pPng);
+	//カラータイプ判定
+	if( (png_get_color_type(pPng, pInfo) == PNG_COLOR_TYPE_GRAY)||(png_get_color_type(pPng, pInfo) == PNG_COLOR_TYPE_GRAY_ALPHA) ){
+		png_destroy_read_struct(&pPng, &pInfo, (png_infopp)NULL);
+		fclose(fp);
+		return false;	//グレースケールには対応してない・・っと思われるので除外。（未検証）
+	}
+
+	//カラータイプ取得
+	if( png_get_color_type(pPng, pInfo) == PNG_COLOR_TYPE_PALETTE ){
+		pallet = true;
+	}
+	else{
+		pallet = false;
 	}
 
 	unsigned char *data = new unsigned char [width*height*4];
 
-	//1ライン分の作業領域を確保
-	png_bytep buf = new png_byte[width*4];
+	//アルファチャンネルを初期化
+	png_set_add_alpha(pPng, 0xff, PNG_FILLER_AFTER);
 
-	for(int h=0; h<height; h++){
-		//1ライン分取得
-		png_read_row(pPng,buf,NULL);
+	if( pallet == false ){
+		// tRNSチャンクがあれば、アルファチャンネルに変換
+		if (png_get_valid(pPng, pInfo, PNG_INFO_tRNS)) {
+			png_set_tRNS_to_alpha(pPng);
+		}
 
-		for(int w=0; w<width; w++){
-			data[(h*width+w)*4 + 0] = buf[w*4 + 0];
-			data[(h*width+w)*4 + 1] = buf[w*4 + 1];
-			data[(h*width+w)*4 + 2] = buf[w*4 + 2];
-			data[(h*width+w)*4 + 3] = buf[w*4 + 3];
+		//1ライン分の作業領域を確保
+		png_bytep buf = new png_byte[width*4];
 
-			if( BlackTransparent == true ){
-				//黒ならば透過する
-				if( (data[(h*width+w)*4 + 0] == 0)&&(data[(h*width+w)*4 + 1] == 0)&&(data[(h*width+w)*4 + 2] == 0) ){
-					data[(h*width+w)*4 + 3] = 0;
+		for(int h=0; h<height; h++){
+			//1ライン分取得
+			png_read_row(pPng,buf,NULL);
+
+			for(int w=0; w<width; w++){
+				data[(h*width+w)*4 + 0] = buf[w*4 + 0];
+				data[(h*width+w)*4 + 1] = buf[w*4 + 1];
+				data[(h*width+w)*4 + 2] = buf[w*4 + 2];
+				data[(h*width+w)*4 + 3] = buf[w*4 + 3];
+
+				if( BlackTransparent == true ){
+					//黒ならば透過する
+					if( (data[(h*width+w)*4 + 0] == 0)&&(data[(h*width+w)*4 + 1] == 0)&&(data[(h*width+w)*4 + 2] == 0) ){
+						data[(h*width+w)*4 + 3] = 0;
+					}
 				}
 			}
 		}
-	}
 
-	//1ライン分の作業領域を解放
-	delete [] buf;
+		//1ライン分の作業領域を解放
+		delete [] buf;
+	}
+	else{
+		png_colorp palette;
+		int num;
+
+		//パレット取得
+		png_get_PLTE(pPng, pInfo, &palette, &num);
+
+		//1ライン分の作業領域を確保
+		png_bytep buf = new png_byte[width];
+
+		for(int h=0; h<height; h++){
+			//1ライン分取得
+			png_read_row(pPng,buf,NULL);
+
+			for(int w=0; w<width; w++){
+				data[(h*width+w)*4 + 0] = palette[ buf[w] ].red;
+				data[(h*width+w)*4 + 1] = palette[ buf[w] ].green;
+				data[(h*width+w)*4 + 2] = palette[ buf[w] ].blue;
+				data[(h*width+w)*4 + 3] = 255;
+
+				if( BlackTransparent == true ){
+					//黒ならば透過する
+					if( (data[(h*width+w)*4 + 0] == 0)&&(data[(h*width+w)*4 + 1] == 0)&&(data[(h*width+w)*4 + 2] == 0) ){
+						data[(h*width+w)*4 + 3] = 0;
+					}
+				}
+			}
+		}
+
+		//1ライン分の作業領域を解放
+		delete [] buf;
+	}
 
 	//解放
 	png_read_end(pPng, NULL);

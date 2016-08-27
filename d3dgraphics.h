@@ -232,6 +232,8 @@ class D3DGraphics
 	jpeg_decompress_struct cinfo;	//!< libjpeg
 	jpeg_error_mgr jerr;			//!< libjpeg
 
+	int CheckFileExtension(char* filename, int nowformat);
+	int CheckFileTypeFlag(char* filename, int nowformat);
 	bool LoadBMPTexture(char* filename, bool BlackTransparent, TEXTUREDATA *ptexture);
 	bool LoadDDSTexture(char* filename, bool BlackTransparent, TEXTUREDATA *ptexture);
 	bool LoadJPEGTexture(char* filename, bool BlackTransparent, TEXTUREDATA *ptexture);
