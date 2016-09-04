@@ -137,11 +137,12 @@ class ParameterInfo
 	WeaponParameter *BugWeapon;						//!< バグ武器の情報を格納するポインタ
 #endif
 	SmallObjectParameter *SmallObject;			//!< 小物の情報を格納するポインタ
-	BulletParameter *Bullet;						//!< 銃弾オブジェクトの情報を格納するポインタ
-	char *missionname[TOTAL_OFFICIALMISSION];		//!< 標準ミッションのミッション識別名
-	char *missionfullname[TOTAL_OFFICIALMISSION];	//!< 標準ミッションのミッション正式名称
-	char *missiondirectory[TOTAL_OFFICIALMISSION];	//!< 標準ミッションのデータディレクトリ
-	char *missiontxt[TOTAL_OFFICIALMISSION];		//!< 標準ミッションのファイル名（.pd1/.txt）
+	BulletParameter *Bullet;					//!< 銃弾オブジェクトの情報を格納するポインタ
+	char *missionname[TOTAL_OFFICIALMISSION];				//!< 標準ミッションのミッション識別名
+	char *missionfullname[TOTAL_OFFICIALMISSION];			//!< 標準ミッションのミッション正式名称
+	char *missiondirectory[TOTAL_OFFICIALMISSION];			//!< 標準ミッションのデータディレクトリ
+	char *missiontxt[TOTAL_OFFICIALMISSION];				//!< 標準ミッションのファイル名（.pd1/.txt）
+	bool missioncollisionflag[TOTAL_OFFICIALMISSION];		//!< 標準ミッションの追加のあたり判定を示すフラグ
 	AIParameter *AIlevel;						//!< AIの性能値
 
 public:
@@ -157,7 +158,7 @@ public:
 #endif
 	int GetSmallObject(int id, SmallObjectParameter *out_data);
 	int GetBullet(int id, BulletParameter *out_data);
-	int GetOfficialMission(int id, char *name, char *fullname, char* directory, char *txt);
+	int GetOfficialMission(int id, char *name, char *fullname, char* directory, char *txt, bool *collisionflag);
 	int GetAIlevel(int level, AIParameter **out_AIlevel);
 };
 

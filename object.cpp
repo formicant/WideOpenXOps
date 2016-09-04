@@ -1270,11 +1270,12 @@ void human::ControlProcess()
 //! @brief マップとの当たり判定
 //! @param CollD Collisionクラスのポインタ
 //! @param inblockdata BlockDataInterfaceクラスのポインタ
+//! @param AddCollisionFlag 追加のあたり判定フラグ
 //! @param FallDist Y軸の移動量を取得するポインタ
 //! @param nowmove_x X軸の移動量を取得するポインタ
 //! @param nowmove_z Z軸の移動量を取得するポインタ
 //! @return ブロックに埋まっている：true　埋まっていない：false
-bool human::MapCollisionDetection(class Collision *CollD, class BlockDataInterface *inblockdata, float *FallDist, float *nowmove_x, float *nowmove_z)
+bool human::MapCollisionDetection(class Collision *CollD, class BlockDataInterface *inblockdata, bool AddCollisionFlag, float *FallDist, float *nowmove_x, float *nowmove_z)
 {
 	bool inside = false;
 	int id;
@@ -1312,6 +1313,8 @@ bool human::MapCollisionDetection(class Collision *CollD, class BlockDataInterfa
 				FallDistance = move_y;
 			}
 			move_y_flag = true;
+
+			//DummyRay() 関数の結果に関わらず FallDistance = move_y; でも良いのだろうか？
 		}
 		else{
 			 int id, face;
@@ -1429,6 +1432,20 @@ bool human::MapCollisionDetection(class Collision *CollD, class BlockDataInterfa
 			CollD->ScratchVector(id, face, move_x2, vy, move_z2, &move_x2, &vy, &move_z2);
 		}
 
+		if( AddCollisionFlag == true ){
+			//腰付近の追加当たり判定
+			if( CollD->CheckALLBlockIntersectDummyRay(pos_x, pos_y + HUMAN_MAPCOLLISION_ADD_HEIGTH_A, pos_z, vx, 0, vz, NULL, NULL, &Dist, speed) == true ){
+				CollD->CheckALLBlockIntersectRay(pos_x, pos_y + FallDistance + HUMAN_MAPCOLLISION_ADD_HEIGTH_A, pos_z, vx, 0, vz, &id, &face, &Dist, speed);
+				CollD->ScratchVector(id, face, move_x2, vy, move_z2, &move_x2, &vy, &move_z2);
+			}
+
+			//腰付近の追加当たり判定
+			if( CollD->CheckALLBlockIntersectDummyRay(pos_x, pos_y + HUMAN_MAPCOLLISION_ADD_HEIGTH_B, pos_z, vx, 0, vz, NULL, NULL, &Dist, speed) == true ){
+				CollD->CheckALLBlockIntersectRay(pos_x, pos_y + FallDistance + HUMAN_MAPCOLLISION_ADD_HEIGTH_B, pos_z, vx, 0, vz, &id, &face, &Dist, speed);
+				CollD->ScratchVector(id, face, move_x2, vy, move_z2, &move_x2, &vy, &move_z2);
+			}
+		}
+
 		//足元がブロックに埋まっていなければ
 		if( CollD->CheckALLBlockInside(pos_x, pos_y + offset, pos_z) == false ){
 
@@ -1516,9 +1533,10 @@ bool human::MapCollisionDetection(class Collision *CollD, class BlockDataInterfa
 //! @brief 計算を実行（当たり判定）
 //! @param CollD Collisionのポインタ
 //! @param inblockdata BlockDataInterfaceのポインタ
+//! @param AddCollisionFlag 追加のあたり判定フラグ
 //! @param F5mode 上昇機能（F5裏技）のフラグ　（有効：true　無効：false）
 //! @return 処理なし：0　通常処理：1　死亡して倒れ終わった直後：2　静止した死体：3
-int human::RunFrame(class Collision *CollD, class BlockDataInterface *inblockdata, bool F5mode)
+int human::RunFrame(class Collision *CollD, class BlockDataInterface *inblockdata, bool AddCollisionFlag, bool F5mode)
 {
 	if( CollD == NULL ){ return 0; }
 	if( EnableFlag == false ){ return 0; }
@@ -1592,7 +1610,7 @@ int human::RunFrame(class Collision *CollD, class BlockDataInterface *inblockdat
 	ControlProcess();
 
 	//マップとの当たり判定
-	MapCollisionDetection(CollD, inblockdata, &FallDistance, &nowmove_x, &nowmove_z);
+	MapCollisionDetection(CollD, inblockdata, AddCollisionFlag, &FallDistance, &nowmove_x, &nowmove_z);
 
 	//移動するなら
 	if( (nowmove_x*nowmove_x + nowmove_z*nowmove_z) > 0.0f * 0.0f ){

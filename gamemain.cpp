@@ -204,6 +204,9 @@ int opening::Create()
 	ObjMgr.LoadPointData();
 	ObjMgr.SetPlayerID(MAX_HUMAN-1);	//実在しない人をプレイヤーに（銃声のサウンド再生対策）
 
+	//追加のあたり判定設定
+	ObjMgr.SetAddCollisionFlag(false);
+
 	//AI設定
 	for(int i=0; i<MAX_HUMAN; i++){
 		HumanAI[i].SetClass(&ObjMgr, i, &BlockData, &PointData, &GameParamInfo, &CollD, GameSound);
@@ -472,6 +475,9 @@ int mainmenu::Create()
 	//ポイントデータ初期化
 	ObjMgr.LoadPointData();
 
+	//追加のあたり判定設定
+	ObjMgr.SetAddCollisionFlag(false);
+
 	//AI設定
 	for(int i=0; i<MAX_HUMAN; i++){
 		HumanAI[i].SetClass(&ObjMgr, i, &BlockData, &PointData, &GameParamInfo, &CollD, GameSound);
@@ -570,7 +576,7 @@ void mainmenu::Input()
 			char name[32];
 			strcpy(name, "");
 			if( GameInfoData.selectaddon == false ){
-				GameParamInfo.GetOfficialMission(scrollitems + i, name, NULL, NULL, NULL);
+				GameParamInfo.GetOfficialMission(scrollitems + i, name, NULL, NULL, NULL, NULL);
 			}
 			else{
 				strcpy(name, GameAddon.GetMissionName(scrollitems + i));
@@ -824,7 +830,7 @@ void mainmenu::Render2D()
 
 		//ミッション名を取得
 		if( GameInfoData.selectaddon == false ){
-			GameParamInfo.GetOfficialMission(scrollitems + i, name, NULL, NULL, NULL);
+			GameParamInfo.GetOfficialMission(scrollitems + i, name, NULL, NULL, NULL, NULL);
 		}
 		else{
 			strcpy(name, GameAddon.GetMissionName(scrollitems + i));
@@ -898,7 +904,7 @@ int briefing::Create()
 
 	//mifファイルのファイルパス取得
 	if( GameInfoData.selectaddon == false ){
-		GameParamInfo.GetOfficialMission(GameInfoData.selectmission_id, NULL, NULL, path, pdata);
+		GameParamInfo.GetOfficialMission(GameInfoData.selectmission_id, NULL, NULL, path, pdata, NULL);
 		strcat(path, pdata);
 		strcat(path, ".txt");
 	}
@@ -993,7 +999,7 @@ void briefing::Render2D()
 	//ミッション名を取得・描画
 	char mname[64];
 	if( MIFdata.GetFiletype() == false ){
-		GameParamInfo.GetOfficialMission(GameInfoData.selectmission_id, NULL, mname, NULL, NULL);
+		GameParamInfo.GetOfficialMission(GameInfoData.selectmission_id, NULL, mname, NULL, NULL, NULL);
 	}
 	else{
 		strcpy(mname, MIFdata.GetMissionFullname());
@@ -1048,10 +1054,11 @@ int maingame::Create()
 	char pdata[MAX_PATH];
 	char pdata2[MAX_PATH];
 	int blockflag, pointflag;
+	bool collisionflag;
 
 	//.bd1と.pd1のファイルパスを求める
 	if( MIFdata.GetFiletype() == false ){
-		GameParamInfo.GetOfficialMission(MainGameInfo.selectmission_id, NULL, NULL, path, pdata2);
+		GameParamInfo.GetOfficialMission(MainGameInfo.selectmission_id, NULL, NULL, path, pdata2, &collisionflag);
 
 		strcpy(bdata, path);
 		strcat(bdata, "temp.bd1");
@@ -1061,6 +1068,7 @@ int maingame::Create()
 	}
 	else{
 		MIFdata.GetDatafilePath(bdata, pdata);
+		collisionflag = MIFdata.GetCollisionFlag();
 
 		strcpy(path, bdata);
 		for(int i=strlen(path)-1; i>0; i--){
@@ -1094,6 +1102,9 @@ int maingame::Create()
 
 	//ポイントデータ初期化
 	ObjMgr.LoadPointData();
+
+	//追加のあたり判定設定
+	ObjMgr.SetAddCollisionFlag(collisionflag);
 
 	//AI設定
 	for(int i=0; i<MAX_HUMAN; i++){
@@ -1179,7 +1190,7 @@ int maingame::Recovery()
 
 	//.bd1と.pd1のファイルパスを求める
 	if( MIFdata.GetFiletype() == false ){
-		GameParamInfo.GetOfficialMission(MainGameInfo.selectmission_id, NULL, NULL, path, NULL);
+		GameParamInfo.GetOfficialMission(MainGameInfo.selectmission_id, NULL, NULL, path, NULL, NULL);
 	}
 	else{
 		MIFdata.GetDatafilePath(bdata, pdata);
@@ -3234,7 +3245,7 @@ void result::Render2D()
 
 	//ミッション名を取得し描画
 	if( MIFdata.GetFiletype() == false ){
-		GameParamInfo.GetOfficialMission(GameInfoData.selectmission_id, NULL, mname, NULL, NULL);
+		GameParamInfo.GetOfficialMission(GameInfoData.selectmission_id, NULL, mname, NULL, NULL, NULL);
 	}
 	else{
 		strcpy(mname, MIFdata.GetMissionFullname());

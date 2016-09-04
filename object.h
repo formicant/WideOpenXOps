@@ -67,6 +67,8 @@
 
 #define HUMAN_MAPCOLLISION_R 5.0f							//!< 人とマップの当たり判定　半径
 #define HUMAN_MAPCOLLISION_HEIGTH 10.2f						//!< 人とマップの当たり判定　高さ（注：腰程度）
+#define HUMAN_MAPCOLLISION_ADD_HEIGTH_A 9.2f				//!< 人とマップの当たり判定 追加分　高さ（注：標準マップ SCHOOL に合わせる）
+#define HUMAN_MAPCOLLISION_ADD_HEIGTH_B 13.2f				//!< 人とマップの当たり判定 追加分　高さ（注：標準マップ SCHOOL に合わせる）
 #define HUMAN_MAPCOLLISION_SLOPEANGLE DegreeToRadian(50)	//!< 人とマップの当たり判定　登れない斜面の角度
 #define HUMAN_MAPCOLLISION_SLOPEFORCEANGLE DegreeToRadian(22.62f)		//!< 人とマップの当たり判定　登れない斜面が人を押し出す角度
 #define HUMAN_DEADLINE -100.0f						//!< 人が死亡するY座標（デッドライン）
@@ -162,7 +164,7 @@ protected:
 	void GunsightErrorRange();
 	int CheckAndProcessDead(class Collision *CollD);
 	void ControlProcess();
-	bool MapCollisionDetection(class Collision *CollD, class BlockDataInterface *inblockdata, float *FallDist, float *nowmove_x, float *nowmove_z);
+	bool MapCollisionDetection(class Collision *CollD, class BlockDataInterface *inblockdata, bool AddCollisionFlag, float *FallDist, float *nowmove_x, float *nowmove_z);
 
 public:
 	human(class ParameterInfo *in_Param = NULL, float x = 0.0f, float y = 0.0f, float z = 0.0f, float rx = 0.0f, int id_param = -1, int dataid = 0, signed char p4 = 0, int team = 0, bool flag = false);
@@ -210,7 +212,7 @@ public:
 	virtual void SetHitFlag();
 	virtual bool CheckHit();
 	virtual float GetTotalMove();
-	virtual int RunFrame(class Collision *CollD, class BlockDataInterface *inblockdata, bool F5mode);
+	virtual int RunFrame(class Collision *CollD, class BlockDataInterface *inblockdata, bool AddCollisionFlag, bool F5mode);
 	virtual int GetGunsightErrorRange();
 	virtual void Render(class D3DGraphics *d3dg, class ResourceManager *Resource, bool DrawArm, bool player);
 };

@@ -47,6 +47,7 @@ ObjectManager::ObjectManager()
 	Human_headshot = new int[MAX_HUMAN];
 	Human_ShotFlag = new bool[MAX_HUMAN];
 	BulletObj_HumanIndex = new BulletObjectHumanIndex[MAX_BULLET];
+	AddCollisionFlag = false;
 	FriendlyFire = false;
 	Player_HumanID = 0;
 	Human_FrameTextureRefresh = new bool[MAX_HUMAN];
@@ -1310,6 +1311,7 @@ void ObjectManager::CleanupPointDataToObject()
 //! @brief ポイントデータを元にオブジェクトを配置
 void ObjectManager::LoadPointData()
 {
+	AddCollisionFlag = false;
 	FriendlyFire = false;
 	Player_HumanID = 0;
 
@@ -1502,6 +1504,13 @@ void ObjectManager::Recovery()
 			EffectIndex[i].SetEnableFlag(false);
 		}
 	}
+}
+
+//! @brief 追加のあたり判定フラグを設定
+//! @param flag フラグ
+void ObjectManager::SetAddCollisionFlag(bool flag)
+{
+	AddCollisionFlag = flag;
 }
 
 //! @brief FF（同士討ち）有効化フラグを取得
@@ -2421,7 +2430,7 @@ int ObjectManager::Process(int cmdF5id, bool demomode, float camera_rx, float ca
 			cmdF5 = false;
 		}
 
-		if( HumanIndex[i].RunFrame(CollD, BlockData, cmdF5) == 2 ){
+		if( HumanIndex[i].RunFrame(CollD, BlockData, AddCollisionFlag, cmdF5) == 2 ){
 			//死亡時のエフェクト
 			DeadEffect(&(HumanIndex[i]));
 		}

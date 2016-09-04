@@ -536,6 +536,14 @@ bool Collision::CheckBlockIntersectRay(int blockid, float RayPos_x, float RayPos
 		if( rmax_x < RayPos_x ){ rmax_x = RayPos_x; }
 		if( rmax_y < RayPos_y ){ rmax_y = RayPos_y; }
 		if( rmax_z < RayPos_z ){ rmax_z = RayPos_z; }
+
+		//計算誤差対策のため、わずかに大きめにする。
+		rmin_x -= 0.1f;
+		rmin_y -= 0.1f;
+		rmin_z -= 0.1f;
+		rmax_x += 0.1f;
+		rmax_y += 0.1f;
+		rmax_z += 0.1f;
 	}
 
 	if( maxDist > 0.0f ){
@@ -646,6 +654,14 @@ bool Collision::CheckALLBlockIntersectRay(float RayPos_x, float RayPos_y, float 
 		if( rmax_x < RayPos_x ){ rmax_x = RayPos_x; }
 		if( rmax_y < RayPos_y ){ rmax_y = RayPos_y; }
 		if( rmax_z < RayPos_z ){ rmax_z = RayPos_z; }
+
+		//計算誤差対策のため、わずかに大きめにする。
+		rmin_x -= 0.1f;
+		rmin_y -= 0.1f;
+		rmin_z -= 0.1f;
+		rmax_x += 0.1f;
+		rmax_y += 0.1f;
+		rmax_z += 0.1f;
 	}
 
 	if( maxDist > 0.0f ){
@@ -936,6 +952,14 @@ bool CollideSphereRay(float s_x, float s_y, float s_z, float s_r, float RayPos_x
 		if( pmax_y < RayPos_y ){ pmax_y = RayPos_y; }
 		if( pmax_z < RayPos_z ){ pmax_z = RayPos_z; }
 
+		//計算誤差対策のため、わずかに大きめにする。
+		pmin_x -= 0.1f;
+		pmin_y -= 0.1f;
+		pmin_z -= 0.1f;
+		pmax_x += 0.1f;
+		pmax_y += 0.1f;
+		pmax_z += 0.1f;
+
 		//境界ボックス同士で判定
 		if( CollideBoxAABB(s_x - s_r, s_y - s_r, s_z - s_r, s_x + s_r, s_y + s_r, s_z + s_r, pmin_x, pmin_y, pmin_z, pmax_x, pmax_y, pmax_z) == false ){
 			return false;
@@ -1022,6 +1046,14 @@ bool CollideAABBRay(float box_min_x, float box_min_y, float box_min_z, float box
 		if( pmax_x < RayPos_x ){ pmax_x = RayPos_x; }
 		if( pmax_y < RayPos_y ){ pmax_y = RayPos_y; }
 		if( pmax_z < RayPos_z ){ pmax_z = RayPos_z; }
+
+		//計算誤差対策のため、わずかに大きめにする。
+		pmin_x -= 0.1f;
+		pmin_y -= 0.1f;
+		pmin_z -= 0.1f;
+		pmax_x += 0.1f;
+		pmax_y += 0.1f;
+		pmax_z += 0.1f;
 
 		//境界ボックス同士で判定
 		if( CollideBoxAABB(box_min_x, box_min_y, box_min_z, box_max_x, box_max_y, box_max_z, pmin_x, pmin_y, pmin_z, pmax_x, pmax_y, pmax_z) == false ){

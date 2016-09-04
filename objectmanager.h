@@ -83,6 +83,7 @@ class ObjectManager
 	bool *Human_ShotFlag;	//!< 発砲フラグ（マズルフラッシュ用）
 	class BulletObjectHumanIndex *BulletObj_HumanIndex;		//!< 弾対人判定用オブジェクト
 
+	bool AddCollisionFlag;	//!< 追加のあたり判定
 	bool FriendlyFire;		//!< FF（同士討ち）有効化
 
 	int Player_HumanID;		//!< プレイヤーが操作する人オブジェクトのID
@@ -126,6 +127,7 @@ public:
 	int AddMapEffect(int id, int face, float pos_x, float pos_y, float pos_z, float size, float rotation, int count, int texture);
 	void LoadPointData();
 	void Recovery();
+	void SetAddCollisionFlag(bool flag);
 	bool GetFriendlyFireFlag();
 	void SetFriendlyFireFlag(bool flag);
 	int GetPlayerID();
