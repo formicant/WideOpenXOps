@@ -592,7 +592,7 @@ bool ObjectManager::CollideHuman(human *in_humanA, human *in_humanB)
 	in_humanB->GetPosData(&h2_x, &h2_y, &h2_z, NULL);
 
 	//円柱の当たり判定
-	if( CollideCylinder(h1_x, h1_y, h1_z, 3.0f, HUMAN_HEIGTH-0.5f, h2_x, h2_y, h2_z, 3.0f, HUMAN_HEIGTH-0.5f, &angle, &length) == true ){
+	if( CollideCylinder(h1_x, h1_y, h1_z, 3.0f, HUMAN_HEIGHT-0.5f, h2_x, h2_y, h2_z, 3.0f, HUMAN_HEIGHT-0.5f, &angle, &length) == true ){
 		//めり込んだ分だけ押し出す
 		in_humanA->AddPosOrder(angle, 0.0f, length/2);
 		in_humanB->AddPosOrder(angle + (float)M_PI, 0.0f, length/2);
@@ -1017,7 +1017,7 @@ bool ObjectManager::GrenadeExplosion(grenade *in_grenade)
 		r = sqrt(x*x + y*y + z*z);
 
 		//100.0より遠ければ計算しない
-		if( r > MAX_DAMAGE_GRENADE_DISTANCE + HUMAN_HEIGTH ){ continue; }
+		if( r > MAX_DAMAGE_GRENADE_DISTANCE + HUMAN_HEIGHT ){ continue; }
 
 		float dummy = 0.0f;
 		int total_damage = 0;
@@ -1090,7 +1090,7 @@ bool ObjectManager::GrenadeExplosion(grenade *in_grenade)
 			arx = atan2(z, x);
 
 			if( sin(atan2(y, sqrt(x*x + z*z))) < 0.0f ){		//上方向に飛ぶなら、角度を計算
-				y2 = gy - (hy + HUMAN_HEIGTH);
+				y2 = gy - (hy + HUMAN_HEIGHT);
 				ary = atan2(y2, sqrt(x*x + z*z)) + (float)M_PI;
 			}
 			else{		//下方向に飛ぶなら、垂直角度は無効。（爆風で地面にめり込むのを防止）
@@ -1178,8 +1178,8 @@ void ObjectManager::DeadEffect(human *in_human)
 	if( data.type == 1 ){
 
 		//腰辺りの座標を算出
-		hx += cos(hrx*-1 - (float)M_PI/2) * sin(hry) * HUMAN_HEIGTH/2;
-		hz += sin(hrx*-1 - (float)M_PI/2) * sin(hry) * HUMAN_HEIGTH/2;
+		hx += cos(hrx*-1 - (float)M_PI/2) * sin(hry) * HUMAN_HEIGHT/2;
+		hz += sin(hrx*-1 - (float)M_PI/2) * sin(hry) * HUMAN_HEIGHT/2;
 
 		//エフェクト（煙）の表示
 		float rnd = DegreeToRadian(10)*GetRand(18);
@@ -2164,7 +2164,7 @@ bool ObjectManager::CheckZombieAttack(human* MyHuman, human* EnemyHuman)
 
 	//敵（攻撃対象）が攻撃ポイントに触れていれば、当たっている
 	if( (ax*ax + az*az) < 3.3f*3.3f ){
-		if( (AttackPoint_y >= ty)&&(AttackPoint_y <= (ty + HUMAN_HEIGTH)) ){
+		if( (AttackPoint_y >= ty)&&(AttackPoint_y <= (ty + HUMAN_HEIGHT)) ){
 			return true;
 		}
 	}

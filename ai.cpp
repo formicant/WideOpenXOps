@@ -304,7 +304,7 @@ void AIcontrol::MoveRandom()
 			vx = cos(rx*-1 + (float)M_PI/2);
 			vz = sin(rx*-1 + (float)M_PI/2);
 			if(
-				(CollD->CheckALLBlockIntersectDummyRay(posx, posy + HUMAN_MAPCOLLISION_HEIGTH, posz, vx, 0, vz, NULL, NULL, &Dist, HUMAN_MAPCOLLISION_R) == true)||		//腰の高さにブロックがある（ぶつかる）
+				(CollD->CheckALLBlockIntersectDummyRay(posx, posy + HUMAN_MAPCOLLISION_HEIGHT, posz, vx, 0, vz, NULL, NULL, &Dist, HUMAN_MAPCOLLISION_R) == true)||		//腰の高さにブロックがある（ぶつかる）
 				(CollD->CheckALLBlockIntersectDummyRay(posx, posy - 1.0f, posz, vx, 0, vz, NULL, NULL, &Dist, HUMAN_MAPCOLLISION_R) == false)							//足元にブロックがない（落ちる）
 			){
 				//前進フラグを削除し、後退フラグを設定
@@ -316,7 +316,7 @@ void AIcontrol::MoveRandom()
 			vx = cos(rx*-1 + (float)M_PI/2 + (float)M_PI);
 			vz = sin(rx*-1 + (float)M_PI/2 + (float)M_PI);
 			if(
-				(CollD->CheckALLBlockIntersectDummyRay(posx, posy + HUMAN_MAPCOLLISION_HEIGTH, posz, vx, 0, vz, NULL, NULL, &Dist, HUMAN_MAPCOLLISION_R) == true)||		//腰の高さにブロックがある（ぶつかる）
+				(CollD->CheckALLBlockIntersectDummyRay(posx, posy + HUMAN_MAPCOLLISION_HEIGHT, posz, vx, 0, vz, NULL, NULL, &Dist, HUMAN_MAPCOLLISION_R) == true)||		//腰の高さにブロックがある（ぶつかる）
 				(CollD->CheckALLBlockIntersectDummyRay(posx, posy - 1.0f, posz, vx, 0, vz, NULL, NULL, &Dist, HUMAN_MAPCOLLISION_R) == false)							//足元にブロックがない（落ちる）
 			){
 				//後退フラグを削除し、前進フラグを設定
@@ -329,7 +329,7 @@ void AIcontrol::MoveRandom()
 			vx = cos(rx*-1);
 			vz = sin(rx*-1);
 			if(
-				(CollD->CheckALLBlockIntersectDummyRay(posx, posy + HUMAN_MAPCOLLISION_HEIGTH, posz, vx, 0, vz, NULL, NULL, &Dist, HUMAN_MAPCOLLISION_R) == true)||		//腰の高さにブロックがある（ぶつかる）
+				(CollD->CheckALLBlockIntersectDummyRay(posx, posy + HUMAN_MAPCOLLISION_HEIGHT, posz, vx, 0, vz, NULL, NULL, &Dist, HUMAN_MAPCOLLISION_R) == true)||		//腰の高さにブロックがある（ぶつかる）
 				(CollD->CheckALLBlockIntersectDummyRay(posx, posy - 1.0f, posz, vx, 0, vz, NULL, NULL, &Dist, HUMAN_MAPCOLLISION_R) == false)							//足元にブロックがない（落ちる）
 			){
 				//右移動フラグを削除し、左移動フラグを設定
@@ -340,7 +340,7 @@ void AIcontrol::MoveRandom()
 			vx = cos(rx*-1 + (float)M_PI);
 			vz = sin(rx*-1 + (float)M_PI);
 			if(
-				(CollD->CheckALLBlockIntersectDummyRay(posx, posy + HUMAN_MAPCOLLISION_HEIGTH, posz, vx, 0, vz, NULL, NULL, &Dist, HUMAN_MAPCOLLISION_R) == true)||		//腰の高さにブロックがある（ぶつかる）
+				(CollD->CheckALLBlockIntersectDummyRay(posx, posy + HUMAN_MAPCOLLISION_HEIGHT, posz, vx, 0, vz, NULL, NULL, &Dist, HUMAN_MAPCOLLISION_R) == true)||		//腰の高さにブロックがある（ぶつかる）
 				(CollD->CheckALLBlockIntersectDummyRay(posx, posy - 1.0f, posz, vx, 0, vz, NULL, NULL, &Dist, HUMAN_MAPCOLLISION_R) == false)							//足元にブロックがない（落ちる）
 			){
 				//左移動フラグを削除し、右移動フラグを設定
@@ -475,7 +475,7 @@ bool AIcontrol::MoveJump()
 
 	//腰付近のあたり判定
 	new_posx = posx + cos(rx*-1 + (float)M_PI/2) * (AI_CHECKJUMP_DIST + HUMAN_MAPCOLLISION_R);
-	new_posy = posy + HUMAN_MAPCOLLISION_HEIGTH;
+	new_posy = posy + HUMAN_MAPCOLLISION_HEIGHT;
 	new_posz = posz + sin(rx*-1 + (float)M_PI/2) * (AI_CHECKJUMP_DIST + HUMAN_MAPCOLLISION_R);
 	if( CollD->CheckALLBlockInside(new_posx, new_posy, new_posz) == true ){
 		ObjMgr->MoveJump(ctrlid);
@@ -490,7 +490,7 @@ bool AIcontrol::MoveJump()
 		ObjMgr->MoveJump(ctrlid);
 		return true;
 	}
-	else if( CollD->CheckALLBlockIntersectRay(new_posx, new_posy, new_posz, 0.0f, 1.0f, 0.0f, NULL, NULL, &dist_dummy, HUMAN_HEIGTH - AI_CHECKJUMP_HEIGHT) == true ){
+	else if( CollD->CheckALLBlockIntersectRay(new_posx, new_posy, new_posz, 0.0f, 1.0f, 0.0f, NULL, NULL, &dist_dummy, HUMAN_HEIGHT - AI_CHECKJUMP_HEIGHT) == true ){
 		ObjMgr->MoveJump(ctrlid);
 		return true;
 	}

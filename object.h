@@ -45,7 +45,7 @@
 
 #define HUMAN_JUMP_SPEED (2.2f + (HUMAN_DAMAGE_SPEED))	//!< ジャンプする速度
 
-#define HUMAN_HEIGTH 20.0f		//!< 人の高さ
+#define HUMAN_HEIGHT 20.0f		//!< 人の高さ
 #define HUMAN_DAMAGE_HEAD 2.0f	//!< 弾が 頭 に当たった場合のダメージ倍率
 #define HUMAN_DAMAGE_UP 1.0f	//!< 弾が 上半身 に当たった場合のダメージ倍率
 #define HUMAN_DAMAGE_LEG 0.7f	//!< 弾が 下半身 に当たった場合のダメージ倍率
@@ -66,9 +66,9 @@
 #define ARMRAD_RELOADWEAPON DegreeToRadian(-20)				//!< リロード時の腕の表示角度
 
 #define HUMAN_MAPCOLLISION_R 5.0f							//!< 人とマップの当たり判定　半径
-#define HUMAN_MAPCOLLISION_HEIGTH 10.2f						//!< 人とマップの当たり判定　高さ（注：腰程度）
-#define HUMAN_MAPCOLLISION_ADD_HEIGTH_A 9.2f				//!< 人とマップの当たり判定 追加分　高さ（注：標準マップ SCHOOL に合わせる）
-#define HUMAN_MAPCOLLISION_ADD_HEIGTH_B 13.2f				//!< 人とマップの当たり判定 追加分　高さ（注：標準マップ SCHOOL に合わせる）
+#define HUMAN_MAPCOLLISION_HEIGHT 10.2f						//!< 人とマップの当たり判定　高さ（注：腰程度）
+#define HUMAN_MAPCOLLISION_ADD_HEIGHT_A 9.2f				//!< 人とマップの当たり判定 追加分　高さ（注：標準マップ SCHOOL に合わせる）
+#define HUMAN_MAPCOLLISION_ADD_HEIGHT_B 13.2f				//!< 人とマップの当たり判定 追加分　高さ（注：標準マップ SCHOOL に合わせる）
 #define HUMAN_MAPCOLLISION_SLOPEANGLE DegreeToRadian(50)	//!< 人とマップの当たり判定　登れない斜面の角度
 #define HUMAN_MAPCOLLISION_SLOPEFORCEANGLE DegreeToRadian(22.62f)		//!< 人とマップの当たり判定　登れない斜面が人を押し出す角度
 #define HUMAN_DEADLINE -100.0f						//!< 人が死亡するY座標（デッドライン）

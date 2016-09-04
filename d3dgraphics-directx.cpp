@@ -1245,9 +1245,9 @@ void D3DGraphics::ScreenBrightness(int Width, int Height, int Brightness)
 void D3DGraphics::Centerline()
 {
 	ResetWorldTransform();
-	Drawline(100.0f, 0.0f, 0.0f, -100.0f, 0.0f, 0.0f, GetColorCode(0.0f,1.0f,0.0f,1.0f));
+	Drawline(100.0f, 0.0f, 0.0f, -100.0f, 0.0f, 0.0f, GetColorCode(1.0f,0.0f,0.0f,1.0f));
 	Drawline(0.0f, 100.0f, 0.0f, 0.0f, -100.0f, 0.0f, GetColorCode(0.0f,1.0f,0.0f,1.0f));
-	Drawline(0.0f, 0.0f, 100.0f, 0.0f, 0.0f, -100.0f, GetColorCode(0.0f,1.0f,0.0f,1.0f));
+	Drawline(0.0f, 0.0f, 100.0f, 0.0f, 0.0f, -100.0f, GetColorCode(0.0f,0.0f,1.0f,1.0f));
 }
 
 //! @brief 【デバック用】線描画

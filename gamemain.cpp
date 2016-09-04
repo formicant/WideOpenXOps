@@ -1824,14 +1824,14 @@ void maingame::Process()
 		float crx = camera_rx*0.6f + (view_rx + mouse_rx*-1 + (float)M_PI/2)*0.4f;		// 3/5 + 2/5
 		float cry = camera_ry*0.6f + (view_ry + mouse_ry)*0.4f;							// 3/5 + 2/5
 		float dist;
-		if( CollD.CheckALLBlockIntersectRay(x, y + HUMAN_HEIGTH, z, cos(crx)*cos(cry)*-1, sin(cry*-1), sin(crx)*cos(cry)*-1, NULL, NULL, &dist, 13.0f) == true ){
+		if( CollD.CheckALLBlockIntersectRay(x, y + HUMAN_HEIGHT, z, cos(crx)*cos(cry)*-1, sin(cry*-1), sin(crx)*cos(cry)*-1, NULL, NULL, &dist, 13.0f) == true ){
 			dist -= 1.0f;
 		}
 		else{
 			dist = 13.0f;
 		}
 		camera_x = x - cos(crx)*cos(cry)*dist;
-		camera_y = y + HUMAN_HEIGTH + sin(cry*-1)*dist;
+		camera_y = y + HUMAN_HEIGHT + sin(cry*-1)*dist;
 		camera_z = z - sin(crx)*cos(cry)*dist;
 		camera_rx = crx;
 		camera_ry = cry;
@@ -1985,14 +1985,14 @@ void maingame::Render3D()
 				d3dg->Drawline(posx+3.0f, posy, posz-3.0f, posx-3.0f, posy, posz-3.0f, d3dg->GetColorCode(1.0f,0.0f,0.0f,1.0f));
 				d3dg->Drawline(posx-3.0f, posy, posz-3.0f, posx-3.0f, posy, posz+3.0f, d3dg->GetColorCode(1.0f,0.0f,0.0f,1.0f));
 				d3dg->Drawline(posx-3.0f, posy, posz+3.0f, posx+3.0f, posy, posz+3.0f, d3dg->GetColorCode(1.0f,0.0f,0.0f,1.0f));
-				d3dg->Drawline(posx+3.0f, posy+HUMAN_HEIGTH, posz+3.0f, posx+3.0f, posy+HUMAN_HEIGTH, posz-3.0f, d3dg->GetColorCode(1.0f,0.0f,0.0f,1.0f));
-				d3dg->Drawline(posx+3.0f, posy+HUMAN_HEIGTH, posz-3.0f, posx-3.0f, posy+HUMAN_HEIGTH, posz-3.0f, d3dg->GetColorCode(1.0f,0.0f,0.0f,1.0f));
-				d3dg->Drawline(posx-3.0f, posy+HUMAN_HEIGTH, posz-3.0f, posx-3.0f, posy+HUMAN_HEIGTH, posz+3.0f, d3dg->GetColorCode(1.0f,0.0f,0.0f,1.0f));
-				d3dg->Drawline(posx-3.0f, posy+HUMAN_HEIGTH, posz+3.0f, posx+3.0f, posy+HUMAN_HEIGTH, posz+3.0f, d3dg->GetColorCode(1.0f,0.0f,0.0f,1.0f));
-				d3dg->Drawline(posx+3.0f, posy, posz+3.0f, posx+3.0f, posy+HUMAN_HEIGTH, posz+3.0f, d3dg->GetColorCode(1.0f,0.0f,0.0f,1.0f));
-				d3dg->Drawline(posx+3.0f, posy, posz-3.0f, posx+3.0f, posy+HUMAN_HEIGTH, posz-3.0f, d3dg->GetColorCode(1.0f,0.0f,0.0f,1.0f));
-				d3dg->Drawline(posx-3.0f, posy, posz-3.0f, posx-3.0f, posy+HUMAN_HEIGTH, posz-3.0f, d3dg->GetColorCode(1.0f,0.0f,0.0f,1.0f));
-				d3dg->Drawline(posx-3.0f, posy, posz+3.0f, posx-3.0f, posy+HUMAN_HEIGTH, posz+3.0f, d3dg->GetColorCode(1.0f,0.0f,0.0f,1.0f));
+				d3dg->Drawline(posx+3.0f, posy+HUMAN_HEIGHT, posz+3.0f, posx+3.0f, posy+HUMAN_HEIGHT, posz-3.0f, d3dg->GetColorCode(1.0f,0.0f,0.0f,1.0f));
+				d3dg->Drawline(posx+3.0f, posy+HUMAN_HEIGHT, posz-3.0f, posx-3.0f, posy+HUMAN_HEIGHT, posz-3.0f, d3dg->GetColorCode(1.0f,0.0f,0.0f,1.0f));
+				d3dg->Drawline(posx-3.0f, posy+HUMAN_HEIGHT, posz-3.0f, posx-3.0f, posy+HUMAN_HEIGHT, posz+3.0f, d3dg->GetColorCode(1.0f,0.0f,0.0f,1.0f));
+				d3dg->Drawline(posx-3.0f, posy+HUMAN_HEIGHT, posz+3.0f, posx+3.0f, posy+HUMAN_HEIGHT, posz+3.0f, d3dg->GetColorCode(1.0f,0.0f,0.0f,1.0f));
+				d3dg->Drawline(posx+3.0f, posy, posz+3.0f, posx+3.0f, posy+HUMAN_HEIGHT, posz+3.0f, d3dg->GetColorCode(1.0f,0.0f,0.0f,1.0f));
+				d3dg->Drawline(posx+3.0f, posy, posz-3.0f, posx+3.0f, posy+HUMAN_HEIGHT, posz-3.0f, d3dg->GetColorCode(1.0f,0.0f,0.0f,1.0f));
+				d3dg->Drawline(posx-3.0f, posy, posz-3.0f, posx-3.0f, posy+HUMAN_HEIGHT, posz-3.0f, d3dg->GetColorCode(1.0f,0.0f,0.0f,1.0f));
+				d3dg->Drawline(posx-3.0f, posy, posz+3.0f, posx-3.0f, posy+HUMAN_HEIGHT, posz+3.0f, d3dg->GetColorCode(1.0f,0.0f,0.0f,1.0f));
 			}
 		}
 	}

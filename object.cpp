@@ -992,9 +992,9 @@ int human::CheckAndProcessDead(class Collision *CollD)
 			SetDisableScope();
 
 			//次のフレームの頭の座標を取得
-			check_posx = pos_x + cos(rotation_x*-1 - (float)M_PI/2) * sin(add_ry) * HUMAN_HEIGTH;
-			check_posy = pos_y + cos(add_ry) * HUMAN_HEIGTH;
-			check_posz = pos_z + sin(rotation_x*-1 - (float)M_PI/2) * sin(add_ry) * HUMAN_HEIGTH;
+			check_posx = pos_x + cos(rotation_x*-1 - (float)M_PI/2) * sin(add_ry) * HUMAN_HEIGHT;
+			check_posy = pos_y + cos(add_ry) * HUMAN_HEIGHT;
+			check_posz = pos_z + sin(rotation_x*-1 - (float)M_PI/2) * sin(add_ry) * HUMAN_HEIGHT;
 
 			if( CollD->CheckALLBlockInside(check_posx, check_posy, check_posz) == true ){
 				deadstate = 2;
@@ -1036,9 +1036,9 @@ int human::CheckAndProcessDead(class Collision *CollD)
 		}
 		else{
 			//次のフレームの頭の座標を取得
-			check_posx = pos_x + cos(rotation_x*-1 - (float)M_PI/2) * sin(rotation_y + add_ry) * HUMAN_HEIGTH;
-			check_posy = pos_y + cos(rotation_y + add_ry) * HUMAN_HEIGTH;
-			check_posz = pos_z + sin(rotation_x*-1 - (float)M_PI/2) * sin(rotation_y + add_ry) * HUMAN_HEIGTH;
+			check_posx = pos_x + cos(rotation_x*-1 - (float)M_PI/2) * sin(rotation_y + add_ry) * HUMAN_HEIGHT;
+			check_posy = pos_y + cos(rotation_y + add_ry) * HUMAN_HEIGHT;
+			check_posz = pos_z + sin(rotation_x*-1 - (float)M_PI/2) * sin(rotation_y + add_ry) * HUMAN_HEIGHT;
 
 			if( CollD->CheckALLBlockInside(check_posx, check_posy, check_posz) == true ){
 				deadstate = 3;
@@ -1090,9 +1090,9 @@ int human::CheckAndProcessDead(class Collision *CollD)
 		}
 
 		//次のフレームの足の座標を取得
-		check_posx = pos_x - cos(rotation_x*-1 - (float)M_PI/2) * sin(rotation_y + add_ry) * HUMAN_HEIGTH;
+		check_posx = pos_x - cos(rotation_x*-1 - (float)M_PI/2) * sin(rotation_y + add_ry) * HUMAN_HEIGHT;
 		check_posy = pos_y + 0.1f;
-		check_posz = pos_z - sin(rotation_x*-1 - (float)M_PI/2) * sin(rotation_y + add_ry) * HUMAN_HEIGTH;
+		check_posz = pos_z - sin(rotation_x*-1 - (float)M_PI/2) * sin(rotation_y + add_ry) * HUMAN_HEIGHT;
 
 		if( CollD->CheckALLBlockInside(check_posx, check_posy, check_posz) == true ){
 			deadstate = 4;
@@ -1100,9 +1100,9 @@ int human::CheckAndProcessDead(class Collision *CollD)
 		}
 
 		//次のフレームの頭の座標を取得
-		check_posx = pos_x - cos(rotation_x*-1 - (float)M_PI/2) * sin(rotation_y + add_ry) * HUMAN_HEIGTH;
-		check_posy = pos_y + cos(rotation_y + add_ry) * HUMAN_HEIGTH;
-		check_posz = pos_z - sin(rotation_x*-1 - (float)M_PI/2) * sin(rotation_y + add_ry) * HUMAN_HEIGTH;
+		check_posx = pos_x - cos(rotation_x*-1 - (float)M_PI/2) * sin(rotation_y + add_ry) * HUMAN_HEIGHT;
+		check_posy = pos_y + cos(rotation_y + add_ry) * HUMAN_HEIGHT;
+		check_posz = pos_z - sin(rotation_x*-1 - (float)M_PI/2) * sin(rotation_y + add_ry) * HUMAN_HEIGHT;
 
 		if( CollD->CheckALLBlockInside(check_posx, check_posy, check_posz) == true ){
 			deadstate = 4;
@@ -1110,8 +1110,8 @@ int human::CheckAndProcessDead(class Collision *CollD)
 		}
 
 		//足の座標を移動
-		pos_x -= cos(rotation_x*-1 - (float)M_PI/2) * sin(add_ry) * HUMAN_HEIGTH;
-		pos_z -= sin(rotation_x*-1 - (float)M_PI/2) * sin(add_ry) * HUMAN_HEIGTH;
+		pos_x -= cos(rotation_x*-1 - (float)M_PI/2) * sin(add_ry) * HUMAN_HEIGHT;
+		pos_z -= sin(rotation_x*-1 - (float)M_PI/2) * sin(add_ry) * HUMAN_HEIGHT;
 
 		rotation_y += add_ry;
 		return 2;
@@ -1303,8 +1303,8 @@ bool human::MapCollisionDetection(class Collision *CollD, class BlockDataInterfa
 
 		if( move_y > 0.0f ){
 			//上方向へ当たり判定
-			if( CollD->CheckALLBlockIntersectDummyRay(pos_x, pos_y + HUMAN_HEIGTH, pos_z, 0, 1, 0, NULL, NULL, &Dist, move_y) == true ){
-				CollD->CheckALLBlockIntersectRay(pos_x, pos_y + HUMAN_HEIGTH, pos_z, 0, 1, 0, NULL, NULL, &Dist, move_y);
+			if( CollD->CheckALLBlockIntersectDummyRay(pos_x, pos_y + HUMAN_HEIGHT, pos_z, 0, 1, 0, NULL, NULL, &Dist, move_y) == true ){
+				CollD->CheckALLBlockIntersectRay(pos_x, pos_y + HUMAN_HEIGHT, pos_z, 0, 1, 0, NULL, NULL, &Dist, move_y);
 
 				FallDistance = Dist;
 				move_y = 0.0f;
@@ -1391,24 +1391,24 @@ bool human::MapCollisionDetection(class Collision *CollD, class BlockDataInterfa
 
 			//腰付近をAABBで荒削り
 			if( CollideBoxAABB(min_x, min_y, min_z, max_x, max_y, max_z,
-				pos_x - HUMAN_MAPCOLLISION_R - 1.0f, pos_y + HUMAN_MAPCOLLISION_HEIGTH - 1.0f, pos_z - HUMAN_MAPCOLLISION_R - 1.0f, pos_x + HUMAN_MAPCOLLISION_R + 1.0f, pos_y + HUMAN_MAPCOLLISION_HEIGTH + 1.0f, pos_z + HUMAN_MAPCOLLISION_R + 1.0f) == true
+				pos_x - HUMAN_MAPCOLLISION_R - 1.0f, pos_y + HUMAN_MAPCOLLISION_HEIGHT - 1.0f, pos_z - HUMAN_MAPCOLLISION_R - 1.0f, pos_x + HUMAN_MAPCOLLISION_R + 1.0f, pos_y + HUMAN_MAPCOLLISION_HEIGHT + 1.0f, pos_z + HUMAN_MAPCOLLISION_R + 1.0f) == true
 			){
 				surface = -1;
-				CollD->CheckBlockInside(i, pos_x, pos_y + HUMAN_MAPCOLLISION_HEIGTH, pos_z, false, &surface);
+				CollD->CheckBlockInside(i, pos_x, pos_y + HUMAN_MAPCOLLISION_HEIGHT, pos_z, false, &surface);
 
 				if( surface != -1 ){
 					//HUMAN_MAPCOLLISION_R 分の先を調べる
-					if( CollD->CheckBlockInside(i, pos_x + cos(ang)*HUMAN_MAPCOLLISION_R, pos_y + HUMAN_MAPCOLLISION_HEIGTH, pos_z + sin(ang)*HUMAN_MAPCOLLISION_R, true, NULL) == true ){
+					if( CollD->CheckBlockInside(i, pos_x + cos(ang)*HUMAN_MAPCOLLISION_R, pos_y + HUMAN_MAPCOLLISION_HEIGHT, pos_z + sin(ang)*HUMAN_MAPCOLLISION_R, true, NULL) == true ){
 						CollD->ScratchVector(i, surface, move_x2, vy, move_z2, &move_x2, &vy, &move_z2);
 					}
 
 					//左右90度づつを調べる
-					if( CollD->CheckBlockInside(i, pos_x + cos(ang + (float)M_PI/2)*HUMAN_MAPCOLLISION_R, pos_y + HUMAN_MAPCOLLISION_HEIGTH, pos_z + sin(ang + (float)M_PI/2)*HUMAN_MAPCOLLISION_R, true, NULL) == true ){
+					if( CollD->CheckBlockInside(i, pos_x + cos(ang + (float)M_PI/2)*HUMAN_MAPCOLLISION_R, pos_y + HUMAN_MAPCOLLISION_HEIGHT, pos_z + sin(ang + (float)M_PI/2)*HUMAN_MAPCOLLISION_R, true, NULL) == true ){
 						if( CollD->CheckPolygonFrontRx(i, surface, ang) == true ){		//進行方向に対して表向きなら～
 							CollD->ScratchVector(i, surface, move_x2, vy, move_z2, &move_x2, &vy, &move_z2);
 						}
 					}
-					if( CollD->CheckBlockInside(i, pos_x + cos(ang - (float)M_PI/2)*HUMAN_MAPCOLLISION_R, pos_y + HUMAN_MAPCOLLISION_HEIGTH, pos_z + sin(ang - (float)M_PI/2)*HUMAN_MAPCOLLISION_R, true, NULL) == true ){
+					if( CollD->CheckBlockInside(i, pos_x + cos(ang - (float)M_PI/2)*HUMAN_MAPCOLLISION_R, pos_y + HUMAN_MAPCOLLISION_HEIGHT, pos_z + sin(ang - (float)M_PI/2)*HUMAN_MAPCOLLISION_R, true, NULL) == true ){
 						if( CollD->CheckPolygonFrontRx(i, surface, ang) == true ){		//進行方向に対して表向きなら～
 							CollD->ScratchVector(i, surface, move_x2, vy, move_z2, &move_x2, &vy, &move_z2);
 						}
@@ -1427,21 +1427,21 @@ bool human::MapCollisionDetection(class Collision *CollD, class BlockDataInterfa
 		}
 
 		//頭を当たり判定
-		if( CollD->CheckALLBlockIntersectDummyRay(pos_x, pos_y + HUMAN_HEIGTH, pos_z, vx, 0, vz, NULL, NULL, &Dist, speed) == true ){
-			CollD->CheckALLBlockIntersectRay(pos_x, pos_y + FallDistance + HUMAN_HEIGTH, pos_z, vx, 0, vz, &id, &face, &Dist, speed);
+		if( CollD->CheckALLBlockIntersectDummyRay(pos_x, pos_y + HUMAN_HEIGHT, pos_z, vx, 0, vz, NULL, NULL, &Dist, speed) == true ){
+			CollD->CheckALLBlockIntersectRay(pos_x, pos_y + FallDistance + HUMAN_HEIGHT, pos_z, vx, 0, vz, &id, &face, &Dist, speed);
 			CollD->ScratchVector(id, face, move_x2, vy, move_z2, &move_x2, &vy, &move_z2);
 		}
 
 		if( AddCollisionFlag == true ){
 			//腰付近の追加当たり判定
-			if( CollD->CheckALLBlockIntersectDummyRay(pos_x, pos_y + HUMAN_MAPCOLLISION_ADD_HEIGTH_A, pos_z, vx, 0, vz, NULL, NULL, &Dist, speed) == true ){
-				CollD->CheckALLBlockIntersectRay(pos_x, pos_y + FallDistance + HUMAN_MAPCOLLISION_ADD_HEIGTH_A, pos_z, vx, 0, vz, &id, &face, &Dist, speed);
+			if( CollD->CheckALLBlockIntersectDummyRay(pos_x, pos_y + HUMAN_MAPCOLLISION_ADD_HEIGHT_A, pos_z, vx, 0, vz, NULL, NULL, &Dist, speed) == true ){
+				CollD->CheckALLBlockIntersectRay(pos_x, pos_y + FallDistance + HUMAN_MAPCOLLISION_ADD_HEIGHT_A, pos_z, vx, 0, vz, &id, &face, &Dist, speed);
 				CollD->ScratchVector(id, face, move_x2, vy, move_z2, &move_x2, &vy, &move_z2);
 			}
 
 			//腰付近の追加当たり判定
-			if( CollD->CheckALLBlockIntersectDummyRay(pos_x, pos_y + HUMAN_MAPCOLLISION_ADD_HEIGTH_B, pos_z, vx, 0, vz, NULL, NULL, &Dist, speed) == true ){
-				CollD->CheckALLBlockIntersectRay(pos_x, pos_y + FallDistance + HUMAN_MAPCOLLISION_ADD_HEIGTH_B, pos_z, vx, 0, vz, &id, &face, &Dist, speed);
+			if( CollD->CheckALLBlockIntersectDummyRay(pos_x, pos_y + HUMAN_MAPCOLLISION_ADD_HEIGHT_B, pos_z, vx, 0, vz, NULL, NULL, &Dist, speed) == true ){
+				CollD->CheckALLBlockIntersectRay(pos_x, pos_y + FallDistance + HUMAN_MAPCOLLISION_ADD_HEIGHT_B, pos_z, vx, 0, vz, &id, &face, &Dist, speed);
 				CollD->ScratchVector(id, face, move_x2, vy, move_z2, &move_x2, &vy, &move_z2);
 			}
 		}
@@ -1486,9 +1486,9 @@ bool human::MapCollisionDetection(class Collision *CollD, class BlockDataInterfa
 					newpos_z = pos_z + move_z2;
 
 					//移動先の高さを調べる
-					if( CollD->CheckALLBlockInside(newpos_x, newpos_y + HUMAN_HEIGTH, newpos_z) == false ){
-						if( CollD->CheckALLBlockIntersectRay(newpos_x, newpos_y + HUMAN_HEIGTH, newpos_z, 0, -1, 0, NULL, NULL, &Dist, HUMAN_HEIGTH) == true ){
-							float height = HUMAN_HEIGTH - Dist;
+					if( CollD->CheckALLBlockInside(newpos_x, newpos_y + HUMAN_HEIGHT, newpos_z) == false ){
+						if( CollD->CheckALLBlockIntersectRay(newpos_x, newpos_y + HUMAN_HEIGHT, newpos_z, 0, -1, 0, NULL, NULL, &Dist, HUMAN_HEIGHT) == true ){
+							float height = HUMAN_HEIGHT - Dist;
 
 							//人を上に持ち上げる
 							if( height > 0.9f ){
@@ -1515,7 +1515,7 @@ bool human::MapCollisionDetection(class Collision *CollD, class BlockDataInterfa
 		//全身を改めて確認
 		if(
 			(CollD->CheckALLBlockInside(newpos_x, newpos_y + offset, newpos_z) == true)||
-			(CollD->CheckALLBlockIntersectRay(newpos_x, newpos_y + offset, newpos_z, 0, 1, 0, NULL, NULL, &Dist, HUMAN_HEIGTH - offset - 1.0f) == true)
+			(CollD->CheckALLBlockIntersectRay(newpos_x, newpos_y + offset, newpos_z, 0, 1, 0, NULL, NULL, &Dist, HUMAN_HEIGHT - offset - 1.0f) == true)
 		){
 			//めり込むなら移動しない
 			move_x2 = 0.0f;
