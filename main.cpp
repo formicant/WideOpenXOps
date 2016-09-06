@@ -50,11 +50,11 @@ StateMachine GameState;
 //! ゲーム設定データ
 Config GameConfig;
 
-//! メインウインドウ
+//! メインウィンドウ
 WindowControl MainWindow;
 
 //! @brief WinMain()関数
-int WINAPI WinMain(HINSTANCE hInstance,	HINSTANCE hPrevInstance, LPSTR lpCmdLine, int nCmdShow)
+int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine, int nCmdShow)
 {
 	//未使用引数対策
 	UNREFERENCED_PARAMETER(hInstance);

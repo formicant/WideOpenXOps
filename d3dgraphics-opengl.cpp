@@ -149,15 +149,15 @@ int D3DGraphics::InitD3D(WindowControl *WindowCtrl, char *TextureFontFilename, b
 
 	//ピクセルフォーマットを取得
 	pfdID = ChoosePixelFormat(hDC, &pfd);	
-	if (pfdID == 0) { return 1; }
+	if( pfdID == 0 ){ return 1; }
 
 	//ピクセルフォーマットを指定
 	bResult = SetPixelFormat(hDC, pfdID, &pfd);
-	if (bResult == FALSE) { return 1; }
+	if( bResult == FALSE ){ return 1; }
 
 	//コンテキストを指定
 	hGLRC = wglCreateContext(hDC);
-	if (hGLRC == NULL) { return 1; }
+	if( hGLRC == NULL ){ return 1; }
 
 	//デバイスコンテキスト解放
 	ReleaseDC(hWnd, hDC);
@@ -183,7 +183,7 @@ int D3DGraphics::InitD3D(WindowControl *WindowCtrl, char *TextureFontFilename, b
 
 	//HUD_myweapon [奥行き, 縦, 横]
 
-	//HUD_A　現在持っている武器を表示する座標
+	//HUD_A　現在持っている武器を描画する座標
 	prx = (float)M_PI/180*-39 * aspecth /2;
 	pry = (float)M_PI/180*-55 /2;
 	r = 7.5f;
@@ -191,7 +191,7 @@ int D3DGraphics::InitD3D(WindowControl *WindowCtrl, char *TextureFontFilename, b
 	HUD_myweapon_y[0] = sin(pry)*r;
 	HUD_myweapon_z[0] = sin(prx)*r;
 
-	//HUD_A　予備の武器を表示する座標
+	//HUD_A　予備の武器を描画する座標
 	prx = (float)M_PI/180*-52 * aspecth /2;
 	pry = (float)M_PI/180*-60 /2;
 	r = 16.0f;
@@ -717,7 +717,7 @@ int D3DGraphics::LoadTexture(char* filename, bool texturefont, bool BlackTranspa
 	HDC hDC;
 	hDC = GetDC(hWnd);
 	wglMakeCurrent(hDC, hGLRC);
-	glGenTextures(1 , &(textureobjname[id]));
+	glGenTextures(1, &(textureobjname[id]));
 	ReleaseDC(hWnd, hDC);
 
 	glBindTexture(GL_TEXTURE_2D, textureobjname[id]);
@@ -1181,7 +1181,7 @@ bool D3DGraphics::LoadPNGTexture(char* filename, bool BlackTransparent, TEXTURED
 
 	if( pallet == false ){
 		// tRNSチャンクがあれば、アルファチャンネルに変換
-		if (png_get_valid(pPng, pInfo, PNG_INFO_tRNS)) {
+		if( png_get_valid(pPng, pInfo, PNG_INFO_tRNS) ){
 			png_set_tRNS_to_alpha(pPng);
 		}
 
@@ -1190,7 +1190,7 @@ bool D3DGraphics::LoadPNGTexture(char* filename, bool BlackTransparent, TEXTURED
 
 		for(int h=0; h<height; h++){
 			//1ライン分取得
-			png_read_row(pPng,buf,NULL);
+			png_read_row(pPng, buf, NULL);
 
 			for(int w=0; w<width; w++){
 				data[(h*width+w)*4 + 0] = buf[w*4 + 0];
@@ -1222,7 +1222,7 @@ bool D3DGraphics::LoadPNGTexture(char* filename, bool BlackTransparent, TEXTURED
 
 		for(int h=0; h<height; h++){
 			//1ライン分取得
-			png_read_row(pPng,buf,NULL);
+			png_read_row(pPng, buf, NULL);
 
 			for(int w=0; w<width; w++){
 				data[(h*width+w)*4 + 0] = palette[ buf[w] ].red;
@@ -1300,7 +1300,7 @@ void D3DGraphics::CleanupTexture(int id)
 	if( ptextures[id].useflag == false ){ return; }
 
 	delete ptextures[id].data;
-	glDeleteTextures(1 , &(textureobjname[id]));
+	glDeleteTextures(1, &(textureobjname[id]));
 	ptextures[id].useflag = false;
 
 #ifdef ENABLE_DEBUGLOG
@@ -1460,7 +1460,7 @@ void D3DGraphics::SetWorldTransformHumanWeapon(float x, float y, float z, float 
 	glScalef(size, size, size);
 }
 
-//! @brief ワールド空間を所持している武器を表示する場所に設定
+//! @brief ワールド空間を所持している武器を描画する場所に設定
 //! @param rotation 武器を回転させる
 //! @param camera_x カメラのX座標
 //! @param camera_y カメラのY座標
@@ -1468,7 +1468,7 @@ void D3DGraphics::SetWorldTransformHumanWeapon(float x, float y, float z, float 
 //! @param camera_rx カメラの横軸角度
 //! @param camera_ry カメラの縦軸角度
 //! @param rx 武器のの縦軸角度
-//! @param size 表示サイズ
+//! @param size 描画サイズ
 //! @note rotation・・　true：現在持っている武器です。　false：予備の武器です。（rx は無視されます）
 //! @todo 位置やサイズの微調整
 void D3DGraphics::SetWorldTransformPlayerWeapon(bool rotation, float camera_x, float camera_y, float camera_z, float camera_rx, float camera_ry, float rx, float size)
@@ -1851,7 +1851,7 @@ void D3DGraphics::ScreenBrightness(int Width, int Height, int Brightness)
 	Draw2DBox(0, 0, Width, Height, GetColorCode(1.0f,1.0f,1.0f,alpha));
 }
 
-//! @brief 【デバック用】中心線描画
+//! @brief 【デバック用】中心線表示
 void D3DGraphics::Centerline()
 {
 	ResetWorldTransform();
@@ -1860,7 +1860,7 @@ void D3DGraphics::Centerline()
 	Drawline(0.0f, 0.0f, 100.0f, 0.0f, 0.0f, -100.0f, GetColorCode(0.0f,0.0f,1.0f,1.0f));
 }
 
-//! @brief 【デバック用】線描画
+//! @brief 【デバック用】線表示
 void D3DGraphics::Drawline(float x1, float y1, float z1, float x2, float y2, float z2, int color)
 {
 	float VertexAry[2*3];
@@ -1884,7 +1884,7 @@ void D3DGraphics::Drawline(float x1, float y1, float z1, float x2, float y2, flo
 	glEnableClientState(GL_VERTEX_ARRAY);
 	glEnableClientState(GL_COLOR_ARRAY);
 
-	//描画
+	//表示
 	glVertexPointer(3, GL_FLOAT, 0, VertexAry);
 	glColorPointer(4, GL_UNSIGNED_BYTE, 0, ColorAry);
 	glDrawArrays(GL_LINE_STRIP, 0, 2);
@@ -1922,14 +1922,14 @@ int D3DGraphics::StrMaxLineLen(char *str)
 	return maxlen;
 }
 
-//! @brief 文字を描画（システムフォント使用）
+//! @brief 文字を表示（システムフォント使用）
 //! @param x x座標
 //! @param y y座標
 //! @param str 文字列　（改行コード：可）
 //! @param color 色
 //! @warning 本関数は1フレーム間で100回までしか呼び出せません。（OpenGLコアのみ）
-//! @warning <b>描画は非常に低速です。</b>画面内で何度も呼び出すとパフォーマンスに影響します。
-//! @warning「改行コードを活用し一度に描画する」「日本語が必要ない文字はテクスチャフォントを活用する」などの対応を講じてください。
+//! @warning <b>表示は非常に低速です。</b>画面内で何度も呼び出すとパフォーマンスに影響します。
+//! @warning「改行コードを活用し一度に表示する」「日本語が必要ない文字はテクスチャフォントを活用する」などの対応を講じてください。
 //! @attention フォントの種類やサイズは固定です。　文字を二重に重ねて立体感を出さないと見にくくなります。
 //! @todo 1文字目が欠ける場合がある。
 void D3DGraphics::Draw2DMSFontText(int x, int y, char *str, int color)
@@ -2006,7 +2006,7 @@ void D3DGraphics::Draw2DMSFontText(int x, int y, char *str, int color)
 	End2DRender();
 }
 
-//! @brief 文字を中央揃えで描画（システムフォント使用）
+//! @brief 文字を中央揃えで表示（システムフォント使用）
 //! @param x x座標
 //! @param y y座標
 //! @param w 横の大きさ

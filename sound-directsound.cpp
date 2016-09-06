@@ -72,7 +72,7 @@ int SoundControl::InitSound(WindowControl *WindowCtrl)
 	dsbd.dwSize = sizeof(DSBUFFERDESC);
 	dsbd.dwFlags = DSBCAPS_CTRL3D | DSBCAPS_PRIMARYBUFFER;
 	if( SUCCEEDED(pDSound->CreateSoundBuffer(&dsbd, &pPrimary, NULL)) ){
-		pPrimary->QueryInterface(IID_IDirectSound3DListener8,(LPVOID *)&p3DListener);
+		pPrimary->QueryInterface(IID_IDirectSound3DListener8, (LPVOID *)&p3DListener);
 		pPrimary->Release();
 	}
 
@@ -215,7 +215,7 @@ int SoundControl::LoadSound(char* filename)
 
 	//波形データを取り込む
 	FILE* fp;
-	fp = fopen(filename,"rb");
+	fp = fopen(filename, "rb");
 	fseek(fp, Wavoffset, SEEK_SET);
 	fread(pWavData, 1, dwSize, fp);
 	fclose(fp);
@@ -291,7 +291,7 @@ int SoundControl::PlaySound(int id, int volume, int pan)
 		if( (status & DSBSTATUS_PLAYING) == 0x00 ){
 			LPDIRECTSOUND3DBUFFER pDS3DBuffer;
 			DWORD status = 0;
-			if( FAILED(pDSBuffer[id][i]->QueryInterface(IID_IDirectSound3DBuffer8,(VOID**)&pDS3DBuffer)) ){
+			if( FAILED(pDSBuffer[id][i]->QueryInterface(IID_IDirectSound3DBuffer8, (VOID**)&pDS3DBuffer)) ){
 				//IDirectSound3DBuffer8を取得できない
 				return 0;
 			}
@@ -333,7 +333,7 @@ int SoundControl::Play3DSound(int id, float x, float y, float z, int volume)
 		if( (status & DSBSTATUS_PLAYING) == 0x00 ){
 
 			LPDIRECTSOUND3DBUFFER pDS3DBuffer;
-			if( FAILED(pDSBuffer[id][i]->QueryInterface(IID_IDirectSound3DBuffer8,(VOID**)&pDS3DBuffer)) ){
+			if( FAILED(pDSBuffer[id][i]->QueryInterface(IID_IDirectSound3DBuffer8, (VOID**)&pDS3DBuffer)) ){
 				//IDirectSound3DBuffer8を取得できない
 				return 0;
 			}

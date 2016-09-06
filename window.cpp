@@ -79,7 +79,7 @@ bool WindowControl::InitWindow(char* title, int width, int height, bool fullscre
 	wc.hbrBackground	= (HBRUSH)GetStockObject(BLACK_BRUSH);
 	wc.lpszMenuName	= NULL;
 	wc.lpszClassName	= "MainWindow";
-	if( !RegisterClass(&wc) ){
+	if( RegisterClass(&wc) == 0 ){
 		return false;
 	}
 
@@ -104,7 +104,7 @@ bool WindowControl::InitWindow(char* title, int width, int height, bool fullscre
 	y = 0;
 
 	/*
-	//ウインドウモードなら、ウインドウを画面の中心に配置する
+	//ウィンドウモードなら、ウィンドウを画面の中心に配置する
 	if( fullscreen == false ){
 		SystemParametersInfo(SPI_GETWORKAREA, 0, &Rect, 0);
 		x = (Rect.right - width)/2;
@@ -142,8 +142,8 @@ HWND WindowControl::GethWnd()
 	return hWnd;
 }
 
-//! @brief ウインドウメッセージを処理（メインループ判定）
-//! @return アイドル状態：0　ゲームのメイン処理実行：1　ウインドウが閉じた：-1
+//! @brief ウィンドウメッセージを処理（メインループ判定）
+//! @return アイドル状態：0　ゲームのメイン処理実行：1　ウィンドウが閉じた：-1
 //! @attention 本関数から「1」が返された場合に限り、ゲームのメイン処理を実行してください。
 //! @attention 本関数から「-1」が返された場合、各リソースやインターフェースを解放し、ゲームを終了してください。
 int WindowControl::CheckMainLoop()
@@ -151,7 +151,7 @@ int WindowControl::CheckMainLoop()
 	MSG msg = {0};
 
 	if( PeekMessage( &msg, NULL, 0U, 0U, PM_REMOVE ) ){
-		//ウインドウメッセージが来ている
+		//ウィンドウメッセージが来ている
 
 		TranslateMessage( &msg );
 		DispatchMessage( &msg );
@@ -166,7 +166,7 @@ int WindowControl::CheckMainLoop()
 		return 1;
 	}
 	//else{
-		//ウインドウメッセージが来るまで待つ
+		//ウィンドウメッセージが来るまで待つ
 		WaitMessage();
 		return 0;
 	//}

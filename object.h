@@ -41,7 +41,7 @@
 //! 人が斜め後ろに進む加速度
 #define HUMAN_REGRESSRUN_SIDEWAYSRUN_ACCELERATION (HUMAN_REGRESSRUN_ACCELERATION)
 #define HUMAN_PROGRESSWALK_ACCELERATION	0.35f		//!< 人が歩く加速度
-#define HUMAN_ATTENUATION			0.5f		//!< 人の1フレーム当たりの減衰率　（0.0 < x < 1.0）
+#define HUMAN_ATTENUATION			0.5f		//!< 人の1フレームあたりの減衰率　（0.0 < x < 1.0）
 
 #define HUMAN_JUMP_SPEED (2.2f + (HUMAN_DAMAGE_SPEED))	//!< ジャンプする速度
 
@@ -62,8 +62,8 @@
 
 #define WEAPONERRORRANGE_SCALE 0.25f	//!< 武器の反動角度の倍率（×0.25 ＝ ÷4）
 
-#define ARMRAD_NOWEAPON DegreeToRadian((-90 + 20))			//!< 手ぶら時の腕の表示角度
-#define ARMRAD_RELOADWEAPON DegreeToRadian(-20)				//!< リロード時の腕の表示角度
+#define ARMRAD_NOWEAPON DegreeToRadian((-90 + 20))			//!< 手ぶら時の腕の描画角度
+#define ARMRAD_RELOADWEAPON DegreeToRadian(-20)				//!< リロード時の腕の描画角度
 
 #define HUMAN_MAPCOLLISION_R 5.0f							//!< 人とマップの当たり判定　半径
 #define HUMAN_MAPCOLLISION_HEIGHT 10.2f						//!< 人とマップの当たり判定　高さ（注：腰程度）
@@ -96,7 +96,7 @@ protected:
 	float pos_y;		//!< Y座標
 	float pos_z;		//!< Z座標
 	float rotation_x;	//!< 回転角度
-	float model_size;	//!< 表示サイズ
+	float model_size;	//!< 描画サイズ
 	int id_parameter;	//!< データの種類
 	int id_model;		//!< モデル認識番号
 	int id_texture;		//!< テクスチャ認識番号
@@ -133,9 +133,9 @@ protected:
 	float armrotation_y;	//!< 腕の回転角度
 	float reaction_y;		//!< 腕を上げ下げする角度
 	float legrotation_x;	//!< 足の回転角度
-	float upmodel_size;		//!< 上半身表示サイズ
-	float armmodel_size;	//!< 腕表示サイズ
-	float legmodel_size;	//!< 足表示サイズ
+	float upmodel_size;		//!< 上半身描画サイズ
+	float armmodel_size;	//!< 腕描画サイズ
+	float legmodel_size;	//!< 足描画サイズ
 	class weapon *weapon[TOTAL_HAVEWEAPON];		//!< 武器
 	int selectweapon;			//!< 武器A/Bの選択
 	int selectweaponcnt;		//!< 武器の切り替えカウント
@@ -371,7 +371,7 @@ enum Effect_Type {
 	EFFECT_ROTATION = 0x10,			//!< 回転
 	EFFECT_FALL = 0x20,				//!< 落下
 	EFFECT_NOBILLBOARD = 0x40,		//!< ビルボード化しない
-	EFFECT_COLLIDEMAP = 0x80		//!< マップとのあたり判定
+	EFFECT_COLLIDEMAP = 0x80		//!< マップとの当たり判定
 };
 
 #endif

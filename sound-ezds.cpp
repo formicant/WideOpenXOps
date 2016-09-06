@@ -67,7 +67,7 @@ int SoundControl::InitSound(WindowControl *WindowCtrl)
 
 	//DLLを読み込む
 	lib = LoadLibrary("ezds.dll");
-	if (lib == NULL){
+	if( lib == NULL ){
 		return 1;
 	}
 
@@ -274,7 +274,7 @@ void SoundControl::CleanupSound(int id)
 //! @return 有効（内）：true　無効（外）：false
 bool SoundControl::CheckSourceDist(float x, float y, float z, bool snear, float *out_dist)
 {
-	float dx, dy ,dz, dist;
+	float dx, dy, dz, dist;
 	int max_dist;
 
 	if( snear == false ){

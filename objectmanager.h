@@ -83,7 +83,7 @@ class ObjectManager
 	bool *Human_ShotFlag;	//!< 発砲フラグ（マズルフラッシュ用）
 	class BulletObjectHumanIndex *BulletObj_HumanIndex;		//!< 弾対人判定用オブジェクト
 
-	bool AddCollisionFlag;	//!< 追加のあたり判定
+	bool AddCollisionFlag;	//!< 追加の当たり判定
 	bool FriendlyFire;		//!< FF（同士討ち）有効化
 
 	int Player_HumanID;		//!< プレイヤーが操作する人オブジェクトのID

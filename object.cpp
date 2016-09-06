@@ -100,7 +100,7 @@ bool object::GetEnableFlag()
 
 //! @brief モデルデータを設定
 //! @param id モデル認識番号
-//! @param size 表示倍率
+//! @param size 描画倍率
 void object::SetModel(int id, float size)
 {
 	id_model = id;
@@ -109,7 +109,7 @@ void object::SetModel(int id, float size)
 
 //! @brief モデルデータを取得
 //! @param id モデル認識番号を受け取るポインタ（NULL可）
-//! @param size 表示倍率を受け取るポインタ（NULL可）
+//! @param size 描画倍率を受け取るポインタ（NULL可）
 void object::GetModel(int *id, float *size)
 {
 	if( id != NULL ){ *id = id_model; }
@@ -1270,7 +1270,7 @@ void human::ControlProcess()
 //! @brief マップとの当たり判定
 //! @param CollD Collisionクラスのポインタ
 //! @param inblockdata BlockDataInterfaceクラスのポインタ
-//! @param AddCollisionFlag 追加のあたり判定フラグ
+//! @param AddCollisionFlag 追加の当たり判定フラグ
 //! @param FallDist Y軸の移動量を取得するポインタ
 //! @param nowmove_x X軸の移動量を取得するポインタ
 //! @param nowmove_z Z軸の移動量を取得するポインタ
@@ -1292,7 +1292,7 @@ bool human::MapCollisionDetection(class Collision *CollD, class BlockDataInterfa
 	//足元ギリギリは当たり判定から除外する
 	offset = 0.1f;
 
-	//　上下方向のあたり判定（ジャンプ・自然落下）
+	//　上下方向の当たり判定（ジャンプ・自然落下）
 	//--------------------------------------------------
 
 	//足元がブロックに埋まっていなければ
@@ -1376,7 +1376,7 @@ bool human::MapCollisionDetection(class Collision *CollD, class BlockDataInterfa
 	}
 
 
-	//　水平方向のあたり判定（移動）
+	//　水平方向の当たり判定（移動）
 	//--------------------------------------------------
 
 	if( (move_x2*move_x2 + move_z2*move_z2) ){
@@ -1533,7 +1533,7 @@ bool human::MapCollisionDetection(class Collision *CollD, class BlockDataInterfa
 //! @brief 計算を実行（当たり判定）
 //! @param CollD Collisionのポインタ
 //! @param inblockdata BlockDataInterfaceのポインタ
-//! @param AddCollisionFlag 追加のあたり判定フラグ
+//! @param AddCollisionFlag 追加の当たり判定フラグ
 //! @param F5mode 上昇機能（F5裏技）のフラグ　（有効：true　無効：false）
 //! @return 処理なし：0　通常処理：1　死亡して倒れ終わった直後：2　静止した死体：3
 int human::RunFrame(class Collision *CollD, class BlockDataInterface *inblockdata, bool AddCollisionFlag, bool F5mode)
@@ -1856,7 +1856,7 @@ int weapon::Pickup()
 //! @param speed 捨てる初速
 void weapon::Dropoff(float x, float y, float z, float rx, float speed)
 {
-	//表示する座標と角度を設定
+	//描画する座標と角度を設定
 	move_x = cos(rx*-1 + (float)M_PI/2) * speed;
 	move_y = 0.0f;
 	move_z = sin(rx*-1 + (float)M_PI/2) * speed;
@@ -2620,9 +2620,9 @@ effect::~effect()
 //! @param in_move_x X軸移動量
 //! @param in_move_y Y軸移動量
 //! @param in_move_z Z軸移動量
-//! @param size 表示倍率
+//! @param size 描画倍率
 //! @param rotation 回転角度
-//! @param count 表示フレーム数
+//! @param count 描画フレーム数
 //! @param texture テクスチャの認識番号
 //! @param settype エフェクトの種類　（Effect_Type を組み合せる）
 //! @param init オブジェクトを初期化
@@ -2679,7 +2679,7 @@ void effect::GetMove(float *mx, float *my, float *mz)
 	*mz = move_z;
 }
 
-//! エフェクトのマップあたり判定フラグ取得
+//! エフェクトのマップ当たり判定フラグ取得
 //! @return 有効：true　無効：false
 bool effect::GetCollideMapFlag()
 {

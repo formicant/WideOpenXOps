@@ -176,9 +176,9 @@ class D3DGraphics
 	VERTEXTXTA g_pVertices[MAX_BLOCKS][6][4];	//!< 頂点情報（CPU管理）
 #endif
 
-	float HUD_myweapon_x[TOTAL_HAVEWEAPON];		//!< HUD_Aの武器表示 X座標
-	float HUD_myweapon_y[TOTAL_HAVEWEAPON];		//!< HUD_Aの武器表示 Y座標
-	float HUD_myweapon_z[TOTAL_HAVEWEAPON];		//!< HUD_Aの武器表示 Z座標
+	float HUD_myweapon_x[TOTAL_HAVEWEAPON];		//!< HUD_Aの武器描画 X座標
+	float HUD_myweapon_y[TOTAL_HAVEWEAPON];		//!< HUD_Aの武器描画 Y座標
+	float HUD_myweapon_z[TOTAL_HAVEWEAPON];		//!< HUD_Aの武器描画 Z座標
 
 	bool StartRenderFlag;			//!< StartRender()関数 実行中を表すフラグ
 
@@ -225,9 +225,9 @@ class D3DGraphics
 	char TextureFontFname[_MAX_PATH];	//!< テクスチャフォントのファイル名
 	int TextureFont;				//!< テクスチャフォントのテクスチャID
 
-	float HUD_myweapon_x[TOTAL_HAVEWEAPON];		//!< HUD_Aの武器表示 X座標
-	float HUD_myweapon_y[TOTAL_HAVEWEAPON];		//!< HUD_Aの武器表示 Y座標
-	float HUD_myweapon_z[TOTAL_HAVEWEAPON];		//!< HUD_Aの武器表示 Z座標
+	float HUD_myweapon_x[TOTAL_HAVEWEAPON];		//!< HUD_Aの武器描画 X座標
+	float HUD_myweapon_y[TOTAL_HAVEWEAPON];		//!< HUD_Aの武器描画 Y座標
+	float HUD_myweapon_z[TOTAL_HAVEWEAPON];		//!< HUD_Aの武器描画 Z座標
 
 	jpeg_decompress_struct cinfo;	//!< libjpeg
 	jpeg_error_mgr jerr;			//!< libjpeg

@@ -204,7 +204,7 @@ int opening::Create()
 	ObjMgr.LoadPointData();
 	ObjMgr.SetPlayerID(MAX_HUMAN-1);	//実在しない人をプレイヤーに（銃声のサウンド再生対策）
 
-	//追加のあたり判定設定
+	//追加の当たり判定設定
 	ObjMgr.SetAddCollisionFlag(false);
 
 	//AI設定
@@ -475,7 +475,7 @@ int mainmenu::Create()
 	//ポイントデータ初期化
 	ObjMgr.LoadPointData();
 
-	//追加のあたり判定設定
+	//追加の当たり判定設定
 	ObjMgr.SetAddCollisionFlag(false);
 
 	//AI設定
@@ -717,7 +717,7 @@ void mainmenu::Render2D()
 		totalmission = GameAddon.GetTotaldatas();
 	}
 
-	//ゲームのバージョン情報描画
+	//ゲームのバージョン情報表示
 	d3dg->Draw2DTextureFontText(522+1, 75+1, GAMEVERSION, d3dg->GetColorCode(0.0f,0.0f,0.0f,1.0f), 18, 22);
 	d3dg->Draw2DTextureFontText(522, 75, GAMEVERSION, d3dg->GetColorCode(1.0f,1.0f,1.0f,1.0f), 18, 22);
 
@@ -751,7 +751,7 @@ void mainmenu::Render2D()
 		d3dg->Draw2DBox(MAINMENU_X+341+3, scrollbar_y +3, MAINMENU_X+360-3, scrollbar_y + (int)scrollbar_height -3, color2);
 	}
 
-	//'< UP >'描画
+	//'< UP >'表示
 	if( scrollitems > 0 ){
 		d3dg->Draw2DTextureFontText(MAINMENU_X+1, MAINMENU_Y+1, "<  UP  >", d3dg->GetColorCode(0.0f,0.0f,0.0f,1.0f), 25, 26);
 
@@ -763,14 +763,14 @@ void mainmenu::Render2D()
 			color = d3dg->GetColorCode(1.0f,1.0f,1.0f,1.0f);
 		}
 
-		//文字を描画
+		//文字を表示
 		d3dg->Draw2DTextureFontText(MAINMENU_X, MAINMENU_Y, "<  UP  >", color, 25, 26);
 	}
 	else{
 		d3dg->Draw2DTextureFontText(MAINMENU_X+1, MAINMENU_Y+1, "<  UP  >", d3dg->GetColorCode(0.6f,0.6f,0.6f,1.0f), 25, 26);
 	}
 
-	//'< DOWN >'描画
+	//'< DOWN >'表示
 	if( scrollitems < (totalmission - TOTAL_MENUITEMS) ){
 		d3dg->Draw2DTextureFontText(MAINMENU_X+1, MAINMENU_Y+MAINMENU_H-55+1, "< DOWN >", d3dg->GetColorCode(0.0f,0.0f,0.0f,1.0f), 25, 26);
 
@@ -782,7 +782,7 @@ void mainmenu::Render2D()
 			color = d3dg->GetColorCode(1.0f,1.0f,1.0f,1.0f);
 		}
 
-		//文字を描画
+		//文字を表示
 		d3dg->Draw2DTextureFontText(MAINMENU_X, MAINMENU_Y+MAINMENU_H-55, "< DOWN >", color, 25, 26);
 	}
 	else{
@@ -801,7 +801,7 @@ void mainmenu::Render2D()
 				color = d3dg->GetColorCode(1.0f,1.0f,1.0f,1.0f);
 			}
 
-			//文字を描画
+			//文字を表示
 			d3dg->Draw2DTextureFontText(MAINMENU_X+1, MAINMENU_Y+MAINMENU_H-25+1, "ADD-ON MISSIONS >>", d3dg->GetColorCode(0.0f,0.0f,0.0f,1.0f), 17, 22);
 			d3dg->Draw2DTextureFontText(MAINMENU_X, MAINMENU_Y+MAINMENU_H-25, "ADD-ON MISSIONS >>", color, 17, 22);
 		}
@@ -817,13 +817,13 @@ void mainmenu::Render2D()
 				color = d3dg->GetColorCode(1.0f,1.0f,1.0f,1.0f);
 			}
 
-			//文字を描画
+			//文字を表示
 			d3dg->Draw2DTextureFontText(MAINMENU_X+1, MAINMENU_Y+MAINMENU_H-25+1, "<< STANDARD MISSIONS", d3dg->GetColorCode(0.0f,0.0f,0.0f,1.0f), 17, 22);
 			d3dg->Draw2DTextureFontText(MAINMENU_X, MAINMENU_Y+MAINMENU_H-25, "<< STANDARD MISSIONS", color, 17, 22);
 		//}
 	}
 
-	//ミッション名を描画
+	//ミッション名を表示
 	for(int i=0; i<TOTAL_MENUITEMS; i++){
 		char name[32];
 		strcpy(name, "");
@@ -844,12 +844,12 @@ void mainmenu::Render2D()
 			color = d3dg->GetColorCode(0.6f,0.6f,1.0f,1.0f);
 		}
 
-		//文字を描画
+		//文字を表示
 		d3dg->Draw2DTextureFontText(MAINMENU_X+1, MAINMENU_Y+30+1 + i*30, name, d3dg->GetColorCode(0.0f,0.0f,0.0f,1.0f), 20, 26);
 		d3dg->Draw2DTextureFontText(MAINMENU_X, MAINMENU_Y+30 + i*30, name, color, 20, 26);
 	}
 
-	//マウスカーソル描画（赤線）
+	//マウスカーソル表示（赤線）
 	d3dg->Draw2DBox(0, mainmenu_mouseY-1, SCREEN_WIDTH, mainmenu_mouseY+1, d3dg->GetColorCode(1.0f,0.0f,0.0f,0.5f));
 	d3dg->Draw2DBox(mainmenu_mouseX-1, 0, mainmenu_mouseX+1, SCREEN_HEIGHT, d3dg->GetColorCode(1.0f,0.0f,0.0f,0.5f));
 	d3dg->Draw2DLine(0, mainmenu_mouseY, SCREEN_WIDTH, mainmenu_mouseY, d3dg->GetColorCode(1.0f,0.0f,0.0f,1.0f));
@@ -977,7 +977,7 @@ void briefing::Render2D()
 
 	//メモ：背景画像の描画は、自動的に行われる。
 
-	//固定文字描画
+	//固定文字表示
 	d3dg->Draw2DTextureFontText(SCREEN_WIDTH/2 - 60*4, 30, "BRIEFING", d3dg->GetColorCode(1.0f,1.0f,0.0f,effectA), 60, 42);
 	d3dg->Draw2DTextureFontText(SCREEN_WIDTH - 210 - effectB_sizeW*20/2, SCREEN_HEIGHT - 37 - effectB_sizeH/2,
 								"LEFT CLICK TO BEGIN", d3dg->GetColorCode(1.0f,1.0f,1.0f,effectB), effectB_sizeW, effectB_sizeH);
@@ -996,7 +996,7 @@ void briefing::Render2D()
 		d3dg->Draw2DTexture(40, 300, TextureB, 160, 150, 1.0f);
 	}
 
-	//ミッション名を取得・描画
+	//ミッション名を取得・表示
 	char mname[64];
 	if( MIFdata.GetFiletype() == false ){
 		GameParamInfo.GetOfficialMission(GameInfoData.selectmission_id, NULL, mname, NULL, NULL, NULL);
@@ -1006,7 +1006,7 @@ void briefing::Render2D()
 	}
 	d3dg->Draw2DTextureFontText(SCREEN_WIDTH/2 - strlen(mname)*18/2, 90, mname, d3dg->GetColorCode(1.0f,0.5f,0.0f,1.0f), 18, 25);
 
-	//ミッション説明を描画
+	//ミッション説明を表示
 	d3dg->Draw2DMSFontText(230, 180, MIFdata.GetBriefingText(), d3dg->GetColorCode(1.0f,1.0f,1.0f,1.0f));
 }
 
@@ -1103,7 +1103,7 @@ int maingame::Create()
 	//ポイントデータ初期化
 	ObjMgr.LoadPointData();
 
-	//追加のあたり判定設定
+	//追加の当たり判定設定
 	ObjMgr.SetAddCollisionFlag(collisionflag);
 
 	//AI設定
@@ -1677,7 +1677,7 @@ void maingame::Input()
 				}
 			}
 
-			//裏技・腕表示の操作かチェック
+			//裏技・腕描画の操作かチェック
 			if( inputCtrl->CheckKeyDown( GetHomeKeycode() ) ){
 				if( Camera_HOMEmode == false ){
 					Camera_HOMEmode = true;
@@ -1933,7 +1933,7 @@ void maingame::Render3D()
 	d3dg->ResetZbuffer();
 
 	if( CenterLine == true ){
-		//中心線描画（デバック用）
+		//中心線表示（デバック用）
 		d3dg->Centerline();
 	}
 
@@ -2056,7 +2056,7 @@ void maingame::Render2D()
 		redflash_flag = false;
 	}
 
-	//スコープ表示
+	//スコープ描画
 	if( (Camera_F1mode == false)&&(myHuman->GetScopeMode() == 1) ){
 		d3dg->Draw2DTexture(0, 0, Resource.GetScopeTexture(), SCREEN_WIDTH, SCREEN_HEIGHT, 1.0f);
 		d3dg->Draw2DLine(SCREEN_WIDTH/2-49, SCREEN_HEIGHT/2, SCREEN_WIDTH/2-4, SCREEN_HEIGHT/2, d3dg->GetColorCode(0.0f,0.0f,0.0f,1.0f));
@@ -2074,7 +2074,7 @@ void maingame::Render2D()
 		d3dg->Draw2DBox(SCREEN_WIDTH/2-1, 0, SCREEN_WIDTH/2+1, SCREEN_HEIGHT, d3dg->GetColorCode(0.0f,0.0f,0.0f,0.5f));
 	}
 
-	//目隠し表示
+	//目隠し描画
 	if( (Camera_Blind == true)&&(Camera_Debugmode == false)&&(hp > 0) ){
 
 		int scopemode = myHuman->GetScopeMode();
@@ -2426,7 +2426,7 @@ void maingame::Render2D()
 	time_render = GetTimeMS() - time;
 }
 
-//! @brief レーダーに表示する座標に変換
+//! @brief レーダーに描画する座標に変換
 //! @param in_x 空間 X座標
 //! @param in_y 空間 Y座標
 //! @param in_z 空間 Z座標
@@ -2504,7 +2504,7 @@ void maingame::RenderRadar()
 		//ブロックのデータを取得
 		BlockData.Getdata(&bdata, i);
 
-		//表示候補のブロックを検出（荒削り）
+		//描画候補のブロックを検出（荒削り）
 		CollD.GetBlockPosMINMAX(i, &x_min, &y_min, &z_min, &x_max, &y_max, &z_max);
 		if( CollideBoxAABB(x_min, y_min, z_min, x_max, y_max, z_max, camera_x-RadarWorldR*2, camera_y-1.0f, camera_z-RadarWorldR*2, camera_x+RadarWorldR*2, camera_y+1.0f, camera_z+RadarWorldR*2) == true ){
 
@@ -2542,7 +2542,7 @@ void maingame::RenderRadar()
 		}
 	}
 
-	//イベントの到着ポイントを描画
+	//イベントの到着ポイントを表示
 	if( EventStop == false ){
 		for(int i=0; i<TOTAL_EVENTLINE; i++){
 			signed char p4 = Event[i].GetNextP4();
@@ -2905,7 +2905,7 @@ void maingame::ProcessConsole()
 		}
 	}
 
-	//レーダーを表示
+	//レーダーを描画
 	if( strcmp(NewCommand, "radar") == 0 ){
 		if( radar == false ){
 			radar = true;
@@ -2917,7 +2917,7 @@ void maingame::ProcessConsole()
 		}
 	}
 
-	//目隠しを表示
+	//目隠しを描画
 	if( strcmp(NewCommand, "inmap") == 0 ){
 		if( Camera_Blind == false ){
 			Camera_Blind = true;
@@ -3171,7 +3171,7 @@ void maingame::ProcessConsole()
 #endif
 }
 
-//! @brief デバック用コンソールの描画処理
+//! @brief デバック用コンソールの表示処理
 void maingame::RenderConsole()
 {
 	//下地
@@ -3240,10 +3240,10 @@ void result::Render2D()
 
 	//メモ：背景画像の描画は、自動的に行われる。
 
-	//固定文字描画
+	//固定文字表示
 	d3dg->Draw2DTextureFontText(SCREEN_WIDTH/2 - 50*3, 40, "RESULT", d3dg->GetColorCode(1.0f,0.0f,1.0f,effectA), 50, 42);
 
-	//ミッション名を取得し描画
+	//ミッション名を取得し表示
 	if( MIFdata.GetFiletype() == false ){
 		GameParamInfo.GetOfficialMission(GameInfoData.selectmission_id, NULL, mname, NULL, NULL, NULL);
 	}

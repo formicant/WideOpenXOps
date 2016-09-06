@@ -53,7 +53,7 @@
 //! @details マウスやキーボードなどの入力デバイスを管理しています。
 class InputControl
 {
-	HWND hWnd;				//!< ウインドウハンドル
+	HWND hWnd;				//!< ウィンドウハンドル
 #ifdef INPUT_DIRECTINPUT
 	LPDIRECTINPUT8 pDI;					//!< DIRECTINPUT8のポインタ
 	LPDIRECTINPUTDEVICE8 pDIDevice;		//!< DIRECTINPUTDEVICE8のポインタ・キーボード用

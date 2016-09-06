@@ -39,10 +39,10 @@
 #define TOTAL_MENUITEMS 8	//!< メニュー1画面に表示するミッション数
 #define MAINMENU_H (TOTAL_MENUITEMS+2)*30 + 25	//!< メニューの表示サイズ・高さ
 
-#define HUDA_WEAPON_POSX (SCREEN_WIDTH - 255)	//!< 武器情報を表示する領域・X座標
-#define HUDA_WEAPON_POSY (SCREEN_HEIGHT - 98)	//!< 武器情報を表示する領域・Y座標
-#define HUDA_WEAPON_SIZEW 8		//!< 武器情報を表示する領域・横サイズ（32ピクセルの配置個数）
-#define HUDA_WEAPON_SIZEH 3		//!< 武器情報を表示する領域・縦サイズ（32ピクセルの配置個数）
+#define HUDA_WEAPON_POSX (SCREEN_WIDTH - 255)	//!< 武器情報を描画する領域・X座標
+#define HUDA_WEAPON_POSY (SCREEN_HEIGHT - 98)	//!< 武器情報を描画する領域・Y座標
+#define HUDA_WEAPON_SIZEW 8		//!< 武器情報を描画する領域・横サイズ（32ピクセルの配置個数）
+#define HUDA_WEAPON_SIZEH 3		//!< 武器情報を描画する領域・縦サイズ（32ピクセルの配置個数）
 
 #define VIEW_HEIGHT 19.0f							//!< 視点の高さ
 #define VIEWANGLE_NORMAL DegreeToRadian(65)			//!< 視野角　標準
@@ -170,7 +170,7 @@ class maingame : public D3Dscene
 	bool radar;					//!< 簡易レーダー表示
 	bool wireframe;				//!< マップをワイヤーフレーム表示
 	bool CenterLine;			//!< 3D空間に中心線を表示
-	bool Camera_Blind;			//!< 目隠し表示
+	bool Camera_Blind;			//!< 目隠し描画
 	bool Camera_F1mode;			//!< カメラF1モード
 	int Camera_F2mode;			//!< カメラF2モード
 	bool Camera_HOMEmode;		//!< カメラHOMEモード

@@ -297,7 +297,7 @@ bool Collision::CheckPolygonFrontRx(int id, int face, float rx)
 	return false;
 }
 
-//! @brief ブロックの面とレイ（光線）のあたり判定
+//! @brief ブロックの面とレイ（光線）の当たり判定
 //! @param blockid 判定するブロック番号
 //! @param face 判定する面番号
 //! @param RayPos_x レイの位置（始点）を指定する X座標
@@ -481,7 +481,7 @@ bool Collision::CheckALLBlockInside(float x, float y, float z)
 	return false;
 }
 
-//! @brief ブロックとレイ（光線）のあたり判定
+//! @brief ブロックとレイ（光線）の当たり判定
 //! @param blockid 判定するブロック番号
 //! @param RayPos_x レイの位置（始点）を指定する X座標
 //! @param RayPos_y レイの位置（始点）を指定する Y座標
@@ -604,7 +604,7 @@ bool Collision::CheckBlockIntersectRay(int blockid, float RayPos_x, float RayPos
 	return true;
 }
 
-//! @brief 全てのブロックとレイ（光線）のあたり判定
+//! @brief 全てのブロックとレイ（光線）の当たり判定
 //! @param RayPos_x レイの位置（始点）を指定する X座標
 //! @param RayPos_y レイの位置（始点）を指定する Y座標
 //! @param RayPos_z レイの位置（始点）を指定する Z座標
@@ -846,7 +846,7 @@ void Collision::ReflectVector(int id, int face, float in_vx, float in_vy, float 
 }
 
 
-//! @brief AABBによるあたり判定
+//! @brief AABBによる当たり判定
 //! @param box1_min_x 物体Aの最少 X座標
 //! @param box1_min_y 物体Aの最少 Y座標
 //! @param box1_min_z 物体Aの最少 Z座標
@@ -916,7 +916,7 @@ bool CollideCylinder(float c1_x, float c1_y, float c1_z, float c1_r, float c1_h,
 	return false;
 }
 
-//! @brief 球体とレイ（光線）のあたり判定
+//! @brief 球体とレイ（光線）の当たり判定
 //! @param s_x 球体のx座標
 //! @param s_y 球体のy座標
 //! @param s_z 球体のz座標
@@ -1000,7 +1000,7 @@ bool CollideSphereRay(float s_x, float s_y, float s_z, float s_r, float RayPos_x
 	return false;
 }
 
-//! @brief AABBとレイ（光線）のあたり判定
+//! @brief AABBとレイ（光線）の当たり判定
 //! @param box_min_x 物体の最少 X座標
 //! @param box_min_y 物体の最少 Y座標
 //! @param box_min_z 物体の最少 Z座標
@@ -1135,7 +1135,7 @@ bool CollideAABBRay(float box_min_x, float box_min_y, float box_min_z, float box
 	return false;
 }
 
-//! @brief 円柱とレイ（光線）のあたり判定
+//! @brief 円柱とレイ（光線）の当たり判定
 //! @param c_x 円柱 底辺のx座標
 //! @param c_y 円柱 底辺のy座標
 //! @param c_z 円柱 底辺のz座標
@@ -1361,7 +1361,7 @@ bool Collide2DLine(int A1x, int A1y, int A2x, int A2y, int B1x, int B1y, int B2x
 //! @param out_line_y2 四角形に収まる 線分の終点 Y座標 を受け取るポインタ
 //! @return 有効（描画する）：true　無効（描画しない）：false
 //! @warning 引数は必ず「box_x1 < box_x2」かつ「box_x1 < box_x2」にすること
-//! @note 簡易レーダーのマップ表示用
+//! @note 簡易レーダーのマップ描画用
 bool Get2DLineInBox(int line_x1, int line_y1, int line_x2, int line_y2, int box_x1, int box_y1, int box_x2, int box_y2, int *out_line_x1, int *out_line_y1, int *out_line_x2, int *out_line_y2)
 {
 	//四角形指定が異常

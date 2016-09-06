@@ -149,7 +149,7 @@ int D3DGraphics::InitD3D(WindowControl *WindowCtrl, char *TextureFontFilename, b
 
 	//HUD_myweapon [奥行き, 縦, 横]
 
-	//HUD_A　現在持っている武器を表示する座標
+	//HUD_A　現在持っている武器を描画する座標
 	prx = DegreeToRadian(-39) * aspecth /2;
 	pry = DegreeToRadian(-55) /2;
 	r = 7.5f;
@@ -157,7 +157,7 @@ int D3DGraphics::InitD3D(WindowControl *WindowCtrl, char *TextureFontFilename, b
 	HUD_myweapon_y[0] = sin(pry)*r;
 	HUD_myweapon_z[0] = sin(prx)*r;
 
-	//HUD_A　予備の武器を表示する座標
+	//HUD_A　予備の武器を描?画する座標
 	prx = DegreeToRadian(-52) * aspecth /2;
 	pry = DegreeToRadian(-60) /2;
 	r = 16.0f;
@@ -280,8 +280,8 @@ int D3DGraphics::InitSubset()
 	pd3dDevice->SetRenderState(D3DRS_FOGCOLOR, D3DCOLOR_RGBA(0, 0, 0, 0));
 	pd3dDevice->SetRenderState(D3DRS_FOGTABLEMODE, D3DFOG_LINEAR);
 	pd3dDevice->SetRenderState(D3DRS_FOGVERTEXMODE, D3DFOG_NONE);
-	pd3dDevice->SetRenderState(D3DRS_FOGSTART,*(DWORD*)(&fog_st));
-	pd3dDevice->SetRenderState(D3DRS_FOGEND,  *(DWORD*)(&fog_end));
+	pd3dDevice->SetRenderState(D3DRS_FOGSTART, *(DWORD*)(&fog_st));
+	pd3dDevice->SetRenderState(D3DRS_FOGEND,   *(DWORD*)(&fog_end));
 
 	// テクスチャフィルタを使う
 	pd3dDevice->SetSamplerState(0, D3DSAMP_MINFILTER, D3DTEXF_LINEAR);
@@ -323,9 +323,9 @@ int D3DGraphics::InitSubset()
 		return 1;
 	}
 	//フォント名：ＭＳ ゴシック　サイズ：18
-	HRESULT hr = D3DXCreateFont( pd3dDevice, -18, 0, FW_NORMAL, 1, FALSE, SHIFTJIS_CHARSET , OUT_DEFAULT_PRECIS,
+	HRESULT hr = D3DXCreateFont( pd3dDevice, -18, 0, FW_NORMAL, 1, FALSE, SHIFTJIS_CHARSET, OUT_DEFAULT_PRECIS,
 								DEFAULT_QUALITY, DEFAULT_PITCH | FF_DONTCARE, "ＭＳ ゴシック", &pxmsfont);
-	if( FAILED(hr) ) return 1;
+	if( FAILED(hr) ){ return 1; }
 
 	//テクスチャフォント用画像を取得
 	TextureFont = LoadTexture(TextureFontFname, true, false);
@@ -474,7 +474,7 @@ int D3DGraphics::MorphingModel(int idA, int idB)
 	pmesh[idB]->GetVertexBuffer(&pvbB);
 	pmesh[idN]->GetVertexBuffer(&pvbN);
 
-	//1頂点当たりのバイト数取得
+	//1頂点あたりのバイト数取得
 	FVFsize = D3DXGetFVFVertexSize(pmesh[idN]->GetFVF());
 
 	//各頂点を読み出し計算
@@ -781,7 +781,7 @@ void D3DGraphics::SetWorldTransformHumanWeapon(float x, float y, float z, float 
 	pd3dDevice->SetTransform( D3DTS_WORLD, &matWorld );
 }
 
-//! @brief ワールド空間を所持している武器を表示する場所に設定
+//! @brief ワールド空間を所持している武器を描画する場所に設定
 //! @param rotation 武器を回転させる
 //! @param camera_x カメラのX座標
 //! @param camera_y カメラのY座標
@@ -789,7 +789,7 @@ void D3DGraphics::SetWorldTransformHumanWeapon(float x, float y, float z, float 
 //! @param camera_rx カメラの横軸角度
 //! @param camera_ry カメラの縦軸角度
 //! @param rx 武器のの縦軸角度
-//! @param size 表示サイズ
+//! @param size 描画サイズ
 //! @note rotation・・　true：現在持っている武器です。　false：予備の武器です。（rx は無視されます）
 //! @todo 位置やサイズの微調整
 void D3DGraphics::SetWorldTransformPlayerWeapon(bool rotation, float camera_x, float camera_y, float camera_z, float camera_rx, float camera_ry, float rx, float size)
@@ -941,7 +941,7 @@ void D3DGraphics::LoadMapdata(BlockDataInterface* in_blockdata, char *directory)
 	bs = blockdata->GetTotaldatas();
 
 	//ブロック数分のバッファーを作成
-	pd3dDevice->CreateVertexBuffer(bs*6*4*sizeof(VERTEXTXTA),0,D3DFVF_XYZ|D3DFVF_DIFFUSE|D3DFVF_TEX1,D3DPOOL_DEFAULT,&g_pVB,NULL);
+	pd3dDevice->CreateVertexBuffer(bs*6*4*sizeof(VERTEXTXTA), 0, D3DFVF_XYZ|D3DFVF_DIFFUSE|D3DFVF_TEX1, D3DPOOL_DEFAULT, &g_pVB, NULL);
 
 	for(int i=0; i<bs; i++){
 		//データを取得
@@ -1049,7 +1049,7 @@ void D3DGraphics::DrawMapdata(bool wireframe)
 
 #ifdef BLOCKDATA_GPUMEMORY
 	//データ設定
-	pd3dDevice->SetStreamSource(0,g_pVB,0,sizeof(VERTEXTXTA));
+	pd3dDevice->SetStreamSource(0, g_pVB, 0, sizeof(VERTEXTXTA));
 
 	for(textureID=0; textureID<TOTAL_BLOCKTEXTURE; textureID++){
 		//テクスチャが正常に読み込めていなければ設定
@@ -1241,7 +1241,7 @@ void D3DGraphics::ScreenBrightness(int Width, int Height, int Brightness)
 	Draw2DBox(0, 0, Width, Height, D3DCOLOR_COLORVALUE(1.0f,1.0f,1.0f,alpha));
 }
 
-//! @brief 【デバック用】中心線描画
+//! @brief 【デバック用】中心線表示
 void D3DGraphics::Centerline()
 {
 	ResetWorldTransform();
@@ -1250,7 +1250,7 @@ void D3DGraphics::Centerline()
 	Drawline(0.0f, 0.0f, 100.0f, 0.0f, 0.0f, -100.0f, GetColorCode(0.0f,0.0f,1.0f,1.0f));
 }
 
-//! @brief 【デバック用】線描画
+//! @brief 【デバック用】線表示
 void D3DGraphics::Drawline(float x1, float y1, float z1, float x2, float y2, float z2, int color)
 {
 	VERTEXTXTA mv[2];
@@ -1268,21 +1268,21 @@ void D3DGraphics::Drawline(float x1, float y1, float z1, float x2, float y2, flo
 	pd3dDevice->DrawPrimitiveUP(D3DPT_LINELIST, 1, mv, sizeof(VERTEXTXTA));
 }
 
-//! @brief 2D システムフォントによるテキスト描画を開始
+//! @brief 2D システムフォントによるテキスト表示を開始
 //! @attention DirectXの ID3DXSprite を初期化しています。
 void D3DGraphics::Start2DMSFontTextRender()
 {
 	ptextsprite->Begin(D3DXSPRITE_ALPHABLEND);
 }
 
-//! @brief 文字を描画（システムフォント使用）
+//! @brief 文字を表示（システムフォント使用）
 //! @param x x座標
 //! @param y y座標
 //! @param str 文字列　（改行コード：可）
 //! @param color 色
-//! @warning <b>描画は非常に低速です。</b>画面内で何度も呼び出すとパフォーマンスに影響します。
-//! @warning 「改行コードを活用し一度に描画する」「日本語が必要ない文字はテクスチャフォントを活用する」などの対応を講じてください。
-//! @attention DirectXの ID3DXSprite を使用し、システムフォントで描画しています。
+//! @warning <b>表示は非常に低速です。</b>画面内で何度も呼び出すとパフォーマンスに影響します。
+//! @warning 「改行コードを活用し一度に表示する」「日本語が必要ない文字はテクスチャフォントを活用する」などの対応を講じてください。
+//! @attention DirectXの ID3DXSprite を使用し、システムフォントで表示しています。
 //! @attention フォントの種類やサイズは固定です。　文字を二重に重ねて立体感を出さないと見にくくなります。
 void D3DGraphics::Draw2DMSFontText(int x, int y, char *str, int color)
 {
@@ -1296,7 +1296,7 @@ void D3DGraphics::Draw2DMSFontText(int x, int y, char *str, int color)
 	D3DXMatrixIdentity(&matWorld);
 	ptextsprite->SetTransform(&matWorld);
 
-	//文字を描画
+	//文字を表示
 	RECT rc = {x, y, 0, 0};
 	pxmsfont->DrawText(ptextsprite, str, -1, &rc, DT_NOCLIP, color);
 
@@ -1304,16 +1304,16 @@ void D3DGraphics::Draw2DMSFontText(int x, int y, char *str, int color)
 	End2DMSFontTextRender();
 }
 
-//! @brief 文字を中央揃えで描画（システムフォント使用）
+//! @brief 文字を中央揃えで表示（システムフォント使用）
 //! @param x x座標
 //! @param y y座標
 //! @param w 横の大きさ
 //! @param h 縦の大きさ
 //! @param str 文字列　（改行コード：可）
 //! @param color 色
-//! @warning <b>描画は非常に低速です。</b>画面内で何度も呼び出すとパフォーマンスに影響します。
-//! @warning 「改行コードを活用し一度に描画する」「日本語が必要ない文字はテクスチャフォントを活用する」などの対応を講じてください。
-//! @attention DirectXの ID3DXSprite を使用し、システムフォントで描画しています。
+//! @warning <b>表示は非常に低速です。</b>画面内で何度も呼び出すとパフォーマンスに影響します。
+//! @warning 「改行コードを活用し一度に表示する」「日本語が必要ない文字はテクスチャフォントを活用する」などの対応を講じてください。
+//! @attention DirectXの ID3DXSprite を使用し、システムフォントで表示しています。
 //! @attention フォントの種類やサイズは固定です。　文字を二重に重ねて立体感を出さないと見にくくなります。
 void D3DGraphics::Draw2DMSFontTextCenter(int x, int y, int w, int h, char *str, int color)
 {
@@ -1327,7 +1327,7 @@ void D3DGraphics::Draw2DMSFontTextCenter(int x, int y, int w, int h, char *str, 
 	D3DXMatrixIdentity(&matWorld);
 	ptextsprite->SetTransform(&matWorld);
 
-	//文字を描画
+	//文字を表示
 	RECT rc = {x, y, x+w, y+h};
 	pxmsfont->DrawText(ptextsprite, str, -1, &rc, DT_CENTER, color);
 
@@ -1335,7 +1335,7 @@ void D3DGraphics::Draw2DMSFontTextCenter(int x, int y, int w, int h, char *str, 
 	End2DMSFontTextRender();
 }
 
-//! @brief 2D システムフォントによるテキスト描画を終了
+//! @brief 2D システムフォントによるテキスト表示を終了
 //! @attention DirectXの ID3DXSprite を解放しています。
 void D3DGraphics::End2DMSFontTextRender()
 {
@@ -1353,7 +1353,7 @@ void D3DGraphics::Start2DRender()
 	pd3dDevice->SetRenderState(D3DRS_ZFUNC, D3DCMP_ALWAYS);
 }
 
-//! @brief 文字を描画（テクスチャフォント使用）
+//! @brief 文字を表示（テクスチャフォント使用）
 //! @param x x座標
 //! @param y y座標
 //! @param str 文字列　（改行コード：<b>不可</b>）
@@ -1418,7 +1418,7 @@ void D3DGraphics::Draw2DTextureFontText(int x, int y, char *str, int color, int 
 			pBoxVertices[j].color = color;
 		}
 
-		//描画
+		//表示
 		pd3dDevice->DrawPrimitiveUP(D3DPT_TRIANGLESTRIP, 2, pBoxVertices, sizeof(TLVERTX));
 	}
 

@@ -1784,7 +1784,7 @@ int ParameterInfo::GetBullet(int id, BulletParameter *out_data)
 //! @param fullname ミッション正式名称を受け取るポインタ　（NULL可）
 //! @param directory データの格納先を受け取るポインタ　（NULL可）
 //! @param txt ファイル名を受け取るポインタ　（NULL可）
-//! @param collisionflag 追加のあたり判定を示すフラグを受け取るポインタ　（NULL可）
+//! @param collisionflag 追加の当たり判定を示すフラグを受け取るポインタ　（NULL可）
 //! @return 成功：0　失敗：1
 //! @note ファイル名・・・ミッション情報ファイル（.txt）とポイントデータファイル（.pd1）に使われる名前
 int ParameterInfo::GetOfficialMission(int id, char *name, char *fullname, char* directory, char *txt, bool *collisionflag)

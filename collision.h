@@ -58,7 +58,7 @@ struct Coll_Blockdata{
 };
 
 //! @brief 当たり判定を行うクラス
-//! @details マップとして使用されるブロックデータへの当たり判定（追突検出）を行います。
+//! @details マップとして使用されるブロックデータへの当たり判定（衝突検出）を行います。
 class Collision
 {
 	class BlockDataInterface* blockdata;		//!< 読み込んだブロックデータが格納されたクラスへのポインタ

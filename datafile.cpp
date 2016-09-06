@@ -88,7 +88,7 @@ BlockDataInterface::BlockDataInterface()
 BlockDataInterface::~BlockDataInterface()
 {
 	//blockdata構造体解放
-	if( data != NULL ) delete [] data;
+	if( data != NULL ){ delete [] data; }
 
 #ifdef ENABLE_DEBUGLOG
 	//ログに出力
@@ -395,11 +395,11 @@ PointDataInterface::PointDataInterface()
 PointDataInterface::~PointDataInterface()
 {
 	//pointdata構造体解放
-	if( data != NULL ) delete [] data;
+	if( data != NULL ){ delete [] data; }
 
 	//イベントメッセージ解放
 	for(int i=0; i<MAX_POINTMESSAGES; i++){
-		if( text[i] != NULL ) delete [] text[i];
+		if( text[i] != NULL ){ delete [] text[i]; }
 	}
 
 #ifdef ENABLE_DEBUGLOG
@@ -743,7 +743,7 @@ int MIFInterface::LoadFiledata(char *fname)
 		DeleteLinefeed(str);
 		skynumber = atoi(str);
 
-		//あたり判定・画面設定の取得
+		//当たり判定・画面設定の取得
 		fgets(str, 16, fp);
 		DeleteLinefeed(str);
 		if( strcmp(str, "1") == 0 ){
@@ -963,7 +963,7 @@ char* MIFInterface::GetBriefingText()
 	return briefingtext;
 }
 
-//! @brief 追加のあたり判定を示すフラグを取得
+//! @brief 追加の当たり判定を示すフラグを取得
 //! @return 有効：true　無効：false
 bool MIFInterface::GetCollisionFlag()
 {

@@ -47,7 +47,7 @@
 #define ID_WEAPON_GRENADE 13	//!< 手榴弾として取り扱う武器番号
 #define ID_WEAPON_CASE 15		//!< ケースとして取り扱う武器番号
 
-#define SMALLOBJECT_SCALE 5.0f				//!< 小物の表示倍率
+#define SMALLOBJECT_SCALE 5.0f				//!< 小物の描画倍率
 
 #ifndef H_LAYERLEVEL
  #define H_LAYERLEVEL 1		//!< Select include file.
@@ -91,7 +91,7 @@ struct WeaponParameter{
 	float yakkyou_sy;	//!< 薬莢排出 初速：Y
 	bool blazingmode;	//!< 連射
 	int scopemode;	//!< スコープモード
-	float size;		//!< 表示倍率
+	float size;		//!< 描画倍率
 	int soundid;	//!< 発砲音の番号
 	int soundvolume;	//!< 発砲音の音量
 	bool silencer;	//!< サイレンサーの有無
@@ -114,7 +114,7 @@ struct SmallObjectParameter{
 struct BulletParameter{
 	char *model;	//!< モデル名
 	char *texture;	//!< テクスチャ名
-	float size;		//!< 表示倍率
+	float size;		//!< 描画倍率
 };
 
 //! AIレベルによる設定（性能値）用構造体
@@ -142,7 +142,7 @@ class ParameterInfo
 	char *missionfullname[TOTAL_OFFICIALMISSION];			//!< 標準ミッションのミッション正式名称
 	char *missiondirectory[TOTAL_OFFICIALMISSION];			//!< 標準ミッションのデータディレクトリ
 	char *missiontxt[TOTAL_OFFICIALMISSION];				//!< 標準ミッションのファイル名（.pd1/.txt）
-	bool missioncollisionflag[TOTAL_OFFICIALMISSION];		//!< 標準ミッションの追加のあたり判定を示すフラグ
+	bool missioncollisionflag[TOTAL_OFFICIALMISSION];		//!< 標準ミッションの追加の当たり判定を示すフラグ
 	AIParameter *AIlevel;						//!< AIの性能値
 
 public:

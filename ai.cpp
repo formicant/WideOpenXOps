@@ -473,7 +473,7 @@ bool AIcontrol::MoveJump()
 
 	float new_posx, new_posy, new_posz;
 
-	//腰付近のあたり判定
+	//腰付近の当たり判定
 	new_posx = posx + cos(rx*-1 + (float)M_PI/2) * (AI_CHECKJUMP_DIST + HUMAN_MAPCOLLISION_R);
 	new_posy = posy + HUMAN_MAPCOLLISION_HEIGHT;
 	new_posz = posz + sin(rx*-1 + (float)M_PI/2) * (AI_CHECKJUMP_DIST + HUMAN_MAPCOLLISION_R);
@@ -482,7 +482,7 @@ bool AIcontrol::MoveJump()
 		return true;
 	}
 
-	//体全体のあたり判定
+	//体全体の当たり判定
 	new_posx = posx + cos(rx*-1 + (float)M_PI/2) * AI_CHECKJUMP_DIST;
 	new_posy = posy + AI_CHECKJUMP_HEIGHT;
 	new_posz = posz + sin(rx*-1 + (float)M_PI/2) * AI_CHECKJUMP_DIST;

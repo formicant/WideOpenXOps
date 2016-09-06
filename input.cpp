@@ -77,7 +77,7 @@ int InputControl::InitInput(WindowControl *WindowCtrl)
  #endif
 #endif
 
-	//ウインドウハンドルを設定
+	//ウィンドウハンドルを設定
 	hWnd = WindowCtrl->GethWnd();
 
 #ifdef INPUT_DIRECTINPUT
@@ -252,7 +252,7 @@ void InputControl::MoveMouseCenter()
 {
 	POINT point;
 
-	//ウインドウ座標の中央を求める
+	//ウィンドウ座標の中央を求める
 	point.x = SCREEN_WIDTH/2;
 	point.y = SCREEN_HEIGHT/2;
 

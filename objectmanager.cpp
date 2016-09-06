@@ -481,9 +481,9 @@ int ObjectManager::AddSmallObjectIndex(float px, float py, float pz, float rx, i
 //! @param move_x X軸移動量
 //! @param move_y Y軸移動量
 //! @param move_z Z軸移動量
-//! @param size 表示倍率
+//! @param size 描画倍率
 //! @param rotation 回転角度
-//! @param count 表示フレーム数
+//! @param count 描画フレーム数
 //! @param texture テクスチャの認識番号
 //! @param settype エフェクトの種類　（Effect_Type を組み合せる）
 //! @return 成功：データ番号（0以上）　失敗：-1
@@ -507,9 +507,9 @@ int ObjectManager::AddEffect(float pos_x, float pos_y, float pos_z, float move_x
 //! @param pos_x X座標
 //! @param pos_y Y座標
 //! @param pos_z Z座標
-//! @param size 表示倍率
+//! @param size 描画倍率
 //! @param rotation 回転角度
-//! @param count 表示フレーム数
+//! @param count 描画フレーム数
 //! @param texture テクスチャの認識番号
 //! @return 成功：データ番号（0以上）　失敗：-1
 int ObjectManager::AddMapEffect(int id, int face, float pos_x, float pos_y, float pos_z, float size, float rotation, int count, int texture)
@@ -872,7 +872,7 @@ bool ObjectManager::CollideBullet(bullet *in_bullet)
 //! @param teamID 発射元のチーム番号
 void ObjectManager::HitBulletMap(float x, float y, float z, int teamID)
 {
-	//エフェクト（煙）を表示
+	//エフェクト（煙）を描画
 	AddEffect(x, y, z, 0.0f, 0.05f, 0.0f, 5.0f, DegreeToRadian(10)*GetRand(18), (int)(GAMEFPS * 0.5f), Resource->GetEffectSmokeTexture(), EFFECT_DISAPPEAR | EFFECT_MAGNIFY);
 
 	//効果音を再生
@@ -938,7 +938,7 @@ void ObjectManager::HitBulletHuman(int HitHuman_id, int Hit_id, float x, float y
 		NotRobot = true;
 	}
 
-	//エフェクト（血）を表示
+	//エフェクト（血）を描画
 	if( Hit_id == 0 ){ damage = (int)((float)attacks * HUMAN_DAMAGE_HEAD); }
 	if( Hit_id == 1 ){ damage = (int)((float)attacks * HUMAN_DAMAGE_UP); }
 	if( Hit_id == 2 ){ damage = (int)((float)attacks * HUMAN_DAMAGE_LEG); }
@@ -976,7 +976,7 @@ void ObjectManager::HitBulletSmallObject(int HitSmallObject_id, float x, float y
 	//小物にダメージを与える
 	SmallObjectIndex[HitSmallObject_id].HitBullet(attacks);
 
-	//エフェクト（煙）を表示
+	//エフェクト（煙）を描画
 	AddEffect(x, y, z, 0.0f, 0.05f, 0.0f, 5.0f, DegreeToRadian(10)*GetRand(18), (int)(GAMEFPS * 0.5f), Resource->GetEffectSmokeTexture(), EFFECT_DISAPPEAR | EFFECT_MAGNIFY);
 
 	//効果音を再生
@@ -1078,7 +1078,7 @@ bool ObjectManager::GrenadeExplosion(grenade *in_grenade)
 				Human_kill[humanid] += 1;
 			}
 
-			//エフェクト（血）を表示
+			//エフェクト（血）を描画
 			SetHumanBlood(hx, hy+15.0f, hz, total_damage, false);
 
 			//人と手榴弾の距離を算出
@@ -1140,10 +1140,10 @@ bool ObjectManager::GrenadeExplosion(grenade *in_grenade)
 		}
 	}
 
-	//エフェクト（フラッシュ）の表示
+	//エフェクト（フラッシュ）の描画
 	AddEffect(gx, gy, gz, 0.0f, 0.0f, 0.0f, 30.0f, 0.0f, 2, Resource->GetEffectMflashTexture(), EFFECT_NORMAL);
 
-	//エフェクト（煙）の表示
+	//エフェクト（煙）の描画
 	float rnd = DegreeToRadian(10)*GetRand(18);
 	AddEffect(gx+1.0f, gy+1.0f, gz+1.0f, 0.1f, 0.2f, 0.1f, 50.0f, rnd, (int)GAMEFPS * 3, Resource->GetEffectSmokeTexture(), EFFECT_DISAPPEAR | EFFECT_ROTATION | EFFECT_TRANSLUCENT);
 	AddEffect(gx-1.0f, gy-1.0f, gz-1.0f, -0.1f, 0.2f, -0.1f, 50.0f, rnd*-1, (int)GAMEFPS * 3, Resource->GetEffectSmokeTexture(), EFFECT_DISAPPEAR | EFFECT_ROTATION | EFFECT_TRANSLUCENT);
@@ -1181,7 +1181,7 @@ void ObjectManager::DeadEffect(human *in_human)
 		hx += cos(hrx*-1 - (float)M_PI/2) * sin(hry) * HUMAN_HEIGHT/2;
 		hz += sin(hrx*-1 - (float)M_PI/2) * sin(hry) * HUMAN_HEIGHT/2;
 
-		//エフェクト（煙）の表示
+		//エフェクト（煙）の描画
 		float rnd = DegreeToRadian(10)*GetRand(18);
 		AddEffect(hx+1.0f, hy+1.0f, hz+1.0f, 0.0f, 0.05f, 0.0f, 10.0f, rnd, (int)GAMEFPS * 3, Resource->GetEffectSmokeTexture(), EFFECT_DISAPPEAR | EFFECT_MAGNIFY | EFFECT_ROTATION);
 		AddEffect(hx-1.0f, hy-1.0f, hz-1.0f, 0.0f, 0.05f, 0.0f, 10.0f, rnd*-1, (int)GAMEFPS * 3, Resource->GetEffectSmokeTexture(), EFFECT_DISAPPEAR | EFFECT_MAGNIFY | EFFECT_ROTATION);
@@ -1506,7 +1506,7 @@ void ObjectManager::Recovery()
 	}
 }
 
-//! @brief 追加のあたり判定フラグを設定
+//! @brief 追加の当たり判定フラグを設定
 //! @param flag フラグ
 void ObjectManager::SetAddCollisionFlag(bool flag)
 {
@@ -1833,7 +1833,7 @@ int ObjectManager::ShotWeapon(int human_id)
 
 			//（ショットガンなど）発射する弾が複数あれば
 			if( ParamData.burst > 1 ){
-				//1個の弾当たりの攻撃力を算出
+				//1個の弾あたりの攻撃力を算出
 				//　　全弾合わせて、攻撃力の2倍になるようにする。
 				attacks = (int)( (float)ParamData.attacks / ((float)ParamData.burst/2) );
 
@@ -1941,7 +1941,7 @@ void ObjectManager::ShotWeaponEffect(int humanid)
 	d3dg->GetWorldTransformPos(&x, &y, &z);
 	d3dg->ResetWorldTransform();
 
-	//エフェクト（煙）の表示
+	//エフェクト（煙）の描画
 	AddEffect(x, y, z, 0.0f, 0.05f, 0.0f, smokesize, DegreeToRadian(10)*GetRand(18), (int)(GAMEFPS/3), Resource->GetEffectSmokeTexture(), EFFECT_DISAPPEAR | EFFECT_MAGNIFY | EFFECT_ROTATION);
 
 	//行列でエフェクト座標を計算
@@ -2227,7 +2227,7 @@ void ObjectManager::HitZombieAttack(human* MyHuman, human* EnemyHuman)
 	EnemyHuman->SetHitFlag();
 #endif
 
-	//エフェクト（血）を表示
+	//エフェクト（血）を描画
 	SetHumanBlood(tx, ty, tz, HUMAN_DAMAGE_ZOMBIEU, NotRobot);
 
 	//効果音を再生
@@ -2626,7 +2626,7 @@ int ObjectManager::SortEffect(float camera_x, float camera_y, float camera_z, ef
 //! @param camera_x カメラのX座標
 //! @param camera_y カメラのY座標
 //! @param camera_z カメラのZ座標
-//! @param HidePlayer プレイヤーの非表示設定　（表示：0　非表示：1　腕と武器のみ表示：2）
+//! @param HidePlayer プレイヤーの描画設定　（描画する：0　描画しない：1　腕と武器のみ描画する：2）
 void ObjectManager::Render(float camera_x, float camera_y, float camera_z, int HidePlayer)
 {
 	//ワールド座標を原点へ
@@ -2656,7 +2656,7 @@ void ObjectManager::Render(float camera_x, float camera_y, float camera_z, int H
 			}
 		}
 
-		//腕の表示
+		//腕の描画
 		if( HidePlayer == 0 ){
 			DrawArm = false;
 		}
@@ -2667,7 +2667,7 @@ void ObjectManager::Render(float camera_x, float camera_y, float camera_z, int H
 			DrawArm = true;
 		}
 		else{							// Player_HumanID == i && HidePlayer == 1
-			continue;	//プレイヤー自身を表示しないならスキップ
+			continue;	//プレイヤー自身を描画しないならスキップ
 		}
 
 		//プレイヤーかどうか判定
