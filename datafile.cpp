@@ -977,6 +977,14 @@ bool MIFInterface::GetScreenFlag()
 	return screen;
 }
 
+//! @brief 追加小物情報ファイルパスを取得
+//! @return 追加小物情報ファイルパスのポインタ（最大：_MAX_PATH）
+//! @attention 本関数は通常必要ありません。モデルデータパスなどのファイル内の情報は、他の関数で取得できます。
+char* MIFInterface::GetAddSmallobjectFile()
+{
+	return addsmallobject_path;
+}
+
 //! @brief 追加小物のモデルデータパスを取得
 //! @return モデルデータパスのポインタ（最大：_MAX_PATH）
 char* MIFInterface::GetAddSmallobjectModelPath()

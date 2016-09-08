@@ -1061,7 +1061,7 @@ int maingame::Create()
 		GameParamInfo.GetOfficialMission(MainGameInfo.selectmission_id, NULL, NULL, path, pdata2, &collisionflag);
 
 		strcpy(bdata, path);
-		strcat(bdata, "temp.bd1");
+		strcat(bdata, OFFICIALMISSION_BD1);
 		strcpy(pdata, path);
 		strcat(pdata, pdata2);
 		strcat(pdata, ".pd1");
@@ -2742,13 +2742,91 @@ void maingame::ProcessConsole()
 	//コマンドリスト
 	if( strcmp(NewCommand, "help") == 0 ){
 		AddInfoConsole(d3dg->GetColorCode(1.0f,1.0f,1.0f,1.0f), "help          human       result     event");
-		AddInfoConsole(d3dg->GetColorCode(1.0f,1.0f,1.0f,1.0f), "ver");
+		AddInfoConsole(d3dg->GetColorCode(1.0f,1.0f,1.0f,1.0f), "mif           ver");
 		AddInfoConsole(d3dg->GetColorCode(1.0f,1.0f,1.0f,1.0f), "info          view        center     map");
 		AddInfoConsole(d3dg->GetColorCode(1.0f,1.0f,1.0f,1.0f), "aiinfo <NUM>  tag         radar      inmap");
 		AddInfoConsole(d3dg->GetColorCode(1.0f,1.0f,1.0f,1.0f), "revive       treat <NUM>  nodamage <NUM>");
 		AddInfoConsole(d3dg->GetColorCode(1.0f,1.0f,1.0f,1.0f), "kill <NUM>   break <NUM>  newobj <NUM>   ff");
 		AddInfoConsole(d3dg->GetColorCode(1.0f,1.0f,1.0f,1.0f), "bot          nofight      caution    stop");
 		AddInfoConsole(d3dg->GetColorCode(1.0f,1.0f,1.0f,1.0f), "estop        speed        ss         clear");
+	}
+
+	//MIFの情報表示
+	if( strcmp(NewCommand, "mif") == 0 ){
+		bool AddonFlag = GameInfoData.selectaddon;
+		int MissionID = GameInfoData.selectmission_id;
+		char str2[MAX_PATH];
+		char str3[MAX_PATH];
+		bool collisionflag;
+
+		//ヘッダー
+		if( AddonFlag == true ){ sprintf(str, "[Addon Mission]   (MissionID:%d)", MissionID); }
+		else{ sprintf(str, "[Standard Mission]   (MissionID:%d)", MissionID); }
+		AddInfoConsole(d3dg->GetColorCode(1.0f,1.0f,1.0f,1.0f), str);
+
+		//ミッション識別名
+		strcpy(str, "Name : ");
+		if( AddonFlag == true ){ strcpy(str2, MIFdata.GetMissionName()); }
+		else{ GameParamInfo.GetOfficialMission(MissionID, str2, NULL, NULL, NULL, NULL); }
+		str2[(MAX_CONSOLELEN - strlen(str) - 1)] = '\0';
+		strcat(str, str2);
+		AddInfoConsole(d3dg->GetColorCode(1.0f,1.0f,1.0f,1.0f), str);
+
+		//ミッション正式名称
+		strcpy(str, "FullName : ");
+		if( AddonFlag == true ){ strcpy(str2, MIFdata.GetMissionFullname()); }
+		else{ GameParamInfo.GetOfficialMission(MissionID, NULL, str2, NULL, NULL, NULL); }
+		str2[(MAX_CONSOLELEN - strlen(str) - 1)] = '\0';
+		strcat(str, str2);
+		AddInfoConsole(d3dg->GetColorCode(1.0f,1.0f,1.0f,1.0f), str);
+
+		//ブロックデータファイル
+		strcpy(str, "BD1file : ");
+		if( AddonFlag == true ){
+			MIFdata.GetDatafilePath(str2, str3);
+			str2[(MAX_CONSOLELEN - strlen(str) - 1)] = '\0';
+			strcat(str, str2);
+		}
+		else{
+			GameParamInfo.GetOfficialMission(MissionID, NULL, NULL, str2, NULL, NULL);
+			str2[(MAX_CONSOLELEN - strlen(str) - 8 - 1)] = '\0';
+			strcat(str, str2);
+			strcat(str, OFFICIALMISSION_BD1);
+		}
+		AddInfoConsole(d3dg->GetColorCode(1.0f,1.0f,1.0f,1.0f), str);
+
+		//ポイントデータファイル
+		strcpy(str, "PD1file : ");
+		if( AddonFlag == true ){
+			MIFdata.GetDatafilePath(str3, str2);
+			str2[(MAX_CONSOLELEN - strlen(str) - 1)] = '\0';
+			strcat(str, str2);
+		}
+		else{
+			GameParamInfo.GetOfficialMission(MissionID, NULL, NULL, str2, str3, NULL);
+			strcat(str2, str3);
+			str2[(MAX_CONSOLELEN - strlen(str) - 4 - 1)] = '\0';
+			strcat(str, str2);
+			strcat(str, ".pd1");
+		}
+		AddInfoConsole(d3dg->GetColorCode(1.0f,1.0f,1.0f,1.0f), str);
+
+		//追加小物情報ファイル
+		strcpy(str, "AddOBJfile : ");
+		strcpy(str2, MIFdata.GetAddSmallobjectFile());
+		str2[(MAX_CONSOLELEN - strlen(str) - 1)] = '\0';
+		strcat(str, str2);
+		AddInfoConsole(d3dg->GetColorCode(1.0f,1.0f,1.0f,1.0f), str);
+
+		//各設定値とFlag
+		if( AddonFlag == true ){
+			collisionflag = MIFdata.GetCollisionFlag();
+		}
+		else{
+			GameParamInfo.GetOfficialMission(MissionID, NULL, NULL, NULL, NULL, &collisionflag);
+		}
+		sprintf(str, "Sky:%d    CollisionFlag:%d    NightFlag:%d", MIFdata.GetSkynumber(), (int)collisionflag, (int)MIFdata.GetScreenFlag());
+		AddInfoConsole(d3dg->GetColorCode(1.0f,1.0f,1.0f,1.0f), str);
 	}
 
 	//人の統計情報

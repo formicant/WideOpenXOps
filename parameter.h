@@ -47,6 +47,8 @@
 #define ID_WEAPON_GRENADE 13	//!< 手榴弾として取り扱う武器番号
 #define ID_WEAPON_CASE 15		//!< ケースとして取り扱う武器番号
 
+#define OFFICIALMISSION_BD1 "temp.bd1"		//!< 標準ミッションのBD1ファイル名
+
 #define SMALLOBJECT_SCALE 5.0f				//!< 小物の描画倍率
 
 #ifndef H_LAYERLEVEL

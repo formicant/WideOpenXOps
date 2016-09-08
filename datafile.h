@@ -175,6 +175,7 @@ public:
 	char* GetBriefingText();
 	bool GetCollisionFlag();
 	bool GetScreenFlag();
+	char* GetAddSmallobjectFile();
 	char* GetAddSmallobjectModelPath();
 	char* GetAddSmallobjectTexturePath();
 	int GetAddSmallobjectDecide();
