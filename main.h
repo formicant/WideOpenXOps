@@ -66,6 +66,7 @@
 
 #define ENABLE_BUG_HUMANWEAPON	//!< 範囲外の人・武器種類番号を用いたバグを再現する（コメント化で無効）
 #define ENABLE_BUG_TEAMID		//!< チーム番号を負数に設定した際のバグを再現する（コメント化で無効）
+#define ENABLE_DEBUGCONSOLE		//!< @brief デバック用コンソールの有効化（コメント化で機能無効）
 #define ENABLE_DEBUGLOG			//!< @brief デバック用ログ出力の有効化（コメント化で機能無効）
 //#define PATH_DELIMITER_SLASH	//!< パス区切り文字を、'\'から‘/’へ変換する。
 

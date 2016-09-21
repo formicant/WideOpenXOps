@@ -32,8 +32,6 @@
 #ifndef GAMEMAIN_H
 #define GAMEMAIN_H
 
-#define ENABLE_DEBUGCONSOLE	//!< @brief デバック用コンソールの有効化（コメント化で機能無効）
-
 #define MAINMENU_X 280		//!< メニューの表示 X座標（左上基準）
 #define MAINMENU_Y 140		//!< メニューの表示 Y座標（〃）
 #define TOTAL_MENUITEMS 8	//!< メニュー1画面に表示するミッション数
@@ -56,16 +54,16 @@
 
 #define TOTAL_EVENTENT_SHOWMESSEC 5.0f		//!< イベントメッセージを表示する秒数
 
-#ifdef ENABLE_DEBUGCONSOLE
- #define MAX_CONSOLELEN 45		//!< デバック用コンソールの文字数（行）
- #define MAX_CONSOLELINES 9		//!< デバック用コンソールの行数
- #define CONSOLE_PROMPT ">"		//!< デバック用コンソールのプロンプト
-#endif
-
 #ifndef H_LAYERLEVEL
  #define H_LAYERLEVEL 3		//!< Select include file.
 #endif
 #include "main.h"
+
+#ifdef ENABLE_DEBUGCONSOLE
+ #define MAX_CONSOLELEN 78		//!< デバック用コンソールの文字数（行）
+ #define MAX_CONSOLELINES 12	//!< デバック用コンソールの行数
+ #define CONSOLE_PROMPT ">"		//!< デバック用コンソールのプロンプト
+#endif
 
 int InitGame(WindowControl *WindowCtrl);
 void CleanupGame();

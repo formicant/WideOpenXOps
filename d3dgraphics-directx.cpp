@@ -57,6 +57,10 @@ D3DGraphics::D3DGraphics()
 	//ptextsprite = NULL;
 	pxmsfont = NULL;
 	TextureFont = -1;
+
+#ifdef ENABLE_DEBUGCONSOLE
+	TextureDebugFont = -1;
+#endif
 }
 
 //! @brief ディストラクタ
@@ -165,6 +169,14 @@ int D3DGraphics::InitD3D(WindowControl *WindowCtrl, char *TextureFontFilename, b
 	HUD_myweapon_y[1] = sin(pry)*r;
 	HUD_myweapon_z[1] = sin(prx)*r;
 
+
+#ifdef ENABLE_DEBUGCONSOLE
+	InitDebugFontData();
+	if( LoadDebugFontTexture() == false ){
+		return 1;
+	}
+#endif
+
 	return 0;
 }
 
@@ -231,6 +243,12 @@ int D3DGraphics::ResetD3D(WindowControl *WindowCtrl)
 	if( InitSubset() != 0){
 		return 2;
 	}
+
+#ifdef ENABLE_DEBUGCONSOLE
+	if( LoadDebugFontTexture() == false ){
+		return 2;
+	}
+#endif
 
 #ifdef ENABLE_DEBUGLOG
 	//ログに出力
@@ -336,6 +354,11 @@ int D3DGraphics::InitSubset()
 void D3DGraphics::CleanupD3Dresource()
 {
 	if( TextureFont != -1 ){ CleanupTexture(TextureFont); }
+
+#ifdef ENABLE_DEBUGCONSOLE
+	if( TextureDebugFont != -1 ){ CleanupTexture(TextureDebugFont); }
+#endif
+
 	if( pxmsfont != NULL ){
 		pxmsfont->Release();
 		pxmsfont = NULL;
@@ -577,6 +600,144 @@ int D3DGraphics::LoadTexture(char* filename, bool texturefont, bool BlackTranspa
 #endif
 	return id;
 }
+
+#ifdef ENABLE_DEBUGCONSOLE
+//! @brief デバック用フォントを読み込む
+//! @return 成功：true　失敗：false
+//! @attention この関数を呼び出す前に、InitDebugFontData()関数を実行してください。
+bool D3DGraphics::LoadDebugFontTexture()
+{
+	int charwidth = 8;
+	int charheight = 16;
+	int width = charwidth * 16;
+	int height = charheight * 8;
+	int headersize = 54;
+	int bufsize = headersize  + width*height*3;
+	int datacnt = 0;
+	int id = -1;
+
+#ifdef ENABLE_DEBUGLOG
+	//ログに出力
+	OutputLog.WriteLog(LOG_LOAD, "テクスチャ", "DebugFontTexture");
+#endif
+
+	//既に読み込まれているなら失敗
+	if( TextureDebugFont != -1 ){ return false; }
+
+	//空いている認識番号を探す
+	for(int i=0; i<MAX_TEXTURE; i++){
+		if( ptextures[i] == NULL ){
+			id = i;
+			break;
+		}
+	}
+	if( id == -1 ){ return false; }
+
+	//.bmp展開用領域作成
+	unsigned char *bmpdata = new unsigned char [bufsize];
+
+	//.bmpヘッダー作成
+	for(int i=0; i<headersize; i++){ bmpdata[i] = 0x00; }
+	bmpdata[0x00] = 'B';
+	bmpdata[0x01] = 'M';
+	bmpdata[0x02] = (unsigned char)((bufsize >> 0) & 0x000000FF);
+	bmpdata[0x03] = (unsigned char)((bufsize >> 8) & 0x000000FF);
+	bmpdata[0x04] = (unsigned char)((bufsize >> 16) & 0x000000FF);
+	bmpdata[0x05] = (unsigned char)((bufsize >> 24) & 0x000000FF);
+	bmpdata[0x0A] = headersize;
+	bmpdata[0x0E] = headersize - 14;
+	bmpdata[0x12] = width;
+	bmpdata[0x16] = height;
+	bmpdata[0x1A] = 1;
+	bmpdata[0x1C] = 24;
+	bmpdata[0x1E] = 0;
+	bmpdata[0x22] = (unsigned char)(( (bufsize - headersize) >> 0 ) & 0x000000FF);
+	bmpdata[0x23] = (unsigned char)(( (bufsize - headersize) >> 8 ) & 0x000000FF);
+	bmpdata[0x24] = (unsigned char)(( (bufsize - headersize) >> 16 ) & 0x000000FF);
+	bmpdata[0x25] = (unsigned char)(( (bufsize - headersize) >> 24 ) & 0x000000FF);
+
+	datacnt = headersize;
+
+	//6行分のデータを作成
+	for(int cnt_y=5; cnt_y>=0; cnt_y--){
+		for(int line_y=(charheight-1); line_y>=0; line_y--){
+			for(int cnt_x=0; cnt_x<16; cnt_x++){
+				for(int line_x=(charwidth-1); line_x>=0; line_x--){
+					unsigned char mask;
+
+					//ビット判定用マスク作成
+					switch(line_x){
+						case 0: mask = 0x01; break;
+						case 1: mask = 0x02; break;
+						case 2: mask = 0x04; break;
+						case 3: mask = 0x08; break;
+						case 4: mask = 0x10; break;
+						case 5: mask = 0x20; break;
+						case 6: mask = 0x40; break;
+						case 7: mask = 0x80; break;
+						default: mask = 0x00;		//事実上エラー
+					}
+
+					//該当ビットが1なら白、0なら黒。
+					if( (DebugFontData[cnt_y*16 + cnt_x][line_y] & mask) != 0 ){
+						bmpdata[datacnt + 0] = 255;
+						bmpdata[datacnt + 1] = 255;
+						bmpdata[datacnt + 2] = 255;
+					}
+					else{
+						bmpdata[datacnt + 0] = 0;
+						bmpdata[datacnt + 1] = 0;
+						bmpdata[datacnt + 2] = 0;
+					}
+
+					datacnt += 3;
+				}
+			}
+		}
+	}
+
+	//制御コードが入っている上の2行 32文字分は、空欄にする。
+	for(int cnt_y=0; cnt_y<2; cnt_y++){
+		for(int line_y=(charheight-1); line_y>=0; line_y--){
+			for(int cnt_x=0; cnt_x<16; cnt_x++){
+				for(int line_x=0; line_x<charwidth; line_x++){
+					bmpdata[datacnt + 0] = 0;
+					bmpdata[datacnt + 1] = 0;
+					bmpdata[datacnt + 2] = 0;
+
+					datacnt += 3;
+				}
+			}
+		}
+	}
+
+	//.bmpテクスチャとして読み込む
+	if( FAILED( D3DXCreateTextureFromFileInMemoryEx(pd3dDevice, bmpdata, bufsize, width, height, 1, 0, D3DFMT_A1R5G5B5, D3DPOOL_MANAGED, D3DX_DEFAULT, D3DX_DEFAULT, D3DCOLOR_ARGB(255, 0, 0, 0), NULL, NULL, &ptextures[id]) ) ) {
+		TextureDebugFont = -1;
+		return false;
+	}
+
+	/*
+	//.bmpとして保存してみる
+	FILE *fp;
+	fp = fopen("debugfont-test.bmp", "wb");
+	fwrite(bmpdata, sizeof(unsigned char), bufsize, fp);
+	fclose(fp);
+	*/
+
+	//.bmp展開用領域解放
+	delete bmpdata;
+
+#ifdef ENABLE_DEBUGLOG
+	//ログに出力
+	OutputLog.WriteLog(LOG_COMPLETE, "", id);
+#endif
+
+	//テクスチャID設定
+	TextureDebugFont = id;
+	return true;
+}
+#endif
 
 //! @brief テクスチャのサイズを取得
 //! @param id テクスチャ認識番号
@@ -1425,6 +1586,93 @@ void D3DGraphics::Draw2DTextureFontText(int x, int y, char *str, int color, int 
 	//2D描画用設定を解除
 	End2DRender();
 }
+
+#ifdef ENABLE_DEBUGCONSOLE
+//! @brief 文字を表示（デバック用フォント使用）
+//! @param x x座標
+//! @param y y座標
+//! @param str 文字列　（改行コード：<b>不可</b>）
+//! @param color 色
+//! @attention 一文字の幅および高さは 8x16 固定です。
+//! @attention 文字を二重に重ねて立体感を出さないと見にくくなります。
+void D3DGraphics::Draw2DTextureDebugFontText(int x, int y, char *str, int color)
+{
+	int fontwidth = 8;
+	int fontheight = 16;
+
+	//テクスチャフォントの取得に失敗していれば、処理しない
+	if( TextureDebugFont == -1 ){ return; }
+
+	//2D描画用設定を適用
+	Start2DRender();
+
+	// テクスチャフィルタ無効化
+	pd3dDevice->SetSamplerState(0, D3DSAMP_MAGFILTER, D3DTEXF_POINT);
+	pd3dDevice->SetSamplerState(0, D3DSAMP_MINFILTER, D3DTEXF_POINT);
+	pd3dDevice->SetSamplerState(0, D3DSAMP_MIPFILTER, D3DTEXF_POINT);
+
+	int w;
+	float font_u, font_v;
+	float t_u, t_v;
+	TLVERTX pBoxVertices[4];
+
+	//1文字のUV座標を計算
+	font_u = 1.0f / 16;
+	font_v = 1.0f / 8;
+
+	//ワールド座標を原点に戻す
+	ResetWorldTransform();
+
+	//テクスチャをフォントテクスチャに設定
+	pd3dDevice->SetTexture( 0, ptextures[TextureDebugFont] );
+
+	//データ形式を設定
+	pd3dDevice->SetFVF(D3DFVF_XYZRHW | D3DFVF_DIFFUSE | D3DFVF_TEX1);
+
+	// 与えられた文字数分ループ
+	for(int i=0; i<(int)strlen(str); i++){
+		//UV座標を計算
+		w = str[i];
+		if( w < 0 ){ w = ' '; }
+		t_u = (w % 16) * font_u;
+		t_v = (w / 16) * font_v;
+
+		//頂点座標・UV座標・色を設定
+		pBoxVertices[0].x = (float)x + i*fontwidth;
+		pBoxVertices[0].y = (float)y;
+		pBoxVertices[0].tu = t_u;
+		pBoxVertices[0].tv = t_v;
+		pBoxVertices[1].x = (float)x + fontwidth + i*fontwidth;
+		pBoxVertices[1].y = (float)y;
+		pBoxVertices[1].tu = t_u + font_u;
+		pBoxVertices[1].tv = t_v;
+		pBoxVertices[2].x = (float)x + i*fontwidth;
+		pBoxVertices[2].y = (float)y + fontheight;
+		pBoxVertices[2].tu = t_u;
+		pBoxVertices[2].tv = t_v + font_v;
+		pBoxVertices[3].x = (float)x + fontwidth + i*fontwidth;
+		pBoxVertices[3].y = (float)y + fontheight;
+		pBoxVertices[3].tu = t_u + font_u;
+		pBoxVertices[3].tv = t_v + font_v;
+		for(int j=0; j<4; j++){
+			pBoxVertices[j].z = 0.0f;
+			pBoxVertices[j].rhw = 1.0f;
+			pBoxVertices[j].color = color;
+		}
+
+		//表示
+		pd3dDevice->DrawPrimitiveUP(D3DPT_TRIANGLESTRIP, 2, pBoxVertices, sizeof(TLVERTX));
+	}
+
+	//テクスチャフィルタ有効化
+	pd3dDevice->SetSamplerState(0, D3DSAMP_MINFILTER, D3DTEXF_LINEAR);
+	pd3dDevice->SetSamplerState(0, D3DSAMP_MAGFILTER, D3DTEXF_LINEAR);
+	pd3dDevice->SetSamplerState(0, D3DSAMP_MIPFILTER, D3DTEXF_LINEAR);
+
+	//2D描画用設定を解除
+	End2DRender();
+}
+#endif
 
 //! @brief 線を描画
 //! @param x1 始点の x座標

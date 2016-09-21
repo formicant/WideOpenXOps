@@ -2109,7 +2109,7 @@ void maingame::Render2D()
 
 	//デバック用・ゲーム情報の表示
 	if( (ShowInfo_Debugmode == true)||(Camera_Debugmode == true) ){
-		//システムフォントによる表示　見やすい・重い
+		//システムフォントによる表示　日本語可・重い
 		/*
 		sprintf(str, "OpenXOPS テスト\ncamera x:%.2f y:%.2f z:%.2f rx:%.2f ry:%.2f\n"
 			"human[%d]：x:%.2f y:%.2f z:%.2f rx:%.2f\n"
@@ -2121,22 +2121,19 @@ void maingame::Render2D()
 		d3dg->Draw2DMSFontText(10, 10, str, d3dg->GetColorCode(1.0f,1.0f,1.0f,1.0f));
 		*/
 
-		//テクスチャフォントによる表示　軽い・見にくい
+		//テクスチャフォントによる表示　軽い・半角英数字と記号のみ　　
 		sprintf(str, "frame:%d   time %02d:%02d", framecnt, framecnt/(int)GAMEFPS/60, framecnt/(int)GAMEFPS%60);
-		d3dg->Draw2DTextureFontText(10+1, 10+1, str, d3dg->GetColorCode(0.1f,0.1f,0.1f,1.0f), 10, 14);
-		d3dg->Draw2DTextureFontText(10, 10, str, d3dg->GetColorCode(1.0f,1.0f,1.0f,1.0f), 10, 14);
+		d3dg->Draw2DTextureDebugFontText(10+1, 10+1, str, d3dg->GetColorCode(0.1f,0.1f,0.1f,1.0f));
+		d3dg->Draw2DTextureDebugFontText(10, 10, str, d3dg->GetColorCode(1.0f,1.0f,1.0f,1.0f));
 		sprintf(str, "camera x:%.2f y:%.2f z:%.2f rx:%.2f ry:%.2f", camera_x, camera_y, camera_z, camera_rx, camera_ry);
-		d3dg->Draw2DTextureFontText(10+1, 30+1, str, d3dg->GetColorCode(0.1f,0.1f,0.1f,1.0f), 10, 14);
-		d3dg->Draw2DTextureFontText(10, 30, str, d3dg->GetColorCode(1.0f,1.0f,1.0f,1.0f), 10, 14);
+		d3dg->Draw2DTextureDebugFontText(10+1, 30+1, str, d3dg->GetColorCode(0.1f,0.1f,0.1f,1.0f));
+		d3dg->Draw2DTextureDebugFontText(10, 30, str, d3dg->GetColorCode(1.0f,1.0f,1.0f,1.0f));
 		sprintf(str, "human[%d] x:%.2f y:%.2f z:%.2f rx:%.2f HP:%d", ObjMgr.GetPlayerID(), human_x, human_y, human_z, human_rx, hp);
-		d3dg->Draw2DTextureFontText(10+1, 50+1, str, d3dg->GetColorCode(0.1f,0.1f,0.1f,1.0f), 10, 14);
-		d3dg->Draw2DTextureFontText(10, 50, str, d3dg->GetColorCode(1.0f,1.0f,1.0f,1.0f), 10, 14);
-		sprintf(str, "Input:%02dms Object:%02dms AI:%02dms Event:%02dms Sound:%02dms", time_input, time_process_object, time_process_ai, time_process_event, time_sound);
-		d3dg->Draw2DTextureFontText(10+1, 70+1, str, d3dg->GetColorCode(0.1f,0.1f,0.1f,1.0f), 10, 14);
-		d3dg->Draw2DTextureFontText(10, 70, str, d3dg->GetColorCode(1.0f,1.0f,1.0f,1.0f), 10, 14);
-		sprintf(str, "Render:%02dms", time_render);
-		d3dg->Draw2DTextureFontText(10+1, 90+1, str, d3dg->GetColorCode(0.1f,0.1f,0.1f,1.0f), 10, 14);
-		d3dg->Draw2DTextureFontText(10, 90, str, d3dg->GetColorCode(1.0f,1.0f,1.0f,1.0f), 10, 14);
+		d3dg->Draw2DTextureDebugFontText(10+1, 50+1, str, d3dg->GetColorCode(0.1f,0.1f,0.1f,1.0f));
+		d3dg->Draw2DTextureDebugFontText(10, 50, str, d3dg->GetColorCode(1.0f,1.0f,1.0f,1.0f));
+		sprintf(str, "Input:%02dms Object:%02dms AI:%02dms Event:%02dms Sound:%02dms Render:%02dms", time_input, time_process_object, time_process_ai, time_process_event, time_sound, time_render);
+		d3dg->Draw2DTextureDebugFontText(10+1, 70+1, str, d3dg->GetColorCode(0.1f,0.1f,0.1f,1.0f));
+		d3dg->Draw2DTextureDebugFontText(10, 70, str, d3dg->GetColorCode(1.0f,1.0f,1.0f,1.0f));
 	}
 
 	//ゲーム実行速度の表示
@@ -2329,20 +2326,20 @@ void maingame::Render2D()
 			HumanAI[AIdebuginfoID].GetPathPointData(&ppdata);
 
 			sprintf(str, "AI debug info [ID:%d]", AIdebuginfoID);
-			d3dg->Draw2DTextureFontText(20 +1, 130 +1, str, d3dg->GetColorCode(0.0f,0.0f,0.0f,1.0f), 12, 16);
-			d3dg->Draw2DTextureFontText(20, 130, str, d3dg->GetColorCode(1.0f,1.0f,0.0f,1.0f), 12, 16);
+			d3dg->Draw2DTextureDebugFontText(20 +1, 130 +1, str, d3dg->GetColorCode(0.0f,0.0f,0.0f,1.0f));
+			d3dg->Draw2DTextureDebugFontText(20, 130, str, d3dg->GetColorCode(1.0f,1.0f,0.0f,1.0f));
 			sprintf(str, "(X:%.2f Y:%.2f Z:%.2f RX:%.2f HP:%d)", posx, posy, posz, rx, hp);
-			d3dg->Draw2DTextureFontText(20 +1, 150 +1, str, d3dg->GetColorCode(0.0f,0.0f,0.0f,1.0f), 10, 14);
-			d3dg->Draw2DTextureFontText(20, 150, str, d3dg->GetColorCode(1.0f,1.0f,0.0f,1.0f), 10, 14);
+			d3dg->Draw2DTextureDebugFontText(20 +1, 150 +1, str, d3dg->GetColorCode(0.0f,0.0f,0.0f,1.0f));
+			d3dg->Draw2DTextureDebugFontText(20, 150, str, d3dg->GetColorCode(1.0f,1.0f,0.0f,1.0f));
 			sprintf(str, "Mode:%s  TargetEnemyID:%d", modestr, EnemyID);
-			d3dg->Draw2DTextureFontText(20 +1, 170 +1, str, d3dg->GetColorCode(0.0f,0.0f,0.0f,1.0f), 12, 16);
-			d3dg->Draw2DTextureFontText(20, 170, str, d3dg->GetColorCode(1.0f,1.0f,0.0f,1.0f), 12, 16);
+			d3dg->Draw2DTextureDebugFontText(20 +1, 170 +1, str, d3dg->GetColorCode(0.0f,0.0f,0.0f,1.0f));
+			d3dg->Draw2DTextureDebugFontText(20, 170, str, d3dg->GetColorCode(1.0f,1.0f,0.0f,1.0f));
 			sprintf(str, "PointPath:[%d][%d][%d][%d]", ppdata.p1, ppdata.p2, ppdata.p3, ppdata.p4);
-			d3dg->Draw2DTextureFontText(20 +1, 190 +1, str, d3dg->GetColorCode(0.0f,0.0f,0.0f,1.0f), 12, 16);
-			d3dg->Draw2DTextureFontText(20, 190, str, d3dg->GetColorCode(1.0f,1.0f,0.0f,1.0f), 12, 16);
+			d3dg->Draw2DTextureDebugFontText(20 +1, 190 +1, str, d3dg->GetColorCode(0.0f,0.0f,0.0f,1.0f));
+			d3dg->Draw2DTextureDebugFontText(20, 190, str, d3dg->GetColorCode(1.0f,1.0f,0.0f,1.0f));
 			sprintf(str, "MovePosX:%.2f  MovePosZ:%.2f", mposx, mposz);
-			d3dg->Draw2DTextureFontText(20 +1, 210 +1, str, d3dg->GetColorCode(0.0f,0.0f,0.0f,1.0f), 12, 16);
-			d3dg->Draw2DTextureFontText(20, 210, str, d3dg->GetColorCode(1.0f,1.0f,0.0f,1.0f), 12, 16);
+			d3dg->Draw2DTextureDebugFontText(20 +1, 210 +1, str, d3dg->GetColorCode(0.0f,0.0f,0.0f,1.0f));
+			d3dg->Draw2DTextureDebugFontText(20, 210, str, d3dg->GetColorCode(1.0f,1.0f,0.0f,1.0f));
 		}
 	}
 
@@ -2741,14 +2738,13 @@ void maingame::ProcessConsole()
 
 	//コマンドリスト
 	if( strcmp(NewCommand, "help") == 0 ){
-		AddInfoConsole(d3dg->GetColorCode(1.0f,1.0f,1.0f,1.0f), "help          human       result     event");
-		AddInfoConsole(d3dg->GetColorCode(1.0f,1.0f,1.0f,1.0f), "mif           ver");
-		AddInfoConsole(d3dg->GetColorCode(1.0f,1.0f,1.0f,1.0f), "info          view        center     map");
-		AddInfoConsole(d3dg->GetColorCode(1.0f,1.0f,1.0f,1.0f), "aiinfo <NUM>  tag         radar      inmap");
-		AddInfoConsole(d3dg->GetColorCode(1.0f,1.0f,1.0f,1.0f), "revive       treat <NUM>  nodamage <NUM>");
-		AddInfoConsole(d3dg->GetColorCode(1.0f,1.0f,1.0f,1.0f), "kill <NUM>   break <NUM>  newobj <NUM>   ff");
-		AddInfoConsole(d3dg->GetColorCode(1.0f,1.0f,1.0f,1.0f), "bot          nofight      caution    stop");
-		AddInfoConsole(d3dg->GetColorCode(1.0f,1.0f,1.0f,1.0f), "estop        speed        ss         clear");
+		AddInfoConsole(d3dg->GetColorCode(1.0f,1.0f,1.0f,1.0f), "help          human         result         event        mif        ver");
+		AddInfoConsole(d3dg->GetColorCode(1.0f,1.0f,1.0f,1.0f), "info          view          center         map          aiinfo <NUM>");
+		AddInfoConsole(d3dg->GetColorCode(1.0f,1.0f,1.0f,1.0f), "tag           radar         inmap");
+		AddInfoConsole(d3dg->GetColorCode(1.0f,1.0f,1.0f,1.0f), "ff            revive        kill <NUM>     treat <NUM>  nodamage <NUM>");
+		AddInfoConsole(d3dg->GetColorCode(1.0f,1.0f,1.0f,1.0f), "break <NUM>   newobj <NUM>");
+		AddInfoConsole(d3dg->GetColorCode(1.0f,1.0f,1.0f,1.0f), "bot           nofight       caution        stop         estop      speed");
+		AddInfoConsole(d3dg->GetColorCode(1.0f,1.0f,1.0f,1.0f), "ss            clear");
 	}
 
 	//MIFの情報表示
@@ -3253,13 +3249,13 @@ void maingame::ProcessConsole()
 void maingame::RenderConsole()
 {
 	//下地
-	d3dg->Draw2DBox(0, 0, SCREEN_WIDTH, (MAX_CONSOLELINES+1)*18 + 5 + 5, d3dg->GetColorCode(0.0f,0.0f,0.0f,0.75f));
+	d3dg->Draw2DBox(0, 0, SCREEN_WIDTH, (MAX_CONSOLELINES+1)*17 + 5 + 5, d3dg->GetColorCode(0.0f,0.0f,0.0f,0.75f));
 
 	//表示中の文字
 	for(int i=0; i<MAX_CONSOLELINES; i++){
 		if( InfoConsoleData[i].textdata[0] != NULL ){
-			d3dg->Draw2DTextureFontText(5+1, i*18+5+1, InfoConsoleData[i].textdata, d3dg->GetColorCode(0.0f,0.0f,0.0f,1.0f), 14, 17);
-			d3dg->Draw2DTextureFontText(5, i*18+5, InfoConsoleData[i].textdata, InfoConsoleData[i].color, 14, 17);
+			d3dg->Draw2DTextureDebugFontText(5+1, i*17+5+1, InfoConsoleData[i].textdata, d3dg->GetColorCode(0.0f,0.0f,0.0f,1.0f));
+			d3dg->Draw2DTextureDebugFontText(5, i*17+5, InfoConsoleData[i].textdata, InfoConsoleData[i].color);
 		}
 	}
 
@@ -3268,8 +3264,8 @@ void maingame::RenderConsole()
 	for(cnt=0; cnt<MAX_CONSOLELINES; cnt++){
 		if( InfoConsoleData[cnt].textdata[0] == NULL ){ break; }
 	}
-	d3dg->Draw2DTextureFontText(5+1, cnt*18+5+1, InputConsoleData->textdata, d3dg->GetColorCode(0.0f,0.0f,0.0f,1.0f), 14, 17);
-	d3dg->Draw2DTextureFontText(5, cnt*18+5, InputConsoleData->textdata, InputConsoleData->color, 14, 17);
+	d3dg->Draw2DTextureDebugFontText(5+1, cnt*17+5+1, InputConsoleData->textdata, d3dg->GetColorCode(0.0f,0.0f,0.0f,1.0f));
+	d3dg->Draw2DTextureDebugFontText(5, cnt*17+5, InputConsoleData->textdata, InputConsoleData->color);
 }
 
 #endif

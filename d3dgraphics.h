@@ -194,6 +194,13 @@ class D3DGraphics
 	void Start2DRender();
 	void End2DRender();
 
+#ifdef ENABLE_DEBUGCONSOLE
+	unsigned char DebugFontData[96][16];	//!< デバック用フォントデータ格納配列
+	int TextureDebugFont;					//!< デバック用フォントのテクスチャID
+	void InitDebugFontData();
+	bool LoadDebugFontTexture();
+#endif
+
 #else	//GRAPHICS_OPENGL
 
 	HWND hWnd;				//!< ウィンドウハンドル
@@ -243,6 +250,13 @@ class D3DGraphics
 	void Start2DRender();
 	void End2DRender();
 
+#ifdef ENABLE_DEBUGCONSOLE
+	unsigned char DebugFontData[96][16];	//!< デバック用フォントデータ格納配列
+	int TextureDebugFont;					//!< デバック用フォントのテクスチャID
+	void InitDebugFontData();
+	bool LoadDebugFontTexture();
+#endif
+
 #endif	//GRAPHICS_OPENGL
 
 public:
@@ -281,6 +295,9 @@ public:
 	void Draw2DMSFontText(int x, int y, char *str, int color);
 	void Draw2DMSFontTextCenter(int x, int y, int w, int h, char *str, int color);
 	void Draw2DTextureFontText(int x, int y, char *str, int color, int fontwidth, int fontheight);
+#ifdef ENABLE_DEBUGCONSOLE
+	void Draw2DTextureDebugFontText(int x, int y, char *str, int color);
+#endif
 	void Draw2DLine(int x1, int y1, int x2, int y2, int color);
 	void Draw2DCycle(int x, int y, int r, int color);
 	void Draw2DBox(int x1, int y1, int x2, int y2, int color);

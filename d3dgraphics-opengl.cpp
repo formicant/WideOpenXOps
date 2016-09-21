@@ -74,6 +74,10 @@ D3DGraphics::D3DGraphics()
 	}
 
 	TextureFont = -1;
+
+#ifdef ENABLE_DEBUGCONSOLE
+	TextureDebugFont = -1;
+#endif
 }
 
 //! @brief ディストラクタ
@@ -198,6 +202,13 @@ int D3DGraphics::InitD3D(WindowControl *WindowCtrl, char *TextureFontFilename, b
 	HUD_myweapon_x[1] = cos(pry)*r;
 	HUD_myweapon_y[1] = sin(pry)*r;
 	HUD_myweapon_z[1] = sin(prx)*r;
+
+#ifdef ENABLE_DEBUGCONSOLE
+	InitDebugFontData();
+	if( LoadDebugFontTexture() == false ){
+		return 1;
+	}
+#endif
 
 
 	//libjpeg初期化
@@ -1260,6 +1271,139 @@ bool D3DGraphics::LoadPNGTexture(char* filename, bool BlackTransparent, TEXTURED
 	return true;
 }
 
+#ifdef ENABLE_DEBUGCONSOLE
+//! @brief デバック用フォントを読み込む
+//! @return 成功：true　失敗：false
+//! @attention この関数を呼び出す前に、InitDebugFontData()関数を実行してください。
+bool D3DGraphics::LoadDebugFontTexture()
+{
+	int charwidth = 8;
+	int charheight = 16;
+	int width = charwidth * 16;
+	int height = charheight * 8;
+
+	int datacnt = 0;
+	int id = -1;
+
+#ifdef ENABLE_DEBUGLOG
+	//ログに出力
+	OutputLog.WriteLog(LOG_LOAD, "テクスチャ", "DebugFontTexture");
+#endif
+
+	//既に読み込まれているなら失敗
+	if( TextureDebugFont != -1 ){ return false; }
+
+	//空いている認識番号を探す
+	for(int i=0; i<MAX_TEXTURE; i++){
+		if( ptextures[i].useflag == false ){
+			id = i;
+			break;
+		}
+	}
+	if( id == -1 ){ return false; }
+
+	unsigned char *data = new unsigned char [width*height*4];
+
+	//制御コードが入っている2行 32文字分は、空欄にする。
+	for(int cnt_y=0; cnt_y<2; cnt_y++){
+		for(int line_y=0; line_y<charheight; line_y++){
+			for(int cnt_x=0; cnt_x<16; cnt_x++){
+				for(int line_x=0; line_x<charwidth; line_x++){
+					data[datacnt + 0] = 0;
+					data[datacnt + 1] = 0;
+					data[datacnt + 2] = 0;
+					data[datacnt + 3] = 0;
+
+					datacnt += 4;
+				}
+			}
+		}
+	}
+
+	//6行分のデータを作成
+	for(int cnt_y=0; cnt_y<6; cnt_y++){
+		for(int line_y=0; line_y<charheight; line_y++){
+			for(int cnt_x=0; cnt_x<16; cnt_x++){
+				for(int line_x=(charwidth-1); line_x>=0; line_x--){
+					unsigned char mask;
+
+					//ビット判定用マスク作成
+					switch(line_x){
+						case 0: mask = 0x01; break;
+						case 1: mask = 0x02; break;
+						case 2: mask = 0x04; break;
+						case 3: mask = 0x08; break;
+						case 4: mask = 0x10; break;
+						case 5: mask = 0x20; break;
+						case 6: mask = 0x40; break;
+						case 7: mask = 0x80; break;
+						default: mask = 0x00;		//事実上エラー
+					}
+
+					//該当ビットが1なら白、0なら黒。
+					if( (DebugFontData[cnt_y*16 + cnt_x][line_y] & mask) != 0 ){
+						data[datacnt + 0] = 255;
+						data[datacnt + 1] = 255;
+						data[datacnt + 2] = 255;
+						data[datacnt + 3] = 255;
+					}
+					else{
+						data[datacnt + 0] = 0;
+						data[datacnt + 1] = 0;
+						data[datacnt + 2] = 0;
+						data[datacnt + 3] = 0;
+					}
+
+					datacnt += 4;
+				}
+			}
+		}
+	}
+
+	//テクスチャ有効
+	glEnable(GL_TEXTURE_2D);
+
+	HDC hDC;
+	hDC = GetDC(hWnd);
+	wglMakeCurrent(hDC, hGLRC);
+	glGenTextures(1, &(textureobjname[id]));
+	ReleaseDC(hWnd, hDC);
+
+	glBindTexture(GL_TEXTURE_2D, textureobjname[id]);
+
+	//OpenGLにセット
+	glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, width, height, 0, GL_RGBA, GL_UNSIGNED_BYTE, data);
+
+	//ミップマップ設定
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR); 
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
+
+	//乗算合成
+	glTexEnvf(GL_TEXTURE_ENV, GL_TEXTURE_ENV_MODE, GL_MODULATE);
+
+	//テクスチャ無効
+	glDisable(GL_TEXTURE_2D);
+
+
+	//構造体に代入
+	ptextures[id].data = data;
+	ptextures[id].width = width;
+	ptextures[id].height = height;
+
+	ptextures[id].useflag = true;
+
+
+#ifdef ENABLE_DEBUGLOG
+	//ログに出力
+	OutputLog.WriteLog(LOG_COMPLETE, "", id);
+#endif
+
+	//テクスチャID設定
+	TextureDebugFont = id;
+	return true;
+}
+#endif
+
 //! @brief テクスチャのサイズを取得
 //! @param id テクスチャ認識番号
 //! @param width 幅を受け取るポインタ
@@ -2124,6 +2268,101 @@ void D3DGraphics::Draw2DTextureFontText(int x, int y, char *str, int color, int 
 	delete [] ColorAry;
 	delete [] TexCoordAry;
 }
+
+#ifdef ENABLE_DEBUGCONSOLE
+//! @brief 文字を表示（デバック用フォント使用）
+//! @param x x座標
+//! @param y y座標
+//! @param str 文字列　（改行コード：<b>不可</b>）
+//! @param color 色
+//! @attention 一文字の幅および高さは 8x16 固定です。
+//! @attention 文字を二重に重ねて立体感を出さないと見にくくなります。
+void D3DGraphics::Draw2DTextureDebugFontText(int x, int y, char *str, int color)
+{
+	int fontwidth = 8;
+	int fontheight = 16;
+
+	//テクスチャフォントの取得に失敗していれば、処理しない
+	if( TextureDebugFont == -1 ){ return; }
+
+	int strlens = (int)strlen(str);
+
+	float *VertexAry = new float [strlens*6*2];
+	unsigned char *ColorAry = new unsigned char [strlens*6*4];
+	float *TexCoordAry = new float [strlens*6*2];
+
+	//2D描画用設定を適用
+	Start2DRender();
+
+	int w;
+	float font_u, font_v;
+	float t_u, t_v;
+
+	//1文字のUV座標を計算
+	font_u = 1.0f / 16;
+	font_v = 1.0f / 8;
+
+	//テクスチャ有効
+	glEnable(GL_TEXTURE_2D);
+
+	//テクスチャをセット
+	SetTexture(TextureDebugFont);
+
+	//配列有効化
+	glEnableClientState(GL_VERTEX_ARRAY);
+	glEnableClientState(GL_COLOR_ARRAY);
+	glEnableClientState(GL_TEXTURE_COORD_ARRAY);
+
+	//色情報配列を用意
+	ColorAry[0] = (color>>24)&0xFF;
+	ColorAry[1] = (color>>16)&0xFF;
+	ColorAry[2] = (color>>8)&0xFF;
+	ColorAry[3] = color&0xFF;
+	for(int i=1; i<strlens*6; i++){
+		memcpy(&(ColorAry[i*4]), ColorAry, sizeof(unsigned char)*4);
+	}
+
+	// 与えられた文字数分ループ
+	for(int i=0; i<strlens; i++){
+		//UV座標を計算
+		w = str[i];
+		if( w < 0 ){ w = ' '; }
+		t_u = (w % 16) * font_u;
+		t_v = (w / 16) * font_v;
+
+		VertexAry[0 + i*12] = (float)x + i*fontwidth;			VertexAry[1 + i*12] = (float)y;
+		VertexAry[2 + i*12] = (float)x + i*fontwidth;			VertexAry[3 + i*12] = (float)y;
+		VertexAry[4 + i*12] = (float)x + fontwidth + i*fontwidth;	VertexAry[5 + i*12] = (float)y;
+		VertexAry[6 + i*12] = (float)x + i*fontwidth;			VertexAry[7 + i*12] = (float)y + fontheight;
+		VertexAry[8 + i*12] = (float)x + fontwidth + i*fontwidth;	VertexAry[9 + i*12] = (float)y + fontheight;
+		VertexAry[10 + i*12] = (float)x + fontwidth + i*fontwidth;	VertexAry[11 + i*12] = (float)y + fontheight;
+		TexCoordAry[0 + i*12] = t_u;		TexCoordAry[1 + i*12] = t_v;
+		TexCoordAry[2 + i*12] = t_u;		TexCoordAry[3 + i*12] = t_v;
+		TexCoordAry[4 + i*12] = t_u + font_u;	TexCoordAry[5 + i*12] = t_v;
+		TexCoordAry[6 + i*12] = t_u;		TexCoordAry[7 + i*12] = t_v + font_v;
+		TexCoordAry[8 + i*12] = t_u + font_u;	TexCoordAry[9 + i*12] = t_v + font_v;
+		TexCoordAry[10 + i*12] = t_u + font_u;	TexCoordAry[11 + i*12] = t_v + font_v;
+	}
+
+	//描画
+	glVertexPointer(2, GL_FLOAT, 0, VertexAry);
+	glColorPointer(4, GL_UNSIGNED_BYTE, 0, ColorAry);
+	glTexCoordPointer(2, GL_FLOAT, 0, TexCoordAry);
+	glDrawArrays(GL_TRIANGLE_STRIP, 1, strlens*6-2);
+
+	//配列無効化
+	glDisableClientState(GL_VERTEX_ARRAY);
+	glDisableClientState(GL_COLOR_ARRAY);
+	glDisableClientState(GL_TEXTURE_COORD_ARRAY);
+
+	//2D描画用設定を解除
+	End2DRender();
+
+	delete [] VertexAry;
+	delete [] ColorAry;
+	delete [] TexCoordAry;
+}
+#endif
 
 //! @brief 線を描画
 //! @param x1 始点の x座標
