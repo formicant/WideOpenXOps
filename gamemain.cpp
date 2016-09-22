@@ -1114,7 +1114,8 @@ int maingame::Create()
 
 
 	//背景空読み込み
-	Resource.LoadSkyModelTexture(MIFdata.GetSkynumber());
+	SkyNumber = MIFdata.GetSkynumber();
+	Resource.LoadSkyModelTexture(SkyNumber);
 
 	//サウンド初期化
 	GameSound->InitWorldSound();
@@ -1214,7 +1215,7 @@ int maingame::Recovery()
 	ObjMgr.Recovery();
 
 	//背景空読み込み
-	Resource.LoadSkyModelTexture(MIFdata.GetSkynumber());
+	Resource.LoadSkyModelTexture(SkyNumber);
 
 	return 0;
 }
@@ -1908,7 +1909,7 @@ void maingame::Render3D()
 	human *myHuman = ObjMgr.GetPlayerHumanObject();
 
 	//フォグとカメラを設定
-	d3dg->SetFog(MIFdata.GetSkynumber());
+	d3dg->SetFog(SkyNumber);
 	if( Camera_F1mode == false ){
 		int scopemode = myHuman->GetScopeMode();
 		float viewangle = 0.0f;
@@ -2677,6 +2678,11 @@ bool maingame::GetCommandNum(char *cmd, int *num)
 	//「コマンド名_X」分の文字数に達しているかどうか
 	if( strlen(cmd)+2 > strlen(NewCommand) ){ return false; }
 
+	//数字が与えられているか
+	for(int i=strlen(cmd)+1; NewCommand[i] != '\0'; i++){
+		if( ((NewCommand[i] < '0')||('9' < NewCommand[i]))&&(NewCommand[i] != '+')&&(NewCommand[i] != '-') ){ return false; }
+	}
+
 	//与えられた数字を調べる
 	*num = atoi(&(NewCommand[ strlen(cmd)+1 ]));
 	return true;
@@ -2738,13 +2744,82 @@ void maingame::ProcessConsole()
 
 	//コマンドリスト
 	if( strcmp(NewCommand, "help") == 0 ){
-		AddInfoConsole(d3dg->GetColorCode(1.0f,1.0f,1.0f,1.0f), "help          human         result         event        mif        ver");
+		AddInfoConsole(d3dg->GetColorCode(1.0f,1.0f,1.0f,1.0f), "help          human         result         event        ver");
+		AddInfoConsole(d3dg->GetColorCode(1.0f,1.0f,1.0f,1.0f), "mif           bd1           pd1");
 		AddInfoConsole(d3dg->GetColorCode(1.0f,1.0f,1.0f,1.0f), "info          view          center         map          aiinfo <NUM>");
-		AddInfoConsole(d3dg->GetColorCode(1.0f,1.0f,1.0f,1.0f), "tag           radar         inmap");
+		AddInfoConsole(d3dg->GetColorCode(1.0f,1.0f,1.0f,1.0f), "tag           radar         inmap          sky <NUM>");
 		AddInfoConsole(d3dg->GetColorCode(1.0f,1.0f,1.0f,1.0f), "ff            revive        kill <NUM>     treat <NUM>  nodamage <NUM>");
 		AddInfoConsole(d3dg->GetColorCode(1.0f,1.0f,1.0f,1.0f), "break <NUM>   newobj <NUM>");
 		AddInfoConsole(d3dg->GetColorCode(1.0f,1.0f,1.0f,1.0f), "bot           nofight       caution        stop         estop      speed");
 		AddInfoConsole(d3dg->GetColorCode(1.0f,1.0f,1.0f,1.0f), "ss            clear");
+	}
+
+	//人の統計情報
+	if( strcmp(NewCommand, "human") == 0 ){
+		int alivemyfriend = 0;
+		int myfriend = 0;
+		int aliveenemy = 0;
+		int enemy = 0;
+		int myteamid;
+
+		//プレイヤーのチーム番号を取得
+		ObjMgr.GetPlayerHumanObject()->GetParamData(NULL, NULL, NULL, &myteamid);
+
+		for(int i=0; i<MAX_HUMAN; i++){
+			int teamid;
+			bool deadflag;
+			human *thuman = ObjMgr.GeHumanObject(i);
+			if( thuman->GetEnableFlag() == true ){
+				//死亡状態とチーム番号を取得
+				deadflag = thuman->GetDeadFlag();
+				thuman->GetParamData(NULL, NULL, NULL, &teamid);
+
+				//カウント
+				if( teamid == myteamid ){
+					myfriend += 1;
+					if( deadflag == false ){ alivemyfriend += 1; }
+				}
+				else{
+					enemy += 1;
+					if( deadflag == false ){ aliveenemy += 1; }
+				}
+			}
+		}
+
+		sprintf(str, "Friend:%d/%d  Enemy:%d/%d  Total:%d/%d",
+			alivemyfriend, myfriend, aliveenemy, enemy, alivemyfriend + aliveenemy, myfriend + enemy);
+		AddInfoConsole(d3dg->GetColorCode(1.0f,1.0f,1.0f,1.0f), str);
+	}
+
+	//暫定リザルト表示
+	if( strcmp(NewCommand, "result") == 0 ){
+		float rate;
+		if( MainGameInfo.fire == 0 ){
+			rate = 0.0f;
+		}
+		else{
+			rate = (float)MainGameInfo.ontarget / MainGameInfo.fire * 100;
+		}
+
+		sprintf(str, "Time %02d:%02d  /  Fired %d  /  On target %d", framecnt/(int)GAMEFPS/60, framecnt/(int)GAMEFPS%60, MainGameInfo.fire, MainGameInfo.ontarget);
+		AddInfoConsole(d3dg->GetColorCode(1.0f,1.0f,1.0f,1.0f), str);
+		sprintf(str, "AR rate %.1f%%  /  Kill %d  /  HS %d", rate, MainGameInfo.kill, MainGameInfo.headshot);
+		AddInfoConsole(d3dg->GetColorCode(1.0f,1.0f,1.0f,1.0f), str);
+	}
+
+	//イベントタスク表示
+	if( strcmp(NewCommand, "event") == 0 ){
+		for(int i=0; i<TOTAL_EVENTLINE; i++){
+			signed char p4 = Event[i].GetNextP4();
+			pointdata data;
+			if( PointData.SearchPointdata(&data, 0x08, 0, 0, 0, p4, 0) == 0 ){
+				sprintf(str, "Event %d   No task.", i);
+			}
+			else{
+				sprintf(str, "Event %d   [%d][%d][%d][%d]", i, data.p1, data.p2, data.p3, data.p4);
+			}
+			AddInfoConsole(d3dg->GetColorCode(1.0f,1.0f,1.0f,1.0f), str);
+		}
 	}
 
 	//MIFの情報表示
@@ -2825,72 +2900,113 @@ void maingame::ProcessConsole()
 		AddInfoConsole(d3dg->GetColorCode(1.0f,1.0f,1.0f,1.0f), str);
 	}
 
-	//人の統計情報
-	if( strcmp(NewCommand, "human") == 0 ){
-		int alivemyfriend = 0;
-		int myfriend = 0;
-		int aliveenemy = 0;
-		int enemy = 0;
-		int myteamid;
+	//ブロックデータの情報
+	if( strcmp(NewCommand, "bd1") == 0 ){
+		bool AddonFlag = GameInfoData.selectaddon;
+		int MissionID = GameInfoData.selectmission_id;
+		char str2[MAX_PATH];
+		char str3[MAX_PATH];
+		char fname1[_MAX_PATH];
+		char fname2[_MAX_PATH];
+		char flagstr1[4];
+		char flagstr2[4];
 
-		//プレイヤーのチーム番号を取得
-		ObjMgr.GetPlayerHumanObject()->GetParamData(NULL, NULL, NULL, &myteamid);
-
-		for(int i=0; i<MAX_HUMAN; i++){
-			int teamid;
-			bool deadflag;
-			human *thuman = ObjMgr.GeHumanObject(i);
-			if( thuman->GetEnableFlag() == true ){
-				//死亡状態とチーム番号を取得
-				deadflag = thuman->GetDeadFlag();
-				thuman->GetParamData(NULL, NULL, NULL, &teamid);
-
-				//カウント
-				if( teamid == myteamid ){
-					myfriend += 1;
-					if( deadflag == false ){ alivemyfriend += 1; }
-				}
-				else{
-					enemy += 1;
-					if( deadflag == false ){ aliveenemy += 1; }
-				}
-			}
-		}
-
-		sprintf(str, "Friend:%d/%d  Enemy:%d/%d  Total:%d/%d",
-			alivemyfriend, myfriend, aliveenemy, enemy, alivemyfriend + aliveenemy, myfriend + enemy);
-		AddInfoConsole(d3dg->GetColorCode(1.0f,1.0f,1.0f,1.0f), str);
-	}
-
-	//暫定リザルト表示
-	if( strcmp(NewCommand, "result") == 0 ){
-		float rate;
-		if( MainGameInfo.fire == 0 ){
-			rate = 0.0f;
+		//ファイル名表示
+		strcpy(str, "Filename : ");
+		if( AddonFlag == true ){
+			MIFdata.GetDatafilePath(str2, str3);
+			str2[(MAX_CONSOLELEN - strlen(str) - 1)] = '\0';
+			strcat(str, str2);
 		}
 		else{
-			rate = (float)MainGameInfo.ontarget / MainGameInfo.fire * 100;
+			GameParamInfo.GetOfficialMission(MissionID, NULL, NULL, str2, NULL, NULL);
+			str2[(MAX_CONSOLELEN - strlen(str) - 8 - 1)] = '\0';
+			strcat(str, str2); 
+			strcat(str, OFFICIALMISSION_BD1);
 		}
-
-		sprintf(str, "Time %02d:%02d  /  Fired %d  /  On target %d", framecnt/(int)GAMEFPS/60, framecnt/(int)GAMEFPS%60, MainGameInfo.fire, MainGameInfo.ontarget);
 		AddInfoConsole(d3dg->GetColorCode(1.0f,1.0f,1.0f,1.0f), str);
-		sprintf(str, "AR rate %.1f%%  /  Kill %d  /  HS %d", rate, MainGameInfo.kill, MainGameInfo.headshot);
-		AddInfoConsole(d3dg->GetColorCode(1.0f,1.0f,1.0f,1.0f), str);
-	}
 
-	//イベントタスク表示
-	if( strcmp(NewCommand, "event") == 0 ){
-		for(int i=0; i<TOTAL_EVENTLINE; i++){
-			signed char p4 = Event[i].GetNextP4();
-			pointdata data;
-			if( PointData.SearchPointdata(&data, 0x08, 0, 0, 0, p4, 0) == 0 ){
-				sprintf(str, "Event %d   No task.", i);
-			}
-			else{
-				sprintf(str, "Event %d   [%d][%d][%d][%d]", i, data.p1, data.p2, data.p3, data.p4);
-			}
+		//合計ブロック数表示
+		sprintf(str, "TotalBlocks : %d", BlockData.GetTotaldatas());
+		AddInfoConsole(d3dg->GetColorCode(1.0f,1.0f,1.0f,1.0f), str);
+
+		//マップテクスチャの読み込み状況表示
+		AddInfoConsole(d3dg->GetColorCode(1.0f,1.0f,1.0f,1.0f), "Texture : ");
+		for(int i=0; i<(TOTAL_BLOCKTEXTURE/2); i++){
+			//テクスチャIDを取得
+			BlockData.GetTexture(fname1, i);
+			BlockData.GetTexture(fname2, i + (TOTAL_BLOCKTEXTURE/2));
+			
+			//テクスチャが読み込まれているか判定
+			if( d3dg->GetMapTextureID(i) == -1 ){ strcpy(flagstr1, "NG"); }
+			else{ strcpy(flagstr1, "OK"); }
+			if( d3dg->GetMapTextureID(i + (TOTAL_BLOCKTEXTURE/2)) == -1 ){ strcpy(flagstr2, "NG"); }
+			else{ strcpy(flagstr2, "OK"); }
+
+			//表示
+			sprintf(str, " %02d_%s %-31s %02d_%s %s", i, flagstr1, fname1, i + (TOTAL_BLOCKTEXTURE/2), flagstr2, fname2);
 			AddInfoConsole(d3dg->GetColorCode(1.0f,1.0f,1.0f,1.0f), str);
 		}
+	}
+
+	//ポイントデータの情報
+	if( strcmp(NewCommand, "pd1") == 0 ){
+		bool AddonFlag = GameInfoData.selectaddon;
+		int MissionID = GameInfoData.selectmission_id;
+		char str2[MAX_PATH];
+		char str3[MAX_PATH];
+		pointdata pdata;
+		int TotalPoints = PointData.GetTotaldatas();
+		int HumanPoints = 0;
+		int WeaponPoints = 0;
+		int OjectPoints = 0;
+		int HumaninfoPoints = 0;
+		int PathPoints = 0;
+		int EventPoints = 0;
+
+		//ファイル名表示
+		strcpy(str, "Filename : ");
+		if( AddonFlag == true ){
+			MIFdata.GetDatafilePath(str3, str2);
+			str2[(MAX_CONSOLELEN - strlen(str) - 1)] = '\0';
+			strcat(str, str2);
+		}
+		else{
+			GameParamInfo.GetOfficialMission(MissionID, NULL, NULL, str2, str3, NULL);
+			strcat(str2, str3);
+			str2[(MAX_CONSOLELEN - strlen(str) - 4 - 1)] = '\0';
+			strcat(str, str2);
+			strcat(str, ".pd1");
+		}
+		AddInfoConsole(d3dg->GetColorCode(1.0f,1.0f,1.0f,1.0f), str);
+
+		//合計ポイント数表示
+		sprintf(str, "TotalPoints : %d", TotalPoints);
+		AddInfoConsole(d3dg->GetColorCode(1.0f,1.0f,1.0f,1.0f), str);
+
+		//各種ポイント数を数えて表示
+		for(int i=0; i<TotalPoints; i++){
+			if( PointData.Getdata(&pdata, i) != 0 ){ continue; }
+
+			if( (pdata.p1 == 1)||(pdata.p1 == 6) ){ HumanPoints += 1; }
+			if( (pdata.p1 == 2)||(pdata.p1 == 7) ){ WeaponPoints += 1; }
+			if( pdata.p1 == 5 ){ OjectPoints += 1; }
+			if( pdata.p1 == 4 ){ HumaninfoPoints += 1; }
+			if( (pdata.p1 == 3)||(pdata.p1 == 8) ){ PathPoints += 1; }
+			if( (10 <= pdata.p1)&&(pdata.p1 <= 19) ){ EventPoints += 1; }
+		}
+		sprintf(str, "HumanPoints : %-3d       WeaponPoints : %-3d    SmallOjectPoints : %-3d", HumanPoints, WeaponPoints, OjectPoints);
+		AddInfoConsole(d3dg->GetColorCode(1.0f,1.0f,1.0f,1.0f), str);
+		sprintf(str, "HumaninfoPoints : %-3d   AIpathPoints : %-3d    EventPoints : %-3d", HumaninfoPoints, PathPoints, EventPoints);
+		AddInfoConsole(d3dg->GetColorCode(1.0f,1.0f,1.0f,1.0f), str);
+
+		//無効なポイント数を逆算で求める
+		sprintf(str, "InvalidPoints : %d", TotalPoints - (HumanPoints + WeaponPoints + OjectPoints + HumaninfoPoints + PathPoints + EventPoints));
+		AddInfoConsole(d3dg->GetColorCode(1.0f,1.0f,1.0f,1.0f), str);
+
+		//人のテクスチャ数を取得
+		sprintf(str, "HumanTextures : %d/%d", Resource.GetHumanTextures(), MAX_LOADHUMANTEXTURE);
+		AddInfoConsole(d3dg->GetColorCode(1.0f,1.0f,1.0f,1.0f), str);
 	}
 
 	//デバック用文字の表示
@@ -3000,6 +3116,20 @@ void maingame::ProcessConsole()
 		else{
 			Camera_Blind = false;
 			AddInfoConsole(d3dg->GetColorCode(1.0f,1.0f,1.0f,1.0f), "Not blindfold in map.");
+		}
+	}
+
+	//背景空の変更
+	if( GetCommandNum("sky", &id) == true ){
+		if( (0 <= id)&&(id <= 5) ){
+			SkyNumber = id;
+
+			//リソース再構築
+			Resource.CleanupSkyModelTexture();
+			Resource.LoadSkyModelTexture(SkyNumber);
+
+			sprintf(str, "Select SkyNumber %d.", id);
+			AddInfoConsole(d3dg->GetColorCode(1.0f,1.0f,1.0f,1.0f), str);
 		}
 	}
 

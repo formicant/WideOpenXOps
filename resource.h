@@ -95,6 +95,7 @@ public:
 	void GetHumanModel(int out_upmodel[], int out_armmodel[], int *legmodel, int out_walkmodel[], int out_runmodel[]);
 	void CleanupHumanModel();
 	int AddHumanTexture(int id);
+	int GetHumanTextures();
 	int GetHumanTexture(int id);
 	void CleanupHumanTexture();
 	int LoadWeaponModelTexture();

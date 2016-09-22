@@ -267,6 +267,21 @@ int ResourceManager::AddHumanTexture(int id)
 	return -1;
 }
 
+//! @brief 読み込んでいる人のテクスチャ数を取得
+//! @return テクスチャ数（最大 MAX_LOADHUMANTEXTURE）
+int ResourceManager::GetHumanTextures()
+{
+	int Textures = 0;
+
+	for(int i=0; i<MAX_LOADHUMANTEXTURE; i++){
+		if( human_texture_Param[i] != -1 ){
+			Textures += 1;
+		}
+	}
+
+	return Textures;
+}
+
 //! @brief 人のテクスチャ番号を取得
 //! @param id 人の種類ID
 //! @return 成功：テクスチャID　失敗：-1
