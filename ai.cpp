@@ -1094,6 +1094,9 @@ int AIcontrol::ThrowGrenade()
 	int selectweapon;
 	class weapon *weapon[TOTAL_HAVEWEAPON];
 	int weaponid, nbs, i;
+	pointdata pdata;
+	float posy2;
+	float atan_rx, atan_ry;
 
 	for(int i=0; i<TOTAL_HAVEWEAPON; i++){
 		weapon[i] = NULL;
@@ -1109,18 +1112,11 @@ int AIcontrol::ThrowGrenade()
 			}
 		}
 	}
-	if( i == TOTAL_HAVEWEAPON ){
-		return 2;
-	}
 
-	//手榴弾を持っていなければ、切り替える
-	if( i != selectweapon ){
+	//手榴弾に切り替えられるなら、切り替える
+	if( (i != TOTAL_HAVEWEAPON)&&(i != selectweapon) ){
 		ObjMgr->ChangeWeapon(ctrlid, i);
 	}
-
-	pointdata pdata;
-	float posy2;
-	float atan_rx, atan_ry;
 
 	//パスと人の高さを取得
 	MoveNavi->GetPathPointData(&pdata);
@@ -1131,6 +1127,24 @@ int AIcontrol::ThrowGrenade()
 
 	//目標地点への角度を求める
 	CheckTargetAngle(posx, posy2, posz, rx*-1 + (float)M_PI/2, ry, pdata.x, pdata.y, pdata.z, 0.0f, &atan_rx, &atan_ry, NULL);
+
+	//手榴弾を持っていなければ
+	if( i == TOTAL_HAVEWEAPON ){
+		//※手榴弾を持っていない場合でも、このフレームではその方向へ向かせるよう処理する。
+		//　この処理により、手榴弾を持っていない状態で かつ手榴弾投げの無限ループに陥った場合、手榴弾投げパスの方角を向き続ける。
+		//　（本家XOPSの仕様）
+
+		//旋回
+		if( atan_rx > 0.0f ){
+			ObjDriver->SetModeFlag(AI_CTRL_TURNLEFT);
+		}
+		if( atan_rx < 0.0f ){
+			ObjDriver->SetModeFlag(AI_CTRL_TURNRIGHT);
+		}
+		ArmAngle();
+
+		return 2;
+	}
 
 	//旋回
 	if( atan_rx > 0.0f ){
