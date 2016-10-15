@@ -140,9 +140,10 @@ void ObjectManager::SetClass(ParameterInfo *in_GameParamInfo, D3DGraphics *in_d3
 //! @brief 人追加
 //! @param data 人のポイントデータ　（pointdata構造体）
 //! @param infodata 参照する人情報のポイントデータ　（〃）
+//! @param RandomFlag ランダム補正を有効にする
 //! @return 成功：データ番号（0以上）　失敗：-1
 //! @attention 無効な人の種類番号が指定された場合は 通称：謎人間 が登場します。テクスチャはマップテクスチャ0番が使用され、HPは 0 が指定（＝即死）されます。
-int ObjectManager::AddHumanIndex(pointdata data, pointdata infodata)
+int ObjectManager::AddHumanIndex(pointdata data, pointdata infodata, bool RandomFlag)
 {
 	int GetHumanFlag;
 	HumanParameter HumanParam;
@@ -168,10 +169,20 @@ int ObjectManager::AddHumanIndex(pointdata data, pointdata infodata)
 	int runmodel[TOTAL_RUNMODE];
 	Resource->GetHumanModel(upmodel, armmodel, &legmodel, walkmodel, runmodel);
 
+	float px = data.x;
+	float py = data.y;
+	float pz = data.z;
+	float rx = data.r;
+	if( RandomFlag == true ){
+		px += 0.001f*GetRand(100*2) - 0.1f;
+		pz += 0.001f*GetRand(100*2) - 0.1f;
+		rx += DegreeToRadian(0.01f)*GetRand(80*2) - DegreeToRadian(0.8f);
+	}
+
 	for(int j=0; j<MAX_HUMAN; j++){
 		if( HumanIndex[j].GetEnableFlag() == false ){
 			//初期化する
-			HumanIndex[j].SetPosData(data.x, data.y, data.z, data.r);
+			HumanIndex[j].SetPosData(px, py, pz, rx);
 			HumanIndex[j].SetParamData(infodata.p2, data.id, data.p4, infodata.p3, true);
 			if( GetHumanFlag == 0 ){
 				int id = Resource->GetHumanTexture(infodata.p2);
@@ -1376,7 +1387,7 @@ void ObjectManager::LoadPointData()
 				Resource->AddHumanTexture(humaninfodata.p2);
 
 				//人として追加
-				AddHumanIndex(data, humaninfodata);
+				AddHumanIndex(data, humaninfodata, true);
 			}
 		}
 

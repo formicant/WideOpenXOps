@@ -99,7 +99,7 @@ class ObjectManager
 	SoundManager *GameSound;				//!< ゲーム効果音管理クラス
 	MIFInterface *MIFdata;				//!< MIFコントロールクラス
 
-	int AddHumanIndex(pointdata data, pointdata infodata);
+	int AddHumanIndex(pointdata data, pointdata infodata, bool RandomFlag);
 	int AddWeaponIndex(pointdata data);
 	int AddSmallObjectIndex(pointdata data);
 	void SetHumanBlood(float x, float y, float z, int damage, bool CollideMap);
