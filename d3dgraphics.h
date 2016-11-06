@@ -176,9 +176,9 @@ class D3DGraphics
 	VERTEXTXTA g_pVertices[MAX_BLOCKS][6][4];	//!< ’¸“_î•ñiCPUŠÇ—j
 #endif
 
-	float HUD_myweapon_x[TOTAL_HAVEWEAPON];		//!< HUD_A‚Ì•Ší•`‰æ XÀ•W
-	float HUD_myweapon_y[TOTAL_HAVEWEAPON];		//!< HUD_A‚Ì•Ší•`‰æ YÀ•W
-	float HUD_myweapon_z[TOTAL_HAVEWEAPON];		//!< HUD_A‚Ì•Ší•`‰æ ZÀ•W
+	float HUD_myweapon_x[TOTAL_HAVEWEAPON];		//!< HUD‚Ì•Ší•`‰æ XÀ•W
+	float HUD_myweapon_y[TOTAL_HAVEWEAPON];		//!< HUD‚Ì•Ší•`‰æ YÀ•W
+	float HUD_myweapon_z[TOTAL_HAVEWEAPON];		//!< HUD‚Ì•Ší•`‰æ ZÀ•W
 
 	bool StartRenderFlag;			//!< StartRender()ŠÖ” ŽÀs’†‚ð•\‚·ƒtƒ‰ƒO
 
@@ -279,7 +279,7 @@ public:
 	void SetWorldTransform(float x, float y, float z, float rx, float ry1, float ry2, float size);
 	void SetWorldTransformEffect(float x, float y, float z, float rx, float ry, float rt, float size);
 	void SetWorldTransformHumanWeapon(float x, float y, float z, float mx, float my, float mz, float rx, float ry, float size);
-	void SetWorldTransformPlayerWeapon(bool rotation, float camera_x, float camera_y, float camera_z, float camera_rx, float camera_ry, float rx, float size);
+	void SetWorldTransformPlayerWeapon(bool rotation, float camera_rx, float camera_ry, float rx, float size);
 	void GetWorldTransformPos(float *x, float *y, float *z);
 	void SetFog(int skynumber);
 	void SetCamera(float camera_x, float camera_y, float camera_z, float camera_rx, float camera_ry, float viewangle);

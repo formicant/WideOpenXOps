@@ -148,26 +148,15 @@ int D3DGraphics::InitD3D(WindowControl *WindowCtrl, char *TextureFontFilename, b
 	//ShowCursor(FALSE);
 
 
-	float aspecth, prx, pry, r;
-	aspecth = (float)SCREEN_WIDTH/SCREEN_HEIGHT;
+	//HUD　現在持っている武器を描画する座標
+	HUD_myweapon_x[0] = SCREEN_WIDTH - 140.0f;
+	HUD_myweapon_y[0] = SCREEN_HEIGHT - 40.0f;
+	HUD_myweapon_z[0] = 0.86f;
 
-	//HUD_myweapon [奥行き, 縦, 横]
-
-	//HUD_A　現在持っている武器を描画する座標
-	prx = DegreeToRadian(-39) * aspecth /2;
-	pry = DegreeToRadian(-55) /2;
-	r = 7.5f;
-	HUD_myweapon_x[0] = cos(pry)*r;
-	HUD_myweapon_y[0] = sin(pry)*r;
-	HUD_myweapon_z[0] = sin(prx)*r;
-
-	//HUD_A　予備の武器を描?画する座標
-	prx = DegreeToRadian(-52) * aspecth /2;
-	pry = DegreeToRadian(-60) /2;
-	r = 16.0f;
-	HUD_myweapon_x[1] = cos(pry)*r;
-	HUD_myweapon_y[1] = sin(pry)*r;
-	HUD_myweapon_z[1] = sin(prx)*r;
+	//HUD　予備の武器を描画する座標
+	HUD_myweapon_x[1] = SCREEN_WIDTH - 72.0f;
+	HUD_myweapon_y[1] = SCREEN_HEIGHT - 25.0f;
+	HUD_myweapon_z[1] = 0.93f;
 
 
 #ifdef ENABLE_DEBUGCONSOLE
@@ -944,39 +933,57 @@ void D3DGraphics::SetWorldTransformHumanWeapon(float x, float y, float z, float 
 
 //! @brief ワールド空間を所持している武器を描画する場所に設定
 //! @param rotation 武器を回転させる
-//! @param camera_x カメラのX座標
-//! @param camera_y カメラのY座標
-//! @param camera_z カメラのZ座標
 //! @param camera_rx カメラの横軸角度
 //! @param camera_ry カメラの縦軸角度
 //! @param rx 武器のの縦軸角度
 //! @param size 描画サイズ
 //! @note rotation・・　true：現在持っている武器です。　false：予備の武器です。（rx は無視されます）
 //! @todo 位置やサイズの微調整
-void D3DGraphics::SetWorldTransformPlayerWeapon(bool rotation, float camera_x, float camera_y, float camera_z, float camera_rx, float camera_ry, float rx, float size)
+void D3DGraphics::SetWorldTransformPlayerWeapon(bool rotation, float camera_rx, float camera_ry, float rx, float size)
 {
 	D3DXMATRIX matWorld;
+	D3DXMATRIX matWorldV;
+	D3DXMATRIXA16 matProj;
+	D3DVIEWPORT9 pViewport;
+	D3DXVECTOR3 p1;
 	D3DXMATRIX matWorld1, matWorld2, matWorld3, matWorld4, matWorld5, matWorld6;
 
-	size = size * 0.3f;
+	if( rotation == true ){
+		p1 = D3DXVECTOR3(HUD_myweapon_x[0], HUD_myweapon_y[0], HUD_myweapon_z[0]);
+	}
+	else{
+		p1 = D3DXVECTOR3(HUD_myweapon_x[1], HUD_myweapon_y[1], HUD_myweapon_z[1]);
+	}
 
-	//行列を作成
-	D3DXMatrixTranslation(&matWorld1, camera_x, camera_y, camera_z);
+	pd3dDevice->GetViewport(&pViewport);
+
+	//カメラ座標
+	pd3dDevice->GetTransform(D3DTS_VIEW, &matWorldV);
+
+	//カメラ設定（射影変換行列）viewangle
+	pd3dDevice->GetTransform(D3DTS_PROJECTION, &matProj);
+
+	D3DXMatrixIdentity(&matWorld);
+
+	//スクリーン空間からオブジェクト空間にベクトルを射影
+	D3DXVec3Unproject(&p1, &p1, &pViewport, &matProj, &matWorldV, &matWorld);
+
+	//size = size * 0.3f;
+	size = size * (0.0004f*SCREEN_HEIGHT*SCREEN_HEIGHT - 0.92f*SCREEN_HEIGHT + 650.0f) / 1000.f;
+
+	//行列計算
+	D3DXMatrixTranslation(&matWorld1, p1.x, p1.y, p1.z);
 	D3DXMatrixRotationY(&matWorld2, camera_rx *-1);
 	D3DXMatrixRotationZ(&matWorld3, camera_ry);
-	// matWorld4 = [奥行き, 縦, 横]
 	if( rotation == true ){
-		D3DXMatrixTranslation(&matWorld4, HUD_myweapon_x[0], HUD_myweapon_y[0], HUD_myweapon_z[0]);
 		D3DXMatrixRotationY(&matWorld5, rx);
 	}
 	else{
-		D3DXMatrixTranslation(&matWorld4, HUD_myweapon_x[1], HUD_myweapon_y[1], HUD_myweapon_z[1]);
 		D3DXMatrixRotationY(&matWorld5, D3DX_PI);
 	}
 	D3DXMatrixScaling(&matWorld6, size, size, size);
 
-	//計算
-	matWorld = matWorld6 * matWorld5 * matWorld4 * matWorld3 * matWorld2 * matWorld1;
+	matWorld = matWorld6 * matWorld5 * matWorld3 * matWorld2 * matWorld1;
 
 	//適用
 	pd3dDevice->SetTransform( D3DTS_WORLD, &matWorld );

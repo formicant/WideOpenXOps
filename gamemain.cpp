@@ -2362,13 +2362,13 @@ void maingame::Render2D()
 		//（3D描画）所持している武器モデルの描画・メイン武器
 		GameParamInfo.GetWeapon(weapon_paramid[selectweapon], &weapon_paramdata);
 		Resource.GetWeaponModelTexture(weapon_paramid[selectweapon], &weaponmodel, &weapontexture);
-		d3dg->SetWorldTransformPlayerWeapon(true, camera_x, camera_y, camera_z, camera_rx, camera_ry, DegreeToRadian(framecnt*2), weapon_paramdata.size);
+		d3dg->SetWorldTransformPlayerWeapon(true, camera_rx, camera_ry, DegreeToRadian(framecnt*2), weapon_paramdata.size);
 		d3dg->RenderModel(weaponmodel, weapontexture);
 
 		//（3D描画）所持している武器モデルの描画・サブ武器
 		GameParamInfo.GetWeapon(weapon_paramid[notselectweapon], &weapon_paramdata);
 		Resource.GetWeaponModelTexture(weapon_paramid[notselectweapon], &weaponmodel, &weapontexture);
-		d3dg->SetWorldTransformPlayerWeapon(false, camera_x, camera_y, camera_z, camera_rx, camera_ry, 0.0f, weapon_paramdata.size);
+		d3dg->SetWorldTransformPlayerWeapon(false, camera_rx, camera_ry, 0.0f, weapon_paramdata.size);
 		d3dg->RenderModel(weaponmodel, weapontexture);
 	}
 

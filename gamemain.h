@@ -32,9 +32,9 @@
 #ifndef GAMEMAIN_H
 #define GAMEMAIN_H
 
-#define MAINMENU_X 280		//!< メニューの表示 X座標（左上基準）
-#define MAINMENU_Y 140		//!< メニューの表示 Y座標（〃）
-#define TOTAL_MENUITEMS 8	//!< メニュー1画面に表示するミッション数
+#define MAINMENU_X (SCREEN_WIDTH - 360)			//!< メニューの表示 X座標（左上基準）
+#define MAINMENU_Y (SCREEN_HEIGHT - 340)		//!< メニューの表示 Y座標（〃）
+#define TOTAL_MENUITEMS 8						//!< メニュー1画面に表示するミッション数
 #define MAINMENU_H (TOTAL_MENUITEMS+2)*30 + 25	//!< メニューの表示サイズ・高さ
 
 #define HUDA_WEAPON_POSX (SCREEN_WIDTH - 255)	//!< 武器情報を描画する領域・X座標

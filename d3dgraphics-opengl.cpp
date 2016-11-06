@@ -182,26 +182,16 @@ int D3DGraphics::InitD3D(WindowControl *WindowCtrl, char *TextureFontFilename, b
 	TextureFont = LoadTexture(TextureFontFname, true, false);
 
 
-	float aspecth, prx, pry, r;
-	aspecth = (float)SCREEN_WIDTH/SCREEN_HEIGHT;
+	//HUD　現在持っている武器を描画する座標
+	HUD_myweapon_x[0] = SCREEN_WIDTH - 140.0f;
+	HUD_myweapon_y[0] = SCREEN_HEIGHT - 40.0f;
+	HUD_myweapon_z[0] = 0.86f;
 
-	//HUD_myweapon [奥行き, 縦, 横]
+	//HUD　予備の武器を描画する座標
+	HUD_myweapon_x[1] = SCREEN_WIDTH - 72.0f;
+	HUD_myweapon_y[1] = SCREEN_HEIGHT - 25.0f;
+	HUD_myweapon_z[1] = 0.93f;
 
-	//HUD_A　現在持っている武器を描画する座標
-	prx = (float)M_PI/180*-39 * aspecth /2;
-	pry = (float)M_PI/180*-55 /2;
-	r = 7.5f;
-	HUD_myweapon_x[0] = cos(pry)*r;
-	HUD_myweapon_y[0] = sin(pry)*r;
-	HUD_myweapon_z[0] = sin(prx)*r;
-
-	//HUD_A　予備の武器を描画する座標
-	prx = (float)M_PI/180*-52 * aspecth /2;
-	pry = (float)M_PI/180*-60 /2;
-	r = 16.0f;
-	HUD_myweapon_x[1] = cos(pry)*r;
-	HUD_myweapon_y[1] = sin(pry)*r;
-	HUD_myweapon_z[1] = sin(prx)*r;
 
 #ifdef ENABLE_DEBUGCONSOLE
 	InitDebugFontData();
@@ -674,6 +664,9 @@ int D3DGraphics::CheckFileTypeFlag(char* filename, int nowformat)
 //! @return 成功：テクスチャ認識番号（0以上）　失敗：-1
 int D3DGraphics::LoadTexture(char* filename, bool texturefont, bool BlackTransparent)
 {
+	//未使用引数対策
+	UNREFERENCED_PARAMETER(texturefont);
+
 	int id = -1;
 	int format = 0;
 
@@ -1606,33 +1599,54 @@ void D3DGraphics::SetWorldTransformHumanWeapon(float x, float y, float z, float 
 
 //! @brief ワールド空間を所持している武器を描画する場所に設定
 //! @param rotation 武器を回転させる
-//! @param camera_x カメラのX座標
-//! @param camera_y カメラのY座標
-//! @param camera_z カメラのZ座標
 //! @param camera_rx カメラの横軸角度
 //! @param camera_ry カメラの縦軸角度
 //! @param rx 武器のの縦軸角度
 //! @param size 描画サイズ
 //! @note rotation・・　true：現在持っている武器です。　false：予備の武器です。（rx は無視されます）
 //! @todo 位置やサイズの微調整
-void D3DGraphics::SetWorldTransformPlayerWeapon(bool rotation, float camera_x, float camera_y, float camera_z, float camera_rx, float camera_ry, float rx, float size)
+void D3DGraphics::SetWorldTransformPlayerWeapon(bool rotation, float camera_rx, float camera_ry, float rx, float size)
 {
-	size = size * 0.3f;
+	float screenX, screenY, screenZ;
+	double modelview[16];
+	double projection[16];
+	int viewport[4];
+	double objX, objY, objZ;
+
+	if( rotation == true ){
+		screenX = HUD_myweapon_x[0];
+		screenY = SCREEN_HEIGHT - HUD_myweapon_y[0];
+		screenZ = HUD_myweapon_z[0];
+	}
+	else{
+		screenX = HUD_myweapon_x[1];
+		screenY = SCREEN_HEIGHT - HUD_myweapon_y[1];
+		screenZ = HUD_myweapon_z[1];
+	}
 
 	ResetWorldTransform();
 
 	glMatrixMode(GL_MODELVIEW);
 
-	glTranslatef(camera_x*-1, camera_y, camera_z);
+	//モデルビュー行列・透視投影行列・ビューポートを取得
+	glGetDoublev(GL_MODELVIEW_MATRIX, modelview);
+	glGetDoublev(GL_PROJECTION_MATRIX, projection);
+	glGetIntegerv(GL_VIEWPORT, viewport);
+
+	//スクリーン座標からオブジェクト座標を求める
+	gluUnProject(screenX, screenY, screenZ, modelview, projection, viewport, &objX, &objY, &objZ);
+
+	//size = size * 0.3f;
+	size = size * (0.0004f*SCREEN_HEIGHT*SCREEN_HEIGHT - 0.92f*SCREEN_HEIGHT + 650.0f) / 1000.f;
+
+	//行列計算
+	glTranslated(objX, objY, objZ);
 	glRotatef(camera_rx*(180.0f/(float)M_PI), 0.0f, 1.0f, 0.0f);
 	glRotatef(camera_ry*-1*(180.0f/(float)M_PI), 0.0f, 0.0f, 1.0f);
-
 	if( rotation == true ){
-		glTranslatef(HUD_myweapon_x[0]*-1, HUD_myweapon_y[0], HUD_myweapon_z[0]);
 		glRotatef(rx*-1*(180.0f/(float)M_PI), 0.0f, 1.0f, 0.0f);
 	}
 	else{
-		glTranslatef(HUD_myweapon_x[1]*-1, HUD_myweapon_y[1], HUD_myweapon_z[1]);
 		glRotatef(180, 0.0f, 1.0f, 0.0f);
 	}
 	glScalef(size, size, size);
@@ -2159,7 +2173,10 @@ void D3DGraphics::Draw2DMSFontText(int x, int y, char *str, int color)
 //! @param color 色
 void D3DGraphics::Draw2DMSFontTextCenter(int x, int y, int w, int h, char *str, int color)
 {
-	Draw2DMSFontText(x + (SCREEN_WIDTH/2 - (StrMaxLineLen(str)*9/2)), y, str, color);
+	//未使用引数対策
+	UNREFERENCED_PARAMETER(h);
+
+	Draw2DMSFontText(x + (w/2 - (StrMaxLineLen(str)*9/2)), y, str, color);
 }
 
 //! @brief 2D描画用設定
