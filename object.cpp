@@ -168,8 +168,6 @@ human::human(class ParameterInfo *in_Param, float x, float y, float z, float rx,
 	EnableFlag = flag;
 	rotation_y = 0.0f;
 	armrotation_y = 0.0f;
-	reaction_y = 0.0f;
-	legrotation_x = 0.0f;
 	point_dataid = dataid;
 	point_p4 = p4;
 	teamid = team;
@@ -189,33 +187,33 @@ human::human(class ParameterInfo *in_Param, float x, float y, float z, float rx,
 #endif
 	add_ry = 0.0f;
 	id_texture = -1;
-	id_upmodel = -1;
-	for(int i=0; i<TOTAL_ARMMODE; i++){
-		id_armmodel[i] = -1;
-	}
-	id_legmodel = -1;
-	for(int i=0; i<TOTAL_WALKMODE; i++){
-		id_walkmodel[i] = -1;
-	}
-	for(int i=0; i<TOTAL_RUNMODE; i++){
-		id_runmodel[i] = -1;
-	}
 
 	move_rx = 0.0f;
 	MoveFlag = 0x00;
 	MoveFlag_lt = MoveFlag;
 	scopemode = 0;
 	HitFlag = false;
-	walkcnt = 0;
-	runcnt = 0;
 	totalmove = 0.0f;
 	StateGunsightErrorRange = 0;
 	ReactionGunsightErrorRange = 0;
+
+	MotionCtrl = new HumanMotionControl;
 }
 
 //! @brief ディストラクタ
 human::~human()
-{}
+{
+	delete MotionCtrl;
+}
+
+//! @brief 設定値を管理するクラスを登録
+//! @attention 各関数を使用する前に実行すること。
+void human::SetParameterInfoClass(class ParameterInfo *in_Param)
+{
+	Param = in_Param;
+
+	MotionCtrl->SetParameterInfoClass(in_Param);
+}
 
 //! @brief 設定値を設定
 //! @param id_param 人の種類番号
@@ -240,8 +238,6 @@ void human::SetParamData(int id_param, int dataid, signed char p4, int team, boo
 		move_y_flag = false;
 		rotation_y = 0.0f;
 		armrotation_y = DegreeToRadian(-30);
-		reaction_y = 0.0f;
-		legrotation_x = rotation_x;
 
 		for(int i=0; i<TOTAL_HAVEWEAPON; i++){
 			weapon[i] = NULL;
@@ -263,6 +259,8 @@ void human::SetParamData(int id_param, int dataid, signed char p4, int team, boo
 		HitFlag = false;
 		totalmove = 0.0f;
 		Invincible = false;
+
+		MotionCtrl->Init(rotation_x);
 	}
 }
 
@@ -356,17 +354,7 @@ void human::GetMovePos(float *x, float *y, float *z)
 //! @param runmodel[] 腕のモデルの配列（配列数：TOTAL_RUNMODE）
 void human::SetModel(int upmodel, int armmodel[], int legmodel, int walkmodel[], int runmodel[])
 {
-	id_upmodel = upmodel;
-	for(int i=0; i<TOTAL_ARMMODE; i++){
-		id_armmodel[i] = armmodel[i];
-	}
-	id_legmodel = legmodel;
-	for(int i=0; i<TOTAL_WALKMODE; i++){
-		id_walkmodel[i] = walkmodel[i];
-	}
-	for(int i=0; i<TOTAL_RUNMODE; i++){
-		id_runmodel[i] = runmodel[i];
-	}
+	MotionCtrl->SetModel(upmodel, armmodel, legmodel, walkmodel, runmodel);
 }
 
 //! @brief 武器を設定
@@ -410,7 +398,11 @@ int human::PickupWeapon(class weapon *in_weapon)
 			weapon[selectweapon] = in_weapon;
 
 			//腕の角度（反動）を設定
-			reaction_y = DegreeToRadian(-20);
+			class weapon *nowweapon;
+			int id_param = 0;
+			nowweapon = weapon[selectweapon];
+			nowweapon->GetParamData(&id_param, NULL, NULL);
+			MotionCtrl->PickupWeapon(id_param);
 
 			//切り替え完了のカウント
 			selectweaponcnt = 10;
@@ -456,8 +448,19 @@ void human::ChangeWeapon(int id)
 	//スコープ表示を解除
 	SetDisableScope();
 
+	//現在装備する武器のクラスを取得
+	class weapon *nowweapon;
+	nowweapon = weapon[selectweapon];
+
 	//腕の角度（反動）を設定
-	reaction_y = DegreeToRadian(-20);
+	if( nowweapon == NULL ){	//手ぶら
+		MotionCtrl->ChangeWeapon(ID_WEAPON_NONE);
+	}
+	else{
+		int id_param = 0;
+		nowweapon->GetParamData(&id_param, NULL, NULL);
+		MotionCtrl->ChangeWeapon(id_param);
+	}
 
 	//切り替え完了のカウント
 	selectweaponcnt = 10;
@@ -565,12 +568,7 @@ bool human::ShotWeapon(int *weapon_paramid, int *GunsightErrorRange)
 	}
 
 	//腕に反動を伝える
-	if( param_id == ID_WEAPON_GRENADE ){
-		reaction_y = DegreeToRadian(20);
-	}
-	else{
-		reaction_y = DegreeToRadian(0.5f) * ParamData.reaction;
-	}
+	MotionCtrl->ShotWeapon(param_id);
 
 	//武器が無くなっていれば、装備から外した扱いに。　（手榴弾用）
 	if( weapon[selectweapon]->GetEnableFlag() == false ){
@@ -597,6 +595,14 @@ bool human::ReloadWeapon()
 
 		//スコープモードを解除
 		SetDisableScope();
+
+		//モーション実行
+		class weapon *nowweapon;
+		int id_param = 0;
+		nowweapon = weapon[selectweapon];
+		nowweapon->GetParamData(&id_param, NULL, NULL);
+		MotionCtrl->ReloadWeapon(id_param);
+
 		return true;
 	}
 	return false;
@@ -621,6 +627,9 @@ bool human::DumpWeapon()
 
 		//スコープモードを解除
 		SetDisableScope();
+
+		//モーション実行
+		MotionCtrl->DumpWeapon();
 
 		return true;
 	}
@@ -652,6 +661,10 @@ int human::ChangeShotMode()
 
 	//設定を適用
 	weapon[selectweapon]->SetParamData(ChangeWeapon, lnbs, nbs, false);
+
+	//モーション実行
+	MotionCtrl->ChangeShotMode(ChangeWeapon);
+
 	return 0;
 }
 
@@ -792,6 +805,9 @@ int human::Jump()
 	if( move_y_flag == false ){
 		if( move_y == 0.0f ){
 			move_y = HUMAN_JUMP_SPEED;
+
+			//モーション実行
+			MotionCtrl->Jump();
 			return 0;
 		}
 	}
@@ -1203,61 +1219,41 @@ void human::ControlProcess()
 	if( GetFlag(MoveFlag, MOVEFLAG_WALK) ){
 		move_rx = DegreeToRadian(0);
 		AddPosOrder(rotation_x*-1 + move_rx + (float)M_PI/2, 0.0f, HUMAN_PROGRESSWALK_ACCELERATION);
-		walkcnt += 1;
-		runcnt = 0;
 	}
 	else if( GetFlag(MoveFlag, (MOVEFLAG_FORWARD | MOVEFLAG_BACK | MOVEFLAG_LEFT | MOVEFLAG_RIGHT)) == MOVEFLAG_FORWARD ){
 		move_rx = DegreeToRadian(0);
 		AddPosOrder(rotation_x*-1 + move_rx + (float)M_PI/2, 0.0f, HUMAN_PROGRESSRUN_ACCELERATION);
-		walkcnt = 0;
-		runcnt += 1;
 	}
 	else if( GetFlag(MoveFlag, (MOVEFLAG_FORWARD | MOVEFLAG_BACK | MOVEFLAG_LEFT | MOVEFLAG_RIGHT)) == MOVEFLAG_BACK ){
 		move_rx = DegreeToRadian(180);
 		AddPosOrder(rotation_x*-1 + move_rx + (float)M_PI/2, 0.0f, HUMAN_REGRESSRUN_ACCELERATION);
-		walkcnt = 0;
-		runcnt += 1;
 	}
 	else if( GetFlag(MoveFlag, (MOVEFLAG_FORWARD | MOVEFLAG_BACK | MOVEFLAG_LEFT | MOVEFLAG_RIGHT)) == MOVEFLAG_LEFT ){
 		move_rx = DegreeToRadian(90);
 		AddPosOrder(rotation_x*-1 + move_rx + (float)M_PI/2, 0.0f, HUMAN_SIDEWAYSRUN_ACCELERATION);
-		walkcnt = 0;
-		runcnt += 1;
 	}
 	else if( GetFlag(MoveFlag, (MOVEFLAG_FORWARD | MOVEFLAG_BACK | MOVEFLAG_LEFT | MOVEFLAG_RIGHT)) == MOVEFLAG_RIGHT ){
 		move_rx = DegreeToRadian(-90);
 		AddPosOrder(rotation_x*-1 + move_rx + (float)M_PI/2, 0.0f, HUMAN_SIDEWAYSRUN_ACCELERATION);
-		walkcnt = 0;
-		runcnt += 1;
 	}
 	else if( GetFlag(MoveFlag, (MOVEFLAG_FORWARD | MOVEFLAG_BACK | MOVEFLAG_LEFT | MOVEFLAG_RIGHT)) == (MOVEFLAG_FORWARD | MOVEFLAG_LEFT) ){
 		move_rx = DegreeToRadian(45);
 		AddPosOrder(rotation_x*-1 + move_rx + (float)M_PI/2, 0.0f, HUMAN_PROGRESSRUN_SIDEWAYSRUN_ACCELERATION);
-		walkcnt = 0;
-		runcnt += 1;
 	}
 	else if( GetFlag(MoveFlag, (MOVEFLAG_FORWARD | MOVEFLAG_BACK | MOVEFLAG_LEFT | MOVEFLAG_RIGHT)) == (MOVEFLAG_BACK | MOVEFLAG_LEFT) ){
 		move_rx = DegreeToRadian(135);
 		AddPosOrder(rotation_x*-1 + move_rx + (float)M_PI/2, 0.0f, HUMAN_REGRESSRUN_SIDEWAYSRUN_ACCELERATION);
-		walkcnt = 0;
-		runcnt += 1;
 	}
 	else if( GetFlag(MoveFlag, (MOVEFLAG_FORWARD | MOVEFLAG_BACK | MOVEFLAG_LEFT | MOVEFLAG_RIGHT)) == (MOVEFLAG_BACK | MOVEFLAG_RIGHT) ){
 		move_rx = DegreeToRadian(-135);
 		AddPosOrder(rotation_x*-1 + move_rx + (float)M_PI/2, 0.0f, HUMAN_REGRESSRUN_SIDEWAYSRUN_ACCELERATION);
-		walkcnt = 0;
-		runcnt += 1;
 	}
 	else if( GetFlag(MoveFlag, (MOVEFLAG_FORWARD | MOVEFLAG_BACK | MOVEFLAG_LEFT | MOVEFLAG_RIGHT)) == (MOVEFLAG_FORWARD | MOVEFLAG_RIGHT) ){
 		move_rx = DegreeToRadian(-45);
 		AddPosOrder(rotation_x*-1 + move_rx + (float)M_PI/2, 0.0f, HUMAN_PROGRESSRUN_SIDEWAYSRUN_ACCELERATION);
-		walkcnt = 0;
-		runcnt += 1;
 	}
 	else{
 		move_rx = 0.0f;
-		walkcnt = 0;
-		runcnt = 0;
 	}
 
 	//フラグをバックアップ
@@ -1534,9 +1530,10 @@ bool human::MapCollisionDetection(class Collision *CollD, class BlockDataInterfa
 //! @param CollD Collisionのポインタ
 //! @param inblockdata BlockDataInterfaceのポインタ
 //! @param AddCollisionFlag 追加の当たり判定フラグ
+//! @param player 対象の人物がプレイヤーかどうか
 //! @param F5mode 上昇機能（F5裏技）のフラグ　（有効：true　無効：false）
 //! @return 処理なし：0　通常処理：1　死亡して倒れ終わった直後：2　静止した死体：3
-int human::RunFrame(class Collision *CollD, class BlockDataInterface *inblockdata, bool AddCollisionFlag, bool F5mode)
+int human::RunFrame(class Collision *CollD, class BlockDataInterface *inblockdata, bool AddCollisionFlag, bool player, bool F5mode)
 {
 	if( CollD == NULL ){ return 0; }
 	if( EnableFlag == false ){ return 0; }
@@ -1551,6 +1548,7 @@ int human::RunFrame(class Collision *CollD, class BlockDataInterface *inblockdat
 	}
 #endif
 
+	int WeaponReloadCnt;
 	float FallDistance;
 	float nowmove_x, nowmove_z;
 	int CheckDead;
@@ -1560,42 +1558,12 @@ int human::RunFrame(class Collision *CollD, class BlockDataInterface *inblockdat
 		selectweaponcnt -= 1;
 	}
 
-	//発砲による反動
-	if( reaction_y > 0.0f ){
-		if( reaction_y > DegreeToRadian(2) ){ reaction_y -= DegreeToRadian(2); }
-		else{ reaction_y = 0.0f; }
-	}
-	if( reaction_y < 0.0f ){
-		if( reaction_y < DegreeToRadian(2) ){ reaction_y += DegreeToRadian(2); }
-		else{ reaction_y = 0.0f; }
-	}
-
-	//リロード中なら腕の角度を再設定
+	//リロードカウント取得
 	if( weapon[selectweapon] != NULL ){
-		if( weapon[selectweapon]->GetReloadCnt() > 0 ){
-			reaction_y = ARMRAD_RELOADWEAPON;
-		}
-	}
-
-	//足の角度を算出
-	if( hp <= 0 ){
-		legrotation_x = rotation_x;
+		WeaponReloadCnt = weapon[selectweapon]->GetReloadCnt();
 	}
 	else{
-		float move_rx2;
-
-		//足の向きを求める
-		if( fabs(move_rx) > DegreeToRadian(90)){
-			move_rx2 = move_rx + (float)M_PI;
-		}
-		else{
-			move_rx2 = move_rx;
-		}
-		for(; move_rx2 > (float)M_PI; move_rx2 -= (float)M_PI*2){}
-		for(; move_rx2 < (float)M_PI*-1; move_rx2 += (float)M_PI*2){}
-
-		//徐々にその向きに
-		legrotation_x = legrotation_x*0.85f + (rotation_x + move_rx2*-1)*0.15f;		// 3/4 + 1/4
+		WeaponReloadCnt = 0;
 	}
 
 	//照準の状態誤差の処理
@@ -1604,43 +1572,61 @@ int human::RunFrame(class Collision *CollD, class BlockDataInterface *inblockdat
 	//死亡判定と倒れる処理
 	CheckDead = CheckAndProcessDead(CollD);
 	if( CheckDead == 3 ){ return 2; }
+
+	if( CheckDead == 0 ){
+		//進行方向と速度を決定
+		ControlProcess();
+
+		//マップとの当たり判定
+		MapCollisionDetection(CollD, inblockdata, AddCollisionFlag, &FallDistance, &nowmove_x, &nowmove_z);
+
+		//移動するなら
+		if( (nowmove_x*nowmove_x + nowmove_z*nowmove_z) > 0.0f * 0.0f ){
+			totalmove += sqrt(nowmove_x*nowmove_x + nowmove_z*nowmove_z);
+		}
+
+		//座標移動
+		pos_x += nowmove_x;
+		pos_z += nowmove_z;
+
+		//移動量を減衰
+		move_x *= HUMAN_ATTENUATION;
+		move_z *= HUMAN_ATTENUATION;
+
+		//F5を使用していなければ、計算結果を反映
+		if( F5mode == false ){
+			pos_y += FallDistance;
+		}
+		else{
+			move_y = 0.0f;
+			pos_y += 5.0f;	//使用していれば、強制的に上昇
+		}
+
+
+		//-100.0より下に落ちたら、死亡
+		if( pos_y < HUMAN_DEADLINE ){
+			pos_y = HUMAN_DEADLINE;
+			hp = 0;
+		}
+	}
+
+
+	//現在装備する武器のクラスを取得
+	class weapon *nowweapon;
+	int weapon_paramid;
+	nowweapon = weapon[selectweapon];
+
+	if( nowweapon == NULL ){		//手ぶら
+		weapon_paramid = ID_WEAPON_NONE;
+	}
+	else{							//何か武器を持っている
+		nowweapon->GetParamData(&weapon_paramid, NULL, NULL);
+	}
+
+	//モーション計算
+	MotionCtrl->RunFrame(rotation_x, armrotation_y, weapon_paramid, WeaponReloadCnt, MoveFlag_lt, hp, player);
+
 	if( CheckDead != 0 ){ return 3; }
-
-	//進行方向と速度を決定
-	ControlProcess();
-
-	//マップとの当たり判定
-	MapCollisionDetection(CollD, inblockdata, AddCollisionFlag, &FallDistance, &nowmove_x, &nowmove_z);
-
-	//移動するなら
-	if( (nowmove_x*nowmove_x + nowmove_z*nowmove_z) > 0.0f * 0.0f ){
-		totalmove += sqrt(nowmove_x*nowmove_x + nowmove_z*nowmove_z);
-	}
-
-	//座標移動
-	pos_x += nowmove_x;
-	pos_z += nowmove_z;
-
-	//移動量を減衰
-	move_x *= HUMAN_ATTENUATION;
-	move_z *= HUMAN_ATTENUATION;
-
-	//F5を使用していなければ、計算結果を反映
-	if( F5mode == false ){
-		pos_y += FallDistance;
-	}
-	else{
-		move_y = 0.0f;
-		pos_y += 5.0f;	//使用していれば、強制的に上昇
-	}
-
-
-	//-100.0より下に落ちたら、死亡
-	if( pos_y < HUMAN_DEADLINE ){
-		pos_y = HUMAN_DEADLINE;
-		hp = 0;
-	}
-
 	return 1;
 }
 
@@ -1659,42 +1645,31 @@ int human::GetGunsightErrorRange()
 //! @todo 死体の部位の高さ（Y軸）がおかしい
 void human::Render(class D3DGraphics *d3dg, class ResourceManager *Resource, bool DrawArm, bool player)
 {
+	//未使用引数対策
+	UNREFERENCED_PARAMETER(player);
+
 	//正しく初期化されていなければ、処理しない
 	if( d3dg == NULL ){ return; }
 	if( EnableFlag == false ){ return; }
 
+	//モーション取得
+	int upmodel, armmodel, legmodel;
+	float armry, legrx;
+	MotionCtrl->GetRenderMotion(&armry, &legrx, &upmodel, &armmodel, &legmodel);
+
+	if( DrawArm == false ){
+		//上半身を描画
+		d3dg->SetWorldTransform(pos_x, pos_y - 1.0f, pos_z, rotation_x + (float)M_PI, rotation_y, upmodel_size);
+		d3dg->RenderModel(upmodel, id_texture);
+
+		//足を描画
+		d3dg->SetWorldTransform(pos_x, pos_y, pos_z, legrx + (float)M_PI, rotation_y, legmodel_size);
+		d3dg->RenderModel(legmodel, id_texture);
+	}
+
 	//現在装備する武器のクラスを取得
 	class weapon *nowweapon;
 	nowweapon = weapon[selectweapon];
-
-	if( DrawArm == false ){
-		int legmodelid;
-
-		//上半身を描画
-		d3dg->SetWorldTransform(pos_x, pos_y - 1.0f, pos_z, rotation_x + (float)M_PI, rotation_y, upmodel_size);
-		d3dg->RenderModel(id_upmodel, id_texture);
-
-		//足のモデルを設定
-		legmodelid = id_legmodel;	//立ち止まり
-		if( GetFlag(MoveFlag_lt, MOVEFLAG_WALK) ){
-			legmodelid = id_walkmodel[ (walkcnt/3 % TOTAL_WALKMODE) ];	//歩き
-		}
-		else{
-			if( GetFlag(MoveFlag_lt, (MOVEFLAG_LEFT | MOVEFLAG_RIGHT)) ){
-				legmodelid = id_runmodel[ (runcnt/3 % TOTAL_RUNMODE) ];		//左右走り
-			}
-			if( GetFlag(MoveFlag_lt, MOVEFLAG_FORWARD) ){
-				legmodelid = id_runmodel[ (runcnt/2 % TOTAL_RUNMODE) ];		//前走り
-			}
-			if( GetFlag(MoveFlag_lt, MOVEFLAG_BACK) ){
-				legmodelid = id_runmodel[ (runcnt/4 % TOTAL_RUNMODE) ];		//後ろ走り
-			}
-		}
-
-		//足を描画
-		d3dg->SetWorldTransform(pos_x, pos_y, pos_z, legrotation_x + (float)M_PI, rotation_y, legmodel_size);
-		d3dg->RenderModel(legmodelid, id_texture);
-	}
 
 	//腕を描画
 	if( rotation_y != 0.0f ){		//死亡して倒れている or 倒れ始めた
@@ -1702,50 +1677,27 @@ void human::Render(class D3DGraphics *d3dg, class ResourceManager *Resource, boo
 		float y = pos_y + cos(rotation_y)*16.0f;
 		float z = pos_z + sin(rotation_x*-1 - (float)M_PI/2)*sin(rotation_y)*16.0f;
 		d3dg->SetWorldTransform(x, y, z, rotation_x + (float)M_PI, armrotation_y + rotation_y, armmodel_size);
-		d3dg->RenderModel(id_armmodel[0], id_texture);
+		d3dg->RenderModel(armmodel, id_texture);
 	}
 	else if( nowweapon == NULL ){	//手ぶら
-		float ry;
-		if( player == true ){
-			ry = ARMRAD_NOWEAPON;
-		}
-		else{
-			ry = armrotation_y;
-		}
-		d3dg->SetWorldTransform(pos_x, pos_y + 16.0f, pos_z, rotation_x + (float)M_PI, ry, armmodel_size);
-		d3dg->RenderModel(id_armmodel[0], id_texture);
+		d3dg->SetWorldTransform(pos_x, pos_y + 16.0f, pos_z, rotation_x + (float)M_PI, armry, armmodel_size);
+		d3dg->RenderModel(armmodel, id_texture);
 	}
 	else{							//何か武器を持っている
 		//武器のモデルとテクスチャを取得
 		int id_param;
-		int armmodelid = 0;
 		WeaponParameter paramdata;
 		int model, texture;
-		float ry = 0.0f;
 		nowweapon->GetParamData(&id_param, NULL, NULL);
 		Param->GetWeapon(id_param, &paramdata);
 		Resource->GetWeaponModelTexture(id_param, &model, &texture);
 
-		//腕の形と角度を決定
-		if( paramdata.WeaponP == 0 ){
-			armmodelid = 1;
-			ry = armrotation_y + reaction_y;
-		}
-		if( paramdata.WeaponP == 1 ){
-			armmodelid = 2;
-			ry = armrotation_y + reaction_y;
-		}
-		if( paramdata.WeaponP == 2 ){
-			armmodelid = 0;
-			ry = ARMRAD_NOWEAPON;
-		}
-
 		//腕を描画
-		d3dg->SetWorldTransform(pos_x, pos_y + 16.0f, pos_z, rotation_x + (float)M_PI, ry, armmodel_size);
-		d3dg->RenderModel(id_armmodel[armmodelid], id_texture);
+		d3dg->SetWorldTransform(pos_x, pos_y + 16.0f, pos_z, rotation_x + (float)M_PI, armry, armmodel_size);
+		d3dg->RenderModel(armmodel, id_texture);
 
 		//武器を描画
-		d3dg->SetWorldTransformHumanWeapon(pos_x, pos_y + 16.0f, pos_z, paramdata.mx/10*-1, paramdata.my/10, paramdata.mz/10*-1, rotation_x + (float)M_PI, ry, paramdata.size);
+		d3dg->SetWorldTransformHumanWeapon(pos_x, pos_y + 16.0f, pos_z, paramdata.mx/10*-1, paramdata.my/10, paramdata.mz/10*-1, rotation_x + (float)M_PI, armry, paramdata.size);
 		d3dg->RenderModel(model, texture);
 	}
 }
@@ -2759,4 +2711,296 @@ void effect::Render(class D3DGraphics *d3dg)
 	//描画
 	d3dg->SetWorldTransformEffect(pos_x, pos_y, pos_z, rotation_x, rotation_y, rotation_texture, model_size);
 	d3dg->RenderBoard(id_texture, alpha);
+}
+
+//! @brief コンストラクタ
+HumanMotionControl::HumanMotionControl(class ParameterInfo *in_Param)
+{
+	Param = in_Param;
+
+	id_upmodel = -1;
+	for(int i=0; i<TOTAL_ARMMODE; i++){
+		id_armmodel[i] = -1;
+	}
+	id_legmodel = -1;
+	for(int i=0; i<TOTAL_WALKMODE; i++){
+		id_walkmodel[i] = -1;
+	}
+	for(int i=0; i<TOTAL_RUNMODE; i++){
+		id_runmodel[i] = -1;
+	}
+
+	reaction_y = 0.0f;
+	armmodel_rotation_y = 0.0f;
+	legrotation_x = 0.0f;
+	walkcnt = 0;
+	runcnt = 0;
+}
+
+//! @brief ディストラクタ
+HumanMotionControl::~HumanMotionControl()
+{}
+
+//! @brief 設定値を管理するクラスを登録
+//! @attention 各関数を使用する前に実行すること。
+void HumanMotionControl::SetParameterInfoClass(class ParameterInfo *in_Param)
+{
+	Param = in_Param;
+}
+
+//! @brief モデルデータを設定
+//! @param upmodel 上半身のモデル
+//! @param armmodel[] 腕のモデルの配列（配列数：TOTAL_ARMMODE）
+//! @param legmodel 足（静止状態）のモデル
+//! @param walkmodel[] 腕のモデルの配列（配列数：TOTAL_WALKMODE）
+//! @param runmodel[] 腕のモデルの配列（配列数：TOTAL_RUNMODE）
+void HumanMotionControl::SetModel(int upmodel, int armmodel[], int legmodel, int walkmodel[], int runmodel[])
+{
+	id_upmodel = upmodel;
+	for(int i=0; i<TOTAL_ARMMODE; i++){
+		id_armmodel[i] = armmodel[i];
+	}
+	id_legmodel = legmodel;
+	for(int i=0; i<TOTAL_WALKMODE; i++){
+		id_walkmodel[i] = walkmodel[i];
+	}
+	for(int i=0; i<TOTAL_RUNMODE; i++){
+		id_runmodel[i] = runmodel[i];
+	}
+}
+
+//! @brief 初期化系関数
+//! @param rx 回転角度
+void HumanMotionControl::Init(float rx)
+{
+	reaction_y = 0.0f;
+	armmodel_rotation_y = 0.0f;
+	legrotation_x = rx;
+	walkcnt = 0;
+	runcnt = 0;
+}
+
+//! @brief 武器を拾う
+//! @param weapon_paramid 武器の種類番号
+void HumanMotionControl::PickupWeapon(int weapon_paramid)
+{
+	//未使用引数対策
+	UNREFERENCED_PARAMETER(weapon_paramid);
+
+	//腕の角度（反動）を設定
+	reaction_y = DegreeToRadian(-20);
+}
+
+//! @brief 武器を切り替える（持ち替える）
+//! @param weapon_paramid 武器の種類番号
+void HumanMotionControl::ChangeWeapon(int weapon_paramid)
+{
+	//未使用引数対策
+	UNREFERENCED_PARAMETER(weapon_paramid);
+
+	//腕の角度（反動）を設定
+	reaction_y = DegreeToRadian(-20);
+}
+
+//! @brief 発砲処理
+//! @param weapon_paramid 武器の種類番号
+void HumanMotionControl::ShotWeapon(int weapon_paramid)
+{
+	//腕に反動を伝える
+	if( weapon_paramid == ID_WEAPON_GRENADE ){
+		reaction_y = DegreeToRadian(20);
+	}
+	else{
+		//武器の設定値を取得
+		WeaponParameter ParamData;
+		if( Param->GetWeapon(weapon_paramid, &ParamData) != 0 ){ return; }
+
+		reaction_y = DegreeToRadian(0.5f) * ParamData.reaction;
+	}
+}
+
+//! @brief リロード
+//! @param weapon_paramid 武器の種類番号
+//! @attention この関数は拡張用のダミー関数です。
+void HumanMotionControl::ReloadWeapon(int weapon_paramid)
+{
+	//未使用引数対策
+	UNREFERENCED_PARAMETER(weapon_paramid);
+}
+
+//! @brief 武器を捨てる
+//! @attention この関数は拡張用のダミー関数です。
+void HumanMotionControl::DumpWeapon()
+{
+	//
+}
+
+//! @brief 武器のショットモード切り替え
+//! @param weapon_paramid 武器の種類番号
+//! @attention この関数は拡張用のダミー関数です。
+void HumanMotionControl::ChangeShotMode(int weapon_paramid)
+{
+	//未使用引数対策
+	UNREFERENCED_PARAMETER(weapon_paramid);
+}
+
+//! @brief ジャンプ
+//! @attention この関数は拡張用のダミー関数です。
+void HumanMotionControl::Jump()
+{
+	//
+}
+
+//! @brief モーション計算を実行
+//! @attention rotation_x 体全体の回転角度
+//! @attention armrotation_y 腕の回転角度
+//! @attention weapon_paramid 武器の種類番号
+//! @attention ReloadCnt 武器のリロードカウント
+//! @attention MoveFlag 移動方向を表すフラグ
+//! @attention hp 体力
+//! @attention PlayerFlag プレイヤーかどうか
+void HumanMotionControl::RunFrame(float rotation_x, float armrotation_y, int weapon_paramid, int ReloadCnt, int MoveFlag, int hp, bool PlayerFlag)
+{
+	int ArmModelID;
+	float move_rx;
+
+	//発砲などによる反動
+	if( reaction_y > 0.0f ){
+		if( reaction_y > DegreeToRadian(2) ){ reaction_y -= DegreeToRadian(2); }
+		else{ reaction_y = 0.0f; }
+	}
+	if( reaction_y < 0.0f ){
+		if( reaction_y < DegreeToRadian(2) ){ reaction_y += DegreeToRadian(2); }
+		else{ reaction_y = 0.0f; }
+	}
+
+	//リロード中なら腕の角度を再設定
+	if( ReloadCnt > 0 ){
+		reaction_y = ARMRAD_RELOADWEAPON;
+	}
+
+	if( weapon_paramid == ID_WEAPON_NONE ){	//手ぶら
+		if( PlayerFlag == true ){
+			armmodel_rotation_y = ARMRAD_NOWEAPON;
+		}
+		else{
+			armmodel_rotation_y = armrotation_y;
+		}
+		ArmModelID = 0;
+	}
+	else{							//何か武器を持っている
+		//武器の情報を取得
+		WeaponParameter paramdata;
+		Param->GetWeapon(weapon_paramid, &paramdata);
+
+		armmodel_rotation_y = 0.0f;
+		ArmModelID = 0;
+
+		//腕の形と角度を決定
+		if( paramdata.WeaponP == 0 ){
+			armmodel_rotation_y = armrotation_y + reaction_y;
+			ArmModelID = 1;
+		}
+		if( paramdata.WeaponP == 1 ){
+			armmodel_rotation_y = armrotation_y + reaction_y;
+			ArmModelID = 2;
+		}
+		if( paramdata.WeaponP == 2 ){
+			armmodel_rotation_y = ARMRAD_NOWEAPON;
+			ArmModelID = 0;
+		}
+	}
+
+	//進行方向を決定
+	if( GetFlag(MoveFlag, MOVEFLAG_WALK) ){
+		move_rx = DegreeToRadian(0);
+	}
+	else if( GetFlag(MoveFlag, (MOVEFLAG_FORWARD | MOVEFLAG_BACK | MOVEFLAG_LEFT | MOVEFLAG_RIGHT)) == MOVEFLAG_FORWARD ){
+		move_rx = DegreeToRadian(0);
+	}
+	else if( GetFlag(MoveFlag, (MOVEFLAG_FORWARD | MOVEFLAG_BACK | MOVEFLAG_LEFT | MOVEFLAG_RIGHT)) == MOVEFLAG_BACK ){
+		move_rx = DegreeToRadian(180);
+	}
+	else if( GetFlag(MoveFlag, (MOVEFLAG_FORWARD | MOVEFLAG_BACK | MOVEFLAG_LEFT | MOVEFLAG_RIGHT)) == MOVEFLAG_LEFT ){
+		move_rx = DegreeToRadian(90);
+	}
+	else if( GetFlag(MoveFlag, (MOVEFLAG_FORWARD | MOVEFLAG_BACK | MOVEFLAG_LEFT | MOVEFLAG_RIGHT)) == MOVEFLAG_RIGHT ){
+		move_rx = DegreeToRadian(-90);
+	}
+	else if( GetFlag(MoveFlag, (MOVEFLAG_FORWARD | MOVEFLAG_BACK | MOVEFLAG_LEFT | MOVEFLAG_RIGHT)) == (MOVEFLAG_FORWARD | MOVEFLAG_LEFT) ){
+		move_rx = DegreeToRadian(45);
+	}
+	else if( GetFlag(MoveFlag, (MOVEFLAG_FORWARD | MOVEFLAG_BACK | MOVEFLAG_LEFT | MOVEFLAG_RIGHT)) == (MOVEFLAG_BACK | MOVEFLAG_LEFT) ){
+		move_rx = DegreeToRadian(135);
+	}
+	else if( GetFlag(MoveFlag, (MOVEFLAG_FORWARD | MOVEFLAG_BACK | MOVEFLAG_LEFT | MOVEFLAG_RIGHT)) == (MOVEFLAG_BACK | MOVEFLAG_RIGHT) ){
+		move_rx = DegreeToRadian(-135);
+	}
+	else if( GetFlag(MoveFlag, (MOVEFLAG_FORWARD | MOVEFLAG_BACK | MOVEFLAG_LEFT | MOVEFLAG_RIGHT)) == (MOVEFLAG_FORWARD | MOVEFLAG_RIGHT) ){
+		move_rx = DegreeToRadian(-45);
+	}
+	else{
+		move_rx = 0.0f;
+	}
+
+	//足の角度を算出
+	if( hp <= 0 ){
+		legrotation_x = rotation_x;
+	}
+	else{
+		float move_rx2;
+
+		//足の向きを求める
+		if( fabs(move_rx) > DegreeToRadian(90)){
+			move_rx2 = move_rx + (float)M_PI;
+		}
+		else{
+			move_rx2 = move_rx;
+		}
+		for(; move_rx2 > (float)M_PI; move_rx2 -= (float)M_PI*2){}
+		for(; move_rx2 < (float)M_PI*-1; move_rx2 += (float)M_PI*2){}
+
+		//徐々にその向きに
+		legrotation_x = legrotation_x*0.85f + (rotation_x + move_rx2*-1)*0.15f;		// 3/4 + 1/4
+	}
+
+	//腕のモデル設定
+	armmodelid = id_armmodel[ArmModelID];
+
+	//足のモデル設定
+	legmodelid = id_legmodel;	//立ち止まり
+	if( GetFlag(MoveFlag, MOVEFLAG_WALK) ){
+		legmodelid = id_walkmodel[ (walkcnt/3 % TOTAL_WALKMODE) ];	//歩き
+		walkcnt += 1;
+		runcnt = 0;
+	}
+	else{
+		if( GetFlag(MoveFlag, (MOVEFLAG_LEFT | MOVEFLAG_RIGHT)) ){
+			legmodelid = id_runmodel[ (runcnt/3 % TOTAL_RUNMODE) ];		//左右走り
+		}
+		if( GetFlag(MoveFlag, MOVEFLAG_FORWARD) ){
+			legmodelid = id_runmodel[ (runcnt/2 % TOTAL_RUNMODE) ];		//前走り
+		}
+		if( GetFlag(MoveFlag, MOVEFLAG_BACK) ){
+			legmodelid = id_runmodel[ (runcnt/4 % TOTAL_RUNMODE) ];		//後ろ走り
+		}
+		walkcnt = 0;
+		runcnt += 1;
+	}
+}
+
+//! @brief モーション取得
+//! @param arm_rotation_y 腕の角度を取得するポインタ
+//! @param leg_rotation_x 足の角度を取得するポインタ
+//! @param upmodel 上半身のモデル認識番号を取得するポインタ
+//! @param armmodel 腕のモデル認識番号を取得するポインタ
+//! @param legmodel 足のモデル認識番号を取得するポインタ
+void HumanMotionControl::GetRenderMotion(float *arm_rotation_y, float *leg_rotation_x, int *upmodel, int *armmodel, int *legmodel)
+{
+	*arm_rotation_y = armmodel_rotation_y;
+	*leg_rotation_x = legrotation_x;
+
+	*upmodel = id_upmodel;
+	*armmodel = armmodelid;
+	*legmodel = legmodelid;
 }

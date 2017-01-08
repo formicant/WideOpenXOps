@@ -129,10 +129,8 @@ protected:
 	float move_y;			//!< Y軸（落下）速度
 	float move_z;			//!< Z軸速度
 	bool move_y_flag;		//!< Y軸移動フラグ
-	float rotation_y;	//!< 全体の回転角度
+	float rotation_y;		//!< 全体の回転角度
 	float armrotation_y;	//!< 腕の回転角度
-	float reaction_y;		//!< 腕を上げ下げする角度
-	float legrotation_x;	//!< 足の回転角度
 	float upmodel_size;		//!< 上半身描画サイズ
 	float armmodel_size;	//!< 腕描画サイズ
 	float legmodel_size;	//!< 足描画サイズ
@@ -141,25 +139,20 @@ protected:
 	int selectweaponcnt;		//!< 武器の切り替えカウント
 	int hp;						//!< 体力
 #ifdef HUMAN_DEADBODY_COLLISION
-	int deadstate;					//!< 死体になっているか
+	int deadstate;				//!< 死体になっているか
 #endif
-	float add_ry;					//!< 死体の倒れる加速度
-	int id_upmodel;							//!< 上半身
-	int id_armmodel[TOTAL_ARMMODE];			//!< 腕
-	int id_legmodel;						//!< 足（静止）
-	int id_walkmodel[TOTAL_WALKMODE];		//!< 足（歩く）
-	int id_runmodel[TOTAL_RUNMODE];			//!< 足（走る）
-	float move_rx;		//!< 移動角度
-	int MoveFlag;		//!< 移動方向を表すフラグ
-	int MoveFlag_lt;	//!< （前回の）移動方向を表すフラグ
-	int scopemode;		//!< スコープ使用モード
-	bool HitFlag;		//!< 被弾を表すフラグ
-	int walkcnt;		//!< 歩くモーションのカウント
-	int runcnt;			//!< 走るモーションのカウント
-	float totalmove;	//!< 合計移動量
+	float add_ry;				//!< 死体の倒れる加速度
+	float move_rx;				//!< 移動角度
+	int MoveFlag;				//!< 移動方向を表すフラグ
+	int MoveFlag_lt;			//!< （前回の）移動方向を表すフラグ
+	int scopemode;				//!< スコープ使用モード
+	bool HitFlag;				//!< 被弾を表すフラグ
+	float totalmove;			//!< 合計移動量
 	int StateGunsightErrorRange;		//!< 照準の状態誤差
 	int ReactionGunsightErrorRange;		//!< 照準の反動誤差
-	bool Invincible;	//!< 無敵フラグ
+	bool Invincible;			//!< 無敵フラグ
+
+	class HumanMotionControl *MotionCtrl;	//!< モーションを制御するクラスへのポインタ
 
 	void GunsightErrorRange();
 	int CheckAndProcessDead(class Collision *CollD);
@@ -169,6 +162,7 @@ protected:
 public:
 	human(class ParameterInfo *in_Param = NULL, float x = 0.0f, float y = 0.0f, float z = 0.0f, float rx = 0.0f, int id_param = -1, int dataid = 0, signed char p4 = 0, int team = 0, bool flag = false);
 	~human();
+	virtual void SetParameterInfoClass(class ParameterInfo *in_Param);
 	virtual void SetParamData(int id_param, int dataid, signed char p4, int team, bool init);
 	virtual void GetParamData(int *id_param, int *dataid, signed char *p4, int *team);
 	virtual void GetMovePos(float *x, float *y, float *z);
@@ -212,7 +206,7 @@ public:
 	virtual void SetHitFlag();
 	virtual bool CheckHit();
 	virtual float GetTotalMove();
-	virtual int RunFrame(class Collision *CollD, class BlockDataInterface *inblockdata, bool AddCollisionFlag, bool F5mode);
+	virtual int RunFrame(class Collision *CollD, class BlockDataInterface *inblockdata, bool AddCollisionFlag, bool player, bool F5mode);
 	virtual int GetGunsightErrorRange();
 	virtual void Render(class D3DGraphics *d3dg, class ResourceManager *Resource, bool DrawArm, bool player);
 };
@@ -343,6 +337,42 @@ public:
 	virtual bool GetCollideMapFlag();
 	virtual int RunFrame(float camera_rx, float camera_ry);
 	virtual void Render(class D3DGraphics *d3dg);
+};
+
+//! @brief 人モーション制御クラス
+//! @details 人のモーション（アニメーション）制御を行うクラスです。humanクラス内で使用します。
+//! @attention 本クラスに人が死亡した際の倒れるモーションは実装されていません。
+class HumanMotionControl
+{
+	class ParameterInfo *Param;				//!< 設定値を管理するクラスへのポインタ
+	int id_upmodel;							//!< 上半身
+	int id_armmodel[TOTAL_ARMMODE];			//!< 腕
+	int id_legmodel;						//!< 足（静止）
+	int id_walkmodel[TOTAL_WALKMODE];		//!< 足（歩く）
+	int id_runmodel[TOTAL_RUNMODE];			//!< 足（走る）
+	float reaction_y;				//!< 腕を上げ下げする相対角度
+	float armmodel_rotation_y;		//!< 腕の回転角度
+	float legrotation_x;			//!< 足の回転角度
+	int walkcnt;					//!< 歩くモーションのカウント
+	int runcnt;						//!< 走るモーションのカウント
+	int armmodelid;					//!< 描画する腕のモデル
+	int legmodelid;					//!< 描画する足のモデル
+
+public:
+	HumanMotionControl(class ParameterInfo *in_Param = NULL);
+	~HumanMotionControl();
+	void SetParameterInfoClass(class ParameterInfo *in_Param);
+	void SetModel(int upmodel, int armmodel[], int legmodel, int walkmodel[], int runmodel[]);
+	void Init(float rx);
+	void PickupWeapon(int weapon_paramid);
+	void ChangeWeapon(int weapon_paramid);
+	void ShotWeapon(int weapon_paramid);
+	void ReloadWeapon(int weapon_paramid);
+	void DumpWeapon();
+	void ChangeShotMode(int weapon_paramid);
+	void Jump();
+	void RunFrame(float rotation_x, float armrotation_y, int weapon_paramid, int ReloadCnt, int MoveFlag, int hp, bool PlayerFlag);
+	void GetRenderMotion(float *arm_rotation_y, float *leg_rotation_x, int *upmodel, int *armmodel, int *legmodel);
 };
 
 //! 人の足の状態を示す定数

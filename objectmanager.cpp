@@ -2432,7 +2432,15 @@ int ObjectManager::Process(int cmdF5id, bool demomode, float camera_rx, float ca
 
 	//人オブジェクトの処理
 	for(int i=0; i<MAX_HUMAN; i++){
-		bool cmdF5;
+		bool cmdF5, player;
+
+		//プレイヤーかどうか判定
+		if( Player_HumanID == i ){
+			player = true;
+		}
+		else{
+			player = false;
+		}
 
 		if( i == cmdF5id ){
 			cmdF5 = true;
@@ -2441,7 +2449,7 @@ int ObjectManager::Process(int cmdF5id, bool demomode, float camera_rx, float ca
 			cmdF5 = false;
 		}
 
-		if( HumanIndex[i].RunFrame(CollD, BlockData, AddCollisionFlag, cmdF5) == 2 ){
+		if( HumanIndex[i].RunFrame(CollD, BlockData, AddCollisionFlag, player, cmdF5) == 2 ){
 			//死亡時のエフェクト
 			DeadEffect(&(HumanIndex[i]));
 		}
