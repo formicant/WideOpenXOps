@@ -1506,10 +1506,6 @@ bool AIcontrol::CautionMain()
 		soundlists = 0;
 	}
 
-	//‰ñ“]‚Æ˜r‚ÌŠp“x
-	TurnSeen();
-	ArmAngle();
-
 	//ƒƒCƒ“ˆ—
 	if( enemyhuman != NULL ){		//Šù‚É“G‚ğŒ©‚Â‚¯‚Ä‚¢‚ê‚Î
 		newbattlemode = AI_ACTION;
@@ -1555,6 +1551,10 @@ bool AIcontrol::CautionMain()
 			cautioncnt = 0;
 		}
 	}
+
+	//‰ñ“]‚Æ˜r‚ÌŠp“x
+	TurnSeen();
+	ArmAngle();
 
 	//İ’è‚ğ”»’è
 	if( battlemode != newbattlemode ){
