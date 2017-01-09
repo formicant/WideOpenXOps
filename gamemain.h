@@ -92,6 +92,11 @@ struct ConsoleData{
 //! @details オープニング画面を管理します。
 class opening : public D3Dscene
 {
+	float add_camera_x;			//!< カメラ座標 Xの増減量
+	float add_camera_y;			//!< カメラ座標 Yの増減量
+	float add_camera_z;			//!< カメラ座標 Zの増減量
+	float add_camera_rx;		//!< カメラ回転角度 RXの増減量
+	float add_camera_ry;		//!< カメラ回転角度 RYの増減量
 	//int opening_banner;		//!< オープニングで表示するテクスチャID
 	void Render3D();
 	void Render2D();

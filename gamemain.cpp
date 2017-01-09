@@ -172,7 +172,13 @@ void CleanupGame()
 
 //! @brief コンストラクタ
 opening::opening()
-{}
+{
+	add_camera_x = 0.0f;
+	add_camera_y = 0.0f;
+	add_camera_z = 0.0f;
+	add_camera_rx = 0.0f;
+	add_camera_ry = 0.0f;
+}
 
 //! @brief ディストラクタ
 opening::~opening()
@@ -225,6 +231,17 @@ int opening::Create()
 	inputCtrl->MoveMouseCenter();
 	framecnt = 0;
 
+	camera_x = -5.0f;
+	camera_y = 58.0f;
+	camera_z = 29.0f;
+	camera_rx = DegreeToRadian(206);
+	camera_ry = DegreeToRadian(12);
+	add_camera_x = 0.0f;
+	add_camera_y = 0.0f;
+	add_camera_z = 0.0f;
+	add_camera_rx = 0.0f;
+	add_camera_ry = 0.0f;
+
 	GameState->NextState();
 	return 0;
 }
@@ -272,23 +289,45 @@ void opening::Process()
 		HumanAI[i].Process();
 	}
 
-	//カメラワークを求める
-	if( framecnt < 3*((int)GAMEFPS) ){
-		camera_x = -5.0f;
-		camera_y = 58.0f;
-		camera_z = 29.0f;
-		camera_rx = DegreeToRadian(206);
-		camera_ry = DegreeToRadian(12);
+	//カメラワークを求める（座標）
+	if( framecnt < (int)(4.0f*GAMEFPS) ){
+		add_camera_z = 0.0f;
+		add_camera_y = 0.0f;
 	}
-	else if( framecnt < 5*((int)GAMEFPS) ){
-		camera_rx += DegreeToRadian(1.1f);
-		camera_ry -= DegreeToRadian(0.7f);
+	else if( framecnt < (int)(5.0f*GAMEFPS) ){
+		add_camera_z += (0.08f - add_camera_z) / 5.0f;
+		add_camera_y += (-0.05f - add_camera_y) / 5.0f;
 	}
-	else if( framecnt < 17*((int)GAMEFPS) ){
-		camera_z += 0.08f;
-		camera_y -= 0.05f;
+	else{
+		add_camera_z = 0.08f;
+		add_camera_y = -0.05f;
 	}
-	else {
+	camera_x += add_camera_x;
+	camera_y += add_camera_y;
+	camera_z += add_camera_z;
+
+	//カメラワークを求める（回転）
+	if( framecnt < (int)(2.6f*GAMEFPS) ){
+		add_camera_rx = 0.0f;
+		add_camera_ry = 0.0f;
+	}
+	else if( framecnt < (int)(3.6f*GAMEFPS) ){
+		add_camera_rx += (DegreeToRadian(0.9f) - add_camera_rx) / 5.0f;
+		add_camera_ry += (DegreeToRadian(-0.6f) - add_camera_ry) / 5.0f;
+	}
+	else if( framecnt < (int)(5.0f*GAMEFPS) ){
+		add_camera_rx = DegreeToRadian(0.9f);
+		add_camera_ry = DegreeToRadian(-0.6f);
+	}
+	else{
+		add_camera_rx *= 0.8f;
+		add_camera_ry *= 0.8f;
+	}
+	camera_rx += add_camera_rx;
+	camera_ry += add_camera_ry;
+
+	//16秒経ったら終了
+	if( framecnt >= 16*((int)GAMEFPS) ){
 		GameState->PushMouseButton();
 	}
 
@@ -353,16 +392,16 @@ void opening::Render2D()
 	}
 
 	//スタッフ名・その１
-	if( ((int)(4.0f*GAMEFPS) < framecnt)&&(framecnt < (int)(8.0f*GAMEFPS)) ){
-		float effectA = 1.0f;
-		if( framecnt < (int)(5.0f*GAMEFPS) ){ effectA = GetEffectAlpha(framecnt, 1.0f, 1.0f, 4.0f, false); }
-		if( framecnt > (int)(7.0f*GAMEFPS) ){ effectA = GetEffectAlpha(framecnt, 1.0f, 1.0f, 7.0f, true); }
-		d3dg->Draw2DTextureFontText(60, 150, "ORIGINAL", d3dg->GetColorCode(1.0f,1.0f,1.0f,effectA), 20, 20);
-	}
 	if( ((int)(4.5f*GAMEFPS) < framecnt)&&(framecnt < (int)(8.5f*GAMEFPS)) ){
 		float effectA = 1.0f;
 		if( framecnt < (int)(5.5f*GAMEFPS) ){ effectA = GetEffectAlpha(framecnt, 1.0f, 1.0f, 4.5f, false); }
 		if( framecnt > (int)(7.5f*GAMEFPS) ){ effectA = GetEffectAlpha(framecnt, 1.0f, 1.0f, 7.5f, true); }
+		d3dg->Draw2DTextureFontText(60, 150, "ORIGINAL", d3dg->GetColorCode(1.0f,1.0f,1.0f,effectA), 20, 20);
+	}
+	if( ((int)(5.0f*GAMEFPS) < framecnt)&&(framecnt < (int)(9.0f*GAMEFPS)) ){
+		float effectA = 1.0f;
+		if( framecnt < (int)(6.0f*GAMEFPS) ){ effectA = GetEffectAlpha(framecnt, 1.0f, 1.0f, 5.0f, false); }
+		if( framecnt > (int)(8.0f*GAMEFPS) ){ effectA = GetEffectAlpha(framecnt, 1.0f, 1.0f, 8.0f, true); }
 		d3dg->Draw2DTextureFontText(100, 180, "nine-two", d3dg->GetColorCode(1.0f,1.0f,1.0f,effectA), 20, 20);
 		d3dg->Draw2DTextureFontText(100, 210, "TENNKUU", d3dg->GetColorCode(1.0f,1.0f,1.0f,effectA), 20, 20);
 	}
@@ -383,13 +422,13 @@ void opening::Render2D()
 	}
 
 	//ゲーム名
-	if( (int)(12.0f*GAMEFPS) <= framecnt ){	//framecnt < (int)(17.0f*GAMEFPS)
+	if( (int)(12.0f*GAMEFPS) <= framecnt ){	//framecnt < (int)(16.0f*GAMEFPS)
 		char str[32];
 		float effectA = 1.0f;
 		sprintf(str, GAMENAME);
 		if( framecnt < (int)(13.0f*GAMEFPS) ){ effectA = GetEffectAlpha(framecnt, 1.0f, 1.0f, 12.0f, false); }
-		if( ((int)(16.0f*GAMEFPS) < framecnt)&&(framecnt < (int)(17.0f*GAMEFPS)) ){ effectA = GetEffectAlpha(framecnt, 1.0f, 1.0f, 16.0f, true); }
-		if( framecnt >= (int)(17.0f*GAMEFPS) ){ effectA = 0.0f; }
+		if( ((int)(15.0f*GAMEFPS) < framecnt)&&(framecnt < (int)(16.0f*GAMEFPS)) ){ effectA = GetEffectAlpha(framecnt, 1.0f, 1.0f, 15.0f, true); }
+		if( framecnt >= (int)(16.0f*GAMEFPS) ){ effectA = 0.0f; }
 		d3dg->Draw2DTextureFontText(SCREEN_WIDTH/2 - strlen(str)*22/2, (SCREEN_HEIGHT-11)/2, str, d3dg->GetColorCode(1.0f,0.0f,0.0f,effectA), 22, 22);
 	}
 }
@@ -512,8 +551,8 @@ int mainmenu::Create()
 		mainmenu_scrollbar_addon_scale = 0.0f;
 	}
 
-	mainmenu_scrollbar_official_y = 141;
-	mainmenu_scrollbar_addon_y = 141;
+	mainmenu_scrollbar_official_y = MAINMENU_Y+1 + (int)(mainmenu_scrollbar_official_scale*mainmenu_scrollitems_official);
+	mainmenu_scrollbar_addon_y = MAINMENU_Y+1 + (int)(mainmenu_scrollbar_addon_scale*mainmenu_scrollitems_addon);
 	mainmenu_scrollbar_flag = false;
 	inputCtrl->MoveMouseCenter();
 	framecnt = 0;
@@ -2110,19 +2149,7 @@ void maingame::Render2D()
 
 	//デバック用・ゲーム情報の表示
 	if( (ShowInfo_Debugmode == true)||(Camera_Debugmode == true) ){
-		//システムフォントによる表示　日本語可・重い
-		/*
-		sprintf(str, "OpenXOPS テスト\ncamera x:%.2f y:%.2f z:%.2f rx:%.2f ry:%.2f\n"
-			"human[%d]：x:%.2f y:%.2f z:%.2f rx:%.2f\n"
-			"I:%02dms PO:%02dms PA:%02dms PE:%02dms R:%02dms",
-			camera_x, camera_y, camera_z, camera_rx, camera_ry,
-			ObjMgr.GetPlayerID(), human_x, human_y, human_z, human_rx,
-			time_input, time_process_object, time_process_ai, time_process_event, time_render);
-		d3dg->Draw2DMSFontText(10+1, 10+1, str, d3dg->GetColorCode(0.1f,0.1f,0.1f,1.0f));
-		d3dg->Draw2DMSFontText(10, 10, str, d3dg->GetColorCode(1.0f,1.0f,1.0f,1.0f));
-		*/
-
-		//テクスチャフォントによる表示　軽い・半角英数字と記号のみ　　
+		//テクスチャフォントによる表示（半角英数字と記号のみ）
 		sprintf(str, "frame:%d   time %02d:%02d", framecnt, framecnt/(int)GAMEFPS/60, framecnt/(int)GAMEFPS%60);
 		d3dg->Draw2DTextureDebugFontText(10+1, 10+1, str, d3dg->GetColorCode(0.1f,0.1f,0.1f,1.0f));
 		d3dg->Draw2DTextureDebugFontText(10, 10, str, d3dg->GetColorCode(1.0f,1.0f,1.0f,1.0f));
