@@ -830,7 +830,7 @@ void human::AddPosOrder(float rx, float ry, float speed)
 void human::HitBulletHead(int attacks)
 {
 	if( Invincible == false ){
-		hp -= (int)((float)attacks * HUMAN_DAMAGE_HEAD);
+		hp -= (int)((float)attacks * HUMAN_DAMAGE_HEAD) + GetRand(16);
 	}
 	ReactionGunsightErrorRange = 15;
 }
@@ -840,7 +840,7 @@ void human::HitBulletHead(int attacks)
 void human::HitBulletUp(int attacks)
 {
 	if( Invincible == false ){
-		hp -= (int)((float)attacks * HUMAN_DAMAGE_UP);
+		hp -= (int)((float)attacks * HUMAN_DAMAGE_UP) + GetRand(8);
 	}
 	ReactionGunsightErrorRange = 12;
 }
@@ -850,7 +850,7 @@ void human::HitBulletUp(int attacks)
 void human::HitBulletLeg(int attacks)
 {
 	if( Invincible == false ){
-		hp -= (int)((float)attacks * HUMAN_DAMAGE_LEG);
+		hp -= (int)((float)attacks * HUMAN_DAMAGE_LEG) + GetRand(6);
 	}
 	ReactionGunsightErrorRange = 8;
 }
