@@ -588,7 +588,7 @@ int D3DGraphics::CheckFileExtension(char* filename, int nowformat)
 	char filename2[MAX_PATH];
 
 	//ファイル名を小文字へ変換（拡張子判定用）
-	for(int i=0; i<strlen(filename); i++){
+	for(int i=0; i<(int)strlen(filename); i++){
 		filename2[i] = (char)tolower(filename[i]);
 	}
 	filename2[ strlen(filename) ] = '\0';
@@ -828,7 +828,7 @@ bool D3DGraphics::LoadBMPTexture(char* filename, bool BlackTransparent, TEXTURED
 		fread(pallet, 1, 16*4, fp);
 
 		for(int h=height-1; h>=0; h--){
-			for(int w=0; w<(width/2); w++){
+			for(int w=0; w<((int)width/2); w++){
 				fread(&pixel, 1, 1, fp);
 				pixelH = (pixel >> 4)&0x0F;
 				pixelL = pixel&0x0F;
@@ -865,7 +865,7 @@ bool D3DGraphics::LoadBMPTexture(char* filename, bool BlackTransparent, TEXTURED
 		fread(pallet, 1, 256*4, fp);
 
 		for(int h=height-1; h>=0; h--){
-			for(int w=0; w<width; w++){
+			for(int w=0; w<(int)width; w++){
 				fread(&pixel, 1, 1, fp);
 
 				data[(h*width+w)*4 + 0] = pallet[pixel*4 + 2];
@@ -889,7 +889,7 @@ bool D3DGraphics::LoadBMPTexture(char* filename, bool BlackTransparent, TEXTURED
 	if( index == 24 ){
 		unsigned char pixel[3];
 		for(int h=height-1; h>=0; h--){
-			for(int w=0; w<width; w++){
+			for(int w=0; w<(int)width; w++){
 				fread(&pixel, 1, 3, fp);
 
 				data[(h*width+w)*4 + 0] = pixel[2];
@@ -911,7 +911,7 @@ bool D3DGraphics::LoadBMPTexture(char* filename, bool BlackTransparent, TEXTURED
 	if( index == 32 ){
 		unsigned char pixel[4];
 		for(int h=height-1; h>=0; h--){
-			for(int w=0; w<width; w++){
+			for(int w=0; w<(int)width; w++){
 				fread(&pixel, 1, 4, fp);
 
 				data[(h*width+w)*4 + 0] = pixel[2];
@@ -955,6 +955,7 @@ bool D3DGraphics::LoadDDSTexture(char* filename, bool BlackTransparent, TEXTURED
 	unsigned int width, height;
 	unsigned int index;
 	unsigned int flag;
+	unsigned int Caps;
 
 	//ファイルを読み込む
 	fp = fopen(filename, "rb");
@@ -974,16 +975,23 @@ bool D3DGraphics::LoadDDSTexture(char* filename, bool BlackTransparent, TEXTURED
 	width = *(int*)&(header[0x10]);
 	height = *(int*)&(header[0x0C]);
 	index = *(int*)&(header[0x58]);
+	flag = *(int*)&(header[0x08]);
+	Caps = *(int*)&(header[0x70]);
 
 	if( (index != 16)&&(index != 32) ){
 		fclose(fp);
 		return false;		//対応してないフォーマット
 	}
 
+	if( (flag & 0x00020000)&&(Caps & 0x00400000) ){		//DDSD_MIPMAPCOUNT・DDSCAPS_MIPMAP
+		//ミップマップ情報読み込み（ダミー）
+		fread(header, 1, 128, fp);
+	}
+
 	unsigned char *data = new unsigned char [width*height*4];
 
-	for(int h=0; h<height; h++){
-		for(int w=0; w<width; w++){
+	for(int h=0; h<(int)height; h++){
+		for(int w=0; w<(int)width; w++){
 			unsigned char pixel[4];
 			fread(&pixel, 1, index/8, fp);
 
@@ -1049,7 +1057,7 @@ bool D3DGraphics::LoadJPEGTexture(char* filename, bool BlackTransparent, TEXTURE
 
 	//領域確保
 	img = (JSAMPARRAY)new JSAMPROW [cinfo.output_height];
-	for(int i=0; i<cinfo.output_height; i++){
+	for(int i=0; i<(int)cinfo.output_height; i++){
 		img[i] = (JSAMPROW)new JSAMPLE [cinfo.output_width * cinfo.out_color_components];
 	}
 
@@ -1072,11 +1080,11 @@ bool D3DGraphics::LoadJPEGTexture(char* filename, bool BlackTransparent, TEXTURE
 
 	unsigned char *data = new unsigned char [width*height*4];
 
-	for(int h=0; h<height; h++){
+	for(int h=0; h<(int)height; h++){
 		//1ライン分取得
 		JSAMPROW p = img[h];
 
-		for(int w=0; w<width; w++){
+		for(int w=0; w<(int)width; w++){
 			data[(h*width+w)*4 + 0] = p[w*3 + 0];
 			data[(h*width+w)*4 + 1] = p[w*3 + 1];
 			data[(h*width+w)*4 + 2] = p[w*3 + 2];
@@ -1093,7 +1101,7 @@ bool D3DGraphics::LoadJPEGTexture(char* filename, bool BlackTransparent, TEXTURE
 	}
 
 	//領域解放
-	for(int i=0; i<cinfo.output_height; i++){
+	for(int i=0; i<(int)cinfo.output_height; i++){
 		delete [] img[i];
 	}
 	delete [] img;
@@ -1192,11 +1200,11 @@ bool D3DGraphics::LoadPNGTexture(char* filename, bool BlackTransparent, TEXTURED
 		//1ライン分の作業領域を確保
 		png_bytep buf = new png_byte[width*4];
 
-		for(int h=0; h<height; h++){
+		for(int h=0; h<(int)height; h++){
 			//1ライン分取得
 			png_read_row(pPng, buf, NULL);
 
-			for(int w=0; w<width; w++){
+			for(int w=0; w<(int)width; w++){
 				data[(h*width+w)*4 + 0] = buf[w*4 + 0];
 				data[(h*width+w)*4 + 1] = buf[w*4 + 1];
 				data[(h*width+w)*4 + 2] = buf[w*4 + 2];
@@ -1224,11 +1232,11 @@ bool D3DGraphics::LoadPNGTexture(char* filename, bool BlackTransparent, TEXTURED
 		//1ライン分の作業領域を確保
 		png_bytep buf = new png_byte[width];
 
-		for(int h=0; h<height; h++){
+		for(int h=0; h<(int)height; h++){
 			//1ライン分取得
 			png_read_row(pPng, buf, NULL);
 
-			for(int w=0; w<width; w++){
+			for(int w=0; w<(int)width; w++){
 				data[(h*width+w)*4 + 0] = palette[ buf[w] ].red;
 				data[(h*width+w)*4 + 1] = palette[ buf[w] ].green;
 				data[(h*width+w)*4 + 2] = palette[ buf[w] ].blue;
@@ -2061,7 +2069,7 @@ int D3DGraphics::StrMaxLineLen(char *str)
 	int maxlen = 0;
 	int cnt = 0;
 
-	for(int i=0; i<strlen(str); i++){
+	for(int i=0; i<(int)strlen(str); i++){
 		if( str[i] == '\n' ){
 			if( maxlen < cnt ){
 				maxlen = cnt;
@@ -2610,7 +2618,65 @@ void D3DGraphics::End2DRender()
 //! @return 成功：true　失敗：false
 bool D3DGraphics::SaveScreenShot(char* filename)
 {
-	return false;
+	HDC hDC;
+	FILE *fp;
+	unsigned char header[54];
+	unsigned char pixel[3];
+
+	unsigned char *dataBuffer = new unsigned char [SCREEN_WIDTH * SCREEN_HEIGHT * 3];
+
+	//デバイスコンテキスト設定
+	hDC = GetDC(hWnd);
+	wglMakeCurrent(hDC, hGLRC);
+
+	//バッファに格納
+	glReadPixels(0, 0, SCREEN_WIDTH, SCREEN_HEIGHT, GL_RGB, GL_UNSIGNED_BYTE, dataBuffer);
+
+	//ファイルを保存する
+	fp = fopen(filename, "wb");
+	if( fp == NULL ){
+		delete [] dataBuffer;
+		return false;		//ファイルが保存できない
+	}
+
+	//ヘッダーを生成
+	for(int i=0; i<54; i++){
+		header[i] = 0x00;
+	}
+	header[0x00] = 'B';
+	header[0x01] = 'M';
+	header[0x0E] = 40;
+	header[0x12] = (unsigned char)(SCREEN_WIDTH&0x000000FF);
+	header[0x13] = (unsigned char)((SCREEN_WIDTH&0x0000FF00) >> 8);
+	header[0x14] = (unsigned char)((SCREEN_WIDTH&0x00FF0000) >> 16);
+	header[0x15] = (unsigned char)((SCREEN_WIDTH&0xFF000000) >> 24);
+	header[0x16] = (unsigned char)(SCREEN_HEIGHT&0x000000FF);
+	header[0x17] = (unsigned char)((SCREEN_HEIGHT&0x0000FF00) >> 8);
+	header[0x18] = (unsigned char)((SCREEN_HEIGHT&0x00FF0000) >> 16);
+	header[0x19] = (unsigned char)((SCREEN_HEIGHT&0xFF000000) >> 24);
+	header[0x1C] = 24;
+
+	//ヘッダーを書き込む
+	fwrite(header, 1, 54, fp);
+
+	for(int h=0; h<SCREEN_HEIGHT; h++){
+		for(int w=0; w<SCREEN_WIDTH; w++){
+			pixel[2] = dataBuffer[(h*SCREEN_WIDTH+w)*3 + 0];
+			pixel[1] = dataBuffer[(h*SCREEN_WIDTH+w)*3 + 1];
+			pixel[0] = dataBuffer[(h*SCREEN_WIDTH+w)*3 + 2];
+
+			fwrite(&pixel, 1, 3, fp);
+		}
+	}
+
+	//ファイルハンドルを解放
+	fclose(fp);
+
+	delete [] dataBuffer;
+
+	ReleaseDC(hWnd, hDC);
+
+	return true;
 }
 
 //! @brief カラーコードを取得
