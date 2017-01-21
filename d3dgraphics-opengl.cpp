@@ -295,7 +295,7 @@ int D3DGraphics::LoadModel(char* filename)
 	char stroks[] = " ;,";		//区切る文字列
 
 	//空いている認識番号を探す
-	for(int i=0; i<MAX_TEXTURE; i++){
+	for(int i=0; i<MAX_MODEL; i++){
 		if( pmodel[i].useflag == false ){
 			id = i;
 			break;
@@ -532,33 +532,63 @@ int D3DGraphics::MorphingModel(int idA, int idB)
 	OutputLog.WriteLog(LOG_LOAD, "モデル", str);
 #endif
 
-	/*
 	//データが正しいか調べる
 	if( (idA < 0)||((MAX_MODEL -1) < idA) ){ return -1; }
-	if( pmodel[idA].useflag == false ){ return; }
+	if( pmodel[idA].useflag == false ){ return -1; }
 	if( (idB < 0)||((MAX_MODEL -1) < idB) ){ return -1; }
-	if( pmodel[idB].useflag == false ){ return; }
+	if( pmodel[idB].useflag == false ){ return -1; }
 
-	int id = -1;
+	int idN = -1;
+	int numpA, numpB;
 
 	//空いている認識番号を探す
-	for(int i=0; i<MAX_TEXTURE; i++){
+	for(int i=0; i<MAX_MODEL; i++){
 		if( pmodel[i].useflag == false ){
-			id = i;
+			idN = i;
 			break;
 		}
 	}
-	if( id == -1 ){ return -1; }
+	if( idN == -1 ){ return -1; }
 
-	return -1;
-	*/
+	//ポリゴン数を取得
+	numpA = pmodel[idA].polygons;
+	numpB = pmodel[idB].polygons;
+
+	//ポリゴン数が同じかどうか調べる
+	if( numpA != numpB ){ return -1; }
+
+	float *VertexAry = new float [numpA*6*3];
+	float *ColorAry = new float [numpA*6*4];
+	float *TexCoordAry = new float [numpA*6*2];
+
+	//各頂点を読み出し計算
+	for(int i=0; i<numpA*6; i++){
+		VertexAry[i*3 + 0] = (pmodel[idA].VertexAry[i*3 + 0] + pmodel[idB].VertexAry[i*3 + 0])/2;
+		VertexAry[i*3 + 1] = (pmodel[idA].VertexAry[i*3 + 1] + pmodel[idB].VertexAry[i*3 + 1])/2;
+		VertexAry[i*3 + 2] = (pmodel[idA].VertexAry[i*3 + 2] + pmodel[idB].VertexAry[i*3 + 2])/2;
+	}
+
+	//マテリアル情報をコピー
+	for(int i=0; i<numpA*6; i++){
+		ColorAry[i*4 + 0] = pmodel[idA].ColorAry[i*4 + 0];
+		ColorAry[i*4 + 1] = pmodel[idA].ColorAry[i*4 + 1];
+		ColorAry[i*4 + 2] = pmodel[idA].ColorAry[i*4 + 2];
+		ColorAry[i*4 + 3] = pmodel[idA].ColorAry[i*4 + 3];
+		TexCoordAry[i*2 + 0] = pmodel[idA].TexCoordAry[i*2 + 0];
+		TexCoordAry[i*2 + 1] = pmodel[idA].TexCoordAry[i*2 + 1];
+	}
+
+	pmodel[idN].useflag = true;
+	pmodel[idN].polygons = numpA;
+	pmodel[idN].VertexAry = VertexAry;
+	pmodel[idN].ColorAry = ColorAry;
+	pmodel[idN].TexCoordAry = TexCoordAry;
 
 #ifdef ENABLE_DEBUGLOG
 	//ログに出力
-	OutputLog.WriteLog(LOG_ERROR, "", "");
+	OutputLog.WriteLog(LOG_COMPLETE, "", idN);
 #endif
-
-	return idA;
+	return idN;
 }
 
 //! @brief モデルファイルを解放
