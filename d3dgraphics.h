@@ -207,6 +207,7 @@ class D3DGraphics
 	HGLRC hGLRC;			//!< OpenGLのコンテキスト
 	int width;				//!< 幅
 	int height;				//!< 高さ
+	bool fullscreenflag;	//!< フルスクリーン表示
 	PAINTSTRUCT Paint_ps;					//!< BeginPaint()関数とEndPaint()関数用
 	MODELDATA pmodel[MAX_MODEL];			//!< モデルデータを格納
 	TEXTUREDATA ptextures[MAX_TEXTURE];		//!< テクスチャを格納
@@ -239,6 +240,7 @@ class D3DGraphics
 	jpeg_decompress_struct cinfo;	//!< libjpeg
 	jpeg_error_mgr jerr;			//!< libjpeg
 
+	void CleanupD3Dresource();
 	int CheckFileExtension(char* filename, int nowformat);
 	int CheckFileTypeFlag(char* filename, int nowformat);
 	bool LoadBMPTexture(char* filename, bool BlackTransparent, TEXTUREDATA *ptexture);
@@ -262,6 +264,8 @@ class D3DGraphics
 public:
 	D3DGraphics();
 	~D3DGraphics();
+	void SetFullScreenFlag(bool fullscreen);
+	bool GetFullScreenFlag();
 	int InitD3D(WindowControl *WindowCtrl, char *TextureFontFilename, bool fullscreen);
 	int ResetD3D(WindowControl *WindowCtrl);
 	void DestroyD3D();

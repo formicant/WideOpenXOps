@@ -40,15 +40,16 @@
 class scene
 {
 protected:
-	class StateMachine *GameState;	//!< ゲーム全体の状態遷移クラス
-	class D3DGraphics *d3dg;		//!< 描画クラス
-	class InputControl *inputCtrl;	//!< 入力取得クラス
-	unsigned int framecnt;		//!< フレーム数のカウント
+	class StateMachine *GameState;		//!< ゲーム全体の状態遷移クラス
+	class WindowControl *WindowCtrl;	//!< ウィンドウ制御クラス
+	class D3DGraphics *d3dg;			//!< 描画クラス
+	class InputControl *inputCtrl;		//!< 入力取得クラス
+	unsigned int framecnt;				//!< フレーム数のカウント
 
 public:
 	scene();
 	~scene();
-	virtual void SetClass(StateMachine *in_GameState, D3DGraphics *in_d3dg, InputControl *in_inputCtrl);
+	virtual void SetClass(StateMachine *in_GameState, WindowControl *in_WindowCtrl, D3DGraphics *in_d3dg, InputControl *in_inputCtrl);
 	virtual int Create();
 	virtual int Recovery();
 	virtual void Input();
@@ -93,7 +94,7 @@ protected:
 public:
 	D3Dscene();
 	~D3Dscene();
-	virtual void SetClass(StateMachine *in_GameState, D3DGraphics *in_d3dg, InputControl *in_inputCtrl, SoundManager *in_GameSound);
+	virtual void SetClass(StateMachine *in_GameState, WindowControl *in_WindowCtrl, D3DGraphics *in_d3dg, InputControl *in_inputCtrl, SoundManager *in_GameSound);
 	virtual void Process();
 	virtual void Sound();
 	virtual bool RenderMain();

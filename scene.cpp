@@ -34,6 +34,7 @@
 //! @brief コンストラクタ
 scene::scene()
 {
+	WindowCtrl = NULL; 
 	d3dg = NULL;
 	inputCtrl = NULL;
 	framecnt = 0;
@@ -44,9 +45,10 @@ scene::~scene()
 {}
 
 //! @brief クラスを設定
-void scene::SetClass(StateMachine *in_GameState, D3DGraphics *in_d3dg, InputControl *in_inputCtrl)
+void scene::SetClass(StateMachine *in_GameState, WindowControl *in_WindowCtrl, D3DGraphics *in_d3dg, InputControl *in_inputCtrl)
 {
 	GameState = in_GameState;
+	WindowCtrl = in_WindowCtrl; 
 	d3dg = in_d3dg;
 	inputCtrl = in_inputCtrl;
 }
@@ -219,9 +221,10 @@ D3Dscene::~D3Dscene()
 {}
 
 //! @brief 3Dシーンクラスを設定
-void D3Dscene::SetClass(StateMachine *in_GameState, D3DGraphics *in_d3dg, InputControl *in_inputCtrl, SoundManager *in_GameSound)
+void D3Dscene::SetClass(StateMachine *in_GameState, WindowControl *in_WindowCtrl, D3DGraphics *in_d3dg, InputControl *in_inputCtrl, SoundManager *in_GameSound)
 {
 	GameState = in_GameState;
+	WindowCtrl = in_WindowCtrl; 
 	d3dg = in_d3dg;
 	inputCtrl = in_inputCtrl;
 	GameSound = in_GameSound;

@@ -60,6 +60,7 @@ public:
 	~WindowControl();
 	void SetParam(HINSTANCE in_hInstance, int in_nCmdShow);
 	bool InitWindow(char* title, int width, int height, bool fullscreen);
+	bool ChangeWindowMode(bool fullscreen);
 	HWND GethWnd();
 	int CheckMainLoop();
 	void ErrorInfo(char *str);

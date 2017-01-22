@@ -119,7 +119,7 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine
 	briefing Briefing;
 	maingame MainGame;
 	result Result;
-	InitScreen(&Opening, &MainMenu, &Briefing, &MainGame, &Result);
+	InitScreen(&MainWindow, &Opening, &MainMenu, &Briefing, &MainGame, &Result);
 
 
 #ifdef ENABLE_DEBUGLOG

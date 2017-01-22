@@ -69,6 +69,21 @@ D3DGraphics::~D3DGraphics()
 	DestroyD3D();
 }
 
+//! @brief フルスクリーンフラグ設定
+//! @param fullscreen フルスクリーンフラグ
+//! @attention 同フラグは、初期化時の InitD3D() 関数でも設定できます。
+void D3DGraphics::SetFullScreenFlag(bool fullscreen)
+{
+	fullscreenflag = fullscreen;
+}
+
+//! @brief フルスクリーンフラグ取得
+//! @return フルスクリーンフラグ
+bool D3DGraphics::GetFullScreenFlag()
+{
+	return fullscreenflag;
+}
+
 //! @brief 初期化@n
 //! （DirectX 9）
 //! @param WindowCtrl WindowControlクラスのポインタ
@@ -342,10 +357,16 @@ int D3DGraphics::InitSubset()
 //! @brief デバイスのリソースを解放
 void D3DGraphics::CleanupD3Dresource()
 {
-	if( TextureFont != -1 ){ CleanupTexture(TextureFont); }
+	if( TextureFont != -1 ){
+		CleanupTexture(TextureFont);
+		TextureFont = -1;
+	}
 
 #ifdef ENABLE_DEBUGCONSOLE
-	if( TextureDebugFont != -1 ){ CleanupTexture(TextureDebugFont); }
+	if( TextureDebugFont != -1 ){
+		CleanupTexture(TextureDebugFont);
+		TextureDebugFont = -1;
+	}
 #endif
 
 	if( pxmsfont != NULL ){
@@ -633,10 +654,10 @@ bool D3DGraphics::LoadDebugFontTexture()
 	bmpdata[0x03] = (unsigned char)((bufsize >> 8) & 0x000000FF);
 	bmpdata[0x04] = (unsigned char)((bufsize >> 16) & 0x000000FF);
 	bmpdata[0x05] = (unsigned char)((bufsize >> 24) & 0x000000FF);
-	bmpdata[0x0A] = headersize;
-	bmpdata[0x0E] = headersize - 14;
-	bmpdata[0x12] = width;
-	bmpdata[0x16] = height;
+	bmpdata[0x0A] = (unsigned char)headersize;
+	bmpdata[0x0E] = (unsigned char)(headersize - 14);
+	bmpdata[0x12] = (unsigned char)width;
+	bmpdata[0x16] = (unsigned char)height;
 	bmpdata[0x1A] = 1;
 	bmpdata[0x1C] = 24;
 	bmpdata[0x1E] = 0;

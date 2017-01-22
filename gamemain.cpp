@@ -532,14 +532,17 @@ int mainmenu::Create()
 	mainmenu_mouseY = SCREEN_HEIGHT/2;
 
 	//標準ミッションのスクロールバーの設定
-	if( TOTAL_OFFICIALMISSION > TOTAL_MENUITEMS ){
+#if TOTAL_OFFICIALMISSION > TOTAL_MENUITEMS
+	//if( TOTAL_OFFICIALMISSION > TOTAL_MENUITEMS ){
 		mainmenu_scrollbar_official_height = (float)(MAINMENU_H-25) / TOTAL_OFFICIALMISSION * TOTAL_MENUITEMS;
 		mainmenu_scrollbar_official_scale = ((float)(MAINMENU_H-25) - mainmenu_scrollbar_official_height) / (TOTAL_OFFICIALMISSION - TOTAL_MENUITEMS);
-	}
-	else{
+	//}
+#else
+	//else{
 		mainmenu_scrollbar_official_height = 0.0f;
 		mainmenu_scrollbar_official_scale = 0.0f;
-	}
+	//}
+#endif
 
 	//addonのスクロールバーの設定
 	if( GameAddon.GetTotaldatas() > TOTAL_MENUITEMS ){
@@ -2165,13 +2168,9 @@ void maingame::Render2D()
 	}
 
 	//ゲーム実行速度の表示
-	if( 1 ){
-		sprintf(str, "fps:%.2f", fps);
-	}
-	else{
-		int speed = (int)(fps / (1000.0f/GAMEFRAMEMS) * 100);
-		sprintf(str, "PROCESSING SPEED %d%%", speed);
-	}
+	//int speed = (int)(fps / (1000.0f/GAMEFRAMEMS) * 100);
+	//sprintf(str, "PROCESSING SPEED %d%%", speed);
+	sprintf(str, "fps:%.2f", fps);
 	d3dg->Draw2DTextureFontText(SCREEN_WIDTH - strlen(str)*14 - 14 +1, 10+1, str, d3dg->GetColorCode(0.0f,0.0f,0.0f,1.0f), 14, 18);
 	d3dg->Draw2DTextureFontText(SCREEN_WIDTH - strlen(str)*14 - 14, 10, str, d3dg->GetColorCode(1.0f,0.5f,0.0f,1.0f), 14, 18);
 
@@ -2778,7 +2777,7 @@ void maingame::ProcessConsole()
 		AddInfoConsole(d3dg->GetColorCode(1.0f,1.0f,1.0f,1.0f), "ff            revive        kill <NUM>     treat <NUM>  nodamage <NUM>");
 		AddInfoConsole(d3dg->GetColorCode(1.0f,1.0f,1.0f,1.0f), "break <NUM>   newobj <NUM>");
 		AddInfoConsole(d3dg->GetColorCode(1.0f,1.0f,1.0f,1.0f), "bot           nofight       caution        stop         estop      speed");
-		AddInfoConsole(d3dg->GetColorCode(1.0f,1.0f,1.0f,1.0f), "ss            clear");
+		AddInfoConsole(d3dg->GetColorCode(1.0f,1.0f,1.0f,1.0f), "window        ss            clear          exit");
 	}
 
 	//人の統計情報
@@ -3359,6 +3358,37 @@ void maingame::ProcessConsole()
 		AddInfoConsole(d3dg->GetColorCode(1.0f,1.0f,1.0f,1.0f), str);
 	}
 
+	//ウィンドウ・フルスクリーン切り替え
+	if( strcmp(NewCommand, "window") == 0 ){
+		//現在の表示モード取得
+		bool flag = d3dg->GetFullScreenFlag();
+
+		if( flag == false ){ flag = true; }
+		else{ flag = false; }
+
+		//切り替え処理
+		WindowCtrl->ChangeWindowMode(flag);
+		d3dg->SetFullScreenFlag(flag);
+		if( ResetGame(WindowCtrl) != 0 ){
+			AddInfoConsole(d3dg->GetColorCode(1.0f,1.0f,1.0f,1.0f), "[Error] Change failed.");
+		}
+		else{
+			Recovery();
+
+			//キー入力を取得
+			//　※ディスプレイ解像度の変化によるマウスの移動分を捨てる
+			inputCtrl->GetInputState(true);
+			inputCtrl->MoveMouseCenter();
+
+			if( flag == true ){
+				AddInfoConsole(d3dg->GetColorCode(1.0f,1.0f,1.0f,1.0f), "Changed FullScreen mode.");
+			}
+			else{
+				AddInfoConsole(d3dg->GetColorCode(1.0f,1.0f,1.0f,1.0f), "Changed Window mode.");
+			}
+		}
+	}
+
 	//スクリーンショットを撮影
 	//　※コンソール画面を削除するため、撮影を1フレーム遅らせる。
 	if( ScreenShot == 2 ){
@@ -3391,6 +3421,12 @@ void maingame::ProcessConsole()
 			InfoConsoleData[i].color = d3dg->GetColorCode(1.0f,1.0f,1.0f,1.0f);
 			InfoConsoleData[i].textdata[0] = '\0';
 		}
+	}
+
+	//コンソールを閉じる
+	if( strcmp(NewCommand, "exit") == 0 ){
+		AddInfoConsole(d3dg->GetColorCode(1.0f,1.0f,1.0f,1.0f), "Closed debug console.");
+		Show_Console = false;
 	}
 
 #ifdef _DEBUG
@@ -3505,13 +3541,13 @@ void result::Render2D()
 }
 
 //! @brief screen派生クラスの初期化（クラスの設定）
-void InitScreen(opening *Opening, mainmenu *MainMenu, briefing *Briefing, maingame *MainGame, result *Result)
+void InitScreen(WindowControl *WindowCtrl, opening *Opening, mainmenu *MainMenu, briefing *Briefing, maingame *MainGame, result *Result)
 {
-	Opening->SetClass(&GameState, &d3dg, &inputCtrl, &GameSound);
-	MainMenu->SetClass(&GameState, &d3dg, &inputCtrl, &GameSound);
-	Briefing->SetClass(&GameState, &d3dg, &inputCtrl);
-	MainGame->SetClass(&GameState, &d3dg, &inputCtrl, &GameSound);
-	Result->SetClass(&GameState, &d3dg, &inputCtrl);
+	Opening->SetClass(&GameState, WindowCtrl, &d3dg, &inputCtrl, &GameSound);
+	MainMenu->SetClass(&GameState, WindowCtrl, &d3dg, &inputCtrl, &GameSound);
+	Briefing->SetClass(&GameState, WindowCtrl, &d3dg, &inputCtrl);
+	MainGame->SetClass(&GameState, WindowCtrl, &d3dg, &inputCtrl, &GameSound);
+	Result->SetClass(&GameState, WindowCtrl, &d3dg, &inputCtrl);
 }
 
 //! @brief screen派生クラスの実行

@@ -135,6 +135,41 @@ LRESULT WINAPI WindowControl::WindowProc(HWND hWnd, UINT msg, WPARAM wParam, LPA
 	return DefWindowProc(hWnd, msg, wParam, lParam);
 }
 
+//! @brief ウィンドウの表示モード切り替え
+//! @param fullscreen false：ウィンドウ表示　true：フルスクリーン用表示
+//! @return 成功：true　失敗：false
+bool WindowControl::ChangeWindowMode(bool fullscreen)
+{
+	if( hWnd == NULL ){ return false; }
+
+	DWORD dwStyle;
+	RECT Rect;
+	int width, height;
+
+	//ウィンドウサイズを取得
+	GetClientRect(hWnd, &Rect);
+
+	if( fullscreen == false ){
+		ChangeDisplaySettings(NULL, 0);		//ディスプレイ解像度を戻す
+
+		dwStyle = WS_OVERLAPPED | WS_SYSMENU | WS_CAPTION | WS_MINIMIZEBOX;
+	}
+	else{
+		dwStyle = WS_POPUP;
+	}
+
+	//ウィンドウサイズを計算
+	AdjustWindowRect(&Rect, dwStyle, FALSE);
+	width = Rect.right - Rect.left;
+	height = Rect.bottom - Rect.top;
+
+	//反映
+	SetWindowLong(hWnd, GWL_STYLE, dwStyle);
+	SetWindowPos(hWnd, NULL, 0, 0, width, height, SWP_NOZORDER | SWP_FRAMECHANGED | SWP_SHOWWINDOW);
+
+	return true;
+}
+
 //! @brief ウィンドウハンドルを取得
 //! @return ウィンドウハンドル
 HWND WindowControl::GethWnd()

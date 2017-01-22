@@ -53,6 +53,7 @@ D3DGraphics::D3DGraphics()
 	hGLRC = NULL;
 	width = 0;
 	height = 0;
+	fullscreenflag = false;
 	SystemFont = NULL;
 	now_SystemFontUStr = new WCHAR [1];
 	now_SystemFontUStr[0] = NULL;
@@ -86,6 +87,21 @@ D3DGraphics::~D3DGraphics()
 	DestroyD3D();
 }
 
+//! @brief フルスクリーンフラグ設定
+//! @param fullscreen フルスクリーンフラグ
+//! @attention 同フラグは、初期化時の InitD3D() 関数でも設定できます。
+void D3DGraphics::SetFullScreenFlag(bool fullscreen)
+{
+	fullscreenflag = fullscreen;
+}
+
+//! @brief フルスクリーンフラグ取得
+//! @return フルスクリーンフラグ
+bool D3DGraphics::GetFullScreenFlag()
+{
+	return fullscreenflag;
+}
+
 //! @brief 初期化@n
 //! （OpenGL 1.1）
 //! @param WindowCtrl WindowControlクラスのポインタ
@@ -105,6 +121,8 @@ int D3DGraphics::InitD3D(WindowControl *WindowCtrl, char *TextureFontFilename, b
 	GetClientRect(hWnd, &prc);
 	width = prc.right;
 	height = prc.bottom;
+
+	fullscreenflag = fullscreen;
 
 	//フルスクリーン化
 	if( fullscreen == true ){
@@ -219,14 +237,99 @@ int D3DGraphics::ResetD3D(WindowControl *WindowCtrl)
 	OutputLog.WriteLog(LOG_INIT, "グラフィック", "OpenGL（リセット）");
 #endif
 
+	//リソース解放
+	CleanupD3Dresource();
+
+	if( hGLRC != NULL ){
+		wglDeleteContext(hGLRC);
+		hGLRC = NULL;
+	}
+
+
+	//  解放処理ここまで
+	//　ここから初期化処理
+
 	hWnd = WindowCtrl->GethWnd();
+
+	//フルスクリーン化
+	if( fullscreenflag == true ){
+		DEVMODE devmode;
+		ZeroMemory(&devmode, sizeof(devmode));
+		devmode.dmSize = sizeof(devmode);
+		devmode.dmPelsWidth = width;
+		devmode.dmPelsHeight = height;
+		devmode.dmFields = DM_PELSWIDTH | DM_PELSHEIGHT;
+
+		if( ChangeDisplaySettings(&devmode, CDS_TEST) != DISP_CHANGE_SUCCESSFUL ){
+			return 1;
+		}
+		ChangeDisplaySettings(&devmode, CDS_FULLSCREEN);
+	}
+
+
+
+	HDC hDC;
+	int pfdID;
+	BOOL bResult;
+
+	//ピクセルフォーマット
+	static PIXELFORMATDESCRIPTOR pfd = {
+		sizeof (PIXELFORMATDESCRIPTOR),
+		1,
+		PFD_DRAW_TO_WINDOW | PFD_SUPPORT_OPENGL,
+		PFD_TYPE_RGBA,
+		24,
+		0, 0, 0,
+		0, 0, 0,
+		0, 0,
+		0, 0, 0, 0, 0,
+		32,
+		0,
+		0,
+		PFD_MAIN_PLANE,
+		0,
+		0,
+		0,
+		0
+	};
+
+	//デバイスコンテキスト取得
+	hDC = GetDC(hWnd);
+
+	//ピクセルフォーマットを取得
+	pfdID = ChoosePixelFormat(hDC, &pfd);	
+	if( pfdID == 0 ){ return 1; }
+
+	//ピクセルフォーマットを指定
+	bResult = SetPixelFormat(hDC, pfdID, &pfd);
+	if( bResult == FALSE ){ return 1; }
+
+	//コンテキストを指定
+	hGLRC = wglCreateContext(hDC);
+	if( hGLRC == NULL ){ return 1; }
+
+	//デバイスコンテキスト解放
+	ReleaseDC(hWnd, hDC);
+
+	//システムフォント用意
+	//フォント名：ＭＳ ゴシック　サイズ：18
+	SystemFont = CreateFont(18, 0, 0, 0, FW_NORMAL, FALSE, FALSE, FALSE, SHIFTJIS_CHARSET, OUT_DEFAULT_PRECIS, CLIP_DEFAULT_PRECIS, DEFAULT_QUALITY, FIXED_PITCH | FF_MODERN, "ＭＳ ゴシック");
 
 #ifdef ENABLE_DEBUGLOG
 	//ログに出力
-	OutputLog.WriteLog(LOG_ERROR, "", "");
+	OutputLog.WriteLog(LOG_COMPLETE, "", "");
 #endif
 
-	return 2;
+	//テクスチャフォント用画像を取得
+	TextureFont = LoadTexture(TextureFontFname, true, false);
+
+#ifdef ENABLE_DEBUGCONSOLE
+	if( LoadDebugFontTexture() == false ){
+		return 1;
+	}
+#endif
+
+	return 0;
 }
 
 //! @brief 解放
@@ -234,6 +337,37 @@ int D3DGraphics::ResetD3D(WindowControl *WindowCtrl)
 void D3DGraphics::DestroyD3D()
 {
 	if( hGLRC == NULL ){ return; }
+
+	CleanupD3Dresource();
+
+	if( hGLRC != NULL ){
+		wglDeleteContext(hGLRC);
+		hGLRC = NULL;
+	}
+
+#ifdef ENABLE_DEBUGLOG
+	//ログに出力
+	OutputLog.WriteLog(LOG_CLEANUP, "グラフィック", "OpenGL");
+#endif
+
+	//libjpeg解放
+	jpeg_destroy_decompress(&cinfo);
+}
+
+//! @brief デバイスのリソースを解放
+void D3DGraphics::CleanupD3Dresource()
+{
+	if( TextureFont != -1 ){
+		CleanupTexture(TextureFont);
+		TextureFont = -1;
+	}
+
+#ifdef ENABLE_DEBUGCONSOLE
+	if( TextureDebugFont != -1 ){
+		CleanupTexture(TextureDebugFont);
+		TextureDebugFont = -1;
+	}
+#endif
 
 	for(int i=0; i<MAX_MODEL; i++){
 		CleanupModel(i);
@@ -254,19 +388,6 @@ void D3DGraphics::DestroyD3D()
 		glDeleteLists(SystemFontListIdx, SystemFontListIdxSize);
 		SystemFontListIdx = 0;
 	}
-
-	if( hGLRC != NULL ){
-		wglDeleteContext(hGLRC);
-		hGLRC = NULL;
-	}
-
-#ifdef ENABLE_DEBUGLOG
-	//ログに出力
-	OutputLog.WriteLog(LOG_CLEANUP, "グラフィック", "OpenGL");
-#endif
-
-	//libjpeg解放
-	jpeg_destroy_decompress(&cinfo);
 }
 
 //! @brief モデルファイルを読み込む（.x）
