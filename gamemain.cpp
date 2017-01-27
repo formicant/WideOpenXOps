@@ -144,8 +144,8 @@ int ResetGame(WindowControl *WindowCtrl)
 		return 1;
 	}
 	//if( rtn == 2 ){
-		WindowCtrl->ErrorInfo("Resetに失敗しました");
-		WindowCtrl->CloseWindow();
+		//WindowCtrl->ErrorInfo("Resetに失敗しました");
+		//WindowCtrl->CloseWindow();
 		return -1;
 	//}
 }
@@ -411,13 +411,13 @@ void opening::Render2D()
 		float effectA = 1.0f;
 		if( framecnt < (int)(8.0f*GAMEFPS) ){ effectA = GetEffectAlpha(framecnt, 1.0f, 1.0f, 7.0f, false); }
 		if( framecnt > (int)(10.0f*GAMEFPS) ){ effectA = GetEffectAlpha(framecnt, 1.0f, 1.0f, 10.0f, true); }
-		d3dg->Draw2DTextureFontText(330, 300, "REMAKE", d3dg->GetColorCode(1.0f,1.0f,1.0f,effectA), 20, 20);
+		d3dg->Draw2DTextureFontText(SCREEN_WIDTH - 310, 300, "REMAKE", d3dg->GetColorCode(1.0f,1.0f,1.0f,effectA), 20, 20);
 	}
 	if( ((int)(7.5f*GAMEFPS) < framecnt)&&(framecnt < (int)(11.5f*GAMEFPS)) ){
 		float effectA = 1.0f;
 		if( framecnt < (int)(8.5f*GAMEFPS) ){ effectA = GetEffectAlpha(framecnt, 1.0f, 1.0f, 7.5f, false); }
 		if( framecnt > (int)(10.5f*GAMEFPS) ){ effectA = GetEffectAlpha(framecnt, 1.0f, 1.0f, 10.5f, true); }
-		d3dg->Draw2DTextureFontText(370, 330, "[-_-;](mikan)", d3dg->GetColorCode(1.0f,1.0f,1.0f,effectA), 20, 20);
+		d3dg->Draw2DTextureFontText(SCREEN_WIDTH - 270, 330, "[-_-;](mikan)", d3dg->GetColorCode(1.0f,1.0f,1.0f,effectA), 20, 20);
 		//d3dg->Draw2DTexture(410, 360, opening_banner, 200, 40, effectA);
 	}
 
@@ -3360,32 +3360,59 @@ void maingame::ProcessConsole()
 
 	//ウィンドウ・フルスクリーン切り替え
 	if( strcmp(NewCommand, "window") == 0 ){
+		bool ErrorFlag = false;
+
 		//現在の表示モード取得
 		bool flag = d3dg->GetFullScreenFlag();
 
 		if( flag == false ){ flag = true; }
 		else{ flag = false; }
 
-		//切り替え処理
+		//切り替え処理（初回）
 		WindowCtrl->ChangeWindowMode(flag);
 		d3dg->SetFullScreenFlag(flag);
 		if( ResetGame(WindowCtrl) != 0 ){
 			AddInfoConsole(d3dg->GetColorCode(1.0f,1.0f,1.0f,1.0f), "[Error] Change failed.");
+
+			if( flag == false ){
+				//フルスクリーン⇒ウィンドウが失敗したら、エラーとして終了。
+				WindowCtrl->ErrorInfo("Resetに失敗しました");
+				WindowCtrl->CloseWindow();
+				ErrorFlag = true;
+			}
+			else{
+				//ウィンドウ⇒フルスクリーンが失敗したら、ウィンドウモードへ戻してゲーム続行を試みる。
+				//　（GPUが指定解像度のフルスクリーンに対応してないとか・・？）
+				flag = false;
+
+				WindowCtrl->ChangeWindowMode(flag);
+				d3dg->SetFullScreenFlag(flag);
+				if( ResetGame(WindowCtrl) != 0 ){
+					//戻しても失敗するなら、エラーとして終了。
+					WindowCtrl->ErrorInfo("Resetに失敗しました");
+					WindowCtrl->CloseWindow();
+					ErrorFlag = true;
+				}
+			}
 		}
 		else{
-			Recovery();
-
-			//キー入力を取得
-			//　※ディスプレイ解像度の変化によるマウスの移動分を捨てる
-			inputCtrl->GetInputState(true);
-			inputCtrl->MoveMouseCenter();
-
+			//初回で切り替えに成功したら、成功メッセージを表示。
 			if( flag == true ){
 				AddInfoConsole(d3dg->GetColorCode(1.0f,1.0f,1.0f,1.0f), "Changed FullScreen mode.");
 			}
 			else{
 				AddInfoConsole(d3dg->GetColorCode(1.0f,1.0f,1.0f,1.0f), "Changed Window mode.");
 			}
+		}
+
+		//切り替えに成功したら、回復などの後処理。
+		if( ErrorFlag == false ){
+			Recovery();
+
+			//キー入力を取得
+			//　※ディスプレイ解像度の変化によるマウスの移動分を捨てる
+			inputCtrl->GetInputState(true);
+			inputCtrl->MoveMouseCenter();
 		}
 	}
 
@@ -3578,7 +3605,11 @@ void ProcessScreen(WindowControl *WindowCtrl, opening *Opening, mainmenu *MainMe
 			Opening->Sound();
 			if( (GameConfig.GetFrameskipFlag() == false)||(framecnt%2 == 0) ){
 				if( Opening->RenderMain() == true ){
-					if( ResetGame(WindowCtrl) == 0 ){
+					if( ResetGame(WindowCtrl) != 0 ){
+						WindowCtrl->ErrorInfo("Resetに失敗しました");
+						WindowCtrl->CloseWindow();
+					}
+					else{
 						Opening->Recovery();
 
 						//現在の画面を再スタートさせる
@@ -3614,7 +3645,11 @@ void ProcessScreen(WindowControl *WindowCtrl, opening *Opening, mainmenu *MainMe
 			MainMenu->Sound();
 			if( (GameConfig.GetFrameskipFlag() == false)||(framecnt%2 == 0) ){
 				if( MainMenu->RenderMain() == true ){
-					if( ResetGame(WindowCtrl) == 0 ){
+					if( ResetGame(WindowCtrl) != 0 ){
+						WindowCtrl->ErrorInfo("Resetに失敗しました");
+						WindowCtrl->CloseWindow();
+					}
+					else{
 						MainMenu->Recovery();
 
 						//現在の画面を再スタートさせる
@@ -3644,7 +3679,11 @@ void ProcessScreen(WindowControl *WindowCtrl, opening *Opening, mainmenu *MainMe
 			Briefing->Process();
 			if( (GameConfig.GetFrameskipFlag() == false)||(framecnt%2 == 0) ){
 				if( Briefing->RenderMain() == true ){
-					if( ResetGame(WindowCtrl) == 0 ){
+					if( ResetGame(WindowCtrl) != 0 ){
+						WindowCtrl->ErrorInfo("Resetに失敗しました");
+						WindowCtrl->CloseWindow();
+					}
+					else{
 						Briefing->Recovery();
 
 						//現在の画面を再スタートさせる
@@ -3682,7 +3721,11 @@ void ProcessScreen(WindowControl *WindowCtrl, opening *Opening, mainmenu *MainMe
 			}
 			if( (GameConfig.GetFrameskipFlag() == false)||(framecnt%2 == 0) ){
 				if( MainGame->RenderMain() == true ){
-					if( ResetGame(WindowCtrl) == 0 ){
+					if( ResetGame(WindowCtrl) != 0 ){
+						WindowCtrl->ErrorInfo("Resetに失敗しました");
+						WindowCtrl->CloseWindow();
+					}
+					else{
 						MainGame->Recovery();
 
 						//現在の画面を再スタートさせる
@@ -3708,7 +3751,11 @@ void ProcessScreen(WindowControl *WindowCtrl, opening *Opening, mainmenu *MainMe
 			Result->Process();
 			if( (GameConfig.GetFrameskipFlag() == false)||(framecnt%2 == 0) ){
 				if( Result->RenderMain() == true ){
-					if( ResetGame(WindowCtrl) == 0 ){
+					if( ResetGame(WindowCtrl) != 0 ){
+						WindowCtrl->ErrorInfo("Resetに失敗しました");
+						WindowCtrl->CloseWindow();
+					}
+					else{
 						Result->Recovery();
 
 						//現在の画面を再スタートさせる
