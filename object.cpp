@@ -1460,8 +1460,9 @@ bool human::MapCollisionDetection(class Collision *CollD, class BlockDataInterfa
 
 				struct blockdata bdata;
 				inblockdata->Getdata(&bdata, id);
+				float surface_ang = acos(bdata.material[face].vy);
 
-				if( acos(bdata.material[face].vy) > HUMAN_MAPCOLLISION_SLOPEANGLE ){	//ŽÎ–Ê`•Ç‚È‚ç
+				if( surface_ang > DegreeToRadian((90.0f-1.0f)) ){			//•Ç‚È‚ç
 					//æ‚è‰z‚¦‚ç‚ê‚é‚‚³‚©’²‚×‚é
 					if( CollD->CheckALLBlockIntersectDummyRay(pos_x, pos_y + 3.5f + offset, pos_z, vx, 0, vz, NULL, NULL, &Dist, speed) == false ){
 						//l‚ðã‚ÉŽ‚¿ã‚°‚é
@@ -1472,7 +1473,11 @@ bool human::MapCollisionDetection(class Collision *CollD, class BlockDataInterfa
 					//‘«Œ³‚ð“–‚½‚è”»’è
 					CollD->ScratchVector(id, face, move_x2, vy, move_z2, &move_x2, &vy, &move_z2);
 				}
-				else{																	//…•½`ŽÎ–Ê‚È‚ç
+				else if( surface_ang > HUMAN_MAPCOLLISION_SLOPEANGLE ){		//ŽÎ–Ê`•Ç‚È‚ç
+					//‘«Œ³‚ð“–‚½‚è”»’è
+					CollD->ScratchVector(id, face, move_x2, vy, move_z2, &move_x2, &vy, &move_z2);
+				}
+				else{														//…•½`ŽÎ–Ê‚È‚ç
 					//’n–Ê‚Æ”F‚ß‚È‚¢@iƒWƒƒƒ“ƒv‘Îôj
 					move_y_flag = true;
 
@@ -1487,16 +1492,16 @@ bool human::MapCollisionDetection(class Collision *CollD, class BlockDataInterfa
 							float height = HUMAN_HEIGHT - Dist;
 
 							//l‚ðã‚ÉŽ‚¿ã‚°‚é
-							if( height > 0.9f ){
-								FallDistance = 0.4f;
-							}
-							else{
-								FallDistance = height;
+							FallDistance = height;
+
+							if( height > 0.4f ){
+								move_x2 *= 0.75f;
+								move_z2 *= 0.75f;
+								move_x = move_x2;
+								move_z = move_z2;
 							}
 
-							//move_x2 = 0.0f;
 							move_y = 0.0f;
-							//move_z2 = 0.0f;
 						}
 					}
 				}
@@ -1581,7 +1586,7 @@ int human::RunFrame(class Collision *CollD, class BlockDataInterface *inblockdat
 		MapCollisionDetection(CollD, inblockdata, AddCollisionFlag, &FallDistance, &nowmove_x, &nowmove_z);
 
 		//ˆÚ“®‚·‚é‚È‚ç
-		if( (nowmove_x*nowmove_x + nowmove_z*nowmove_z) > 0.0f * 0.0f ){
+		if( (nowmove_x*nowmove_x + nowmove_z*nowmove_z) > 0.0f ){
 			totalmove += sqrt(nowmove_x*nowmove_x + nowmove_z*nowmove_z);
 		}
 

@@ -2152,6 +2152,9 @@ void maingame::Render2D()
 
 	//デバック用・ゲーム情報の表示
 	if( (ShowInfo_Debugmode == true)||(Camera_Debugmode == true) ){
+		float move_x, move_y, move_z;
+		myHuman->GetMovePos(&move_x, &move_y, &move_z);
+
 		//テクスチャフォントによる表示（半角英数字と記号のみ）
 		sprintf(str, "frame:%d   time %02d:%02d", framecnt, framecnt/(int)GAMEFPS/60, framecnt/(int)GAMEFPS%60);
 		d3dg->Draw2DTextureDebugFontText(10+1, 10+1, str, d3dg->GetColorCode(0.1f,0.1f,0.1f,1.0f));
@@ -2159,12 +2162,15 @@ void maingame::Render2D()
 		sprintf(str, "camera x:%.2f y:%.2f z:%.2f rx:%.2f ry:%.2f", camera_x, camera_y, camera_z, camera_rx, camera_ry);
 		d3dg->Draw2DTextureDebugFontText(10+1, 30+1, str, d3dg->GetColorCode(0.1f,0.1f,0.1f,1.0f));
 		d3dg->Draw2DTextureDebugFontText(10, 30, str, d3dg->GetColorCode(1.0f,1.0f,1.0f,1.0f));
-		sprintf(str, "human[%d] x:%.2f y:%.2f z:%.2f rx:%.2f HP:%d", ObjMgr.GetPlayerID(), human_x, human_y, human_z, human_rx, hp);
+		sprintf(str, "human[%02d] x:%.2f y:%.2f z:%.2f rx:%.2f HP:%d", ObjMgr.GetPlayerID(), human_x, human_y, human_z, human_rx, hp);
 		d3dg->Draw2DTextureDebugFontText(10+1, 50+1, str, d3dg->GetColorCode(0.1f,0.1f,0.1f,1.0f));
 		d3dg->Draw2DTextureDebugFontText(10, 50, str, d3dg->GetColorCode(1.0f,1.0f,1.0f,1.0f));
-		sprintf(str, "Input:%02dms Object:%02dms AI:%02dms Event:%02dms Sound:%02dms Render:%02dms", time_input, time_process_object, time_process_ai, time_process_event, time_sound, time_render);
+		sprintf(str, "          move_x:%.2f move_y:%.2f move_z:%.2f", move_x, move_y, move_z);
 		d3dg->Draw2DTextureDebugFontText(10+1, 70+1, str, d3dg->GetColorCode(0.1f,0.1f,0.1f,1.0f));
 		d3dg->Draw2DTextureDebugFontText(10, 70, str, d3dg->GetColorCode(1.0f,1.0f,1.0f,1.0f));
+		sprintf(str, "Input:%02dms Object:%02dms AI:%02dms Event:%02dms Sound:%02dms Render:%02dms", time_input, time_process_object, time_process_ai, time_process_event, time_sound, time_render);
+		d3dg->Draw2DTextureDebugFontText(10+1, 90+1, str, d3dg->GetColorCode(0.1f,0.1f,0.1f,1.0f));
+		d3dg->Draw2DTextureDebugFontText(10, 90, str, d3dg->GetColorCode(1.0f,1.0f,1.0f,1.0f));
 	}
 
 	//ゲーム実行速度の表示
