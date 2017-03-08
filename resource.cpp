@@ -122,11 +122,14 @@ void ResourceManager::DestroyResource()
 	CleanupHumanModel();
 	CleanupHumanTexture();
 	CleanupWeaponModelTexture();
+	CleanupWeaponSound();
 	CleanupSmallObjectModelTexture();
+	CleanupSmallObjectSound();
 
 	CleanupScopeTexture();
 	CleanupSkyModelTexture();
 	CleanupBulletModelTexture();
+	CleanupBulletSound();
 	CleanupEffectTexture();
 }
 
@@ -468,6 +471,17 @@ int ResourceManager::GetWeaponSound(int id)
 	return weapon_sound[id];
 }
 
+//! @brief 武器のサウンドを一括解放
+void ResourceManager::CleanupWeaponSound()
+{
+	for(int i=0; i<TOTAL_PARAMETERINFO_WEAPON; i++){
+		SoundCtrl->CleanupSound(weapon_sound[i]);
+		weapon_sound[i] = -1;
+	}
+	SoundCtrl->CleanupSound(weapon_reloadsound);
+	weapon_reloadsound = -1;
+}
+
 //! @brief 小物のモデルやテクスチャを一括読み込み
 //! @return 成功：0　失敗：1以上
 int ResourceManager::LoadSmallObjectModelTexture()
@@ -560,6 +574,15 @@ int ResourceManager::GetSmallObjectSound(int id)
 	return smallobject_sound[id];
 }
 
+//! @brief 小物のサウンドを一括解放
+void ResourceManager::CleanupSmallObjectSound()
+{
+	for(int i=0; i<TOTAL_PARAMETERINFO_SMALLOBJECT+1; i++){
+		SoundCtrl->CleanupSound(smallobject_sound[i]);
+		smallobject_sound[i] = -1;
+	}
+}
+
 //! @brief 追加小物のモデル・テクスチャ・サウンドを取得
 //! @param modelpath モデルデータのパス
 //! @param texturepath テクスチャデータのパス
@@ -572,7 +595,7 @@ int ResourceManager::LoadAddSmallObject(char *modelpath, char *texturepath, char
 
 	d3dg->CleanupModel(smallobject_model[dataid]);
 	d3dg->CleanupTexture(smallobject_texture[dataid]);
-	//SoundCtrl->CleanupSound(smallobject_sound[dataid]);
+	SoundCtrl->CleanupSound(smallobject_sound[dataid]);
 
 	smallobject_model[dataid] = d3dg->LoadModel(modelpath);
 	smallobject_texture[dataid] = d3dg->LoadTexture(texturepath, false, false);
@@ -737,6 +760,24 @@ void ResourceManager::GetBulletSound(int *hitsoundA, int *hitsoundB, int *humanh
 	if( passingsound != NULL ){ *passingsound = bullet_passingsound; }
 	if( grenadebang != NULL ){ *grenadebang = grenade_bang; }
 	if( grenadecco != NULL ){ *grenadecco = grenade_cco; }
+}
+
+//! @brief 弾・手榴弾のサウンドを一括解放
+void ResourceManager::CleanupBulletSound()
+{
+	SoundCtrl->CleanupSound(bullet_hitsoundA);
+	SoundCtrl->CleanupSound(bullet_hitsoundB);
+	SoundCtrl->CleanupSound(bullet_humanhitsound);
+	SoundCtrl->CleanupSound(bullet_passingsound);
+	SoundCtrl->CleanupSound(grenade_bang);
+	SoundCtrl->CleanupSound(grenade_cco);
+
+	bullet_hitsoundA = -1;
+	bullet_hitsoundB = -1;
+	bullet_humanhitsound = -1;
+	bullet_passingsound = -1;
+	grenade_bang = -1;
+	grenade_cco = -1;
 }
 
 //! @brief エフェクトのテクスチャを読み込む

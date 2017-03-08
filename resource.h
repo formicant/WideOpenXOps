@@ -106,11 +106,13 @@ public:
 	void CleanupWeaponModelTexture();
 	int LoadWeaponSound();
 	int GetWeaponSound(int id);
+	void CleanupWeaponSound();
 	int LoadSmallObjectModelTexture();
 	int GetSmallObjectModelTexture(int id, int *model, int *texture);
 	void CleanupSmallObjectModelTexture();
 	int LoadSmallObjectSound();
 	int GetSmallObjectSound(int id);
+	void CleanupSmallObjectSound();
 	int LoadAddSmallObject(char *modelpath, char *texturepath, char *soundpath);
 	int LoadBulletModelTexture();
 	int GetBulletModelTexture(int id, int *model, int *texture);
@@ -124,6 +126,7 @@ public:
 	void CleanupSkyModelTexture();
 	int LoadBulletSound();
 	void GetBulletSound(int *hitsoundA, int *hitsoundB, int *humanhitsound, int *passingsound, int *grenadebang, int *grenadecco);
+	void CleanupBulletSound();
 	int LoadEffectTexture();
 	int GetEffectBloodTexture();
 	int GetEffectMflashTexture();

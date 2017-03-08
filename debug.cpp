@@ -36,8 +36,12 @@
 //! @brief コンストラクタ
 DebugLog::DebugLog()
 {
+	//ファイル名を生成
+	char time[32];
+	GetTimeName(time);
+	sprintf(fname, GAMENAME"_log-%s.html", time);
+
 	OutputFlag = false;
-	strcpy(fname, GAMENAME"_log.html");
 	error = false;
 }
 
