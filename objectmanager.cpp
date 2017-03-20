@@ -58,6 +58,10 @@ ObjectManager::ObjectManager()
 	BlockData = NULL;
 	PointData = NULL;
 	CollD = NULL;
+	GameSound = NULL;
+	MIFdata = NULL;
+
+	ObjectLog = new ObjectManagerLog;
 }
 
 //! @brief ディストラクタ
@@ -78,6 +82,8 @@ ObjectManager::~ObjectManager()
 	if( Human_ShotFlag != NULL ){ delete [] Human_ShotFlag; }
 	if( BulletObj_HumanIndex != NULL ){ delete [] BulletObj_HumanIndex; }
 	if( Human_FrameTextureRefresh != NULL ){ delete [] Human_FrameTextureRefresh; }
+
+	if( ObjectLog != NULL ){ delete ObjectLog; }
 }
 
 //! @brief 参照するクラスを設定
@@ -135,6 +141,8 @@ void ObjectManager::SetClass(ParameterInfo *in_GameParamInfo, D3DGraphics *in_d3
 			}
 		}
 	}
+
+	ObjectLog->SetClass(d3dg);
 }
 
 //! @brief 人追加
@@ -325,6 +333,11 @@ int ObjectManager::AddHumanIndex(float px, float py, float pz, float rx, int par
 		HumanIndex[Humanindexid].SetWeapon(Weapon);
 	}
 
+	//ログ関係の処理
+	int player_teamid;
+	HumanIndex[Player_HumanID].GetParamData(NULL, NULL, NULL, &player_teamid);
+	ObjectLog->AddHuman(Humanindexid, TeamID, player_teamid);
+
 	return Humanindexid;
 }
 
@@ -466,20 +479,24 @@ int ObjectManager::AddSmallObjectIndex(float px, float py, float pz, float rx, i
 		return -1;
 	}
 
-	for(int j=0; j<MAX_SMALLOBJECT; j++){
-		if( SmallObjectIndex[j].GetEnableFlag() == false ){
+	for(int i=0; i<MAX_SMALLOBJECT; i++){
+		if( SmallObjectIndex[i].GetEnableFlag() == false ){
 			//初期化
-			SmallObjectIndex[j].SetPosData(px, py, pz, rx);
-			SmallObjectIndex[j].SetParamData(paramID, 0, true);
-			SmallObjectIndex[j].SetModel(model, SMALLOBJECT_SCALE);
-			SmallObjectIndex[j].SetTexture(texture);
-			SmallObjectIndex[j].SetEnableFlag(true);
+			SmallObjectIndex[i].SetPosData(px, py, pz, rx);
+			SmallObjectIndex[i].SetParamData(paramID, 0, true);
+			SmallObjectIndex[i].SetModel(model, SMALLOBJECT_SCALE);
+			SmallObjectIndex[i].SetTexture(texture);
+			SmallObjectIndex[i].SetEnableFlag(true);
 
 			//位置修正フラグが有効ならば、マップと判定
 			if( MapColl == true ){
-				SmallObjectIndex[j].CollisionMap(CollD);
+				SmallObjectIndex[i].CollisionMap(CollD);
 			}
-			return j;
+
+			//ログ関係の処理
+			ObjectLog->AddSmallObject(i);
+
+			return i;
 		}
 	}
 	return -1;
@@ -902,6 +919,7 @@ void ObjectManager::HitBulletMap(float x, float y, float z, int teamID)
 void ObjectManager::HitBulletHuman(int HitHuman_id, int Hit_id, float x, float y, float z, float brx, int attacks, int Shothuman_id)
 {
 	int Shothuman_TeamID;
+	int HitHuman_TeamID;
 	int damage = 0;
 	int paramid;
 	HumanParameter Paraminfo;
@@ -911,8 +929,9 @@ void ObjectManager::HitBulletHuman(int HitHuman_id, int Hit_id, float x, float y
 	if( HumanIndex[HitHuman_id].GetEnableFlag() == false ){ return; }
 	if( HumanIndex[HitHuman_id].GetHP() <= 0 ){ return; }
 
-	//発射元のチーム番号取得
+	//発射元と対象人物のチーム番号取得
 	HumanIndex[Shothuman_id].GetParamData(NULL, NULL, NULL, &Shothuman_TeamID);
+	HumanIndex[HitHuman_id].GetParamData(NULL, NULL, NULL, &HitHuman_TeamID);
 
 	//人にダメージと衝撃を与える
 	if( Hit_id == 0 ){ HumanIndex[HitHuman_id].HitBulletHead(attacks); }
@@ -921,9 +940,7 @@ void ObjectManager::HitBulletHuman(int HitHuman_id, int Hit_id, float x, float y
 	HumanIndex[HitHuman_id].AddPosOrder(brx, 0.0f, 1.0f);
 
 #ifdef ENABLE_BUG_TEAMID
-	int HitHuman_TeamID;
 	bool flag = true;
-	HumanIndex[HitHuman_id].GetParamData(NULL, NULL, NULL, &HitHuman_TeamID);
 
 	//チーム番号が負数、かつチーム番号が大きいなら、フラグ無効
 	if( (HitHuman_TeamID < 0)&&(Shothuman_TeamID < 0) ){
@@ -964,6 +981,16 @@ void ObjectManager::HitBulletHuman(int HitHuman_id, int Hit_id, float x, float y
 	if( HumanIndex[HitHuman_id].GetHP() <= 0 ){
 		Human_kill[Shothuman_id] += 1;
 	}
+
+	//ログ関係の処理
+	if( HumanIndex[HitHuman_id].GetHP() <= 0 ){
+		//ダメージ計算前に hp>0 でかつ、計算後に hp <= 0 なら、今回死亡した。
+
+		int player_teamid;
+		HumanIndex[Player_HumanID].GetParamData(NULL, NULL, NULL, &player_teamid);
+
+		ObjectLog->DiedHuman(Shothuman_id, HitHuman_id, Shothuman_TeamID, HitHuman_TeamID, player_teamid);
+	}
 }
 
 //! @brief 弾が小物に当たった処理
@@ -994,6 +1021,13 @@ void ObjectManager::HitBulletSmallObject(int HitSmallObject_id, float x, float y
 	int id;
 	SmallObjectIndex[HitSmallObject_id].GetParamData(&id, NULL);
 	GameSound->HitSmallObject(x, y, z, id, teamID);
+
+	//ログ関係の処理
+	hp = SmallObjectIndex[HitSmallObject_id].GetHP();
+	if( hp <= 0 ){
+		//ダメージ計算前に hp>0 でかつ、計算後に hp <= 0 なら、今回破壊された。
+		ObjectLog->BreakSmallObject(HitSmallObject_id);
+	}
 }
 
 //! @brief 手榴弾のダメージ判定と処理
@@ -1017,6 +1051,7 @@ bool ObjectManager::GrenadeExplosion(grenade *in_grenade)
 		if( HumanIndex[i].GetEnableFlag() == false ){ continue; }
 		if( HumanIndex[i].GetHP() <= 0 ){ continue; }
 
+		int HitHuman_TeamID;
 		float hx, hy, hz;
 		float x, y, z, r;
 
@@ -1062,10 +1097,10 @@ bool ObjectManager::GrenadeExplosion(grenade *in_grenade)
 			//ダメージを反映
 			HumanIndex[i].HitGrenadeExplosion(total_damage);
 
-#ifdef ENABLE_BUG_TEAMID
-			int HitHuman_TeamID;
-			bool flag = true;
 			HumanIndex[i].GetParamData(NULL, NULL, NULL, &HitHuman_TeamID);
+
+#ifdef ENABLE_BUG_TEAMID
+			bool flag = true;
 
 			//チーム番号が負数、かつチーム番号が大きいなら、フラグ無効
 			if( (HitHuman_TeamID < 0)&&(teamid < 0) ){
@@ -1111,6 +1146,16 @@ bool ObjectManager::GrenadeExplosion(grenade *in_grenade)
 			//爆風による風圧
 			HumanIndex[i].AddPosOrder(arx, ary, 2.2f/MAX_DAMAGE_GRENADE_DISTANCE * (MAX_DAMAGE_GRENADE_DISTANCE - sqrt(x*x + y*y + z*z)));
 
+			//ログ関係の処理
+			if( HumanIndex[i].GetHP() <= 0 ){
+				//ダメージ計算前に hp>0 でかつ、計算後に hp <= 0 なら、今回死亡した。
+
+				int player_teamid;
+				HumanIndex[Player_HumanID].GetParamData(NULL, NULL, NULL, &player_teamid);
+
+				ObjectLog->DiedHuman(humanid, i, teamid, HitHuman_TeamID, player_teamid);
+			}
+
 			returnflag = true;
 		}
 	}
@@ -1146,6 +1191,12 @@ bool ObjectManager::GrenadeExplosion(grenade *in_grenade)
 
 			//小物から効果音を発する
 			GameSound->HitSmallObject(sx, sy, sz, id, teamid);
+
+			//ログ関係の処理
+			if( SmallObjectIndex[i].GetHP() <= 0 ){
+				//ダメージ計算前に hp>0 でかつ、計算後に hp <= 0 なら、今回破壊された。
+				ObjectLog->BreakSmallObject(i);
+			}
 
 			returnflag = true;
 		}
@@ -1401,6 +1452,10 @@ void ObjectManager::LoadPointData()
 			AddSmallObjectIndex(data);
 		}
 	}
+
+	//ログ関係の処理
+	ObjectLog->ClearLog();
+	ObjectLog->InfoLog("Set object...");
 }
 
 //! @brief リソースの回復
@@ -1515,6 +1570,9 @@ void ObjectManager::Recovery()
 			EffectIndex[i].SetEnableFlag(false);
 		}
 	}
+
+	//ログ関係の処理
+	ObjectLog->InfoLog("Recovery object...");
 }
 
 //! @brief 追加の当たり判定フラグを設定
@@ -2194,14 +2252,16 @@ void ObjectManager::HitZombieAttack(human* MyHuman, human* EnemyHuman)
 	if( EnemyHuman->GetEnableFlag() == false ){ return; }
 	if( EnemyHuman->GetHP() <= 0 ){ return; }
 
-	int MyHuman_TeamID;
+	int MyHuman_dataID, MyHuman_TeamID;
+	int EnemyHuman_dataID, EnemyHuman_TeamID;
 	float tx, ty, tz;
 	int paramid;
 	HumanParameter Paraminfo;
 	bool NotRobot;
 
-	//ゾンビ側のチーム番号取得
-	MyHuman->GetParamData(NULL, NULL, NULL, &MyHuman_TeamID);
+	//ゾンビ側と攻撃を受ける側チーム番号取得
+	MyHuman->GetParamData(NULL, &MyHuman_dataID, NULL, &MyHuman_TeamID);
+	EnemyHuman->GetParamData(NULL, &EnemyHuman_dataID, NULL, &EnemyHuman_TeamID);
 
 	EnemyHuman->GetPosData(&tx, &ty, &tz, NULL);
 	ty += VIEW_HEIGHT;
@@ -2220,9 +2280,7 @@ void ObjectManager::HitZombieAttack(human* MyHuman, human* EnemyHuman)
 	EnemyHuman->HitZombieAttack();
 
 #ifdef ENABLE_BUG_TEAMID
-	int EnemyHuman_TeamID;
 	bool flag = true;
-	EnemyHuman->GetParamData(NULL, NULL, NULL, &EnemyHuman_TeamID);
 
 	//チーム番号が負数、かつチーム番号が大きいなら、フラグ無効
 	if( (EnemyHuman_TeamID < 0)&&(MyHuman_TeamID < 0) ){
@@ -2243,6 +2301,16 @@ void ObjectManager::HitZombieAttack(human* MyHuman, human* EnemyHuman)
 
 	//効果音を再生
 	GameSound->HitHuman(tx, ty, tz, MyHuman_TeamID);
+
+	//ログ関係の処理
+	if( EnemyHuman->GetHP() <= 0 ){
+		//ダメージ計算前に hp>0 でかつ、計算後に hp <= 0 なら、今回死亡した。
+
+		int player_teamid;
+		HumanIndex[Player_HumanID].GetParamData(NULL, NULL, NULL, &player_teamid);
+
+		ObjectLog->DiedHuman(MyHuman_dataID, EnemyHuman_dataID, MyHuman_TeamID, EnemyHuman_TeamID, player_teamid);
+	}
 }
 
 //! @brief 死者を蘇生する
@@ -2263,6 +2331,11 @@ bool ObjectManager::HumanResuscitation(int id)
 	HumanIndex[id].GetParamData(&id_param, &dataid, &p4, &team);
 	if( (id_param < 0)||( TOTAL_PARAMETERINFO_HUMAN-1 < id_param) ){ return false; }	//謎人間なら処理しない
 	HumanIndex[id].SetParamData(id_param, dataid, p4, team, true);
+
+	//ログ関係の処理
+	int player_teamid;
+	HumanIndex[Player_HumanID].GetParamData(NULL, NULL, NULL, &player_teamid);
+	ObjectLog->ReviveHuman(id, team, player_teamid);
 
 	return true;
 }
@@ -2433,6 +2506,7 @@ int ObjectManager::Process(int cmdF5id, bool demomode, float camera_rx, float ca
 	//人オブジェクトの処理
 	for(int i=0; i<MAX_HUMAN; i++){
 		bool cmdF5, player;
+		int rtn;
 
 		//プレイヤーかどうか判定
 		if( Player_HumanID == i ){
@@ -2449,9 +2523,18 @@ int ObjectManager::Process(int cmdF5id, bool demomode, float camera_rx, float ca
 			cmdF5 = false;
 		}
 
-		if( HumanIndex[i].RunFrame(CollD, BlockData, AddCollisionFlag, player, cmdF5) == 2 ){
+		rtn = HumanIndex[i].RunFrame(CollD, BlockData, AddCollisionFlag, player, cmdF5);
+		if( rtn == 2 ){
 			//死亡時のエフェクト
 			DeadEffect(&(HumanIndex[i]));
+		}
+		if( rtn == 4 ){
+			int teamid, player_teamid;
+			HumanIndex[i].GetParamData(NULL, NULL, NULL, &teamid);
+			HumanIndex[Player_HumanID].GetParamData(NULL, NULL, NULL, &player_teamid);
+
+			//ログ関係の処理
+			ObjectLog->DiedHuman(-1, i, -1, teamid, player_teamid);
 		}
 
 		//足音
@@ -2577,6 +2660,9 @@ int ObjectManager::Process(int cmdF5id, bool demomode, float camera_rx, float ca
 			CollideHuman(&HumanIndex[i], &HumanIndex[j]);
 		}
 	}
+
+	//ログ関係の処理
+	ObjectLog->Process();
 
 	framecnt += 1;
 
@@ -2748,6 +2834,14 @@ void ObjectManager::Render(float camera_x, float camera_y, float camera_z, int H
 	}
 }
 
+//! @brief オブジェクトログの描画処理
+//! @param x 左上の x座標
+//! @param y 左上の y座標
+void ObjectManager::RenderLog(int x, int y)
+{
+	ObjectLog->Render(x, y);
+}
+
 //! @brief データの解放
 void ObjectManager::Cleanup()
 {
@@ -2792,4 +2886,213 @@ void BulletObjectHumanIndex::SetIndexFlag(int id)
 {
 	if( (id < 0)||(MAX_HUMAN <= id) ){ return; }
 	HumanIndex[id] = true;
+}
+
+//! @brief コンストラクタ
+ObjectManagerLog::ObjectManagerLog()
+{
+	d3dg = NULL;
+	for(int i=0; i<MAX_OBJECTMANAGER_LOGLEN; i++){
+		TextStr[i] = new char [MAX_OBJECTMANAGER_LOGLINES];
+	}
+	ClearLog();
+}
+
+//! @brief ディストラクタ
+ObjectManagerLog::~ObjectManagerLog()
+{
+	for(int i=0; i<MAX_OBJECTMANAGER_LOGLEN; i++){
+		delete [] TextStr[i];
+	}
+}
+
+//! @brief 参照するクラスを設定
+//! @param in_d3dg 描画処理クラス
+//! @attention この関数で設定を行わないと、クラス自体が正しく機能しません。
+void ObjectManagerLog::SetClass(D3DGraphics *in_d3dg)
+{
+	d3dg = in_d3dg;
+}
+
+//! @brief オブジェクトログを初期化
+void ObjectManagerLog::ClearLog()
+{
+	for(int i=0; i<MAX_OBJECTMANAGER_LOGLEN; i++){
+		TextCnt[i] = -1;
+		TextStr[i][0] = '\0';
+		TextColor[i] = 0;
+	}
+}
+
+//! @brief 情報を追記
+//! @param str 文字列　（改行コード：<b>不可</b>）
+void ObjectManagerLog::InfoLog(char *str)
+{
+	AddTextLog(MAX_OBJECTMANAGER_LOGCNT, str, d3dg->GetColorCode(0.0f,1.0f,0.0f,1.0f));
+}
+
+//! @brief 人を追加した
+//! @param humanID 人のID
+//! @param TeamID チーム番号
+//! @param PlayerTeamID プレイヤーのチーム番号
+void ObjectManagerLog::AddHuman(int humanID, int TeamID, int PlayerTeamID)
+{
+	char str[64];
+	int str_color;
+
+	//文字の色を決定
+	if( PlayerTeamID == TeamID ){ str_color = d3dg->GetColorCode(0.0f,1.0f,1.0f,1.0f); }
+	else{ str_color = d3dg->GetColorCode(1.0f,0.5f,0.0f,1.0f); }
+
+	sprintf(str, "Added human[%d]", humanID);
+
+	AddTextLog(MAX_OBJECTMANAGER_LOGCNT, str, str_color);
+}
+
+//! @brief 人が死亡した
+//! @param ShothumanID  攻撃をした人のID
+//! @param HitHumanID 攻撃を受けた人のID
+//! @param ShothumanTeamID 攻撃をした人のチーム番号
+//! @param HitHumanTeamID 攻撃を受けた人のチーム番号
+//! @param PlayerTeamID プレイヤーのチーム番号
+void ObjectManagerLog::DiedHuman(int ShothumanID, int HitHumanID, int ShothumanTeamID, int HitHumanTeamID, int PlayerTeamID)
+{
+	char str[64];
+	int str_color;
+
+	//文字の色を決定
+	if( PlayerTeamID == HitHumanTeamID ){ str_color = d3dg->GetColorCode(1.0f,0.5f,0.0f,1.0f); }
+	else{ str_color = d3dg->GetColorCode(0.0f,1.0f,1.0f,1.0f); }
+
+	if( (ShothumanID == -1)||(ShothumanID == HitHumanID) ){
+		sprintf(str, "human[%d] died", HitHumanID);
+	}
+	else{
+		sprintf(str, "human[%d] killed human[%d]", ShothumanID, HitHumanID);
+
+		//TK判定
+		if( ShothumanTeamID == HitHumanTeamID ){
+			strcat(str, " (TK)");
+		}
+	}
+
+	AddTextLog(MAX_OBJECTMANAGER_LOGCNT, str, str_color);
+}
+
+//! @brief 人が蘇生した
+//! @param humanID 人のID
+//! @param TeamID チーム番号
+//! @param PlayerTeamID プレイヤーのチーム番号
+void ObjectManagerLog::ReviveHuman(int humanID, int TeamID, int PlayerTeamID)
+{
+	char str[64];
+	int str_color;
+
+	//文字の色を決定
+	if( PlayerTeamID == TeamID ){ str_color = d3dg->GetColorCode(0.0f,1.0f,1.0f,1.0f); }
+	else{ str_color = d3dg->GetColorCode(1.0f,0.5f,0.0f,1.0f); }
+
+	sprintf(str, "Revived human[%d]", humanID);
+
+	AddTextLog(MAX_OBJECTMANAGER_LOGCNT, str, str_color);
+}
+
+//! @brief 小物を追加した
+//! @param objID 小物のID
+void ObjectManagerLog::AddSmallObject(int objID)
+{
+	char str[64];
+	sprintf(str, "Added SmallObject[%d]", objID);
+	AddTextLog(MAX_OBJECTMANAGER_LOGCNT, str, d3dg->GetColorCode(1.0f,1.0f,0.0f,1.0f));
+}
+
+//! @brief 小物を破壊した
+//! @param objID 小物のID
+void ObjectManagerLog::BreakSmallObject(int objID)
+{
+	char str[64];
+	sprintf(str, "Breaked SmallObject[%d]", objID);
+	AddTextLog(MAX_OBJECTMANAGER_LOGCNT, str, d3dg->GetColorCode(1.0f,1.0f,0.0f,1.0f));
+}
+
+//! @brief オブジェクトログ追加
+//! @param cnt 描画フレーム数
+//! @param str 文字列　（改行コード：<b>不可</b>）
+//! @param color 色
+//! @return 1行上書き：true　追加のみ：false
+bool ObjectManagerLog::AddTextLog(int cnt, char *str, int color)
+{
+	//空いている行があるなら、その行に書いて終了
+	for(int i=0; i<MAX_OBJECTMANAGER_LOGLEN; i++){
+		if( TextCnt[i] == -1 ){
+			TextCnt[i] = cnt;
+			strcpy(TextStr[i], str);
+			TextColor[i] = color;
+			return false;
+		}
+	}
+
+	//空いている行がなければ、1行づつ詰める
+	for(int i=0; i<MAX_OBJECTMANAGER_LOGLEN-1; i++){
+		TextCnt[i] = TextCnt[i+1];
+		strcpy(TextStr[i], TextStr[i+1]);
+		TextColor[i] = TextColor[i+1];
+	}
+
+	//最後の行に書く
+	TextCnt[MAX_OBJECTMANAGER_LOGLEN-1] = cnt;
+	strcpy(TextStr[MAX_OBJECTMANAGER_LOGLEN-1], str);
+	TextColor[MAX_OBJECTMANAGER_LOGLEN-1] = color;
+	return true;
+}
+
+//! @brief オブジェクトログの主計算処理
+void ObjectManagerLog::Process()
+{
+	//各行ごとにカウント処理
+	for(int i=0; i<MAX_OBJECTMANAGER_LOGLEN; i++){
+		if( TextCnt[i] == 0 ){
+			TextCnt[i] = -1;
+			TextStr[i][0] = '\0';
+			TextColor[i] = 0;
+		}
+		else if( TextCnt[i] > 0 ){
+			TextCnt[i] -= 1;
+		}
+	}
+
+	//ゼロカウントの行を詰める
+	for(int i=0; i<MAX_OBJECTMANAGER_LOGLEN-1; i++){
+		if( TextCnt[i] == 0 ){
+			for(int j=i; j<MAX_OBJECTMANAGER_LOGLEN-1; j++){
+				TextCnt[j] = TextCnt[j+1];
+				strcpy(TextStr[j], TextStr[j+1]);
+				TextColor[j] = TextColor[j+1];
+			}
+
+			//最後の行は空行に
+			TextCnt[MAX_OBJECTMANAGER_LOGLEN-1] = -1;
+			TextStr[MAX_OBJECTMANAGER_LOGLEN-1][0] = '\0';
+			TextColor[MAX_OBJECTMANAGER_LOGLEN-1] = 0;
+		}
+	}
+}
+
+//! @brief オブジェクトログの描画処理
+//! @param x 左上の x座標
+//! @param y 左上の y座標
+//! @attention 上から逆順で描画されます。
+void ObjectManagerLog::Render(int x, int y)
+{
+#ifdef ENABLE_DEBUGCONSOLE
+	if( d3dg == NULL ){ return; }
+
+	for(int i=MAX_OBJECTMANAGER_LOGLEN-1; i>=0; i--){
+		if( TextCnt[i] >= 0 ){
+			d3dg->Draw2DTextureDebugFontText(x+2+1, y+2+1, TextStr[i], d3dg->GetColorCode(0.1f,0.1f,0.1f,1.0f));
+			d3dg->Draw2DTextureDebugFontText(x+2, y+2, TextStr[i], TextColor[i]);
+		}
+		y += 20;
+	}
+#endif
 }

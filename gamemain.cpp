@@ -2150,6 +2150,7 @@ void maingame::Render2D()
 		}
 	}
 
+#ifdef ENABLE_DEBUGCONSOLE
 	//デバック用・ゲーム情報の表示
 	if( (ShowInfo_Debugmode == true)||(Camera_Debugmode == true) ){
 		float move_x, move_y, move_z;
@@ -2172,6 +2173,7 @@ void maingame::Render2D()
 		d3dg->Draw2DTextureDebugFontText(10+1, 90+1, str, d3dg->GetColorCode(0.1f,0.1f,0.1f,1.0f));
 		d3dg->Draw2DTextureDebugFontText(10, 90, str, d3dg->GetColorCode(1.0f,1.0f,1.0f,1.0f));
 	}
+#endif
 
 	//ゲーム実行速度の表示
 	//int speed = (int)(fps / (1000.0f/GAMEFRAMEMS) * 100);
@@ -2289,6 +2291,13 @@ void maingame::Render2D()
 		d3dg->Draw2DMSFontTextCenter(0, SCREEN_HEIGHT - 140, SCREEN_WIDTH, 140, messtr, d3dg->GetColorCode(1.0f,1.0f,1.0f,effectA));
 	}
 
+#ifdef ENABLE_DEBUGCONSOLE
+	//デバック用・ゲーム情報の表示
+	if( ShowInfo_Debugmode == true ){
+		ObjMgr.RenderLog(HUDA_WEAPON_POSX, HUDA_WEAPON_POSY-60);
+	}
+#endif
+
 	//リロード表示
 	if( reloadcnt > 0 ){
 		d3dg->Draw2DTextureFontText(SCREEN_WIDTH/2 - 145 +3, SCREEN_HEIGHT - 180+3, "RELOADING", d3dg->GetColorCode(0.2f,0.2f,0.2f,1.0f), 32, 34);
@@ -2341,6 +2350,7 @@ void maingame::Render2D()
 		}
 	}
 
+#ifdef ENABLE_DEBUGCONSOLE
 	//AIデバック情報表示
 	if( AIdebuginfoID != -1 ){
 		if( (0 <= AIdebuginfoID)&&(AIdebuginfoID < MAX_HUMAN) ){
@@ -2375,6 +2385,7 @@ void maingame::Render2D()
 			d3dg->Draw2DTextureDebugFontText(20, 210, str, d3dg->GetColorCode(1.0f,1.0f,0.0f,1.0f));
 		}
 	}
+#endif
 
 
 	//-----------------------------------
@@ -2511,7 +2522,7 @@ void maingame::RenderRadar()
 {
 	int RadarSize = 200;							//レーダーの描画サイズ
 	int RadarPosX = SCREEN_WIDTH - RadarSize - 10;	//レーダーの描画 X座標（左上基準）
-	int RadarPosY = 130;							//レーダーの描画 Y座標（左上基準）
+	int RadarPosY = 110;							//レーダーの描画 Y座標（左上基準）
 	float RadarWorldR = 300.0f;						//レーダーにポイントする距離
 
 	float ecr = DISTANCE_CHECKPOINT / RadarWorldR * (RadarSize/2);

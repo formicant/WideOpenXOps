@@ -1537,7 +1537,7 @@ bool human::MapCollisionDetection(class Collision *CollD, class BlockDataInterfa
 //! @param AddCollisionFlag 追加の当たり判定フラグ
 //! @param player 対象の人物がプレイヤーかどうか
 //! @param F5mode 上昇機能（F5裏技）のフラグ　（有効：true　無効：false）
-//! @return 処理なし：0　通常処理：1　死亡して倒れ終わった直後：2　静止した死体：3
+//! @return 処理なし：0　通常処理：1　死亡して倒れ終わった直後：2　静止した死体：3　地形により死亡した直後：4
 int human::RunFrame(class Collision *CollD, class BlockDataInterface *inblockdata, bool AddCollisionFlag, bool player, bool F5mode)
 {
 	if( CollD == NULL ){ return 0; }
@@ -1557,6 +1557,7 @@ int human::RunFrame(class Collision *CollD, class BlockDataInterface *inblockdat
 	float FallDistance;
 	float nowmove_x, nowmove_z;
 	int CheckDead;
+	int hp_old;
 
 	//武器切り替えカウント
 	if( selectweaponcnt > 0 ){
@@ -1583,6 +1584,7 @@ int human::RunFrame(class Collision *CollD, class BlockDataInterface *inblockdat
 		ControlProcess();
 
 		//マップとの当たり判定
+		hp_old = hp;
 		MapCollisionDetection(CollD, inblockdata, AddCollisionFlag, &FallDistance, &nowmove_x, &nowmove_z);
 
 		//移動するなら
@@ -1612,6 +1614,12 @@ int human::RunFrame(class Collision *CollD, class BlockDataInterface *inblockdat
 		if( pos_y < HUMAN_DEADLINE ){
 			pos_y = HUMAN_DEADLINE;
 			hp = 0;
+			return 4;
+		}
+
+		//今回のマップとの当たり判定でHPがゼロになったなら、地形による死亡
+		if( (hp_old >0)&&(hp <= 0) ){
+			return 4;
 		}
 	}
 

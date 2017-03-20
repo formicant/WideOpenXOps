@@ -53,6 +53,10 @@
 
 #define SMALLOBJECT_COLLISIONSCALE 0.13f	//!< 小物当たり判定の倍率
 
+#define MAX_OBJECTMANAGER_LOGLEN 3						//!< オブジェクトログの最大行数
+#define MAX_OBJECTMANAGER_LOGLINES 64					//!< オブジェクトログの最大文字数
+#define MAX_OBJECTMANAGER_LOGCNT (int)(5.0f*GAMEFPS)	//!< オブジェクトログの表示カウント数
+
 #ifndef H_LAYERLEVEL
  #define H_LAYERLEVEL 3		//!< Select include file.
 #endif
@@ -73,7 +77,7 @@ class ObjectManager
 	class smallobject *SmallObjectIndex;		//!< 小物オブジェクト
 	class bullet *BulletIndex;					//!< 弾オブジェクト
 	class grenade *GrenadeIndex;				//!< 手榴弾オブジェクト
-	class effect *EffectIndex;				//!< 手榴弾オブジェクト
+	class effect *EffectIndex;					//!< 手榴弾オブジェクト
 
 	unsigned int framecnt;		//!< フレーム数のカウント
 
@@ -98,6 +102,8 @@ class ObjectManager
 	Collision *CollD;					//!< 当たり判定管理クラス
 	SoundManager *GameSound;				//!< ゲーム効果音管理クラス
 	MIFInterface *MIFdata;				//!< MIFコントロールクラス
+
+	class ObjectManagerLog *ObjectLog;	//!< オブジェクトログクラス
 
 	int AddHumanIndex(pointdata data, pointdata infodata, bool RandomFlag);
 	int AddWeaponIndex(pointdata data);
@@ -165,6 +171,7 @@ public:
 	int Process(int cmdF5id, bool demomode, float camera_rx, float camera_ry);
 	bool GetHumanShotInfo(int id, int *ontarget, int *kill, int *headshot);
 	void Render(float camera_x, float camera_y, float camera_z, int HidePlayer);
+	void RenderLog(int x, int y);
 	void Cleanup();
 };
 
@@ -180,6 +187,33 @@ public:
 	void Init();
 	bool GetIndexFlag(int id);
 	void SetIndexFlag(int id);
+};
+
+//! @brief オブジェクトログクラス
+//! @details オブジェクト管理クラス ObjectManager のログを記録・表示します。
+class ObjectManagerLog
+{
+	D3DGraphics *d3dg;							//!< 描画クラス
+
+	int TextCnt[MAX_OBJECTMANAGER_LOGLEN];		//!< フレーム数
+	char *TextStr[MAX_OBJECTMANAGER_LOGLEN];	//!< 文字列
+	int TextColor[MAX_OBJECTMANAGER_LOGLEN];	//!< 文字列の色
+
+	bool AddTextLog(int cnt, char *str, int color);
+
+public:
+	ObjectManagerLog();
+	~ObjectManagerLog();
+	void SetClass(D3DGraphics *in_d3dg);
+	void ClearLog();
+	void InfoLog(char *str);
+	void AddHuman(int humanID, int TeamID, int PlayerTeamID);
+	void DiedHuman(int ShothumanID, int HitHumanID, int ShothumanTeamID, int HitHumanTeamID, int PlayerTeamID);
+	void ReviveHuman(int humanID, int TeamID, int PlayerTeamID);
+	void AddSmallObject(int objID);
+	void BreakSmallObject(int objID);
+	void Process();
+	void Render(int x, int y);
 };
 
 #endif
