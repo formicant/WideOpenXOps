@@ -104,8 +104,8 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine
 	//GameConfig.GetPlayerName(str);
 	//MessageBox(NULL, str, "プレイヤー名", MB_OK);
 	char str[255];
-	strcpy(str, "The compiler is the Debug mode.\nIf release the software, Switch compiler to Release mode.");
-	MessageBox(NULL, str, "Information", MB_OK);
+	strcpy(str, "[Information]\nThe compiler is the Debug mode.\nIf release the software, Switch compiler to Release mode.");
+	MessageBox(NULL, str, GAMENAME, MB_OK);
 #endif
 
 	//ウィンドウ初期化
