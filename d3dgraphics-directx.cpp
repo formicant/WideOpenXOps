@@ -31,7 +31,7 @@
 
 #include "d3dgraphics.h"
 
-#ifndef GRAPHICS_OPENGL
+#ifndef ENABLE_GRAPHICS_OPENGL
 
 //! @brief コンストラクタ
 D3DGraphics::D3DGraphics()
@@ -411,7 +411,7 @@ int D3DGraphics::LoadModel(char* filename)
 
 	LPD3DXBUFFER pD3DXMtrlBuffer;
 
-#ifdef PATH_DELIMITER_SLASH
+#ifdef ENABLE_PATH_DELIMITER_SLASH
 	//パス区切り文字を変換
 	filename = ChangePathDelimiter(filename);
 #endif
@@ -576,7 +576,7 @@ int D3DGraphics::LoadTexture(char* filename, bool texturefont, bool BlackTranspa
 	}
 	if( id == -1 ){ return -1; }
 
-#ifdef PATH_DELIMITER_SLASH
+#ifdef ENABLE_PATH_DELIMITER_SLASH
 	//パス区切り文字を変換
 	filename = ChangePathDelimiter(filename);
 #endif
@@ -1917,4 +1917,4 @@ int D3DGraphics::GetColorCode(float red, float green, float blue, float alpha)
 	return D3DCOLOR_COLORVALUE(red, green, blue, alpha);
 }
 
-#endif	//GRAPHICS_OPENGL
+#endif	//ENABLE_GRAPHICS_OPENGL

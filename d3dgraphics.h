@@ -57,9 +57,9 @@
 #endif
 #include "main.h"
 
-//#define GRAPHICS_OPENGL		//!< @brief 使用するグラフィックスコアの選択 @details 定数宣言有効：OpenGL 1.1　定数宣言無効（コメント化）：DirectX 9.0c
+//#define ENABLE_GRAPHICS_OPENGL		//!< @brief 使用するグラフィックスコアの選択 @details 定数宣言有効：OpenGL 1.1　定数宣言無効（コメント化）：DirectX 9.0c
 
-#ifndef GRAPHICS_OPENGL
+#ifndef ENABLE_GRAPHICS_OPENGL
 
 #define BLOCKDATA_GPUMEMORY	//!< @brief ブロックデータを格納するメモリーを選択 @details 定数宣言有効：GPUメモリー　定数宣言無効（コメント化）：メインメモリー
 
@@ -72,7 +72,7 @@
 
 #define GRAPHICS_CORE "DirectX 9.0"		//!< バージョン表示用情報
 
-#else	//GRAPHICS_OPENGL
+#else	//ENABLE_GRAPHICS_OPENGL
 
 #include <ctype.h>
 #include <windows.h>
@@ -91,9 +91,9 @@
 
 #define GRAPHICS_CORE "OpenGL 1.1"		//!< バージョン表示用情報
 
-#endif	//GRAPHICS_OPENGL
+#endif	//ENABLE_GRAPHICS_OPENGL
 
-#ifndef GRAPHICS_OPENGL
+#ifndef ENABLE_GRAPHICS_OPENGL
 
 //! 3Dポリゴン描画用構造体
 struct VERTEXTXTA
@@ -116,7 +116,7 @@ struct TLVERTX
 	FLOAT    tv;	//!< texture coordinates
 };
 
-#else	//GRAPHICS_OPENGL
+#else	//ENABLE_GRAPHICS_OPENGL
 
 //! モデルデータの頂点格納構造体
 struct MODELVDATA
@@ -147,7 +147,7 @@ struct TEXTUREDATA
 	unsigned char *data;	//!< 実データ
 };
 
-#endif	//GRAPHICS_OPENGL
+#endif	//ENABLE_GRAPHICS_OPENGL
 
 
 //! @brief 画面描画を行うクラス
@@ -156,7 +156,7 @@ struct TEXTUREDATA
 class D3DGraphics
 {
 
-#ifndef GRAPHICS_OPENGL
+#ifndef ENABLE_GRAPHICS_OPENGL
 
 	LPDIRECT3D9 pD3D;					//!< DIRECT3D9のポインタ
 	LPDIRECT3DDEVICE9 pd3dDevice;		//!< DIRECT3DDEVICE9のポインタ
@@ -201,7 +201,7 @@ class D3DGraphics
 	bool LoadDebugFontTexture();
 #endif
 
-#else	//GRAPHICS_OPENGL
+#else	//ENABLE_GRAPHICS_OPENGL
 
 	HWND hWnd;				//!< ウィンドウハンドル
 	HGLRC hGLRC;			//!< OpenGLのコンテキスト
@@ -259,7 +259,7 @@ class D3DGraphics
 	bool LoadDebugFontTexture();
 #endif
 
-#endif	//GRAPHICS_OPENGL
+#endif	//ENABLE_GRAPHICS_OPENGL
 
 public:
 	D3DGraphics();

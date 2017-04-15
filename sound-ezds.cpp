@@ -164,7 +164,7 @@ int SoundControl::LoadSound(char* filename)
 	for(int i=0; i<MAX_LOADSOUND; i++){
 		if( useflag[i] == false ){
 
-#ifdef PATH_DELIMITER_SLASH
+#ifdef ENABLE_PATH_DELIMITER_SLASH
 			//ƒpƒX‹æØ‚è•¶Žš‚ð•ÏŠ·
 			filename = ChangePathDelimiter(filename);
 #endif

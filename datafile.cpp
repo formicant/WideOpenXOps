@@ -111,7 +111,7 @@ int BlockDataInterface::LoadFiledata(char *fname)
 	OutputLog.WriteLog(LOG_LOAD, "BD1", fname);
 #endif
 
-#ifdef PATH_DELIMITER_SLASH
+#ifdef ENABLE_PATH_DELIMITER_SLASH
 	//パス区切り文字を変換
 	fname = ChangePathDelimiter(fname);
 #endif
@@ -424,7 +424,7 @@ int PointDataInterface::LoadFiledata(char *fname)
 	OutputLog.WriteLog(LOG_LOAD, "PD1", fname);
 #endif
 
-#ifdef PATH_DELIMITER_SLASH
+#ifdef ENABLE_PATH_DELIMITER_SLASH
 	//パス区切り文字を変換
 	fname = ChangePathDelimiter(fname);
 #endif
@@ -481,7 +481,7 @@ int PointDataInterface::LoadFiledata(char *fname)
 	}
 	strcat(fname2, ".msg");
 
-#ifdef PATH_DELIMITER_SLASH
+#ifdef ENABLE_PATH_DELIMITER_SLASH
 	//パス区切り文字を変換
 	strcpy(fname2, ChangePathDelimiter(fname2));
 #endif
@@ -709,7 +709,7 @@ int MIFInterface::LoadFiledata(char *fname)
 
 	FILE *fp;
 
-#ifdef PATH_DELIMITER_SLASH
+#ifdef ENABLE_PATH_DELIMITER_SLASH
 	//パス区切り文字を変換
 	fname = ChangePathDelimiter(fname);
 #endif
@@ -850,7 +850,7 @@ int MIFInterface::LoadFiledata(char *fname)
 		OutputLog.WriteLog(LOG_LOAD, "（追加小物）", addsmallobject_path);
 #endif
 
-#ifdef PATH_DELIMITER_SLASH
+#ifdef ENABLE_PATH_DELIMITER_SLASH
 		//パス区切り文字を変換
 		strcpy(addsmallobject_path, ChangePathDelimiter(addsmallobject_path));
 #endif

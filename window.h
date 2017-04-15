@@ -74,7 +74,7 @@ void GetTimeName(char *str);
 void InitRand();
 int GetRand(int num);
 
-#ifdef PATH_DELIMITER_SLASH
+#ifdef ENABLE_PATH_DELIMITER_SLASH
  char* ChangePathDelimiter(char *str);
 #endif
 

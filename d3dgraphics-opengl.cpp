@@ -45,7 +45,7 @@
 
 #include "d3dgraphics.h"
 
-#ifdef GRAPHICS_OPENGL
+#ifdef ENABLE_GRAPHICS_OPENGL
 
 //! @brief コンストラクタ
 D3DGraphics::D3DGraphics()
@@ -2847,4 +2847,4 @@ int D3DGraphics::GetColorCode(float red, float green, float blue, float alpha)
 	return (red2 << 24) | (green2 << 16) | (blue2 << 8) | alpha2;
 }
 
-#endif	//GRAPHICS_OPENGL
+#endif	//ENABLE_GRAPHICS_OPENGL

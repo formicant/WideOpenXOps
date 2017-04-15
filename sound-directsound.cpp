@@ -208,7 +208,7 @@ int SoundControl::LoadSound(char* filename)
 		return -1;
 	}
 
-#ifdef PATH_DELIMITER_SLASH
+#ifdef ENABLE_PATH_DELIMITER_SLASH
 	//ƒpƒX‹æØ‚è•¶š‚ğ•ÏŠ·
 	filename = ChangePathDelimiter(filename);
 #endif

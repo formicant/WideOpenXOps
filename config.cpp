@@ -66,7 +66,7 @@ int Config::LoadFile(char *fname)
 	OutputLog.WriteLog(LOG_LOAD, "設定ファイル", fname);
 #endif
 
-#ifdef PATH_DELIMITER_SLASH
+#ifdef ENABLE_PATH_DELIMITER_SLASH
 	//パス区切り文字を変換
 	fname = ChangePathDelimiter(fname);
 #endif

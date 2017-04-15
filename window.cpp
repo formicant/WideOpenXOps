@@ -315,7 +315,7 @@ int GetRand(int num)
 	//return x%num;
 }
 
-#ifdef PATH_DELIMITER_SLASH
+#ifdef ENABLE_PATH_DELIMITER_SLASH
 //! @brief パス区切り文字を変換
 //! @param *str ファイルパスのポインタ
 //! @return 新しいファイルパスのポインタ
