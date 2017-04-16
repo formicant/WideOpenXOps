@@ -368,6 +368,8 @@ int ResourceManager::GetWeaponModelTexture(int id, int *model, int *texture)
 //! @attention バグ武器を追加する場合は、ParameterInfoクラスの GetBugWeapon() 関数も編集してください。
 int ResourceManager::GetBugWeaponModelTexture(int id, int *model, int *texture)
 {
+	if( d3dg == NULL ){ return 1; }
+
 	if( id == 23 ){
 		*model = human_upmodel[0];
 		*texture = d3dg->GetMapTextureID(0);
@@ -410,6 +412,8 @@ void ResourceManager::CleanupWeaponModelTexture()
 //! @return 成功：0　失敗：1
 int ResourceManager::LoadWeaponSound()
 {
+	if( SoundCtrl == NULL ){ return 1; }
+
 	int soundid[6];
 	int reloadid;
 
@@ -462,9 +466,10 @@ int ResourceManager::LoadWeaponSound()
 
 //! @brief 武器のサウンドを取得
 //! @param id 0以上で武器の認識番号、-1でリロード音
-//! @return 成功：0　失敗：-1
+//! @return 成功：データ番号　失敗：-1
 int ResourceManager::GetWeaponSound(int id)
 {
+	if( SoundCtrl == NULL ){ return -1; }
 	if( id == -1 ){ return weapon_reloadsound; }
 
 	if( (id < 0)||((TOTAL_PARAMETERINFO_WEAPON -1) < id ) ){ return -1; }
@@ -474,6 +479,8 @@ int ResourceManager::GetWeaponSound(int id)
 //! @brief 武器のサウンドを一括解放
 void ResourceManager::CleanupWeaponSound()
 {
+	if( SoundCtrl == NULL ){ return; }
+
 	for(int i=0; i<TOTAL_PARAMETERINFO_WEAPON; i++){
 		SoundCtrl->CleanupSound(weapon_sound[i]);
 		weapon_sound[i] = -1;
@@ -536,6 +543,8 @@ void ResourceManager::CleanupSmallObjectModelTexture()
 //! @return 成功：0　失敗：1
 int ResourceManager::LoadSmallObjectSound()
 {
+	if( SoundCtrl == NULL ){ return 1; }
+
 	int soundid[2];
 
 	//サウンドファイルをまとめて読み込む
@@ -567,9 +576,10 @@ int ResourceManager::LoadSmallObjectSound()
 
 //! @brief 小物のサウンドを取得
 //! @param id 小物の認識番号
-//! @return 成功：0　失敗：-1
+//! @return 成功：データ番号　失敗：-1
 int ResourceManager::GetSmallObjectSound(int id)
 {
+	if( SoundCtrl == NULL ){ return -1; }
 	if( (id < 0)||((TOTAL_PARAMETERINFO_SMALLOBJECT+1 -1) < id ) ){ return -1; }
 	return smallobject_sound[id];
 }
@@ -577,6 +587,8 @@ int ResourceManager::GetSmallObjectSound(int id)
 //! @brief 小物のサウンドを一括解放
 void ResourceManager::CleanupSmallObjectSound()
 {
+	if( SoundCtrl == NULL ){ return; }
+
 	for(int i=0; i<TOTAL_PARAMETERINFO_SMALLOBJECT+1; i++){
 		SoundCtrl->CleanupSound(smallobject_sound[i]);
 		smallobject_sound[i] = -1;
@@ -590,6 +602,9 @@ void ResourceManager::CleanupSmallObjectSound()
 //! @return 成功：0　失敗：1以上
 int ResourceManager::LoadAddSmallObject(char *modelpath, char *texturepath, char *soundpath)
 {
+	if( d3dg == NULL ){ return 1; }
+	if( SoundCtrl == NULL ){ return 1; }
+
 	int dataid = TOTAL_PARAMETERINFO_SMALLOBJECT+1 -1;
 	int cnt = 0;
 
@@ -663,6 +678,8 @@ void ResourceManager::CleanupBulletModelTexture()
 //! @return 成功：0　失敗：1
 int ResourceManager::LoadScopeTexture()
 {
+	if( d3dg == NULL ){ return 1; }
+
 	scopetexture = d3dg->LoadTexture("data\\scope.dds", false, false);
 	if( scopetexture == -1 ){ return 1; }
 	return 0;
@@ -678,6 +695,7 @@ int ResourceManager::GetScopeTexture()
 //! @brief スコープテクスチャを解放
 void ResourceManager::CleanupScopeTexture()
 {
+	if( d3dg == NULL ){ return; }
 	if( scopetexture == -1 ){ return; }
 
 	d3dg->CleanupTexture(scopetexture);
@@ -729,6 +747,8 @@ void ResourceManager::CleanupSkyModelTexture()
 //! @return 成功：0　失敗：1
 int ResourceManager::LoadBulletSound()
 {
+	if( SoundCtrl == NULL ){ return 1; }
+
 	bullet_hitsoundA = SoundCtrl->LoadSound("data\\sound\\hit1.wav");
 	bullet_hitsoundB = SoundCtrl->LoadSound("data\\sound\\hit3.wav");
 	bullet_humanhitsound = SoundCtrl->LoadSound("data\\sound\\hit2.wav");
@@ -754,6 +774,8 @@ int ResourceManager::LoadBulletSound()
 //! @param grenadecco 手榴弾バウンド サウンド　（NULL可）
 void ResourceManager::GetBulletSound(int *hitsoundA, int *hitsoundB, int *humanhitsound, int *passingsound, int *grenadebang, int *grenadecco)
 {
+	if( SoundCtrl == NULL ){ return; }
+
 	if( hitsoundA != NULL ){ *hitsoundA = bullet_hitsoundA; }
 	if( hitsoundB != NULL ){ *hitsoundB = bullet_hitsoundB; }
 	if( humanhitsound != NULL ){ *humanhitsound = bullet_humanhitsound; }
@@ -765,6 +787,8 @@ void ResourceManager::GetBulletSound(int *hitsoundA, int *hitsoundB, int *humanh
 //! @brief 弾・手榴弾のサウンドを一括解放
 void ResourceManager::CleanupBulletSound()
 {
+	if( SoundCtrl == NULL ){ return; }
+
 	SoundCtrl->CleanupSound(bullet_hitsoundA);
 	SoundCtrl->CleanupSound(bullet_hitsoundB);
 	SoundCtrl->CleanupSound(bullet_humanhitsound);
