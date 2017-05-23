@@ -978,7 +978,7 @@ int human::CheckAndProcessDead(class Collision *CollD)
 	if( deadstate == 0 ){
 		if( hp <= 0 ){		//HP‚ª 0 ˆÈ‰º‚É‚È‚Á‚½iŽ€–S‚µ‚½juŠÔ‚È‚çA“|‚µŽn‚ß‚é
 			//‘Ì‚ÌŠp“x
-			if( GetRand(2) == 0 ){
+			if( armrotation_y > 0.0f ){
 				add_ry = HUMAN_DEADADDRY;
 			}
 			else{

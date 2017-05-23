@@ -584,14 +584,14 @@ void AIcontrol::Action()
 
 		//òrÇÃäpìx
 		if( zombie == true ){
-			//ry = 0.0f;
+			//ry = AI_ZOMBIEATTACK_ARMRY;
 
 			//ê˘âÒ
-			if( ry < 0.0f ){
+			if( ry < AI_ZOMBIEATTACK_ARMRY ){
 				ObjDriver->SetModeFlag(AI_CTRL_TURNUP);
 				ObjDriver->DelModeFlag(AI_CTRL_TURNDOWN);
 			}
-			if( ry > 0.0f ){
+			if( ry > AI_ZOMBIEATTACK_ARMRY ){
 				ObjDriver->SetModeFlag(AI_CTRL_TURNDOWN);
 				ObjDriver->DelModeFlag(AI_CTRL_TURNUP);
 			}
