@@ -618,7 +618,7 @@ void mainmenu::Input()
 			char name[32];
 			strcpy(name, "");
 			if( GameInfoData.selectaddon == false ){
-				GameParamInfo.GetOfficialMission(scrollitems + i, name, NULL, NULL, NULL, NULL);
+				GameParamInfo.GetOfficialMission(scrollitems + i, name, NULL, NULL, NULL, NULL, NULL);
 			}
 			else{
 				strcpy(name, GameAddon.GetMissionName(scrollitems + i));
@@ -872,7 +872,7 @@ void mainmenu::Render2D()
 
 		//ミッション名を取得
 		if( GameInfoData.selectaddon == false ){
-			GameParamInfo.GetOfficialMission(scrollitems + i, name, NULL, NULL, NULL, NULL);
+			GameParamInfo.GetOfficialMission(scrollitems + i, name, NULL, NULL, NULL, NULL, NULL);
 		}
 		else{
 			strcpy(name, GameAddon.GetMissionName(scrollitems + i));
@@ -946,7 +946,7 @@ int briefing::Create()
 
 	//mifファイルのファイルパス取得
 	if( GameInfoData.selectaddon == false ){
-		GameParamInfo.GetOfficialMission(GameInfoData.selectmission_id, NULL, NULL, path, pdata, NULL);
+		GameParamInfo.GetOfficialMission(GameInfoData.selectmission_id, NULL, NULL, path, pdata, NULL, NULL);
 		strcat(path, pdata);
 		strcat(path, ".txt");
 	}
@@ -1041,7 +1041,7 @@ void briefing::Render2D()
 	//ミッション名を取得・表示
 	char mname[64];
 	if( MIFdata.GetFiletype() == false ){
-		GameParamInfo.GetOfficialMission(GameInfoData.selectmission_id, NULL, mname, NULL, NULL, NULL);
+		GameParamInfo.GetOfficialMission(GameInfoData.selectmission_id, NULL, mname, NULL, NULL, NULL, NULL);
 	}
 	else{
 		strcpy(mname, MIFdata.GetMissionFullname());
@@ -1096,11 +1096,11 @@ int maingame::Create()
 	char pdata[MAX_PATH];
 	char pdata2[MAX_PATH];
 	int blockflag, pointflag;
-	bool collisionflag;
+	bool collisionflag, screenflag;
 
 	//.bd1と.pd1のファイルパスを求める
 	if( MIFdata.GetFiletype() == false ){
-		GameParamInfo.GetOfficialMission(MainGameInfo.selectmission_id, NULL, NULL, path, pdata2, &collisionflag);
+		GameParamInfo.GetOfficialMission(MainGameInfo.selectmission_id, NULL, NULL, path, pdata2, &collisionflag, &screenflag);
 
 		strcpy(bdata, path);
 		strcat(bdata, OFFICIALMISSION_BD1);
@@ -1111,6 +1111,7 @@ int maingame::Create()
 	else{
 		MIFdata.GetDatafilePath(bdata, pdata);
 		collisionflag = MIFdata.GetCollisionFlag();
+		screenflag = MIFdata.GetScreenFlag();
 
 		strcpy(path, bdata);
 		for(int i=strlen(path)-1; i>0; i--){
@@ -1138,7 +1139,7 @@ int maingame::Create()
 	}
 
 	//ブロックデータ初期化
-	BlockData.CalculationBlockdata(MIFdata.GetScreenFlag());
+	BlockData.CalculationBlockdata(screenflag);
 	d3dg->LoadMapdata(&BlockData, path);
 	CollD.InitCollision(&BlockData);
 
@@ -1233,7 +1234,7 @@ int maingame::Recovery()
 
 	//.bd1と.pd1のファイルパスを求める
 	if( MIFdata.GetFiletype() == false ){
-		GameParamInfo.GetOfficialMission(MainGameInfo.selectmission_id, NULL, NULL, path, NULL, NULL);
+		GameParamInfo.GetOfficialMission(MainGameInfo.selectmission_id, NULL, NULL, path, NULL, NULL, NULL);
 	}
 	else{
 		MIFdata.GetDatafilePath(bdata, pdata);
@@ -2881,7 +2882,7 @@ void maingame::ProcessConsole()
 		//ミッション識別名
 		strcpy(str, "Name : ");
 		if( AddonFlag == true ){ strcpy(str2, MIFdata.GetMissionName()); }
-		else{ GameParamInfo.GetOfficialMission(MissionID, str2, NULL, NULL, NULL, NULL); }
+		else{ GameParamInfo.GetOfficialMission(MissionID, str2, NULL, NULL, NULL, NULL, NULL); }
 		str2[(MAX_CONSOLELEN - strlen(str) - 1)] = '\0';
 		strcat(str, str2);
 		AddInfoConsole(d3dg->GetColorCode(1.0f,1.0f,1.0f,1.0f), str);
@@ -2889,7 +2890,7 @@ void maingame::ProcessConsole()
 		//ミッション正式名称
 		strcpy(str, "FullName : ");
 		if( AddonFlag == true ){ strcpy(str2, MIFdata.GetMissionFullname()); }
-		else{ GameParamInfo.GetOfficialMission(MissionID, NULL, str2, NULL, NULL, NULL); }
+		else{ GameParamInfo.GetOfficialMission(MissionID, NULL, str2, NULL, NULL, NULL, NULL); }
 		str2[(MAX_CONSOLELEN - strlen(str) - 1)] = '\0';
 		strcat(str, str2);
 		AddInfoConsole(d3dg->GetColorCode(1.0f,1.0f,1.0f,1.0f), str);
@@ -2902,7 +2903,7 @@ void maingame::ProcessConsole()
 			strcat(str, str2);
 		}
 		else{
-			GameParamInfo.GetOfficialMission(MissionID, NULL, NULL, str2, NULL, NULL);
+			GameParamInfo.GetOfficialMission(MissionID, NULL, NULL, str2, NULL, NULL, NULL);
 			str2[(MAX_CONSOLELEN - strlen(str) - 8 - 1)] = '\0';
 			strcat(str, str2);
 			strcat(str, OFFICIALMISSION_BD1);
@@ -2917,7 +2918,7 @@ void maingame::ProcessConsole()
 			strcat(str, str2);
 		}
 		else{
-			GameParamInfo.GetOfficialMission(MissionID, NULL, NULL, str2, str3, NULL);
+			GameParamInfo.GetOfficialMission(MissionID, NULL, NULL, str2, str3, NULL, NULL);
 			strcat(str2, str3);
 			str2[(MAX_CONSOLELEN - strlen(str) - 4 - 1)] = '\0';
 			strcat(str, str2);
@@ -2937,7 +2938,7 @@ void maingame::ProcessConsole()
 			collisionflag = MIFdata.GetCollisionFlag();
 		}
 		else{
-			GameParamInfo.GetOfficialMission(MissionID, NULL, NULL, NULL, NULL, &collisionflag);
+			GameParamInfo.GetOfficialMission(MissionID, NULL, NULL, NULL, NULL, &collisionflag, NULL);
 		}
 		sprintf(str, "Sky:%d    CollisionFlag:%d    NightFlag:%d", MIFdata.GetSkynumber(), (int)collisionflag, (int)MIFdata.GetScreenFlag());
 		AddInfoConsole(d3dg->GetColorCode(1.0f,1.0f,1.0f,1.0f), str);
@@ -2962,7 +2963,7 @@ void maingame::ProcessConsole()
 			strcat(str, str2);
 		}
 		else{
-			GameParamInfo.GetOfficialMission(MissionID, NULL, NULL, str2, NULL, NULL);
+			GameParamInfo.GetOfficialMission(MissionID, NULL, NULL, str2, NULL, NULL, NULL);
 			str2[(MAX_CONSOLELEN - strlen(str) - 8 - 1)] = '\0';
 			strcat(str, str2); 
 			strcat(str, OFFICIALMISSION_BD1);
@@ -3015,7 +3016,7 @@ void maingame::ProcessConsole()
 			strcat(str, str2);
 		}
 		else{
-			GameParamInfo.GetOfficialMission(MissionID, NULL, NULL, str2, str3, NULL);
+			GameParamInfo.GetOfficialMission(MissionID, NULL, NULL, str2, str3, NULL, NULL);
 			strcat(str2, str3);
 			str2[(MAX_CONSOLELEN - strlen(str) - 4 - 1)] = '\0';
 			strcat(str, str2);
@@ -3556,7 +3557,7 @@ void result::Render2D()
 
 	//ミッション名を取得し表示
 	if( MIFdata.GetFiletype() == false ){
-		GameParamInfo.GetOfficialMission(GameInfoData.selectmission_id, NULL, mname, NULL, NULL, NULL);
+		GameParamInfo.GetOfficialMission(GameInfoData.selectmission_id, NULL, mname, NULL, NULL, NULL, NULL);
 	}
 	else{
 		strcpy(mname, MIFdata.GetMissionFullname());

@@ -119,6 +119,16 @@ struct BulletParameter{
 	float size;		//!< 描画倍率
 };
 
+//! 標準ミッション設定用の構造体
+struct OfficialMissionParameter{
+	char *name;				//!< ミッション識別名
+	char *fullname;			//!< ミッション正式名称
+	char *directory;		//!< データディレクトリ
+	char *txt;				//!< ファイル名（.pd1/.txt）
+	bool collision;			//!< 追加の当たり判定を示すフラグ
+	bool screen;			//!< 画面を暗くするフラグ
+};
+
 //! AIレベルによる設定（性能値）用構造体
 struct AIParameter{
 	int aiming;			//!< エイミング能力
@@ -140,6 +150,7 @@ class ParameterInfo
 #endif
 	SmallObjectParameter *SmallObject;			//!< 小物の情報を格納するポインタ
 	BulletParameter *Bullet;					//!< 銃弾オブジェクトの情報を格納するポインタ
+	OfficialMissionParameter *MissionData;		//!< 標準ミッションの情報を格納するポインタ
 	char *missionname[TOTAL_OFFICIALMISSION];				//!< 標準ミッションのミッション識別名
 	char *missionfullname[TOTAL_OFFICIALMISSION];			//!< 標準ミッションのミッション正式名称
 	char *missiondirectory[TOTAL_OFFICIALMISSION];			//!< 標準ミッションのデータディレクトリ
@@ -160,7 +171,7 @@ public:
 #endif
 	int GetSmallObject(int id, SmallObjectParameter *out_data);
 	int GetBullet(int id, BulletParameter *out_data);
-	int GetOfficialMission(int id, char *name, char *fullname, char* directory, char *txt, bool *collisionflag);
+	int GetOfficialMission(int id, char *name, char *fullname, char* directory, char *txt, bool *collisionflag, bool *screenflag);
 	int GetAIlevel(int level, AIParameter **out_AIlevel);
 };
 
