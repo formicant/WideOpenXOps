@@ -409,8 +409,6 @@ int D3DGraphics::LoadModel(char* filename)
 	}
 	if( id == -1 ){ return -1; }
 
-	LPD3DXBUFFER pD3DXMtrlBuffer;
-
 #ifdef ENABLE_PATH_DELIMITER_SLASH
 	//パス区切り文字を変換
 	filename = ChangePathDelimiter(filename);
@@ -418,24 +416,9 @@ int D3DGraphics::LoadModel(char* filename)
 
 	//.xファイルをバッファーに読み込む
 	if( FAILED( D3DXLoadMeshFromX( filename, D3DXMESH_SYSTEMMEM, pd3dDevice, NULL, 
-				&pD3DXMtrlBuffer, NULL, &nummaterials[id], &pmesh[id] ) ) ) {
+				NULL, NULL, &nummaterials[id], &pmesh[id] ) ) ) {
 		return -1;
 	}
-
-	//マテリアル情報を取得
-	D3DXMATERIAL* d3dxMaterials = (D3DXMATERIAL*)pD3DXMtrlBuffer->GetBufferPointer();
-	int num = nummaterials[id];
-	pmaterials[id] = new D3DMATERIAL9[num];
-	if( pmaterials[id]  == NULL ) return -1;
-
-	//構造体に代入
-	for( int i=0; i<num; i=i+1 ){
-		pmaterials[id][i] = d3dxMaterials[i].MatD3D;
-		pmaterials[id][i].Ambient = pmaterials[id][i].Diffuse;
-	}
-
-	//バッファを開放
-	pD3DXMtrlBuffer->Release();
 
 #ifdef ENABLE_DEBUGLOG
 	//ログに出力
@@ -494,13 +477,7 @@ int D3DGraphics::MorphingModel(int idA, int idB)
 	}
 
 	//マテリアル情報をコピー
-	int num = nummaterials[idA];
 	nummaterials[idN] = nummaterials[idA];
-	pmaterials[idN] = new D3DMATERIAL9[num];
-	if( pmaterials[idN]  == NULL ) return -1;
-	for( int i=0; i<num; i=i+1 ){
-		pmaterials[idN][i] = pmaterials[idA][i];
-	}
 
 	//バッファーを取得
 	pmesh[idA]->GetVertexBuffer(&pvbA);
@@ -539,8 +516,6 @@ void D3DGraphics::CleanupModel(int id)
 {
 	if( (id < 0)||((MAX_MODEL -1) < id) ){ return; }
 	if( pmesh[id] != NULL ){
-		delete [] pmaterials[id];
-
 		pmesh[id]->Release();
 		pmesh[id] = NULL;
 
@@ -1349,7 +1324,8 @@ void D3DGraphics::CleanupMapdata()
 //! @brief モデルファイルを描画
 //! @param id_model モデル認識番号
 //! @param id_texture テクスチャ認識番号
-void D3DGraphics::RenderModel(int id_model, int id_texture)
+//! @param darkflag モデルを暗くする
+void D3DGraphics::RenderModel(int id_model, int id_texture, bool darkflag)
 {
 	//無効な引数が設定されていれば失敗
 	if( id_model == -1 ){ return; }
@@ -1358,20 +1334,42 @@ void D3DGraphics::RenderModel(int id_model, int id_texture)
 	//指定したモデルが初期化されていなければ失敗
 	if( pmesh[id_model] == NULL) return;
 
+	float Brightness;
+
+	if( darkflag == false ){
+		Brightness = 1.0f;
+	}
+	else{
+		Brightness = 0.8f;
+	}
+
+	//ライティング有効化
+	pd3dDevice->SetRenderState(D3DRS_LIGHTING, TRUE);
+
+	//色合い設定
+	D3DMATERIAL9 mtrl;
+	ZeroMemory(&mtrl, sizeof(mtrl));
+	mtrl.Emissive = D3DXCOLOR(Brightness, Brightness, Brightness, 1.0f);
+	pd3dDevice->SetMaterial(&mtrl);
+
+	//テクスチャ設定
+	if( id_texture == -1 ){
+		pd3dDevice->SetTexture(0, NULL);
+	}
+	else if( ptextures[id_texture] == NULL ){
+		pd3dDevice->SetTexture(0, NULL);
+	}
+	else{
+		pd3dDevice->SetTexture( 0, ptextures[id_texture] );
+	}
+
 	//描画
 	for(int i=0; i<(signed)nummaterials[id_model]; i=i+1){
-		pd3dDevice->SetMaterial( &pmaterials[id_model][i] );
-		if( id_texture == -1 ){
-			pd3dDevice->SetTexture(0, NULL);
-		}
-		else if( ptextures[id_texture] == NULL ){
-			pd3dDevice->SetTexture(0, NULL);
-		}
-		else{
-			pd3dDevice->SetTexture( 0, ptextures[id_texture] );
-		}
 		pmesh[id_model]->DrawSubset(i);
 	}
+
+	//ライティング無効化
+	pd3dDevice->SetRenderState(D3DRS_LIGHTING, FALSE);
 }
 
 //! @brief 板を描画

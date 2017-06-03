@@ -112,7 +112,7 @@ public:
 	BlockDataInterface();
 	~BlockDataInterface();
 	int LoadFiledata(char *fname);
-	void CalculationBlockdata(bool screen);
+	void CalculationBlockdata(bool darkflag);
 	int GetTexture(char *fname, int id);
 	int Getdata(blockdata *out_data, int id);
 };

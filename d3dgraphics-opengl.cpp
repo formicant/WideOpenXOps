@@ -518,6 +518,7 @@ int D3DGraphics::LoadModel(char* filename)
 
 	float *VertexAry = new float [polygons*6*3];
 	float *ColorAry = new float [polygons*6*4];
+	float *ColorGrayAry = new float [polygons*6*4];
 	float *TexCoordAry = new float [polygons*6*2];
 	int vid;
 	int cnt = 0;
@@ -620,6 +621,13 @@ int D3DGraphics::LoadModel(char* filename)
 	for(int i=1; i<cnt; i++){
 		memcpy(&(ColorAry[i*4]), ColorAry, sizeof(float)*4);
 	}
+	ColorGrayAry[0] = 0.8f;
+	ColorGrayAry[1] = 0.8f;
+	ColorGrayAry[2] = 0.8f;
+	ColorGrayAry[3] = 1.0f;
+	for(int i=1; i<cnt; i++){
+		memcpy(&(ColorGrayAry[i*4]), ColorGrayAry, sizeof(float)*4);
+	}
 
 	delete [] vertex;
 	delete [] index;
@@ -628,6 +636,7 @@ int D3DGraphics::LoadModel(char* filename)
 	pmodel[id].polygons = polygons;
 	pmodel[id].VertexAry = VertexAry;
 	pmodel[id].ColorAry = ColorAry;
+	pmodel[id].ColorGrayAry = ColorGrayAry;
 	pmodel[id].TexCoordAry = TexCoordAry;
 
 #ifdef ENABLE_DEBUGLOG
@@ -680,6 +689,7 @@ int D3DGraphics::MorphingModel(int idA, int idB)
 
 	float *VertexAry = new float [numpA*6*3];
 	float *ColorAry = new float [numpA*6*4];
+	float *ColorGrayAry = new float [numpA*6*4];
 	float *TexCoordAry = new float [numpA*6*2];
 
 	//各頂点を読み出し計算
@@ -695,6 +705,10 @@ int D3DGraphics::MorphingModel(int idA, int idB)
 		ColorAry[i*4 + 1] = pmodel[idA].ColorAry[i*4 + 1];
 		ColorAry[i*4 + 2] = pmodel[idA].ColorAry[i*4 + 2];
 		ColorAry[i*4 + 3] = pmodel[idA].ColorAry[i*4 + 3];
+		ColorGrayAry[i*4 + 0] = pmodel[idA].ColorGrayAry[i*4 + 0];
+		ColorGrayAry[i*4 + 1] = pmodel[idA].ColorGrayAry[i*4 + 1];
+		ColorGrayAry[i*4 + 2] = pmodel[idA].ColorGrayAry[i*4 + 2];
+		ColorGrayAry[i*4 + 3] = pmodel[idA].ColorGrayAry[i*4 + 3];
 		TexCoordAry[i*2 + 0] = pmodel[idA].TexCoordAry[i*2 + 0];
 		TexCoordAry[i*2 + 1] = pmodel[idA].TexCoordAry[i*2 + 1];
 	}
@@ -703,6 +717,7 @@ int D3DGraphics::MorphingModel(int idA, int idB)
 	pmodel[idN].polygons = numpA;
 	pmodel[idN].VertexAry = VertexAry;
 	pmodel[idN].ColorAry = ColorAry;
+	pmodel[idN].ColorGrayAry = ColorGrayAry;
 	pmodel[idN].TexCoordAry = TexCoordAry;
 
 #ifdef ENABLE_DEBUGLOG
@@ -721,6 +736,7 @@ void D3DGraphics::CleanupModel(int id)
 
 	delete pmodel[id].VertexAry;
 	delete pmodel[id].ColorAry;
+	delete pmodel[id].ColorGrayAry;
 	delete pmodel[id].TexCoordAry;
 	pmodel[id].useflag = false;
 
@@ -2051,7 +2067,8 @@ void D3DGraphics::CleanupMapdata()
 //! @brief モデルファイルを描画
 //! @param id_model モデル認識番号
 //! @param id_texture テクスチャ認識番号
-void D3DGraphics::RenderModel(int id_model, int id_texture)
+//! @param darkflag モデルを暗くする
+void D3DGraphics::RenderModel(int id_model, int id_texture, bool darkflag)
 {
 	//無効な引数が設定されていれば失敗
 	if( id_model == -1 ){ return; }
@@ -2074,6 +2091,14 @@ void D3DGraphics::RenderModel(int id_model, int id_texture)
 		SetTexture(id_texture);
 	}
 
+	float *ColorAry = NULL;
+	if( darkflag == false ){
+		ColorAry = pmodel[id_model].ColorAry;
+	}
+	else{
+		ColorAry = pmodel[id_model].ColorGrayAry;
+	}
+
 	//配列有効化
 	glEnableClientState(GL_VERTEX_ARRAY);
 	glEnableClientState(GL_COLOR_ARRAY);
@@ -2081,7 +2106,7 @@ void D3DGraphics::RenderModel(int id_model, int id_texture)
 
 	//描画
 	glVertexPointer(3, GL_FLOAT, 0, pmodel[id_model].VertexAry);
-	glColorPointer(4, GL_FLOAT, 0, pmodel[id_model].ColorAry);
+	glColorPointer(4, GL_FLOAT, 0, ColorAry);
 	glTexCoordPointer(2, GL_FLOAT, 0, pmodel[id_model].TexCoordAry);
 	glDrawArrays(GL_TRIANGLE_STRIP, 1, pmodel[id_model].polygons*6-2);
 

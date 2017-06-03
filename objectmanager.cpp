@@ -2491,10 +2491,11 @@ bool ObjectManager::GetObjectInfoTag(float camera_x, float camera_y, float camer
 //! @param demomode デモモード
 //! @param camera_rx カメラの横軸角度
 //! @param camera_ry カメラの縦軸角度
+//! @param screen 画面を暗くする
 //! @return 常に 0
 //! @attention 一般的に cmdF5id は、F5裏技使用中はプレイヤー番号（GetPlayerID()関数で取得）、未使用時は -1 を指定します。
 //! @attention demomode は主にメニュー画面で使用します。有効にすると、銃弾・手榴弾を処理しません。
-int ObjectManager::Process(int cmdF5id, bool demomode, float camera_rx, float camera_ry)
+int ObjectManager::Process(int cmdF5id, bool demomode, float camera_rx, float camera_ry, bool screen)
 {
 	//このフレームの戦歴を初期化
 	for(int i=0; i<MAX_HUMAN; i++){
@@ -2537,6 +2538,8 @@ int ObjectManager::Process(int cmdF5id, bool demomode, float camera_rx, float ca
 			ObjectLog->DiedHuman(-1, i, -1, teamid, player_teamid);
 		}
 
+		HumanIndex[i].SetDarkModelFlag(screen);
+
 		//足音
 		if( HumanIndex[i].GetMovemode(false) == 2 ){
 			//走る足音追加
@@ -2551,11 +2554,13 @@ int ObjectManager::Process(int cmdF5id, bool demomode, float camera_rx, float ca
 	//武器オブジェクトの処理
 	for(int i=0; i<MAX_WEAPON; i++){
 		WeaponIndex[i].RunFrame(CollD);
+		WeaponIndex[i].SetDarkModelFlag(screen);
 	}
 
 	//小物オブジェクトの処理
 	for(int i=0; i<MAX_SMALLOBJECT; i++){
 		SmallObjectIndex[i].RunFrame();
+		SmallObjectIndex[i].SetDarkModelFlag(screen);
 	}
 
 	if( demomode == false ){
@@ -2567,6 +2572,7 @@ int ObjectManager::Process(int cmdF5id, bool demomode, float camera_rx, float ca
 
 			CollideBullet(&BulletIndex[i]);		//当たり判定を実行
 			BulletIndex[i].RunFrame();	//主計算
+			BulletIndex[i].SetDarkModelFlag(screen);
 
 			if( BulletIndex[i].GetEnableFlag() == true ){
 				//弾の座標と角度を取得
@@ -2606,6 +2612,7 @@ int ObjectManager::Process(int cmdF5id, bool demomode, float camera_rx, float ca
 		}
 		else{
 			EffectIndex[i].RunFrame(camera_rx, camera_ry);
+			EffectIndex[i].SetDarkModelFlag(screen);
 		}
 	}
 
@@ -2616,6 +2623,7 @@ int ObjectManager::Process(int cmdF5id, bool demomode, float camera_rx, float ca
 
 			//主計算
 			int rcr = GrenadeIndex[i].RunFrame(CollD);
+			GrenadeIndex[i].SetDarkModelFlag(screen);
 
 			//バウンド・跳ね返ったならば
 			if( rcr == 1 ){

@@ -168,7 +168,7 @@ public:
 	bool HumanResuscitation(int id);
 	int CheckGameOverorComplete();
 	bool GetObjectInfoTag(float camera_x, float camera_y, float camera_z, float camera_rx, float camera_ry, int *color, char *infostr);
-	int Process(int cmdF5id, bool demomode, float camera_rx, float camera_ry);
+	int Process(int cmdF5id, bool demomode, float camera_rx, float camera_ry, bool screen);
 	bool GetHumanShotInfo(int id, int *ontarget, int *kill, int *headshot);
 	void Render(float camera_x, float camera_y, float camera_z, int HidePlayer);
 	void RenderLog(int x, int y);

@@ -135,6 +135,7 @@ struct MODELDATA
 	int polygons;			//!< ポリゴン数
 	float *VertexAry;		//!< 頂点格納配列
 	float *ColorAry;		//!< 色格納配列
+	float *ColorGrayAry;		//!< 色格納配列（暗い）
 	float *TexCoordAry;		//!< テクスチャ座標格納配列
 };
 
@@ -163,7 +164,6 @@ class D3DGraphics
 	float aspect;						//!< 画面のアスペクト比
 	bool fullscreenflag;				//!< フルスクリーン表示
 	LPD3DXMESH pmesh[MAX_MODEL];				//!< （Xファイル用）D3DXMESHのポインタ
-	D3DMATERIAL9* pmaterials[MAX_MODEL];		//!< （Xファイル用）D3DMATERIAL9のポインタ
 	DWORD nummaterials[MAX_MODEL];				//!< （Xファイル用）マテリアル数
 	LPDIRECT3DTEXTURE9 ptextures[MAX_TEXTURE];	//!< テクスチャを格納
 
@@ -291,7 +291,7 @@ public:
 	void DrawMapdata(bool wireframe);
 	int GetMapTextureID(int id);
 	void CleanupMapdata();
-	void RenderModel(int id_model, int id_texture);
+	void RenderModel(int id_model, int id_texture, bool darkflag);
 	void RenderBoard(int id_texture, float alpha);
 	void ScreenBrightness(int Width, int Height, int Brightness);
 	void Centerline();

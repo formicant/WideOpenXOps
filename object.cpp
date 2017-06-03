@@ -45,6 +45,7 @@ object::object(class ParameterInfo *in_Param, float x, float y, float z, float r
 	id_parameter = 0;
 	id_model = -1;
 	id_texture = -1;
+	DarkModelFlag = false;
 }
 
 //! @brief ディストラクタ
@@ -130,6 +131,13 @@ int object::GetTexture()
 	return id_texture;
 }
 
+//! @brief モデルを暗くするフラグを設定
+//! @param flag フラグ
+void object::SetDarkModelFlag(bool flag)
+{
+	DarkModelFlag = flag;
+}
+
 //! @brief 計算を実行（自由落下など）
 int object::RunFrame()
 {
@@ -144,7 +152,7 @@ void object::Render(D3DGraphics *d3dg)
 	if( EnableFlag == false ){ return; }
 
 	d3dg->SetWorldTransform(pos_x, pos_y, pos_z, rotation_x, 0.0f, model_size);
-	d3dg->RenderModel(id_model, id_texture);
+	d3dg->RenderModel(id_model, id_texture, DarkModelFlag);
 }
 
 //! @brief コンストラクタ
@@ -1673,11 +1681,11 @@ void human::Render(class D3DGraphics *d3dg, class ResourceManager *Resource, boo
 	if( DrawArm == false ){
 		//上半身を描画
 		d3dg->SetWorldTransform(pos_x, pos_y - 1.0f, pos_z, rotation_x + (float)M_PI, rotation_y, upmodel_size);
-		d3dg->RenderModel(upmodel, id_texture);
+		d3dg->RenderModel(upmodel, id_texture, DarkModelFlag);
 
 		//足を描画
 		d3dg->SetWorldTransform(pos_x, pos_y, pos_z, legrx + (float)M_PI, rotation_y, legmodel_size);
-		d3dg->RenderModel(legmodel, id_texture);
+		d3dg->RenderModel(legmodel, id_texture, DarkModelFlag);
 	}
 
 	//現在装備する武器のクラスを取得
@@ -1690,11 +1698,11 @@ void human::Render(class D3DGraphics *d3dg, class ResourceManager *Resource, boo
 		float y = pos_y + cos(rotation_y)*16.0f;
 		float z = pos_z + sin(rotation_x*-1 - (float)M_PI/2)*sin(rotation_y)*16.0f;
 		d3dg->SetWorldTransform(x, y, z, rotation_x + (float)M_PI, armrotation_y + rotation_y, armmodel_size);
-		d3dg->RenderModel(armmodel, id_texture);
+		d3dg->RenderModel(armmodel, id_texture, DarkModelFlag);
 	}
 	else if( nowweapon == NULL ){	//手ぶら
 		d3dg->SetWorldTransform(pos_x, pos_y + 16.0f, pos_z, rotation_x + (float)M_PI, armry, armmodel_size);
-		d3dg->RenderModel(armmodel, id_texture);
+		d3dg->RenderModel(armmodel, id_texture, DarkModelFlag);
 	}
 	else{							//何か武器を持っている
 		//武器のモデルとテクスチャを取得
@@ -1707,11 +1715,11 @@ void human::Render(class D3DGraphics *d3dg, class ResourceManager *Resource, boo
 
 		//腕を描画
 		d3dg->SetWorldTransform(pos_x, pos_y + 16.0f, pos_z, rotation_x + (float)M_PI, armry, armmodel_size);
-		d3dg->RenderModel(armmodel, id_texture);
+		d3dg->RenderModel(armmodel, id_texture, DarkModelFlag);
 
 		//武器を描画
 		d3dg->SetWorldTransformHumanWeapon(pos_x, pos_y + 16.0f, pos_z, paramdata.mx/10*-1, paramdata.my/10, paramdata.mz/10*-1, rotation_x + (float)M_PI, armry, paramdata.size);
-		d3dg->RenderModel(model, texture);
+		d3dg->RenderModel(model, texture, DarkModelFlag);
 	}
 }
 
@@ -2065,7 +2073,7 @@ void weapon::Render(class D3DGraphics *d3dg)
 
 	//武器を描画
 	d3dg->SetWorldTransform(pos_x, pos_y, pos_z, rotation_x, 0.0f, (float)M_PI/2, model_size);
-	d3dg->RenderModel(id_model, id_texture);
+	d3dg->RenderModel(id_model, id_texture, DarkModelFlag);
 }
 
 //! @brief コンストラクタ
@@ -2300,7 +2308,7 @@ void smallobject::Render(D3DGraphics *d3dg)
 
 	//描画
 	d3dg->SetWorldTransform(pos_x, pos_y, pos_z, rotation_x, rotation_y, model_size);
-	d3dg->RenderModel(id_model, id_texture);
+	d3dg->RenderModel(id_model, id_texture, DarkModelFlag);
 }
 
 //! @brief コンストラクタ
@@ -2418,7 +2426,7 @@ void bullet::Render(class D3DGraphics *d3dg)
 
 	//描画
 	d3dg->SetWorldTransform(pos_x, pos_y, pos_z, (rotation_x * -1 - (float)M_PI/2), rotation_y, model_size);
-	d3dg->RenderModel(id_model, id_texture);
+	d3dg->RenderModel(id_model, id_texture, false);
 }
 
 //! @brief コンストラクタ
@@ -2551,7 +2559,7 @@ void grenade::Render(class D3DGraphics *d3dg)
 
 	//描画
 	d3dg->SetWorldTransform(pos_x, pos_y, pos_z, (rotation_x * -1 - (float)M_PI/2), 0.0f, (float)M_PI/2, model_size);
-	d3dg->RenderModel(id_model, id_texture);
+	d3dg->RenderModel(id_model, id_texture, DarkModelFlag);
 }
 
 //! @brief コンストラクタ

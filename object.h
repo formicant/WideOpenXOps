@@ -100,6 +100,7 @@ protected:
 	int id_parameter;	//!< データの種類
 	int id_model;		//!< モデル認識番号
 	int id_texture;		//!< テクスチャ認識番号
+	bool DarkModelFlag;	//!< モデルを暗くする
 	bool EnableFlag;	//!< 有効化フラグ
 
 public:
@@ -114,6 +115,7 @@ public:
 	virtual void GetModel(int *id, float *size);
 	virtual void SetTexture(int id);
 	virtual int GetTexture();
+	virtual void SetDarkModelFlag(bool flag);
 	virtual int RunFrame();
 	virtual void Render(class D3DGraphics *d3dg);
 };

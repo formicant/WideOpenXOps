@@ -282,7 +282,7 @@ void opening::Input()
 void opening::Process()
 {
 	//オブジェクトマネージャーを実行
-	ObjMgr.Process(-1, false, camera_rx, camera_ry);
+	ObjMgr.Process(-1, false, camera_rx, camera_ry, false);
 
 	//AIを実行
 	for(int i=0; i<MAX_HUMAN; i++){
@@ -345,7 +345,7 @@ void opening::Render3D()
 	//カメラ座標に背景空を描画
 	d3dg->SetWorldTransform(camera_x, camera_y, camera_z, 0.0f, 0.0f, 2.0f);
 	Resource.GetSkyModelTexture(&skymodel, &skytexture);
-	d3dg->RenderModel(skymodel, skytexture);
+	d3dg->RenderModel(skymodel, skytexture, false);
 
 	//Zバッファを初期化
 	d3dg->ResetZbuffer();
@@ -700,7 +700,7 @@ void mainmenu::Input()
 void mainmenu::Process()
 {
 	//オブジェクトマネージャーを実行
-	ObjMgr.Process(-1, true, camera_rx, camera_ry);
+	ObjMgr.Process(-1, true, camera_rx, camera_ry, false);
 
 	//AIを実行
 	for(int i=0; i<MAX_HUMAN; i++){
@@ -1096,11 +1096,11 @@ int maingame::Create()
 	char pdata[MAX_PATH];
 	char pdata2[MAX_PATH];
 	int blockflag, pointflag;
-	bool collisionflag, screenflag;
+	bool collisionflag;
 
 	//.bd1と.pd1のファイルパスを求める
 	if( MIFdata.GetFiletype() == false ){
-		GameParamInfo.GetOfficialMission(MainGameInfo.selectmission_id, NULL, NULL, path, pdata2, &collisionflag, &screenflag);
+		GameParamInfo.GetOfficialMission(MainGameInfo.selectmission_id, NULL, NULL, path, pdata2, &collisionflag, &DarkScreenFlag);
 
 		strcpy(bdata, path);
 		strcat(bdata, OFFICIALMISSION_BD1);
@@ -1111,7 +1111,7 @@ int maingame::Create()
 	else{
 		MIFdata.GetDatafilePath(bdata, pdata);
 		collisionflag = MIFdata.GetCollisionFlag();
-		screenflag = MIFdata.GetScreenFlag();
+		DarkScreenFlag = MIFdata.GetScreenFlag();
 
 		strcpy(path, bdata);
 		for(int i=strlen(path)-1; i>0; i--){
@@ -1139,7 +1139,7 @@ int maingame::Create()
 	}
 
 	//ブロックデータ初期化
-	BlockData.CalculationBlockdata(screenflag);
+	BlockData.CalculationBlockdata(DarkScreenFlag);
 	d3dg->LoadMapdata(&BlockData, path);
 	CollD.InitCollision(&BlockData);
 
@@ -1760,12 +1760,14 @@ void maingame::Process()
 	GameParamInfo.GetWeapon(weaponid, &data);
 
 	//オブジェクトマネージャーを実行
+	int cmdF5id;
 	if( Cmd_F5 == true ){
-		ObjMgr.Process( ObjMgr.GetPlayerID() , false, camera_rx, camera_ry);
+		cmdF5id = ObjMgr.GetPlayerID();
 	}
 	else{
-		ObjMgr.Process(-1, false, camera_rx, camera_ry);
+		cmdF5id = -1;
 	}
+	ObjMgr.Process(cmdF5id, false, camera_rx, camera_ry, DarkScreenFlag);
 
 	//プレイヤーの戦歴を加算
 	ObjMgr.GetHumanShotInfo( ObjMgr.GetPlayerID(), &ontarget, &kill, &headshot);
@@ -1971,7 +1973,7 @@ void maingame::Render3D()
 	//カメラ座標に背景空を描画
 	d3dg->SetWorldTransform(camera_x, camera_y, camera_z, 0.0f, 0.0f, 2.0f);
 	Resource.GetSkyModelTexture(&skymodel, &skytexture);
-	d3dg->RenderModel(skymodel, skytexture);
+	d3dg->RenderModel(skymodel, skytexture, false);
 
 	//Zバッファを初期化
 	d3dg->ResetZbuffer();
@@ -2407,13 +2409,13 @@ void maingame::Render2D()
 		GameParamInfo.GetWeapon(weapon_paramid[selectweapon], &weapon_paramdata);
 		Resource.GetWeaponModelTexture(weapon_paramid[selectweapon], &weaponmodel, &weapontexture);
 		d3dg->SetWorldTransformPlayerWeapon(true, camera_rx, camera_ry, DegreeToRadian(framecnt*2), weapon_paramdata.size);
-		d3dg->RenderModel(weaponmodel, weapontexture);
+		d3dg->RenderModel(weaponmodel, weapontexture, false);
 
 		//（3D描画）所持している武器モデルの描画・サブ武器
 		GameParamInfo.GetWeapon(weapon_paramid[notselectweapon], &weapon_paramdata);
 		Resource.GetWeaponModelTexture(weapon_paramid[notselectweapon], &weaponmodel, &weapontexture);
 		d3dg->SetWorldTransformPlayerWeapon(false, camera_rx, camera_ry, 0.0f, weapon_paramdata.size);
-		d3dg->RenderModel(weaponmodel, weapontexture);
+		d3dg->RenderModel(weaponmodel, weapontexture, false);
 	}
 
 	//-----------------------------------
@@ -2791,7 +2793,7 @@ void maingame::ProcessConsole()
 		AddInfoConsole(d3dg->GetColorCode(1.0f,1.0f,1.0f,1.0f), "help          human         result         event        ver");
 		AddInfoConsole(d3dg->GetColorCode(1.0f,1.0f,1.0f,1.0f), "mif           bd1           pd1");
 		AddInfoConsole(d3dg->GetColorCode(1.0f,1.0f,1.0f,1.0f), "info          view          center         map          aiinfo <NUM>");
-		AddInfoConsole(d3dg->GetColorCode(1.0f,1.0f,1.0f,1.0f), "tag           radar         inmap          sky <NUM>");
+		AddInfoConsole(d3dg->GetColorCode(1.0f,1.0f,1.0f,1.0f), "tag           radar         inmap          sky <NUM>    dark");
 		AddInfoConsole(d3dg->GetColorCode(1.0f,1.0f,1.0f,1.0f), "ff            revive        kill <NUM>     treat <NUM>  nodamage <NUM>");
 		AddInfoConsole(d3dg->GetColorCode(1.0f,1.0f,1.0f,1.0f), "break <NUM>   newobj <NUM>");
 		AddInfoConsole(d3dg->GetColorCode(1.0f,1.0f,1.0f,1.0f), "bot           nofight       caution        stop         estop      speed");
@@ -2872,7 +2874,7 @@ void maingame::ProcessConsole()
 		int MissionID = GameInfoData.selectmission_id;
 		char str2[MAX_PATH];
 		char str3[MAX_PATH];
-		bool collisionflag;
+		bool collisionflag, screenflag;
 
 		//ヘッダー
 		if( AddonFlag == true ){ sprintf(str, "[Addon Mission]   (MissionID:%d)", MissionID); }
@@ -2936,11 +2938,12 @@ void maingame::ProcessConsole()
 		//各設定値とFlag
 		if( AddonFlag == true ){
 			collisionflag = MIFdata.GetCollisionFlag();
+			screenflag = MIFdata.GetScreenFlag();
 		}
 		else{
-			GameParamInfo.GetOfficialMission(MissionID, NULL, NULL, NULL, NULL, &collisionflag, NULL);
+			GameParamInfo.GetOfficialMission(MissionID, NULL, NULL, NULL, NULL, &collisionflag, &screenflag);
 		}
-		sprintf(str, "Sky:%d    CollisionFlag:%d    NightFlag:%d", MIFdata.GetSkynumber(), (int)collisionflag, (int)MIFdata.GetScreenFlag());
+		sprintf(str, "Sky:%d    CollisionFlag:%d    DarkScreenFlag:%d", MIFdata.GetSkynumber(), (int)collisionflag, (int)screenflag);
 		AddInfoConsole(d3dg->GetColorCode(1.0f,1.0f,1.0f,1.0f), str);
 	}
 
@@ -3175,6 +3178,44 @@ void maingame::ProcessConsole()
 			sprintf(str, "Select SkyNumber %d.", id);
 			AddInfoConsole(d3dg->GetColorCode(1.0f,1.0f,1.0f,1.0f), str);
 		}
+	}
+
+	//画面を暗く
+	if( strcmp(NewCommand, "dark") == 0 ){
+		char path[MAX_PATH];
+		char bdata[MAX_PATH];
+		char pdata[MAX_PATH];
+
+		//フラグ切り替え
+		if( DarkScreenFlag == false ){
+			DarkScreenFlag = true;
+			AddInfoConsole(d3dg->GetColorCode(1.0f,1.0f,1.0f,1.0f), "Enable DarkScreen Flag.");
+		}
+		else{
+			DarkScreenFlag = false;
+			AddInfoConsole(d3dg->GetColorCode(1.0f,1.0f,1.0f,1.0f), "Disable DarkScreen Flag.");
+		}
+
+		//.bd1のファイルパスを求める
+		if( MIFdata.GetFiletype() == false ){
+			GameParamInfo.GetOfficialMission(MainGameInfo.selectmission_id, NULL, NULL, path, NULL, NULL, NULL);
+		}
+		else{
+			MIFdata.GetDatafilePath(bdata, pdata);
+
+			strcpy(path, bdata);
+			for(int i=strlen(path)-1; i>0; i--){
+				if( path[i] == '\\' ){
+					path[i+1] = '\0';
+					break;
+				}
+			}
+		}
+
+		//ブロックデータ初期化
+		BlockData.CalculationBlockdata(DarkScreenFlag);
+		d3dg->CleanupMapdata();
+		d3dg->LoadMapdata(&BlockData, path);
 	}
 
 	//全ての死者を蘇生する

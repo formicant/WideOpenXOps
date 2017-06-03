@@ -176,9 +176,9 @@ int BlockDataInterface::LoadFiledata(char *fname)
 }
 
 //! @brief ブロックデータの法線・影を算出する
-//! @param screen ブロックを暗くする
+//! @param darkflag ブロックを暗くする
 //! @attention LoadBlockdata()関数で読みこんだ後、一度だけ実行。
-void BlockDataInterface::CalculationBlockdata(bool screen)
+void BlockDataInterface::CalculationBlockdata(bool darkflag)
 {
 	int vID[4];
 	int uvID[4];
@@ -257,11 +257,11 @@ void BlockDataInterface::CalculationBlockdata(bool screen)
 			//data[i].material[j].shadow = a/2 + 0.5f;
 			a = sqrt(rx*rx + ry*ry + rz*rz) / 3.0f;
 			data[i].material[j].shadow = a/2;
-			if( screen == false ){
+			if( darkflag == false ){
 				data[i].material[j].shadow += 0.5f;
 			}
 			else{
-				data[i].material[j].shadow += 0.2f;
+				data[i].material[j].shadow += 0.3f;
 			}
 		}
 	}

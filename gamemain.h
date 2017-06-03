@@ -164,6 +164,7 @@ class maingame : public D3Dscene
 {
 	//class EventControl Event[TOTAL_EVENTLINE];	//!< イベント制御クラス
 	int SkyNumber;			//!< 背景空番号
+	bool DarkScreenFlag;	//!< 画面を暗く
 	float mouse_rx;		//!< マウスによる水平軸角度
 	float mouse_ry;		//!< マウスによる垂直軸角度
 	float view_rx;		//!< マウス角度とカメラ角度の差（水平軸）
