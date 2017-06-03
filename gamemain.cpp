@@ -1973,7 +1973,7 @@ void maingame::Render3D()
 	//ƒJƒƒ‰À•W‚É”wŒi‹ó‚ð•`‰æ
 	d3dg->SetWorldTransform(camera_x, camera_y, camera_z, 0.0f, 0.0f, 2.0f);
 	Resource.GetSkyModelTexture(&skymodel, &skytexture);
-	d3dg->RenderModel(skymodel, skytexture, false);
+	d3dg->RenderModel(skymodel, skytexture, DarkScreenFlag);
 
 	//Zƒoƒbƒtƒ@‚ð‰Šú‰»
 	d3dg->ResetZbuffer();
