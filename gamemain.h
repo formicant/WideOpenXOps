@@ -37,12 +37,19 @@
 #define TOTAL_MENUITEMS 8						//!< メニュー1画面に表示するミッション数
 #define MAINMENU_H (TOTAL_MENUITEMS+2)*30 + 25	//!< メニューの表示サイズ・高さ
 
+#define INPUT_ARROWKEYS_ANGLE DegreeToRadian(4)		//!< 方向キーでの回転角度
+#define INPUT_F1NUMKEYS_ANGLE DegreeToRadian(2)		//!< 三人称視点でのテンキーの回転角度
+
 #define HUDA_WEAPON_POSX (SCREEN_WIDTH - 255)	//!< 武器情報を描画する領域・X座標
 #define HUDA_WEAPON_POSY (SCREEN_HEIGHT - 98)	//!< 武器情報を描画する領域・Y座標
 #define HUDA_WEAPON_SIZEW 8		//!< 武器情報を描画する領域・横サイズ（32ピクセルの配置個数）
 #define HUDA_WEAPON_SIZEH 3		//!< 武器情報を描画する領域・縦サイズ（32ピクセルの配置個数）
 
 #define VIEW_HEIGHT 19.0f							//!< 視点の高さ
+#define VIEW_DIST 0.1f								//!< 中心から視点までの距離
+#define VIEW_F1MODE_ANGLE DegreeToRadian(-22.5f)	//!< 三人称視点での視点角度（初期）
+#define VIEW_F1MODE_DIST 14.0f						//!< 三人称視点での視点距離（最大）
+#define VIEW_FREECAMERA_SCALE 1.5f					//!< フリーカメラでの移動速度（高速モードは×2）
 #define VIEWANGLE_NORMAL DegreeToRadian(65)			//!< 視野角　標準
 #define VIEWANGLE_SCOPE_1 DegreeToRadian(30)		//!< 視野角　スコープ1
 #define VIEWANGLE_SCOPE_2 DegreeToRadian(15)		//!< 視野角　スコープ2
@@ -165,10 +172,12 @@ class maingame : public D3Dscene
 	//class EventControl Event[TOTAL_EVENTLINE];	//!< イベント制御クラス
 	int SkyNumber;			//!< 背景空番号
 	bool DarkScreenFlag;	//!< 画面を暗く
-	float mouse_rx;		//!< マウスによる水平軸角度
-	float mouse_ry;		//!< マウスによる垂直軸角度
-	float view_rx;		//!< マウス角度とカメラ角度の差（水平軸）
-	float view_ry;		//!< マウス角度とカメラ角度の差（垂直軸） 
+	float mouse_rx;				//!< マウスによる水平軸角度
+	float mouse_ry;				//!< マウスによる垂直軸角度
+	float view_rx;				//!< マウス角度とカメラ角度の差（水平軸）
+	float view_ry;				//!< マウス角度とカメラ角度の差（垂直軸）
+	float add_camera_rx;		//!< カメラ回転角度 RXの増減量
+	float add_camera_ry;		//!< カメラ回転角度 RYの増減量
 	bool ShowInfo_Debugmode;	//!< 座標などを表示するデバックモード
 	bool Camera_Debugmode;		//!< カメラデバックモード
 	bool tag;					//!< オブジェクトのタグを表示
@@ -201,6 +210,8 @@ class maingame : public D3Dscene
 	int time_render;				//!< 描画の処理時間
 	GameInfo MainGameInfo;			//!< リザルト用管理クラス
 	bool CheckInputControl(int CheckKey, int mode);
+	void InputPlayer(human *myHuman, int mouse_x, int mouse_y, float MouseSensitivity);
+	void InputViewCamera(int mouse_x, int mouse_y, float MouseSensitivity);
 	void Render3D();
 	void Render2D();
 	bool GetRadarPos(float in_x, float in_y, float in_z, int RadarPosX, int RadarPosY, int RadarSize, float RadarWorldR, int *out_x, int *out_y, float *local_y, bool check);

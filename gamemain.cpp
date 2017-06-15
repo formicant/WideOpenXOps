@@ -1067,6 +1067,8 @@ void briefing::Destroy()
 //! @brief コンストラクタ
 maingame::maingame()
 {
+	add_camera_rx = 0.0f;
+	add_camera_ry = 0.0f;
 	ShowInfo_Debugmode = false;
 	Camera_F2mode = 0;
 	Camera_HOMEmode = false;
@@ -1176,6 +1178,8 @@ int maingame::Create()
 
 	view_rx = 0.0f;
 	view_ry = 0.0f;
+	add_camera_rx = 0.0f;
+	add_camera_ry = 0.0f;
 	Camera_Debugmode = false;
 	tag = false;
 	radar = false;
@@ -1351,7 +1355,6 @@ void maingame::Input()
 
 	//プレイヤーのクラスを取得
 	human *myHuman = ObjMgr.GetPlayerHumanObject();
-	int PlayerID = ObjMgr.GetPlayerID();
 
 	//キー入力を取得
 	inputCtrl->GetInputState(true);
@@ -1374,45 +1377,6 @@ void maingame::Input()
 		y *= -1;
 	}
 
-	if( Camera_Debugmode == false ){	//通常モードならば
-		if( myHuman->GetHP() > 0 ){
-			//マウスによる向きを計算
-			mouse_rx += x * MouseSensitivity;
-			mouse_ry -= y * MouseSensitivity;
-
-			//キー操作による向きを計算
-			if( CheckInputControl(KEY_TURNUP, 0) ){ mouse_ry += DegreeToRadian(3); }		// 標準：[↑]
-			if( CheckInputControl(KEY_TURNDOWN, 0) ){ mouse_ry -= DegreeToRadian(3); }		// 標準：[↓]
-			if( CheckInputControl(KEY_TURNLEFT, 0) ){ mouse_rx -= DegreeToRadian(3); }		// 標準：[←]
-			if( CheckInputControl(KEY_TURNRIGHT, 0) ){ mouse_rx += DegreeToRadian(3); }		// 標準：[→]
-
-			if( mouse_ry > DegreeToRadian(70) ) mouse_ry = DegreeToRadian(70);
-			if( mouse_ry < DegreeToRadian(-70) ) mouse_ry = DegreeToRadian(-70);
-		}
-	}
-	else{								//デバックモードならば
-		//キー操作によりカメラ座標を計算
-		if( inputCtrl->CheckKeyNow(OriginalkeycodeToDinputdef(0x00)) ){ camera_x += 2.0f; }		// [↑]
-		if( inputCtrl->CheckKeyNow(OriginalkeycodeToDinputdef(0x01)) ){ camera_x -= 2.0f; }		// [↓]
-		if( inputCtrl->CheckKeyNow(OriginalkeycodeToDinputdef(0x02)) ){ camera_z += 2.0f; }		// [←]
-		if( inputCtrl->CheckKeyNow(OriginalkeycodeToDinputdef(0x03)) ){ camera_z -= 2.0f; }		// [→]
-		if( inputCtrl->CheckKeyNow(OriginalkeycodeToDinputdef(0x48)) ){ camera_y += 2.0f; }		//［NUM +］
-		if( inputCtrl->CheckKeyNow(OriginalkeycodeToDinputdef(0x49)) ){ camera_y -= 2.0f; }		//［NUM -］
-
-		//マウス移動をカメラの向きとして適用
-		//camera_rx -= x*0.0025f;
-		//camera_ry -= y*0.0025f;
-		camera_rx -= x * MouseSensitivity;
-		camera_ry -= y * MouseSensitivity;
-		if( camera_ry > DegreeToRadian(70) ) camera_ry = DegreeToRadian(70);
-		if( camera_ry < DegreeToRadian(-70) ) camera_ry = DegreeToRadian(-70);
-	}
-
-	//プレイヤー（オブジェクト）の向きを設定
-	if( (PlayerAI == false)&&(myHuman->GetHP() > 0) ){
-		myHuman->SetRxRy(mouse_rx, mouse_ry);
-	}
-
 	if( inputCtrl->CheckKeyDown(GetEscKeycode()) ){					//ゲーム終了操作かチェック
 		GameState->PushBackSpaceKey();
 		GameSpeed = 1;
@@ -1420,20 +1384,6 @@ void maingame::Input()
 	else if( inputCtrl->CheckKeyDown( GetFunctionKeycode(12) ) ){	//リセット操作かチェック
 		GameState->PushF12Key();
 		GameSpeed = 1;
-	}
-
-	//カメラ表示モード変更操作かチェック
-	if( inputCtrl->CheckKeyDown( GetFunctionKeycode(1) ) ){
-		if( Camera_F1mode == false ){
-			Camera_F1mode = true;
-			view_rx = 0.0f;
-			view_ry = DegreeToRadian(-22.5f);
-		}
-		else{
-			Camera_F1mode = false;
-			view_rx = 0.0f;
-			view_ry = 0.0f;
-		}
 	}
 
 	//画面のUI変更操作かチェック
@@ -1447,6 +1397,21 @@ void maingame::Input()
 	}
 
 #ifdef ENABLE_DEBUGCONSOLE
+	if( Show_Console == false ){
+#endif
+
+		if( Camera_Debugmode == false ){	//通常モードならば
+			if( PlayerAI == false ){
+				InputPlayer(myHuman, x, y, MouseSensitivity);
+			}
+		}
+		else{								//デバックモードならば
+			InputViewCamera(x, y, MouseSensitivity);
+		}
+
+#ifdef ENABLE_DEBUGCONSOLE
+	}
+
 	//デバック用コンソールの表示操作かチェック
 	if( inputCtrl->CheckKeyDown( GetFunctionKeycode(11) ) ){
 		if( Show_Console == false ){
@@ -1459,287 +1424,381 @@ void maingame::Input()
 		}
 	}
 
-	if( Show_Console == false ){
-#endif
-
-		if( PlayerAI == false ){
-
-			//前後左右の移動（走り）操作かチェック
-			if( CheckInputControl(KEY_MOVEFORWARD, 0) ){
-				ObjMgr.MoveForward(PlayerID);
-			}
-			else{
-				if( CheckInputControl(KEY_MOVEBACKWARD, 0) ){
-					ObjMgr.MoveBack(PlayerID);
-				}
-			}
-			if( CheckInputControl(KEY_MOVELEFT, 0) ){
-				ObjMgr.MoveLeft(PlayerID);
-			}
-			else{
-				if( CheckInputControl(KEY_MOVERIGHT, 0) ){
-					ObjMgr.MoveRight(PlayerID);
-				}
-			}
-
-			//歩き操作かチェック
-			if( CheckInputControl(KEY_WALK, 0) ){
-				ObjMgr.MoveWalk(PlayerID);
-			}
-
-			//ジャンプ操作かチェック
-			if( CheckInputControl(KEY_JUMP, 1) ){
-				ObjMgr.MoveJump(PlayerID);
-			}
-
-			if( Camera_Debugmode == true ){		//デバックモードならば
-				//
-			}
-			else{		//デバックモードでなければ
-				HumanParameter humandata;
-				int id_param;
-				bool zombie;
-				int keymode;
-
-				//ゾンビかどうか判定
-				myHuman->GetParamData(&id_param, NULL, NULL, NULL);
-				GameParamInfo.GetHuman(id_param, &humandata);
-				if( humandata.type == 2 ){
-					zombie = true;
-				}
-				else{
-					zombie = false;
-				}
-
-				//連射モードを取得
-				if( zombie == true ){
-					keymode = 1;
-				}
-				else if( myHuman->GetWeaponBlazingmode() == false ){
-					keymode = 1;
-				}
-				else{
-					keymode = 0;
-				}
-
-				//発砲操作かチェック
-				if( CheckInputControl(KEY_Shot, keymode) ){
-
-					if( zombie == false ){
-						//弾の発射に成功すれば
-						if( ObjMgr.ShotWeapon(PlayerID) == 1 ){
-							//スコアに加算
-							MainGameInfo.fire += 1;
-
-							//プレイヤーの向きを取得
-							ObjMgr.GetPlayerHumanObject()->GetRxRy(&mouse_rx, &mouse_ry);
-						}
-					}
-					else{
-						for(int i=0; i<MAX_HUMAN; i++){
-							human *EnemyHuman = ObjMgr.GeHumanObject(i);
-							if( ObjMgr.CheckZombieAttack(myHuman, EnemyHuman) == true ){
-								ObjMgr.HitZombieAttack(myHuman, EnemyHuman);
-							}
-						}
-					}
-
-				}
-			}
-
-			//リロード操作かチェック
-			if( CheckInputControl(KEY_RELOAD, 1) ){
-				ObjMgr.ReloadWeapon(PlayerID);
-			}
-
-			//武器の切り替え操作かチェック
-			if( CheckInputControl(KEY_SWITCHWEAPON, 1) ){
-				ObjMgr.ChangeWeapon(PlayerID, -1);
-			}
-			if( CheckInputControl(KEY_WEAPON1, 1) ){
-				ObjMgr.ChangeWeapon(PlayerID, 0);
-			}
-			if( CheckInputControl(KEY_WEAPON2, 1) ){
-				ObjMgr.ChangeWeapon(PlayerID, 1);
-			}
-
-			//武器の廃棄操作かチェック
-			if( CheckInputControl(KEY_DROPWEAPON, 1) ){
-				ObjMgr.DumpWeapon(PlayerID);
-			}
-
-			//スコープ操作かチェック
-			if( CheckInputControl(KEY_ZOOMSCOPE, 1) ){
-				ObjMgr.ChangeScopeMode(PlayerID);
-			}
-
-			//連射モード変更操作かチェック
-			if( CheckInputControl(KEY_ShotMODE, 1) ){
-				ObjMgr.ChangeShotMode(PlayerID);
-			}
-
-			//カメラ操作
-			if( Camera_F1mode == true ){
-				if( inputCtrl->CheckKeyNow( OriginalkeycodeToDinputdef(0x0C) ) ){	//NUM8
-					view_ry -= DegreeToRadian(2);
-				}
-				if( inputCtrl->CheckKeyNow( OriginalkeycodeToDinputdef(0x09) ) ){	//NUM5
-					view_ry += DegreeToRadian(2);
-				}
-				if( inputCtrl->CheckKeyNow( OriginalkeycodeToDinputdef(0x08) ) ){	//NUM4
-					view_rx -= DegreeToRadian(2);
-				}
-				if( inputCtrl->CheckKeyNow( OriginalkeycodeToDinputdef(0x0A) ) ){	//NUM6
-					view_rx += DegreeToRadian(2);
-				}
-			}
-
-			//裏技・上昇の操作かチェック
-			if( (inputCtrl->CheckKeyNow( GetFunctionKeycode(5) ))&&(inputCtrl->CheckKeyNow(OriginalkeycodeToDinputdef(0x0F))) ){	// F5 + [ENTER]
-				Cmd_F5 = true;
-			}
-			else{
-				Cmd_F5 = false;
-			}
-
-			//裏技・弾追加の操作かチェック
-			if( inputCtrl->CheckKeyNow( GetFunctionKeycode(6) ) ){
-				if( inputCtrl->CheckKeyDown(OriginalkeycodeToDinputdef(0x0F)) ){		// [ENTER]
-					ObjMgr.CheatAddBullet(PlayerID);
-				}
-			}
-
-			//裏技・武器変更の操作かチェック
-			if( inputCtrl->CheckKeyNow( GetFunctionKeycode(7) ) ){
-				if( inputCtrl->CheckKeyDown(OriginalkeycodeToDinputdef(0x02)) ){		// [←]
-					int id_param = myHuman->GetMainWeaponTypeNO();
-
-					//次の武器番号を計算
-					if( id_param >= TOTAL_PARAMETERINFO_WEAPON-1 ){ id_param = 0; }
-					else{ id_param += 1; }
-
-					ObjMgr.CheatNewWeapon(PlayerID, id_param);
-				}
-				if( inputCtrl->CheckKeyDown(OriginalkeycodeToDinputdef(0x03)) ){		// [→]
-					int id_param = myHuman->GetMainWeaponTypeNO();
-
-					//次の武器番号を計算
-					if( id_param <= 0 ){ id_param = TOTAL_PARAMETERINFO_WEAPON-1; }
-					else{ id_param -= 1; }
-
-					ObjMgr.CheatNewWeapon(PlayerID, id_param);
-				}
-			}
-
-			//裏技・人変更の操作かチェック
-			if( inputCtrl->CheckKeyNow( GetFunctionKeycode(8) ) ){
-				int Player_HumanID;
-
-				if( inputCtrl->CheckKeyDown(OriginalkeycodeToDinputdef(0x02)) ){		// [←]
-					//現在のプレイヤー番号を取得
-					Player_HumanID = ObjMgr.GetPlayerID();
-
-					//次の人を計算
-					Player_HumanID += 1;
-					if( Player_HumanID >= MAX_HUMAN ){ Player_HumanID = 0; }
-
-					//対象プレイヤー番号を適用
-					ObjMgr.SetPlayerID(Player_HumanID);
-
-					//プレイヤーの向きを取得
-					ObjMgr.GetPlayerHumanObject()->GetRxRy(&mouse_rx, &mouse_ry);
-
-					//F1モード時にカメラの向きを再設定
-					if( Camera_F1mode == true ){
-						camera_rx = DegreeToRadian(90);
-					}
-				}
-				if( inputCtrl->CheckKeyDown(OriginalkeycodeToDinputdef(0x03)) ){		// [→]
-					//現在のプレイヤー番号を取得
-					Player_HumanID = ObjMgr.GetPlayerID();
-
-					//次の人を計算
-					Player_HumanID -= 1;
-					if( Player_HumanID < 0 ){ Player_HumanID = MAX_HUMAN-1; }
-
-					//対象プレイヤー番号を適用
-					ObjMgr.SetPlayerID(Player_HumanID);
-
-					//プレイヤーの向きを取得
-					ObjMgr.GetPlayerHumanObject()->GetRxRy(&mouse_rx, &mouse_ry);
-
-					//F1モード時にカメラの向きを再設定
-					if( Camera_F1mode == true ){
-						camera_rx = DegreeToRadian(90);
-					}
-				}
-			}
-
-			//裏技・人追加の操作かチェック
-			if( inputCtrl->CheckKeyNow( GetFunctionKeycode(9) ) ){
-				if( (inputCtrl->CheckKeyDown(OriginalkeycodeToDinputdef(0x00)))||(inputCtrl->CheckKeyDown(OriginalkeycodeToDinputdef(0x01))) ){		// [↑]・[↓]
-					float x, y, z, r;
-					int param, dataid, team; 
-					int selectweapon;
-					weapon *weapon[TOTAL_HAVEWEAPON];
-					int weapon_paramid[TOTAL_HAVEWEAPON];
-					for(int i=0; i<TOTAL_HAVEWEAPON; i++){
-						weapon[i] = NULL;
-						weapon_paramid[i] = 0;
-					}
-					int id;
-
-					//プレイヤーの座標や武器を取得
-					myHuman->GetPosData(&x, &y, &z, &r);
-					myHuman->GetParamData(&param, &dataid, NULL, &team);
-					myHuman->GetWeapon(&selectweapon, weapon);
-					for(int i=0; i<TOTAL_HAVEWEAPON; i++){
-						if( weapon[i] != NULL ){
-							weapon[i]->GetParamData(&weapon_paramid[i], NULL, NULL);
-						}
-					}
-
-					//プレイヤーの目の前の座標を取得
-					x += cos(r*-1 + (float)M_PI/2)*10.0f;
-					y += 5.0f;
-					z += sin(r*-1 + (float)M_PI/2)*10.0f;
-
-					//人を追加
-					id = ObjMgr.AddHumanIndex(x, y, z, r, param, team, weapon_paramid);
-					if( id >= 0 ){
-						ObjMgr.ChangeWeapon(id, selectweapon);
-
-						//AIを設定
-						HumanAI[id].Init();
-						if( inputCtrl->CheckKeyDown(OriginalkeycodeToDinputdef(0x00)) ){		// [↑]
-							HumanAI[id].SetHoldTracking(PlayerID);
-						}
-						if( inputCtrl->CheckKeyDown(OriginalkeycodeToDinputdef(0x01)) ){		// [↓]
-							HumanAI[id].SetHoldWait(x, z, r);
-						}
-					}
-				}
-			}
-
-			//裏技・腕描画の操作かチェック
-			if( inputCtrl->CheckKeyDown( GetHomeKeycode() ) ){
-				if( Camera_HOMEmode == false ){
-					Camera_HOMEmode = true;
-				}
-				else{
-					Camera_HOMEmode = false;
-				}
-			}
-		}
-
-#ifdef ENABLE_DEBUGCONSOLE
-	}
 	if( Show_Console == true ){
 		InputConsole();
 	}
 #endif
 
 	time_input = GetTimeMS() - time;
+}
+
+//! @brief プレイヤー操作系の入力処理
+//! @param myHuman プレイヤーのクラス
+//! @param mouse_x マウスのX座標
+//! @param mouse_y マウスのY座標 
+//! @param MouseSensitivity 視点の移動量計算
+void maingame::InputPlayer(human *myHuman, int mouse_x, int mouse_y, float MouseSensitivity)
+{
+	int PlayerID = ObjMgr.GetPlayerID();
+
+	if( myHuman->GetHP() > 0 ){
+
+		//マウスによる向きを計算
+		mouse_rx += mouse_x * MouseSensitivity;
+		mouse_ry -= mouse_y * MouseSensitivity;
+
+		//キー操作による向きを計算
+		if(      (CheckInputControl(KEY_TURNUP, 0) == true)&&(CheckInputControl(KEY_TURNDOWN, 0) == false) ){ add_camera_ry += (INPUT_ARROWKEYS_ANGLE - add_camera_ry)*0.2f; }			// 標準：[↑]
+		else if( (CheckInputControl(KEY_TURNDOWN, 0) == true)&&(CheckInputControl(KEY_TURNUP, 0) == false) ){ add_camera_ry += (INPUT_ARROWKEYS_ANGLE*-1 - add_camera_ry)*0.2f; }		// 標準：[↓]
+		else { add_camera_ry = 0.0f; }
+		if(      (CheckInputControl(KEY_TURNLEFT, 0) == true)&&(CheckInputControl(KEY_TURNRIGHT, 0) == false) ){ add_camera_rx += (INPUT_ARROWKEYS_ANGLE*-1 - add_camera_rx)*0.2f; }	// 標準：[←]
+		else if( (CheckInputControl(KEY_TURNRIGHT, 0) == true)&&(CheckInputControl(KEY_TURNLEFT, 0) == false) ){ add_camera_rx += (INPUT_ARROWKEYS_ANGLE - add_camera_rx)*0.2f; }		// 標準：[→]
+		else { add_camera_rx = 0.0f; }
+		mouse_rx += add_camera_rx;
+		mouse_ry += add_camera_ry;
+
+		if( mouse_ry > DegreeToRadian(70) ) mouse_ry = DegreeToRadian(70);
+		if( mouse_ry < DegreeToRadian(-70) ) mouse_ry = DegreeToRadian(-70);
+
+
+		//プレイヤー（オブジェクト）の向きを設定
+		myHuman->SetRxRy(mouse_rx, mouse_ry);
+
+
+		//前後左右の移動（走り）操作かチェック
+		if( CheckInputControl(KEY_MOVEFORWARD, 0) ){
+			ObjMgr.MoveForward(PlayerID);
+		}
+		else{
+			if( CheckInputControl(KEY_MOVEBACKWARD, 0) ){
+				ObjMgr.MoveBack(PlayerID);
+			}
+		}
+		if( CheckInputControl(KEY_MOVELEFT, 0) ){
+			ObjMgr.MoveLeft(PlayerID);
+		}
+		else{
+			if( CheckInputControl(KEY_MOVERIGHT, 0) ){
+				ObjMgr.MoveRight(PlayerID);
+			}
+		}
+
+		//歩き操作かチェック
+		if( CheckInputControl(KEY_WALK, 0) ){
+			ObjMgr.MoveWalk(PlayerID);
+		}
+
+		//ジャンプ操作かチェック
+		if( CheckInputControl(KEY_JUMP, 1) ){
+			ObjMgr.MoveJump(PlayerID);
+		}
+
+		HumanParameter humandata;
+		int id_param;
+		bool zombie;
+		int keymode;
+
+		//ゾンビかどうか判定
+		myHuman->GetParamData(&id_param, NULL, NULL, NULL);
+		GameParamInfo.GetHuman(id_param, &humandata);
+		if( humandata.type == 2 ){
+			zombie = true;
+		}
+		else{
+			zombie = false;
+		}
+
+		//連射モードを取得
+		if( zombie == true ){
+			keymode = 1;
+		}
+		else if( myHuman->GetWeaponBlazingmode() == false ){
+			keymode = 1;
+		}
+		else{
+			keymode = 0;
+		}
+
+		//発砲操作かチェック
+		if( CheckInputControl(KEY_Shot, keymode) ){
+
+			if( zombie == false ){
+				//弾の発射に成功すれば
+				if( ObjMgr.ShotWeapon(PlayerID) == 1 ){
+					//スコアに加算
+					MainGameInfo.fire += 1;
+
+					//プレイヤーの向きを取得
+					ObjMgr.GetPlayerHumanObject()->GetRxRy(&mouse_rx, &mouse_ry);
+				}
+			}
+			else{
+				for(int i=0; i<MAX_HUMAN; i++){
+					human *EnemyHuman = ObjMgr.GeHumanObject(i);
+					if( ObjMgr.CheckZombieAttack(myHuman, EnemyHuman) == true ){
+						ObjMgr.HitZombieAttack(myHuman, EnemyHuman);
+					}
+				}
+			}
+
+		}
+
+		//リロード操作かチェック
+		if( CheckInputControl(KEY_RELOAD, 1) ){
+			ObjMgr.ReloadWeapon(PlayerID);
+		}
+
+		//武器の切り替え操作かチェック
+		if( CheckInputControl(KEY_SWITCHWEAPON, 1) ){
+			ObjMgr.ChangeWeapon(PlayerID, -1);
+		}
+		if( CheckInputControl(KEY_WEAPON1, 1) ){
+			ObjMgr.ChangeWeapon(PlayerID, 0);
+		}
+		if( CheckInputControl(KEY_WEAPON2, 1) ){
+			ObjMgr.ChangeWeapon(PlayerID, 1);
+		}
+
+		//武器の廃棄操作かチェック
+		if( CheckInputControl(KEY_DROPWEAPON, 1) ){
+			ObjMgr.DumpWeapon(PlayerID);
+		}
+
+		//スコープ操作かチェック
+		if( CheckInputControl(KEY_ZOOMSCOPE, 1) ){
+			ObjMgr.ChangeScopeMode(PlayerID);
+		}
+
+		//連射モード変更操作かチェック
+		if( CheckInputControl(KEY_ShotMODE, 1) ){
+			ObjMgr.ChangeShotMode(PlayerID);
+		}
+
+		//カメラ表示モード変更操作かチェック
+		if( inputCtrl->CheckKeyDown( GetFunctionKeycode(1) ) ){
+			if( Camera_F1mode == false ){
+				Camera_F1mode = true;
+				view_rx = 0.0f;
+				view_ry = VIEW_F1MODE_ANGLE;
+			}
+			else{
+				Camera_F1mode = false;
+				view_rx = 0.0f;
+				view_ry = 0.0f;
+			}
+		}
+
+		//カメラ操作
+		if( Camera_F1mode == true ){
+			if( inputCtrl->CheckKeyNow( OriginalkeycodeToDinputdef(0x0C) ) ){	//NUM8
+				view_ry -= INPUT_F1NUMKEYS_ANGLE;
+			}
+			if( inputCtrl->CheckKeyNow( OriginalkeycodeToDinputdef(0x09) ) ){	//NUM5
+				view_ry += INPUT_F1NUMKEYS_ANGLE;
+			}
+			if( inputCtrl->CheckKeyNow( OriginalkeycodeToDinputdef(0x08) ) ){	//NUM4
+				view_rx -= INPUT_F1NUMKEYS_ANGLE;
+			}
+			if( inputCtrl->CheckKeyNow( OriginalkeycodeToDinputdef(0x0A) ) ){	//NUM6
+				view_rx += INPUT_F1NUMKEYS_ANGLE;
+			}
+		}
+
+	}
+
+	//　ここまで通常操作系
+	//
+	//　ここから裏技系
+
+	if( myHuman->GetHP() > 0 ){
+
+		//裏技・上昇の操作かチェック
+		if( (inputCtrl->CheckKeyNow( GetFunctionKeycode(5) ))&&(inputCtrl->CheckKeyNow(OriginalkeycodeToDinputdef(0x0F))) ){	// F5 + [ENTER]
+			Cmd_F5 = true;
+		}
+		else{
+			Cmd_F5 = false;
+		}
+
+		//裏技・弾追加の操作かチェック
+		if( inputCtrl->CheckKeyNow( GetFunctionKeycode(6) ) ){
+			if( inputCtrl->CheckKeyDown(OriginalkeycodeToDinputdef(0x0F)) ){		// [ENTER]
+				ObjMgr.CheatAddBullet(PlayerID);
+			}
+		}
+
+		//裏技・武器変更の操作かチェック
+		if( inputCtrl->CheckKeyNow( GetFunctionKeycode(7) ) ){
+			if( inputCtrl->CheckKeyDown(OriginalkeycodeToDinputdef(0x02)) ){		// [←]
+				int id_param = myHuman->GetMainWeaponTypeNO();
+
+				//次の武器番号を計算
+				if( id_param >= TOTAL_PARAMETERINFO_WEAPON-1 ){ id_param = 0; }
+				else{ id_param += 1; }
+
+				ObjMgr.CheatNewWeapon(PlayerID, id_param);
+			}
+			if( inputCtrl->CheckKeyDown(OriginalkeycodeToDinputdef(0x03)) ){		// [→]
+				int id_param = myHuman->GetMainWeaponTypeNO();
+
+				//次の武器番号を計算
+				if( id_param <= 0 ){ id_param = TOTAL_PARAMETERINFO_WEAPON-1; }
+				else{ id_param -= 1; }
+
+				ObjMgr.CheatNewWeapon(PlayerID, id_param);
+			}
+		}
+
+	}
+
+	//裏技・人変更の操作かチェック
+	if( inputCtrl->CheckKeyNow( GetFunctionKeycode(8) ) ){
+		int Player_HumanID;
+
+		if( inputCtrl->CheckKeyDown(OriginalkeycodeToDinputdef(0x02)) ){		// [←]
+			//現在のプレイヤー番号を取得
+			Player_HumanID = ObjMgr.GetPlayerID();
+
+			//次の人を計算
+			Player_HumanID += 1;
+			if( Player_HumanID >= MAX_HUMAN ){ Player_HumanID = 0; }
+
+			//対象プレイヤー番号を適用
+			ObjMgr.SetPlayerID(Player_HumanID);
+
+			//プレイヤーの向きを取得
+			ObjMgr.GetPlayerHumanObject()->GetRxRy(&mouse_rx, &mouse_ry);
+
+			//F1モード時にカメラの向きを再設定
+			if( Camera_F1mode == true ){
+				camera_rx = DegreeToRadian(90);
+			}
+		}
+		if( inputCtrl->CheckKeyDown(OriginalkeycodeToDinputdef(0x03)) ){		// [→]
+			//現在のプレイヤー番号を取得
+			Player_HumanID = ObjMgr.GetPlayerID();
+
+			//次の人を計算
+			Player_HumanID -= 1;
+			if( Player_HumanID < 0 ){ Player_HumanID = MAX_HUMAN-1; }
+
+			//対象プレイヤー番号を適用
+			ObjMgr.SetPlayerID(Player_HumanID);
+
+			//プレイヤーの向きを取得
+			ObjMgr.GetPlayerHumanObject()->GetRxRy(&mouse_rx, &mouse_ry);
+
+			//F1モード時にカメラの向きを再設定
+			if( Camera_F1mode == true ){
+				camera_rx = DegreeToRadian(90);
+			}
+		}
+	}
+
+	if( myHuman->GetHP() > 0 ){
+
+		//裏技・人追加の操作かチェック
+		if( inputCtrl->CheckKeyNow( GetFunctionKeycode(9) ) ){
+			if( (inputCtrl->CheckKeyDown(OriginalkeycodeToDinputdef(0x00)))||(inputCtrl->CheckKeyDown(OriginalkeycodeToDinputdef(0x01))) ){		// [↑]・[↓]
+				float x, y, z, r;
+				int param, dataid, team; 
+				int selectweapon;
+				weapon *weapon[TOTAL_HAVEWEAPON];
+				int weapon_paramid[TOTAL_HAVEWEAPON];
+				for(int i=0; i<TOTAL_HAVEWEAPON; i++){
+					weapon[i] = NULL;
+					weapon_paramid[i] = 0;
+				}
+				int id;
+
+				//プレイヤーの座標や武器を取得
+				myHuman->GetPosData(&x, &y, &z, &r);
+				myHuman->GetParamData(&param, &dataid, NULL, &team);
+				myHuman->GetWeapon(&selectweapon, weapon);
+				for(int i=0; i<TOTAL_HAVEWEAPON; i++){
+					if( weapon[i] != NULL ){
+						weapon[i]->GetParamData(&weapon_paramid[i], NULL, NULL);
+					}
+				}
+
+				//プレイヤーの目の前の座標を取得
+				x += cos(r*-1 + (float)M_PI/2)*10.0f;
+				y += 5.0f;
+				z += sin(r*-1 + (float)M_PI/2)*10.0f;
+
+				//人を追加
+				id = ObjMgr.AddHumanIndex(x, y, z, r, param, team, weapon_paramid);
+				if( id >= 0 ){
+					ObjMgr.ChangeWeapon(id, selectweapon);
+
+					//AIを設定
+					HumanAI[id].Init();
+					if( inputCtrl->CheckKeyDown(OriginalkeycodeToDinputdef(0x00)) ){		// [↑]
+						HumanAI[id].SetHoldTracking(PlayerID);
+					}
+					if( inputCtrl->CheckKeyDown(OriginalkeycodeToDinputdef(0x01)) ){		// [↓]
+						HumanAI[id].SetHoldWait(x, z, r);
+					}
+				}
+			}
+		}
+
+		//裏技・腕描画の操作かチェック
+		if( inputCtrl->CheckKeyDown( GetHomeKeycode() ) ){
+			if( Camera_HOMEmode == false ){
+				Camera_HOMEmode = true;
+			}
+			else{
+				Camera_HOMEmode = false;
+			}
+		}
+	}
+}
+
+//! @brief フリーカメラ操作系の入力処理
+//! @param mouse_x マウスのX座標
+//! @param mouse_y マウスのY座標 
+//! @param MouseSensitivity 視点の移動量計算
+void maingame::InputViewCamera(int mouse_x, int mouse_y, float MouseSensitivity)
+{
+	//マウス移動をカメラの向きとして適用
+	camera_rx -= mouse_x * MouseSensitivity;
+	camera_ry -= mouse_y * MouseSensitivity;
+
+	//キー操作による向きを計算
+	if( CheckInputControl(KEY_TURNUP, 0) ){ camera_ry += INPUT_ARROWKEYS_ANGLE; }			// 標準：[↑]
+	if( CheckInputControl(KEY_TURNDOWN, 0) ){ camera_ry -= INPUT_ARROWKEYS_ANGLE; }			// 標準：[↓]
+	if( CheckInputControl(KEY_TURNLEFT, 0) ){ camera_rx += INPUT_ARROWKEYS_ANGLE; }			// 標準：[←]
+	if( CheckInputControl(KEY_TURNRIGHT, 0) ){ camera_rx -= INPUT_ARROWKEYS_ANGLE; }		// 標準：[→]
+
+	if( camera_ry > DegreeToRadian(70) ) camera_ry = DegreeToRadian(70);
+	if( camera_ry < DegreeToRadian(-70) ) camera_ry = DegreeToRadian(-70);
+
+	//移動量決定
+	float dist = VIEW_FREECAMERA_SCALE;
+	if( CheckInputControl(KEY_Shot, 0) ){
+		dist *= 2;
+	}
+
+	//キー操作によりカメラ座標を計算
+	if( CheckInputControl(KEY_MOVEFORWARD, 0) ){
+		camera_x += cos(camera_rx)*cos(camera_ry)*dist;
+		camera_y += sin(camera_ry)*dist;
+		camera_z += sin(camera_rx)*cos(camera_ry)*dist;
+	}
+	if( CheckInputControl(KEY_MOVEBACKWARD, 0) ){
+		camera_x -= cos(camera_rx)*cos(camera_ry)*dist;
+		camera_y -= sin(camera_ry)*dist;
+		camera_z -= sin(camera_rx)*cos(camera_ry)*dist;
+	}
+	if( CheckInputControl(KEY_MOVELEFT, 0) ){
+		camera_x += cos(camera_rx + (float)M_PI/2)*dist;
+		camera_z += sin(camera_rx + (float)M_PI/2)*dist;
+	}
+	if( CheckInputControl(KEY_MOVERIGHT, 0) ){
+		camera_x += cos(camera_rx - (float)M_PI/2)*dist;
+		camera_z += sin(camera_rx - (float)M_PI/2)*dist;
+	}
 }
 
 void maingame::Process()
@@ -1867,27 +1926,42 @@ void maingame::Process()
 		camera_z = z + sin(camera_rx)*r;
 	}
 	else if( Camera_F1mode == true ){
-		float crx = camera_rx*0.6f + (view_rx + mouse_rx*-1 + (float)M_PI/2)*0.4f;		// 3/5 + 2/5
-		float cry = camera_ry*0.6f + (view_ry + mouse_ry)*0.4f;							// 3/5 + 2/5
+		float crx, cry;
+		float ccx, ccy, ccz;
+
+		//カメラの注視点を計算
+		crx = camera_rx*0.8f + (view_rx + mouse_rx*-1 + (float)M_PI/2)*0.2f;	// 8 : 2
+		cry = camera_ry*0.8f + (view_ry + mouse_ry)*0.2f - (float)M_PI/2;		// 8 : 2
+		ccx = x - cos(crx)*cos(cry)*3.0f;
+		ccy = y + HUMAN_HEIGHT-0.5f + sin(cry*-1)*2.5f;
+		ccz = z - sin(crx)*cos(cry)*3.0f;
+
+		//注視点からカメラまでの当たり判定
+		cry += (float)M_PI/2;
 		float dist;
-		if( CollD.CheckALLBlockIntersectRay(x, y + HUMAN_HEIGHT, z, cos(crx)*cos(cry)*-1, sin(cry*-1), sin(crx)*cos(cry)*-1, NULL, NULL, &dist, 13.0f) == true ){
+		if( CollD.CheckALLBlockIntersectRay(ccx, ccy, ccz, cos(crx)*cos(cry)*-1, sin(cry*-1), sin(crx)*cos(cry)*-1, NULL, NULL, &dist, VIEW_F1MODE_DIST) == true ){
 			dist -= 1.0f;
 		}
 		else{
-			dist = 13.0f;
+			dist = VIEW_F1MODE_DIST;
 		}
-		camera_x = x - cos(crx)*cos(cry)*dist;
-		camera_y = y + HUMAN_HEIGHT + sin(cry*-1)*dist;
-		camera_z = z - sin(crx)*cos(cry)*dist;
+
+		//カメラ座標を再計算
+		camera_x = ccx - cos(crx)*cos(cry)*(dist);
+		camera_y = ccy + sin(cry*-1)*dist;
+		camera_z = ccz - sin(crx)*cos(cry)*(dist);
 		camera_rx = crx;
 		camera_ry = cry;
 	}
 	else{
-		camera_x = x;
-		camera_y = y + VIEW_HEIGHT;
-		camera_z = z;
-		camera_rx = view_rx + mouse_rx*-1 + (float)M_PI/2;
-		camera_ry = view_ry + mouse_ry;
+		float crx = view_rx + mouse_rx*-1 + (float)M_PI/2;
+		float cry = view_ry + mouse_ry;
+
+		camera_x = x + cos(crx)*cos(cry)*VIEW_DIST;
+		camera_y = y + VIEW_HEIGHT + sin(cry)*VIEW_DIST;
+		camera_z = z + sin(crx)*cos(cry)*VIEW_DIST;
+		camera_rx = crx;
+		camera_ry = cry;
 	}
 
 	//ダメージを受けていれば、レッドフラッシュを描画する
