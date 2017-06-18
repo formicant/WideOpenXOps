@@ -950,10 +950,10 @@ void ObjectManager::HitBulletHuman(int HitHuman_id, int Hit_id, float x, float y
 	}
 
 	if( flag == true ){
-		HumanIndex[HitHuman_id].SetHitFlag();
+		HumanIndex[HitHuman_id].SetHitFlag(brx*-1 - (float)M_PI/2);
 	}
 #else
-	HumanIndex[HitHuman_id].SetHitFlag();
+	HumanIndex[HitHuman_id].SetHitFlag(brx*-1 - (float)M_PI/2);
 #endif
 
 	//ロボットかどうか判定
@@ -1099,23 +1099,6 @@ bool ObjectManager::GrenadeExplosion(grenade *in_grenade)
 
 			HumanIndex[i].GetParamData(NULL, NULL, NULL, &HitHuman_TeamID);
 
-#ifdef ENABLE_BUG_TEAMID
-			bool flag = true;
-
-			//チーム番号が負数、かつチーム番号が大きいなら、フラグ無効
-			if( (HitHuman_TeamID < 0)&&(teamid < 0) ){
-				if( HitHuman_TeamID < teamid ){
-					flag = false;
-				}
-			}
-
-			if( flag == true ){
-				HumanIndex[i].SetHitFlag();
-			}
-#else
-			HumanIndex[i].SetHitFlag();
-#endif
-
 			float y2;
 			float arx, ary;
 
@@ -1142,6 +1125,23 @@ bool ObjectManager::GrenadeExplosion(grenade *in_grenade)
 			else{		//下方向に飛ぶなら、垂直角度は無効。（爆風で地面にめり込むのを防止）
 				ary = 0.0f;
 			}
+
+#ifdef ENABLE_BUG_TEAMID
+			bool flag = true;
+
+			//チーム番号が負数、かつチーム番号が大きいなら、フラグ無効
+			if( (HitHuman_TeamID < 0)&&(teamid < 0) ){
+				if( HitHuman_TeamID < teamid ){
+					flag = false;
+				}
+			}
+
+			if( flag == true ){
+				HumanIndex[i].SetHitFlag(arx*-1 + (float)M_PI/2);
+			}
+#else
+			HumanIndex[i].SetHitFlag(arx*-1 + (float)M_PI/2);
+#endif
 
 			//爆風による風圧
 			HumanIndex[i].AddPosOrder(arx, ary, 2.2f/MAX_DAMAGE_GRENADE_DISTANCE * (MAX_DAMAGE_GRENADE_DISTANCE - sqrt(x*x + y*y + z*z)));
@@ -2254,7 +2254,9 @@ void ObjectManager::HitZombieAttack(human* MyHuman, human* EnemyHuman)
 
 	int MyHuman_dataID, MyHuman_TeamID;
 	int EnemyHuman_dataID, EnemyHuman_TeamID;
+	float mx, my, mz;
 	float tx, ty, tz;
+	float arx;
 	int paramid;
 	HumanParameter Paraminfo;
 	bool NotRobot;
@@ -2263,8 +2265,12 @@ void ObjectManager::HitZombieAttack(human* MyHuman, human* EnemyHuman)
 	MyHuman->GetParamData(NULL, &MyHuman_dataID, NULL, &MyHuman_TeamID);
 	EnemyHuman->GetParamData(NULL, &EnemyHuman_dataID, NULL, &EnemyHuman_TeamID);
 
+	MyHuman->GetPosData(&mx, &my, &mz, NULL);
 	EnemyHuman->GetPosData(&tx, &ty, &tz, NULL);
 	ty += VIEW_HEIGHT;
+
+	//敵が攻撃を受けた角度を求める
+	arx = atan2(mz - tz, mx - tx);
 
 	//ロボットかどうか判定
 	EnemyHuman->GetParamData(&paramid, NULL, NULL, NULL);
@@ -2290,10 +2296,10 @@ void ObjectManager::HitZombieAttack(human* MyHuman, human* EnemyHuman)
 	}
 
 	if( flag == true ){
-		EnemyHuman->SetHitFlag();
+		EnemyHuman->SetHitFlag(arx*-1 + (float)M_PI/2);
 	}
 #else
-	EnemyHuman->SetHitFlag();
+	EnemyHuman->SetHitFlag(arx*-1 + (float)M_PI/2);
 #endif
 
 	//エフェクト（血）を描画

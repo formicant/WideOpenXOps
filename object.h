@@ -149,6 +149,7 @@ protected:
 	int MoveFlag_lt;			//!< （前回の）移動方向を表すフラグ
 	int scopemode;				//!< スコープ使用モード
 	bool HitFlag;				//!< 被弾を表すフラグ
+	float Hit_rx;				//!< 被弾した方向
 	float totalmove;			//!< 合計移動量
 	int StateGunsightErrorRange;		//!< 照準の状態誤差
 	int ReactionGunsightErrorRange;		//!< 照準の反動誤差
@@ -205,8 +206,8 @@ public:
 	virtual void HitBulletLeg(int attacks);
 	virtual void HitZombieAttack();
 	virtual void HitGrenadeExplosion(int attacks);
-	virtual void SetHitFlag();
-	virtual bool CheckHit();
+	virtual void SetHitFlag(float rx);
+	virtual bool CheckHit(float *rx);
 	virtual float GetTotalMove();
 	virtual int RunFrame(class Collision *CollD, class BlockDataInterface *inblockdata, bool AddCollisionFlag, bool player, bool F5mode);
 	virtual int GetGunsightErrorRange();

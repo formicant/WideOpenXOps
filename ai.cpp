@@ -45,6 +45,8 @@ AIcontrol::AIcontrol(class ObjectManager *in_ObjMgr, int in_ctrlid, class BlockD
 	battlemode = AI_NORMAL;
 	cautionback_posx = 0.0f;
 	cautionback_posz = 0.0f;
+	FaceCaution_flag = false;
+	FaceCaution_rx = 0.0f;
 	total_move = 0.0f;
 	waitcnt = 0;
 	movejumpcnt = 1*((int)GAMEFPS);
@@ -379,6 +381,31 @@ void AIcontrol::TurnSeen()
 	float target_rx;
 	int pointmode;
 	MoveNavi->GetTargetPos(NULL, NULL, &target_rx, NULL, &pointmode);
+
+	//撃たれて警戒したなら、撃たれた方向を向く
+	if( (battlemode == AI_CAUTION)&&(FaceCaution_flag == true) ){
+		float tr;
+
+		//方向を計算
+		tr = FaceCaution_rx - rx;
+		for(; tr > (float)M_PI; tr -= (float)M_PI*2){}
+		for(; tr < (float)M_PI*-1; tr += (float)M_PI*2){}
+
+		//旋回
+		if( tr > DegreeToRadian(2.5f) ){
+			ObjDriver->SetModeFlag(AI_CTRL_TURNRIGHT);
+		}
+		if( tr < DegreeToRadian(-2.5f) ){
+			ObjDriver->SetModeFlag(AI_CTRL_TURNLEFT);
+		}
+
+		//特定方向に向き終われば、普通の警戒に移行する
+		if( fabs(tr) <= DegreeToRadian(2.5f) ){
+			FaceCaution_flag = false;
+		}
+
+		return;
+	}
 
 	//回転の開始・終了確率を設定
 	if( battlemode == AI_ACTION ){
@@ -1475,6 +1502,8 @@ bool AIcontrol::ActionMain()
 		else{
 			newbattlemode = AI_CAUTION;
 			cautioncnt = 160;
+			FaceCaution_flag = false;
+			FaceCaution_rx = 0.0f;
 		}
 	}
 
@@ -1491,13 +1520,14 @@ bool AIcontrol::ActionMain()
 bool AIcontrol::CautionMain()
 {
 	int newbattlemode = AI_CAUTION;
+	float caution_rx;
 
 	//座標とチーム番号を取得
 	int teamid;
 	ctrlhuman->GetParamData(NULL, NULL, NULL, &teamid);
 
 	//被弾と音の状況を取得
-	bool HitFlag = ctrlhuman->CheckHit();
+	bool HitFlag = ctrlhuman->CheckHit(&caution_rx);
 	soundlist soundlist[MAX_SOUNDMGR_LIST];
 	int soundlists = GameSound->GetWorldSound(posx, posy + VIEW_HEIGHT, posz, teamid, soundlist);
 
@@ -1511,12 +1541,17 @@ bool AIcontrol::CautionMain()
 		newbattlemode = AI_ACTION;
 		actioncnt = 0;
 	}
-	else if( SearchEnemy() != 0 ){		//敵が見つかれば
+	else if( SearchEnemy() != 0 ){	//敵が見つかれば
 		newbattlemode = AI_ACTION;
 		actioncnt = 0;
 	}
-	else if( (HitFlag == true)||(soundlists > 0) ){	//被弾したか音が聞こえた
-		cautioncnt = 160;			//警戒を再開
+	else if( HitFlag == true ){		//被弾した
+		cautioncnt = 160;					//警戒を再開
+		FaceCaution_flag = true;
+		FaceCaution_rx = caution_rx;
+	}
+	else if( soundlists > 0 ){		//音が聞こえた
+		cautioncnt = 160;					//警戒を再開
 	}
 	else if( cautioncnt == 0 ){		//警戒を終了するなら
 		if( CheckTargetPos(true) == false ){				//警戒開始地点より離れているか
@@ -1524,6 +1559,8 @@ bool AIcontrol::CautionMain()
 		}
 		else{
 			newbattlemode = AI_NORMAL;
+			FaceCaution_flag = false;
+			FaceCaution_rx = 0.0f;
 
 			//警戒待ちパスなら次へ進める
 			pointdata pdata;
@@ -1534,7 +1571,7 @@ bool AIcontrol::CautionMain()
 			}
 		}
 	}
-	else if( cautioncnt < 100 ){	//100フレームを切ったら、ランダムに警戒終了（カウント：0に）
+	else if( (cautioncnt < 100)&&(FaceCaution_flag == false) ){		//100フレームを切ったら、ランダムに警戒終了（カウント：0に）
 		if( GetRand(50) == 0 ){ cautioncnt = 0; }
 	}
 	else{ cautioncnt -= 1; }
@@ -1569,6 +1606,7 @@ bool AIcontrol::CautionMain()
 bool AIcontrol::NormalMain()
 {
 	int newbattlemode = AI_NORMAL;
+	float caution_rx;
 
 	MoveNavi->MovePathNowState();
 	enemyhuman = NULL;
@@ -1578,7 +1616,7 @@ bool AIcontrol::NormalMain()
 	ctrlhuman->GetParamData(NULL, NULL, NULL, &teamid);
 
 	//被弾と音の状況を取得
-	bool HitFlag = ctrlhuman->CheckHit();
+	bool HitFlag = ctrlhuman->CheckHit(&caution_rx);
 	soundlist soundlist[MAX_SOUNDMGR_LIST];
 	int soundlists = GameSound->GetWorldSound(posx, posy + VIEW_HEIGHT, posz, teamid, soundlist);
 
@@ -1614,15 +1652,25 @@ bool AIcontrol::NormalMain()
 	}
 	else{							//優先的な走り以外の処理
 		//警戒判定に入る処理
-		if(
-			(SearchEnemy() != 0)||							//敵を見つけた
-			(HitFlag == true)||(soundlists > 0)||	//被弾したか音が聞こえた
+		if( HitFlag == true ){							//被弾した
+			newbattlemode = AI_CAUTION;
+			cautioncnt = 160;
+			cautionback_posx = posx;
+			cautionback_posz = posz;
+			FaceCaution_flag = true;
+			FaceCaution_rx = caution_rx;
+		}
+		else if(
+			(SearchEnemy() != 0)||						//敵を見つけた
+			(soundlists > 0)||							//音が聞こえた
 			(CheckCorpse( GetRand(MAX_HUMAN) ) == true)	//死体を見つけた
 		){
 			newbattlemode = AI_CAUTION;
 			cautioncnt = 160;
 			cautionback_posx = posx;
 			cautionback_posz = posz;
+			FaceCaution_flag = false;
+			FaceCaution_rx = 0.0f;
 		}
 		else{
 			MovePath();		//移動実行
@@ -1657,6 +1705,8 @@ void AIcontrol::Init()
 	NoFight = false;
 	battlemode = AI_NORMAL;
 	enemyhuman = NULL;
+	FaceCaution_flag = false;
+	FaceCaution_rx = 0.0f;
 	waitcnt = 0;
 	gotocnt = 0;
 	cautioncnt = 0;
@@ -1710,6 +1760,8 @@ void AIcontrol::SetCautionMode()
 	}
 	battlemode = AI_CAUTION;
 	cautioncnt = 160;
+	FaceCaution_flag = false;
+	FaceCaution_rx = 0.0f;
 }
 
 //! @brief 非戦闘化フラグを設定

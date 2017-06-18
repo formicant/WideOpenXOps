@@ -201,6 +201,7 @@ human::human(class ParameterInfo *in_Param, float x, float y, float z, float rx,
 	MoveFlag_lt = MoveFlag;
 	scopemode = 0;
 	HitFlag = false;
+	Hit_rx = 0.0f;
 	totalmove = 0.0f;
 	StateGunsightErrorRange = 0;
 	ReactionGunsightErrorRange = 0;
@@ -265,6 +266,7 @@ void human::SetParamData(int id_param, int dataid, signed char p4, int team, boo
 		MoveFlag_lt = MoveFlag;
 		scopemode = 0;
 		HitFlag = false;
+		Hit_rx = 0.0f;
 		totalmove = 0.0f;
 		Invincible = false;
 
@@ -884,18 +886,23 @@ void human::HitGrenadeExplosion(int attacks)
 }
 
 //! @brief 被弾フラグをセット
-void human::SetHitFlag()
+//! @param rx 被弾した方向
+void human::SetHitFlag(float rx)
 {
 	HitFlag = true;
+	Hit_rx = rx;
 }
 
 //! @brief 被弾したかチェックする
+//! @param rx 被弾した方向を受け取るポインタ（NULL可）
 //! @return 被弾した：true　被弾してない：false
 //! @attention 実行すると、フラグは false に初期化されます。
-bool human::CheckHit()
+bool human::CheckHit(float *rx)
 {
 	bool returnflag = HitFlag;
+	if( rx != NULL ){ *rx = Hit_rx; }
 	HitFlag = false;
+	//Hit_rx = 0.0f;
 	return returnflag;
 }
 
@@ -985,8 +992,15 @@ int human::CheckAndProcessDead(class Collision *CollD)
 
 	if( deadstate == 0 ){
 		if( hp <= 0 ){		//HPが 0 以下になった（死亡した）瞬間なら、倒し始める
+			float tr;
+
+			//最後に攻撃を受けた方向を計算
+			tr = Hit_rx - rotation_x;
+			for(; tr > (float)M_PI; tr -= (float)M_PI*2){}
+			for(; tr < (float)M_PI*-1; tr += (float)M_PI*2){}
+
 			//体の角度
-			if( GetRand(2) == 0 ){
+			if( ((float)M_PI/2*-1 < tr)&&(tr < (float)M_PI/2) ){
 				add_ry = HUMAN_DEADADDRY;
 			}
 			else{

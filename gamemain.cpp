@@ -1965,7 +1965,7 @@ void maingame::Process()
 	}
 
 	//ダメージを受けていれば、レッドフラッシュを描画する
-	redflash_flag = myHuman->CheckHit();
+	redflash_flag = myHuman->CheckHit(NULL);
 
 	//-----------------------------------
 

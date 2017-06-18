@@ -75,6 +75,8 @@ class AIcontrol
 	float ry;			//!< Y軸回転角度
 	float cautionback_posx;		//!< 警戒後に戻るX座標
 	float cautionback_posz;		//!< 警戒後に戻るZ座標
+	bool FaceCaution_flag;		//!< 警戒中に特定の報告を向くフラグ
+	float FaceCaution_rx;		//!< 警戒中に向く方向
 	float total_move;			//!< 合計移動量
 	int waitcnt;		//!< 時間待ちカウント
 	int movejumpcnt;	//!< ジャンプ判定カウント
