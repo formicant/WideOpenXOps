@@ -1027,15 +1027,15 @@ void briefing::Render2D()
 
 	//ブリーフィング画像描画
 	if( TwoTexture == false ){
-		d3dg->Draw2DBox(40, 180, 40+160, 180+150, d3dg->GetColorCode(1.0f,1.0f,1.0f,1.0f));
-		d3dg->Draw2DTexture(40, 180, TextureA, 160, 150, 1.0f);
+		if( TextureA == -1 ){ d3dg->Draw2DBox(40, 180, 40+160, 180+150, d3dg->GetColorCode(1.0f,1.0f,1.0f,1.0f)); }
+		else{ d3dg->Draw2DTexture(40, 180, TextureA, 160, 150, 1.0f); }
 	}
 	else{
-		d3dg->Draw2DBox(40, 130, 40+160, 130+150, d3dg->GetColorCode(1.0f,1.0f,1.0f,1.0f));
-		d3dg->Draw2DTexture(40, 130, TextureA, 160, 150, 1.0f);
+		if( TextureA == -1 ){ d3dg->Draw2DBox(40, 130, 40+160, 130+150, d3dg->GetColorCode(1.0f,1.0f,1.0f,1.0f)); }
+		else{ d3dg->Draw2DTexture(40, 130, TextureA, 160, 150, 1.0f); }
 
-		d3dg->Draw2DBox(40, 300, 40+160, 300+150, d3dg->GetColorCode(1.0f,1.0f,1.0f,1.0f));
-		d3dg->Draw2DTexture(40, 300, TextureB, 160, 150, 1.0f);
+		if( TextureB == -1 ){ d3dg->Draw2DBox(40, 300, 40+160, 300+150, d3dg->GetColorCode(1.0f,1.0f,1.0f,1.0f)); }
+		else{ d3dg->Draw2DTexture(40, 300, TextureB, 160, 150, 1.0f); }
 	}
 
 	//ミッション名を取得・表示
