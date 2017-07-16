@@ -2864,14 +2864,14 @@ void maingame::ProcessConsole()
 
 	//コマンドリスト
 	if( strcmp(NewCommand, "help") == 0 ){
-		AddInfoConsole(d3dg->GetColorCode(1.0f,1.0f,1.0f,1.0f), "help          human         result         event        ver");
-		AddInfoConsole(d3dg->GetColorCode(1.0f,1.0f,1.0f,1.0f), "mif           bd1           pd1");
-		AddInfoConsole(d3dg->GetColorCode(1.0f,1.0f,1.0f,1.0f), "info          view          center         map          aiinfo <NUM>");
-		AddInfoConsole(d3dg->GetColorCode(1.0f,1.0f,1.0f,1.0f), "tag           radar         inmap          sky <NUM>    dark");
-		AddInfoConsole(d3dg->GetColorCode(1.0f,1.0f,1.0f,1.0f), "ff            revive        kill <NUM>     treat <NUM>  nodamage <NUM>");
-		AddInfoConsole(d3dg->GetColorCode(1.0f,1.0f,1.0f,1.0f), "break <NUM>   newobj <NUM>");
-		AddInfoConsole(d3dg->GetColorCode(1.0f,1.0f,1.0f,1.0f), "bot           nofight       caution        stop         estop      speed");
-		AddInfoConsole(d3dg->GetColorCode(1.0f,1.0f,1.0f,1.0f), "window        ss            clear          exit");
+		AddInfoConsole(d3dg->GetColorCode(1.0f,1.0f,1.0f,1.0f), "help          human        result          event            ver");
+		AddInfoConsole(d3dg->GetColorCode(1.0f,1.0f,1.0f,1.0f), "mif           bd1          pd1");
+		AddInfoConsole(d3dg->GetColorCode(1.0f,1.0f,1.0f,1.0f), "info          view         center          map              aiinfo <NUM>");
+		AddInfoConsole(d3dg->GetColorCode(1.0f,1.0f,1.0f,1.0f), "tag           radar        inmap           sky <NUM>        dark");
+		AddInfoConsole(d3dg->GetColorCode(1.0f,1.0f,1.0f,1.0f), "ff            revive       kill <NUM>      treat <NUM>      nodamage <NUM>");
+		AddInfoConsole(d3dg->GetColorCode(1.0f,1.0f,1.0f,1.0f), "newobj <NUM>  break <NUM>  delhuman <NUM>  delweapon <NUM>  delobj <NUL>");
+		AddInfoConsole(d3dg->GetColorCode(1.0f,1.0f,1.0f,1.0f), "bot           nofight      caution         stop             estop     speed");
+		AddInfoConsole(d3dg->GetColorCode(1.0f,1.0f,1.0f,1.0f), "window        ss           clear           exit");
 	}
 
 	//人の統計情報
@@ -3360,6 +3360,17 @@ void maingame::ProcessConsole()
 		}
 	}
 
+	//小物を新規配置
+	if( GetCommandNum("newobj", &id) == true ){
+		if( (0 <= id)&&(id < TOTAL_PARAMETERINFO_SMALLOBJECT) ){
+			int dataid = ObjMgr.AddSmallObjectIndex(camera_x + cos(camera_rx)*20.0f, camera_y, camera_z + sin(camera_rx)*20.0f, camera_rx*-1, id, true);
+			if( dataid != -1 ){
+				sprintf(str, "Add SmallObject[%d].", dataid);
+				AddInfoConsole(d3dg->GetColorCode(1.0f,1.0f,1.0f,1.0f), str);
+			}
+		}
+	}
+
 	//小物を破壊
 	if( GetCommandNum("break", &id) == true ){
 		if( (0 <= id)&&(id < MAX_SMALLOBJECT) ){
@@ -3372,12 +3383,67 @@ void maingame::ProcessConsole()
 		}
 	}
 
-	//小物を新規配置
-	if( GetCommandNum("newobj", &id) == true ){
-		if( (0 <= id)&&(id < TOTAL_PARAMETERINFO_SMALLOBJECT) ){
-			int dataid = ObjMgr.AddSmallObjectIndex(camera_x + cos(camera_rx)*20.0f, camera_y, camera_z + sin(camera_rx)*20.0f, camera_rx*-1, id, true);
-			if( dataid != -1 ){
-				sprintf(str, "Add SmallObject[%d].", dataid);
+	//人を削除
+	if( GetCommandNum("delhuman", &id) == true ){
+		if( (0 <= id)&&(id < MAX_HUMAN) ){
+			human *thuman = ObjMgr.GeHumanObject(id);
+			if( thuman->GetEnableFlag() == true ){
+
+				//人が持っている武器もすべて無効にする
+				int dummy;
+				class weapon *weaponlist[TOTAL_HAVEWEAPON];
+				thuman->GetWeapon(&dummy, weaponlist);
+				for(int i=0; i<TOTAL_HAVEWEAPON; i++){
+					if( weaponlist[i] != NULL ){
+						weaponlist[i]->SetEnableFlag(false);
+						weaponlist[i] = NULL;
+					}
+				}
+				thuman->SetWeapon(weaponlist);
+
+				thuman->SetEnableFlag(false);
+				sprintf(str, "Delete human[%d].", id);
+				AddInfoConsole(d3dg->GetColorCode(1.0f,1.0f,1.0f,1.0f), str);
+			}
+		}
+	}
+
+	//武器を削除
+	if( GetCommandNum("delweapon", &id) == true ){
+		if( (0 <= id)&&(id < MAX_WEAPON) ){
+			weapon *tweapon = ObjMgr.GetWeaponObject(id);
+			if( tweapon->GetEnableFlag() == true ){
+				
+				//人がその武器を持っているなら、関連付けを外す（捨てさせる）
+				int dummy;
+				class weapon *weaponlist[TOTAL_HAVEWEAPON];
+				for(int i=0; i<MAX_HUMAN; i++){
+					human *thuman = ObjMgr.GeHumanObject(i);
+					if( thuman->GetEnableFlag() == true ){
+						thuman->GetWeapon(&dummy, weaponlist);
+						for(int j=0; j<TOTAL_HAVEWEAPON; j++){
+							if( weaponlist[j] == tweapon ){
+								weaponlist[j] = NULL;
+							}
+						}
+						thuman->SetWeapon(weaponlist);
+					}
+				}
+
+				tweapon->SetEnableFlag(false);
+				sprintf(str, "Delete weapon[%d].", id);
+				AddInfoConsole(d3dg->GetColorCode(1.0f,1.0f,1.0f,1.0f), str);
+			}
+		}
+	}
+
+	//小物を削除
+	if( GetCommandNum("delobj", &id) == true ){
+		if( (0 <= id)&&(id < MAX_SMALLOBJECT) ){
+			smallobject *tsmallobject = ObjMgr.GetSmallObject(id);
+			if( tsmallobject->GetEnableFlag() == true ){
+				tsmallobject->SetEnableFlag(false);
+				sprintf(str, "Delete SmallObject[%d].", id);
 				AddInfoConsole(d3dg->GetColorCode(1.0f,1.0f,1.0f,1.0f), str);
 			}
 		}

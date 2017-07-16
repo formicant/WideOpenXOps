@@ -165,8 +165,9 @@ int EventControl::Execution(int *endcnt, bool *complete, int *MessageID, bool *S
 
 			case 15:	//¬•¨”j‰ó‘Ò‚¿
 				tsmallobject = ObjMgr->SearchSmallobject(data.p2);
-				if( tsmallobject == NULL ){ return cnt; }
-				if( tsmallobject->GetEnableFlag() == true ){ return cnt; }
+				if( tsmallobject != NULL ){
+					if( tsmallobject->GetEnableFlag() == true ){ return cnt; }
+				}
 				nextp4 = data.p3;
 				break;
 
