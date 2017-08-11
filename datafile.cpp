@@ -415,8 +415,8 @@ int PointDataInterface::LoadFiledata(char *fname)
 {
 	FILE *fp;
 	unsigned char pdata_header[2];
-	float pdata_mainf[200][4];
-	char pdata_mainc[200][4];
+	float pdata_mainf[MAX_POINTS][4];
+	char pdata_mainc[MAX_POINTS][4];
 	char fname2[MAX_PATH];
 
 #ifdef ENABLE_DEBUGLOG

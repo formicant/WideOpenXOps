@@ -2661,17 +2661,25 @@ int ObjectManager::Process(int cmdF5id, bool demomode, float camera_rx, float ca
 
 	//武器を拾う処理
 	for(int i=0; i<MAX_HUMAN; i++){
-		//武器を拾うだけで毎フレーム総当たりで処理する意味はないので、各武器2フレームに1回処理にケチってます　（＾＾；
-		//フレーム数が偶数目の時は、データ番号が偶数の武器。奇数の時は、奇数の武器を処理。
-		for(int j=(framecnt%2); j<MAX_WEAPON; j+=2){
-			PickupWeapon(&HumanIndex[i], &WeaponIndex[j]);
+		if( HumanIndex[i].GetEnableFlag() == true ){
+			//武器を拾うだけで毎フレーム総当たりで処理する意味はないので、各武器2フレームに1回処理にケチってます　（＾＾；
+			//フレーム数が偶数目の時は、データ番号が偶数の武器。奇数の時は、奇数の武器を処理。
+			for(int j=(framecnt%2); j<MAX_WEAPON; j+=2){
+				PickupWeapon(&HumanIndex[i], &WeaponIndex[j]);
+			}
 		}
 	}
 
 	for(int i=0; i<MAX_HUMAN; i++){
-		for(int j=i+1; j<MAX_HUMAN; j++){
-			//人同士の当たり判定（押し合い）
-			CollideHuman(&HumanIndex[i], &HumanIndex[j]);
+		if( HumanIndex[i].GetEnableFlag() == true ){
+			for(int j=i+1; j<MAX_HUMAN; j++){
+				if( HumanIndex[j].GetEnableFlag() == true ){
+
+					//人同士の当たり判定（押し合い）
+					CollideHuman(&HumanIndex[i], &HumanIndex[j]);
+
+				}
+			}
 		}
 	}
 
