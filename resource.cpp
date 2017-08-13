@@ -734,13 +734,15 @@ void ResourceManager::GetSkyModelTexture(int *model, int *texture)
 void ResourceManager::CleanupSkyModelTexture()
 {
 	if( d3dg == NULL ){ return; }
-	if( skymodel == -1 ){ return; }
-	if( skytexture == -1 ){ return; }
 
-	d3dg->CleanupModel(skymodel);
-	d3dg->CleanupTexture(skytexture);
-	skymodel = -1;
-	skytexture = -1;
+	if( skymodel != -1 ){
+		d3dg->CleanupModel(skymodel);
+		skymodel = -1;
+	}
+	if( skytexture != -1 ){
+		d3dg->CleanupTexture(skytexture);
+		skytexture = -1;
+	}
 }
 
 //! @brief ’eEŽèžÖ’e‚ÌƒTƒEƒ“ƒh‚ð“Ç‚Ýž‚Þ
@@ -855,19 +857,19 @@ void ResourceManager::CleanupEffectTexture()
 {
 	if( d3dg == NULL ){ return; }
 
-	if( effecttexture_blood == -1 ){
+	if( effecttexture_blood != -1 ){
 		d3dg->CleanupTexture(effecttexture_blood);
 		effecttexture_blood = -1;
 	}
-	if( effecttexture_mflash == -1 ){
+	if( effecttexture_mflash != -1 ){
 		d3dg->CleanupTexture(effecttexture_mflash);
 		effecttexture_mflash = -1;
 	}
-	if( effecttexture_smoke == -1 ){
+	if( effecttexture_smoke != -1 ){
 		d3dg->CleanupTexture(effecttexture_smoke);
 		effecttexture_smoke = -1;
 	}
-	if( effecttexture_yakkyou == -1 ){
+	if( effecttexture_yakkyou != -1 ){
 		d3dg->CleanupTexture(effecttexture_yakkyou);
 		effecttexture_yakkyou = -1;
 	}
