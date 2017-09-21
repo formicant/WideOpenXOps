@@ -1297,7 +1297,10 @@ int D3DGraphics::GetMapTextureID(int id)
 //! @brief マップデータを解放
 void D3DGraphics::CleanupMapdata()
 {
-	if( (g_pVB == NULL)&&(bs == 0)&&(blockdata == NULL) ){ return; }
+#ifdef BLOCKDATA_GPUMEMORY
+	if( g_pVB == NULL ){ return; }
+#endif
+	if( (bs == 0)&&(blockdata == NULL) ){ return; }
 
 	//テクスチャを開放
 	for(int i=0; i<TOTAL_BLOCKTEXTURE; i++){

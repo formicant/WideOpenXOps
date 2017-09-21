@@ -376,7 +376,7 @@ int ObjectManager::AddWeaponIndex(pointdata data)
 
 	//Ý’è’l‚ðŽæ“¾
 	WeaponParameter WeaponParam;
-	if( GameParamInfo->GetWeapon(data.p2, &WeaponParam) == 1 ){ return -1; }
+	if( GameParamInfo->GetWeapon(WeaponID, &WeaponParam) == 1 ){ return -1; }
 
 	for(int i=0; i<MAX_WEAPON; i++){
 		if( WeaponIndex[i].GetEnableFlag() == false ){
