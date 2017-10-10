@@ -564,17 +564,48 @@ bool human::ShotWeapon(int *weapon_paramid, int *GunsightErrorRange)
 	*GunsightErrorRange = StateGunsightErrorRange + ReactionGunsightErrorRange;
 
 
-	//精密スコープ以外の武器を、スコープを使わずに使っていたら、設定された誤差を加算。
-	if( (ParamData.scopemode != 2)&&(scopemode == 0) ){
+	//誤差計算
+	if( (scopemode == 1)||(ParamData.scopemode == 2) ){
+		//簡易スコープ使用中か、精密スコープを所持しているなら、
+		//照準の誤差なし
+	}
+	else {
+		//設定された誤差を加算。
 		ReactionGunsightErrorRange += ParamData.reaction;
 	}
 
 	//スコープを使用している状態の反動を加算
 	if( (ParamData.scopemode == 1)&&(scopemode != 0) ){
-		armrotation_y += DegreeToRadian(1) * (WEAPONERRORRANGE_SCALE * ParamData.reaction);
+		int rx_rnds, ry_rnds;
+		float rx_degree, ry_degree;
+
+		//ランダムの数値範囲計算
+		rx_rnds = (int)(WEAPONRECOIL_SCOPE_1_RX*10) * 2;
+		ry_rnds = (int)(WEAPONRECOIL_SCOPE_1_RYMAX*10) - (int)(WEAPONRECOIL_SCOPE_1_RYMIN*10);
+
+		//反動（角度）決定
+		rx_degree = WEAPONRECOIL_SCOPE_1_RX*-1 + ((float)GetRand(rx_rnds))/10;
+		ry_degree = WEAPONRECOIL_SCOPE_1_RYMIN + ((float)GetRand(ry_rnds))/10;
+
+		//反動加算
+		rotation_x += DegreeToRadian(rx_degree);
+		armrotation_y += DegreeToRadian(ry_degree);
 	}
 	if( ParamData.scopemode == 2 ){
-		armrotation_y += DegreeToRadian(1) * (WEAPONERRORRANGE_SCALE * ParamData.reaction);
+		int rx_rnds, ry_rnds;
+		float rx_degree, ry_degree;
+
+		//ランダムの数値範囲計算
+		rx_rnds = (int)(WEAPONRECOIL_SCOPE_2_RX*10) * 2;
+		ry_rnds = (int)(WEAPONRECOIL_SCOPE_2_RYMAX*10) - (int)(WEAPONRECOIL_SCOPE_2_RYMIN*10);
+
+		//反動（角度）決定
+		rx_degree = WEAPONRECOIL_SCOPE_2_RX*-1 + ((float)GetRand(rx_rnds))/10;
+		ry_degree = WEAPONRECOIL_SCOPE_2_RYMIN + ((float)GetRand(ry_rnds))/10;
+
+		//反動加算
+		rotation_x += DegreeToRadian(rx_degree);
+		armrotation_y += DegreeToRadian(ry_degree);
 	}
 
 	//腕に反動を伝える

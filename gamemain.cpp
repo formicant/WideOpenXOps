@@ -1366,8 +1366,7 @@ void maingame::Input()
 	inputCtrl->GetMouseMovement(&x, &y);
 
 	//視点の移動量計算
-	float mang = 0.0f;
-	if( myHuman->GetScopeMode() == 0 ){ mang = 0.01f; }
+	float mang = 0.01f;
 	if( myHuman->GetScopeMode() == 1 ){ mang = 0.0032f; }
 	if( myHuman->GetScopeMode() == 2 ){ mang = 0.0060f; }
 	MouseSensitivity = DegreeToRadian(1) * mang * GameConfig.GetMouseSensitivity();
@@ -2031,10 +2030,9 @@ void maingame::Render3D()
 	d3dg->SetFog(SkyNumber);
 	if( Camera_F1mode == false ){
 		int scopemode = myHuman->GetScopeMode();
-		float viewangle = 0.0f;
 
 		//スコープによる視野角を決定
-		if( scopemode == 0 ){ viewangle = VIEWANGLE_NORMAL; }
+		float viewangle = VIEWANGLE_NORMAL;
 		if( scopemode == 1 ){ viewangle = VIEWANGLE_SCOPE_1; }
 		if( scopemode == 2 ){ viewangle = VIEWANGLE_SCOPE_2; }
 
@@ -2177,32 +2175,33 @@ void maingame::Render2D()
 	}
 
 	//スコープ描画
-	if( (Camera_F1mode == false)&&(myHuman->GetScopeMode() == 1) ){
+	if( (Camera_F1mode == false)&&(myHuman->GetScopeMode() != 0) ){
 		d3dg->Draw2DTexture(0, 0, Resource.GetScopeTexture(), SCREEN_WIDTH, SCREEN_HEIGHT, 1.0f);
-		d3dg->Draw2DLine(SCREEN_WIDTH/2-49, SCREEN_HEIGHT/2, SCREEN_WIDTH/2-4, SCREEN_HEIGHT/2, d3dg->GetColorCode(0.0f,0.0f,0.0f,1.0f));
-		d3dg->Draw2DLine(SCREEN_WIDTH/2+4, SCREEN_HEIGHT/2, SCREEN_WIDTH/2+49, SCREEN_HEIGHT/2, d3dg->GetColorCode(0.0f,0.0f,0.0f,1.0f));
-		d3dg->Draw2DLine(SCREEN_WIDTH/2, SCREEN_HEIGHT/2-49, SCREEN_WIDTH/2, SCREEN_HEIGHT/2-4, d3dg->GetColorCode(0.0f,0.0f,0.0f,1.0f));
-		d3dg->Draw2DLine(SCREEN_WIDTH/2, SCREEN_HEIGHT/2+4, SCREEN_WIDTH/2, SCREEN_HEIGHT/2+49, d3dg->GetColorCode(0.0f,0.0f,0.0f,1.0f));
-		d3dg->Draw2DBox(SCREEN_WIDTH/2-50, SCREEN_HEIGHT/2-1, SCREEN_WIDTH/2+50, SCREEN_HEIGHT/2+1, d3dg->GetColorCode(0.0f,0.0f,0.0f,0.5f));
-		d3dg->Draw2DBox(SCREEN_WIDTH/2-1, SCREEN_HEIGHT/2-50, SCREEN_WIDTH/2+1, SCREEN_HEIGHT/2+50, d3dg->GetColorCode(0.0f,0.0f,0.0f,0.5f));
-	}
-	if( (Camera_F1mode == false)&&(myHuman->GetScopeMode() == 2) ){
-		d3dg->Draw2DTexture(0, 0, Resource.GetScopeTexture(), SCREEN_WIDTH, SCREEN_HEIGHT, 1.0f);
-		d3dg->Draw2DLine(0, SCREEN_HEIGHT/2, SCREEN_WIDTH, SCREEN_HEIGHT/2, d3dg->GetColorCode(0.0f,0.0f,0.0f,1.0f));
-		d3dg->Draw2DLine(SCREEN_WIDTH/2, 0, SCREEN_WIDTH/2, SCREEN_HEIGHT, d3dg->GetColorCode(0.0f,0.0f,0.0f,1.0f));
-		d3dg->Draw2DBox(0, SCREEN_HEIGHT/2-1, SCREEN_WIDTH, SCREEN_HEIGHT/2+1, d3dg->GetColorCode(0.0f,0.0f,0.0f,0.5f));
-		d3dg->Draw2DBox(SCREEN_WIDTH/2-1, 0, SCREEN_WIDTH/2+1, SCREEN_HEIGHT, d3dg->GetColorCode(0.0f,0.0f,0.0f,0.5f));
+
+		if( myHuman->GetScopeMode() == 1 ){
+			d3dg->Draw2DLine(SCREEN_WIDTH/2-49, SCREEN_HEIGHT/2, SCREEN_WIDTH/2-4, SCREEN_HEIGHT/2, d3dg->GetColorCode(0.0f,0.0f,0.0f,1.0f));
+			d3dg->Draw2DLine(SCREEN_WIDTH/2+4, SCREEN_HEIGHT/2, SCREEN_WIDTH/2+49, SCREEN_HEIGHT/2, d3dg->GetColorCode(0.0f,0.0f,0.0f,1.0f));
+			d3dg->Draw2DLine(SCREEN_WIDTH/2, SCREEN_HEIGHT/2-49, SCREEN_WIDTH/2, SCREEN_HEIGHT/2-4, d3dg->GetColorCode(0.0f,0.0f,0.0f,1.0f));
+			d3dg->Draw2DLine(SCREEN_WIDTH/2, SCREEN_HEIGHT/2+4, SCREEN_WIDTH/2, SCREEN_HEIGHT/2+49, d3dg->GetColorCode(0.0f,0.0f,0.0f,1.0f));
+			d3dg->Draw2DBox(SCREEN_WIDTH/2-50, SCREEN_HEIGHT/2-1, SCREEN_WIDTH/2+50, SCREEN_HEIGHT/2+1, d3dg->GetColorCode(0.0f,0.0f,0.0f,0.5f));
+			d3dg->Draw2DBox(SCREEN_WIDTH/2-1, SCREEN_HEIGHT/2-50, SCREEN_WIDTH/2+1, SCREEN_HEIGHT/2+50, d3dg->GetColorCode(0.0f,0.0f,0.0f,0.5f));
+		}
+		if( myHuman->GetScopeMode() == 2 ){
+			d3dg->Draw2DLine(0, SCREEN_HEIGHT/2, SCREEN_WIDTH, SCREEN_HEIGHT/2, d3dg->GetColorCode(0.0f,0.0f,0.0f,1.0f));
+			d3dg->Draw2DLine(SCREEN_WIDTH/2, 0, SCREEN_WIDTH/2, SCREEN_HEIGHT, d3dg->GetColorCode(0.0f,0.0f,0.0f,1.0f));
+			d3dg->Draw2DBox(0, SCREEN_HEIGHT/2-1, SCREEN_WIDTH, SCREEN_HEIGHT/2+1, d3dg->GetColorCode(0.0f,0.0f,0.0f,0.5f));
+			d3dg->Draw2DBox(SCREEN_WIDTH/2-1, 0, SCREEN_WIDTH/2+1, SCREEN_HEIGHT, d3dg->GetColorCode(0.0f,0.0f,0.0f,0.5f));
+		}
 	}
 
 	//目隠し描画
 	if( (Camera_Blind == true)&&(Camera_Debugmode == false)&&(hp > 0) ){
 
 		int scopemode = myHuman->GetScopeMode();
-		float addang;
 		float adddist = 1.2f;
 
 		//スコープによる視野角を決定
-		if( scopemode == 0 ){ addang = VIEWANGLE_NORMAL / 4; }
+		float addang = VIEWANGLE_NORMAL / 4;
 		if( scopemode == 1 ){ addang = VIEWANGLE_SCOPE_1 / 4; }
 		if( scopemode == 2 ){ addang = VIEWANGLE_SCOPE_2 / 4; }
 
@@ -2389,31 +2388,37 @@ void maingame::Render2D()
 
 	//照準表示
 	if( (Camera_F1mode == false)&&(param_WeaponP != 2) ){
-		if( (weapon[selectweapon] != NULL)&&(myHuman->GetScopeMode() == 0)&&(param_scopemode != 2) ){
-			if( (end_framecnt == 0)||(GameInfoData.missioncomplete == true) ){
-				if( GameConfig.GetAnotherGunsightFlag() ){	//オプション型
-					//照準の透明度
-					float alpha = 1.0f - (float)ErrorRange/40.0f;
-					if( alpha < 0.0f ){ alpha = 0.0f; }
+		if( (weapon[selectweapon] != NULL) ){
+			if( (myHuman->GetScopeMode() == 1)||(param_scopemode == 2) ){
+				//簡易スコープ使用中か、精密スコープを所持しているなら、
+				//表示する照準なし
+			}
+			else{
+				if( (end_framecnt == 0)||(GameInfoData.missioncomplete == true) ){
+					if( GameConfig.GetAnotherGunsightFlag() ){	//オプション型
+						//照準の透明度
+						float alpha = 1.0f - (float)ErrorRange/40.0f;
+						if( alpha < 0.0f ){ alpha = 0.0f; }
 
-					d3dg->Draw2DLine(SCREEN_WIDTH/2, SCREEN_HEIGHT/2, SCREEN_WIDTH/2, SCREEN_HEIGHT/2+4, d3dg->GetColorCode(1.0f,0.0f,0.0f,0.5f));
-					d3dg->Draw2DLine(SCREEN_WIDTH/2-15, SCREEN_HEIGHT/2+15, SCREEN_WIDTH/2-19, SCREEN_HEIGHT/2+19, d3dg->GetColorCode(1.0f,0.0f,0.0f,0.5f));
-					d3dg->Draw2DLine(SCREEN_WIDTH/2+15, SCREEN_HEIGHT/2+15, SCREEN_WIDTH/2+19, SCREEN_HEIGHT/2+19, d3dg->GetColorCode(1.0f,0.0f,0.0f,0.5f));
-					d3dg->Draw2DLine(SCREEN_WIDTH/2-4, SCREEN_HEIGHT/2+4, SCREEN_WIDTH/2+4, SCREEN_HEIGHT/2+4, d3dg->GetColorCode(1.0f,0.0f,0.0f,1.0f));
+						d3dg->Draw2DLine(SCREEN_WIDTH/2, SCREEN_HEIGHT/2, SCREEN_WIDTH/2, SCREEN_HEIGHT/2+4, d3dg->GetColorCode(1.0f,0.0f,0.0f,0.5f));
+						d3dg->Draw2DLine(SCREEN_WIDTH/2-15, SCREEN_HEIGHT/2+15, SCREEN_WIDTH/2-19, SCREEN_HEIGHT/2+19, d3dg->GetColorCode(1.0f,0.0f,0.0f,0.5f));
+						d3dg->Draw2DLine(SCREEN_WIDTH/2+15, SCREEN_HEIGHT/2+15, SCREEN_WIDTH/2+19, SCREEN_HEIGHT/2+19, d3dg->GetColorCode(1.0f,0.0f,0.0f,0.5f));
+						d3dg->Draw2DLine(SCREEN_WIDTH/2-4, SCREEN_HEIGHT/2+4, SCREEN_WIDTH/2+4, SCREEN_HEIGHT/2+4, d3dg->GetColorCode(1.0f,0.0f,0.0f,1.0f));
 
-					d3dg->Draw2DLine(SCREEN_WIDTH/2-4 - ErrorRange, SCREEN_HEIGHT/2-4 - ErrorRange/2, SCREEN_WIDTH/2-4 - ErrorRange, SCREEN_HEIGHT/2+4 + ErrorRange/2, d3dg->GetColorCode(1.0f,0.0f,0.0f,alpha));
-					d3dg->Draw2DLine(SCREEN_WIDTH/2+4 + ErrorRange, SCREEN_HEIGHT/2-4 - ErrorRange/2, SCREEN_WIDTH/2+4 + ErrorRange, SCREEN_HEIGHT/2+4 + ErrorRange/2, d3dg->GetColorCode(1.0f,0.0f,0.0f,alpha));
-				}
-				else{										//標準型
-					d3dg->Draw2DLine(SCREEN_WIDTH/2-13, SCREEN_HEIGHT/2, SCREEN_WIDTH/2-3, SCREEN_HEIGHT/2, d3dg->GetColorCode(1.0f,0.0f,0.0f,1.0f));
-					d3dg->Draw2DLine(SCREEN_WIDTH/2+13, SCREEN_HEIGHT/2, SCREEN_WIDTH/2+3, SCREEN_HEIGHT/2, d3dg->GetColorCode(1.0f,0.0f,0.0f,1.0f));
-					d3dg->Draw2DLine(SCREEN_WIDTH/2, SCREEN_HEIGHT/2-13, SCREEN_WIDTH/2, SCREEN_HEIGHT/2-3, d3dg->GetColorCode(1.0f,0.0f,0.0f,1.0f));
-					d3dg->Draw2DLine(SCREEN_WIDTH/2, SCREEN_HEIGHT/2+13, SCREEN_WIDTH/2, SCREEN_HEIGHT/2+3, d3dg->GetColorCode(1.0f,0.0f,0.0f,1.0f));
+						d3dg->Draw2DLine(SCREEN_WIDTH/2-4 - ErrorRange, SCREEN_HEIGHT/2-4 - ErrorRange/2, SCREEN_WIDTH/2-4 - ErrorRange, SCREEN_HEIGHT/2+4 + ErrorRange/2, d3dg->GetColorCode(1.0f,0.0f,0.0f,alpha));
+						d3dg->Draw2DLine(SCREEN_WIDTH/2+4 + ErrorRange, SCREEN_HEIGHT/2-4 - ErrorRange/2, SCREEN_WIDTH/2+4 + ErrorRange, SCREEN_HEIGHT/2+4 + ErrorRange/2, d3dg->GetColorCode(1.0f,0.0f,0.0f,alpha));
+					}
+					else{										//標準型
+						d3dg->Draw2DLine(SCREEN_WIDTH/2-13, SCREEN_HEIGHT/2, SCREEN_WIDTH/2-3, SCREEN_HEIGHT/2, d3dg->GetColorCode(1.0f,0.0f,0.0f,1.0f));
+						d3dg->Draw2DLine(SCREEN_WIDTH/2+13, SCREEN_HEIGHT/2, SCREEN_WIDTH/2+3, SCREEN_HEIGHT/2, d3dg->GetColorCode(1.0f,0.0f,0.0f,1.0f));
+						d3dg->Draw2DLine(SCREEN_WIDTH/2, SCREEN_HEIGHT/2-13, SCREEN_WIDTH/2, SCREEN_HEIGHT/2-3, d3dg->GetColorCode(1.0f,0.0f,0.0f,1.0f));
+						d3dg->Draw2DLine(SCREEN_WIDTH/2, SCREEN_HEIGHT/2+13, SCREEN_WIDTH/2, SCREEN_HEIGHT/2+3, d3dg->GetColorCode(1.0f,0.0f,0.0f,1.0f));
 
-					stru[0] = 0xBD;		stru[1] = '\0';	//"ｽ"
-					d3dg->Draw2DTextureFontText(SCREEN_WIDTH/2 - 16 - ErrorRange, SCREEN_HEIGHT/2 - 16, (char*)stru, d3dg->GetColorCode(1.0f,0.0f,0.0f,0.5f), 32, 32);
-					stru[0] = 0xBE;		stru[1] = '\0';	//"ｾ"
-					d3dg->Draw2DTextureFontText(SCREEN_WIDTH/2 - 16 + ErrorRange, SCREEN_HEIGHT/2 - 16, (char*)stru, d3dg->GetColorCode(1.0f,0.0f,0.0f,0.5f), 32, 32);
+						stru[0] = 0xBD;		stru[1] = '\0';	//"ｽ"
+						d3dg->Draw2DTextureFontText(SCREEN_WIDTH/2 - 16 - ErrorRange, SCREEN_HEIGHT/2 - 16, (char*)stru, d3dg->GetColorCode(1.0f,0.0f,0.0f,0.5f), 32, 32);
+						stru[0] = 0xBE;		stru[1] = '\0';	//"ｾ"
+						d3dg->Draw2DTextureFontText(SCREEN_WIDTH/2 - 16 + ErrorRange, SCREEN_HEIGHT/2 - 16, (char*)stru, d3dg->GetColorCode(1.0f,0.0f,0.0f,0.5f), 32, 32);
+					}
 				}
 			}
 		}

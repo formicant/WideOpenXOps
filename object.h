@@ -60,7 +60,12 @@
 #define HUMAN_DAMAGE_GRENADE_LEG 80				//!< 手榴弾による 足 への最大ダメージ
 #define SMALLOBJECT_DAMAGE_GRENADE 80			//!< 手榴弾による 小物 への最大ダメージ
 
-#define WEAPONERRORRANGE_SCALE 0.25f	//!< 武器の反動角度の倍率（×0.25 ＝ ÷4）
+#define WEAPONRECOIL_SCOPE_1_RX 0.4f			//!< スコープ1 発砲時の反動 横軸　※度数法 0.1f刻み
+#define WEAPONRECOIL_SCOPE_1_RYMIN 1.2f			//!< スコープ1 発砲時の反動 縦軸最小　※度数法 0.1f刻み
+#define WEAPONRECOIL_SCOPE_1_RYMAX 2.0f			//!< スコープ1 発砲時の反動 縦軸最大　※度数法 0.1f刻み
+#define WEAPONRECOIL_SCOPE_2_RX 0.6f			//!< スコープ2 発砲時の反動 横軸　※度数法 0.1f刻み
+#define WEAPONRECOIL_SCOPE_2_RYMIN 2.4f			//!< スコープ2 発砲時の反動 縦軸最小　※度数法 0.1f刻み
+#define WEAPONRECOIL_SCOPE_2_RYMAX 3.6f			//!< スコープ2 発砲時の反動 縦軸最大　※度数法 0.1f刻み
 
 #define ARMRAD_NOWEAPON DegreeToRadian((-90 + 20))			//!< 手ぶら時の腕の描画角度
 #define ARMRAD_RELOADWEAPON DegreeToRadian(-20)				//!< リロード時の腕の描画角度
