@@ -127,6 +127,8 @@ class PointDataInterface : public DataInterface
 	pointdata *data;							//!< ブロックデータを表す構造体
 	char *text[MAX_POINTMESSAGES];				//!< イベントメッセージ
 
+	int LoadMSGFiledata(char *fname);
+
 public:
 	PointDataInterface();
 	~PointDataInterface();
@@ -161,6 +163,10 @@ class MIFInterface : public DataInterface
 	int addsmallobject_hp;						//!< 追加小物の耐久力
 	char addsmallobject_soundpath[_MAX_PATH];	//!< 追加小物のサウンドデータパス
 	int addsmallobject_jump;					//!< 追加小物の飛び具合
+
+	int LoadDefaultTextFiledata(char *fname);
+	int LoadMissionInfoFiledata(char *fname);
+	int LoadAddSmallObjectFiledata(char *fname);
 
 public:
 	MIFInterface();

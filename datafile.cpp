@@ -481,19 +481,31 @@ int PointDataInterface::LoadFiledata(char *fname)
 	}
 	strcat(fname2, ".msg");
 
+	LoadMSGFiledata(fname2);
+
+	return 0;
+}
+
+//! @brief メッセージデータファイルを読みこむ
+//! @param fname ファイル名
+//! @return 成功：0　失敗：1
+int PointDataInterface::LoadMSGFiledata(char *fname)
+{
+	FILE *fp;
+
 #ifdef ENABLE_PATH_DELIMITER_SLASH
 	//パス区切り文字を変換
-	strcpy(fname2, ChangePathDelimiter(fname2));
+	fname = ChangePathDelimiter(fname);
+#endif
+
+#ifdef ENABLE_DEBUGLOG
+	//ログに出力
+	OutputLog.WriteLog(LOG_LOAD, "MSG", fname);
 #endif
 
 	//ファイルを読み込み
-	fp = fopen( fname2, "r" );
+	fp = fopen( fname, "r" );
 	if( fp != NULL ){
-#ifdef ENABLE_DEBUGLOG
-		//ログに出力
-		OutputLog.WriteLog(LOG_LOAD, "MSG", fname2);
-#endif
-
 		//メッセージデータを取得
 		for(int i=0; i<MAX_POINTMESSAGES; i++){
 			if( fgets(text[i], MAX_POINTMESSAGEBYTE, fp) == NULL ){ break; }
@@ -504,22 +516,21 @@ int PointDataInterface::LoadFiledata(char *fname)
 			}
 		}
 
+		//ファイルポインタを開放
+		fclose( fp );
+
 #ifdef ENABLE_DEBUGLOG
 		//ログに出力
 		OutputLog.WriteLog(LOG_COMPLETE, "", "");
 #endif
-
-		//ファイルポインタを開放
-		fclose( fp );
+		return 0;
 	}
-	else{
+
 #ifdef ENABLE_DEBUGLOG
-		//ログに出力
-		OutputLog.WriteLog(LOG_CHECK, "MSG", "ファイルなし");
+	//ログに出力
+	OutputLog.WriteLog(LOG_ERROR, "", "");
 #endif
-	}
-
-	return 0;
+	return 1;
 }
 
 //! @brief ポイントデータを取得
@@ -683,8 +694,6 @@ MIFInterface::~MIFInterface()
 //! @return 成功：0　失敗：1
 int MIFInterface::LoadFiledata(char *fname)
 {
-	char str[64];
-
 #ifdef ENABLE_DEBUGLOG
 	//ログに出力
 	OutputLog.WriteLog(LOG_LOAD, "MIF", fname);
@@ -707,21 +716,128 @@ int MIFInterface::LoadFiledata(char *fname)
 		}
 	}
 
-	FILE *fp;
-
 #ifdef ENABLE_PATH_DELIMITER_SLASH
 	//パス区切り文字を変換
 	fname = ChangePathDelimiter(fname);
 #endif
 
-	//ファイルを開く
-	fp = fopen( fname, "r" );
-	if( fp == NULL ){
-		//briefing data open failed
-		return 1;
+	if( mif == false ){
+		if( LoadDefaultTextFiledata(fname) != 0 ){
+			//briefing data open failed
+			return 1;
+		}
+	}
+	else{
+		if( LoadMissionInfoFiledata(fname) != 0 ){
+			//briefing data open failed
+			return 1;
+		}
 	}
 
-	if( mif == true ){
+#ifdef ENABLE_DEBUGLOG
+	//ログに出力
+	OutputLog.WriteLog(LOG_COMPLETE, "", "");
+#endif
+
+
+	//追加小物情報を初期値へ
+	strcpy(addsmallobject_modelpath, "");
+	strcpy(addsmallobject_texturepath, "");
+	addsmallobject_decide = 0;
+	addsmallobject_hp = 0;
+	strcpy(addsmallobject_soundpath, "");
+	addsmallobject_jump = 0;
+
+	//何かしらの追加小物情報ファイルが指定されていれば
+	if( (strcmp(addsmallobject_path, "") != 0)&&(strcmp(addsmallobject_path, "!") != 0) ){
+		LoadAddSmallObjectFiledata(addsmallobject_path);
+	}
+#ifdef ENABLE_DEBUGLOG
+	else{
+		//ログに出力
+		OutputLog.WriteLog(LOG_CHECK, "（追加小物）", "ファイルなし");
+	}
+#endif
+
+	return 0;
+}
+
+//! @brief ミッションファイル（.txt）を読みこむ
+//! @param fname ファイル名
+//! @return 成功：0　失敗：1
+int MIFInterface::LoadDefaultTextFiledata(char *fname)
+{
+	FILE *fp;
+	char str[64];
+
+	//ファイルを開く
+	fp = fopen( fname, "r" );
+	if( fp != NULL ){
+		//画像Aを取得
+		fgets(str, 64, fp);
+		DeleteLinefeed(str);
+		if( strcmp(str, "!") == 0 ){
+			strcpy(picturefileA_path, "!");
+		}
+		else{
+			//「data\\briefing\\　～　.bmp」を生成
+			strcpy(picturefileA_path, "data\\briefing\\");
+			strcat(picturefileA_path, str);
+			strcat(picturefileA_path, ".bmp");
+		}
+
+		//画像Bを取得
+		fgets(str, 64, fp);
+		DeleteLinefeed(str);
+		if( strcmp(str, "!") == 0 ){
+			strcpy(picturefileB_path, "!");
+		}
+		else{
+			//「data\\briefing\\　～　.bmp」を生成
+			strcpy(picturefileB_path, "data\\briefing\\");
+			strcat(picturefileB_path, str);
+			strcat(picturefileB_path, ".bmp");
+		}
+
+		//背景空の番号
+		fgets(str, 16, fp);
+		DeleteLinefeed(str);
+		skynumber = atoi(str);
+
+		//ブリーフィングテキストを取得
+		strcpy(briefingtext, "");
+		for(int i=0; i<17; i++ ){
+			if( fgets(str, 50, fp) == NULL ){ break; }
+			strcat(briefingtext, str);
+			datas += 1;
+		}
+
+		//取得できない値の初期化
+		strcpy(mission_name, "");
+		strcpy(mission_fullname, "");
+		strcpy(blockfile_path, "");
+		strcpy(pointfile_path, "");
+		strcpy(addsmallobject_path, "");
+		collision = false;
+		screen = false;
+
+		return 0;
+	}
+
+	return 1;
+}
+
+//! @brief ミッションファイル（.mif）を読みこむ
+//! @param fname ファイル名
+//! @return 成功：0　失敗：1
+int MIFInterface::LoadMissionInfoFiledata(char *fname)
+{
+	FILE *fp;
+	char str[64];
+
+	//ファイルを開く
+	fp = fopen( fname, "r" );
+	if( fp != NULL ){
 		//ミッション識別名
 		fgets(mission_name, 24, fp);
 		DeleteLinefeed(mission_name);
@@ -774,134 +890,92 @@ int MIFInterface::LoadFiledata(char *fname)
 		//画像Bを取得
 		fgets(picturefileB_path, _MAX_PATH, fp);
 		DeleteLinefeed(picturefileB_path);
-	}
-	else{
-		//画像Aを取得
-		fgets(str, 64, fp);
-		DeleteLinefeed(str);
-		if( strcmp(str, "!") == 0 ){
-			strcpy(picturefileA_path, "!");
-		}
-		else{
-			//「data\\briefing\\　～　.bmp」を生成
-			strcpy(picturefileA_path, "data\\briefing\\");
-			strcat(picturefileA_path, str);
-			strcat(picturefileA_path, ".bmp");
-		}
 
-		//画像Bを取得
-		fgets(str, 64, fp);
-		DeleteLinefeed(str);
-		if( strcmp(str, "!") == 0 ){
-			strcpy(picturefileB_path, "!");
+		//ブリーフィングテキストを取得
+		strcpy(briefingtext, "");
+		for(int i=0; i<17; i++ ){
+			if( fgets(str, 50, fp) == NULL ){ break; }
+			strcat(briefingtext, str);
+			datas += 1;
 		}
-		else{
-			//「data\\briefing\\　～　.bmp」を生成
-			strcpy(picturefileB_path, "data\\briefing\\");
-			strcat(picturefileB_path, str);
-			strcat(picturefileB_path, ".bmp");
-		}
-
-		//背景空の番号
-		fgets(str, 16, fp);
-		DeleteLinefeed(str);
-		skynumber = atoi(str);
-
-		//取得できない値の初期化
-		strcpy(mission_name, "");
-		strcpy(mission_fullname, "");
-		strcpy(blockfile_path, "");
-		strcpy(pointfile_path, "");
-		strcpy(addsmallobject_path, "");
-		collision = false;
-		screen = false;
+		return 0;
 	}
 
-	//ブリーフィングテキストを取得
-	strcpy(briefingtext, "");
-	for(int i=0; i<17; i++ ){
-		if( fgets(str, 50, fp) == NULL ){ break; }
-		strcat(briefingtext, str);
-		datas += 1;
-	}
+	return 1;
+}
 
-	//ファイルハンドルを開放
-	fclose( fp );
+//! @brief 追加小物情報ファイルを読みこむ
+//! @param fname ファイル名
+//! @return 成功：0　失敗：1
+int MIFInterface::LoadAddSmallObjectFiledata(char *fname)
+{
+	FILE *fp;
+	char str[64];
+
+#ifdef ENABLE_PATH_DELIMITER_SLASH
+	//パス区切り文字を変換
+	fname = ChangePathDelimiter(fname);
+#endif
 
 #ifdef ENABLE_DEBUGLOG
 	//ログに出力
-	OutputLog.WriteLog(LOG_COMPLETE, "", "");
+	OutputLog.WriteLog(LOG_LOAD, "（追加小物）", fname);
 #endif
 
+	//ファイルを開く
+	fp = fopen( fname, "r" );
+	if( fp != NULL ){
+		//モデルデータパス
+		fgets(addsmallobject_modelpath, _MAX_PATH, fp);
+		DeleteLinefeed(addsmallobject_modelpath);
 
-	//追加小物情報を初期値へ
-	strcpy(addsmallobject_modelpath, "");
-	strcpy(addsmallobject_texturepath, "");
-	addsmallobject_decide = 0;
-	addsmallobject_hp = 0;
-	strcpy(addsmallobject_soundpath, "");
-	addsmallobject_jump = 0;
+		//テクスチャパス
+		fgets(addsmallobject_texturepath, _MAX_PATH, fp);
+		DeleteLinefeed(addsmallobject_texturepath);
 
-	//何かしらの追加小物情報ファイルが指定されていれば
-	if( (strcmp(addsmallobject_path, "") != 0)&&(strcmp(addsmallobject_path, "!") != 0) ){
-
-#ifdef ENABLE_DEBUGLOG
-		//ログに出力
-		OutputLog.WriteLog(LOG_LOAD, "（追加小物）", addsmallobject_path);
+		//当たり判定の大きさ
+		fgets(str, 16, fp);
+		DeleteLinefeed(str);
+		addsmallobject_decide = atoi(str);
+#ifdef ENABLE_ADDOBJ_PARAM8BIT
+		addsmallobject_decide = addsmallobject_decide & 0x0000007F;
 #endif
 
-#ifdef ENABLE_PATH_DELIMITER_SLASH
-		//パス区切り文字を変換
-		strcpy(addsmallobject_path, ChangePathDelimiter(addsmallobject_path));
+		//耐久力
+		fgets(str, 16, fp);
+		DeleteLinefeed(str);
+		addsmallobject_hp = atoi(str);
+#ifdef ENABLE_ADDOBJ_PARAM8BIT
+		addsmallobject_hp = addsmallobject_hp & 0x0000007F;
 #endif
 
-		//ファイルを開く
-		fp = fopen( addsmallobject_path, "r" );
-		if( fp != NULL ){
-			//モデルデータパス
-			fgets(addsmallobject_modelpath, _MAX_PATH, fp);
-			DeleteLinefeed(addsmallobject_modelpath);
+		//サウンドデータパス
+		fgets(addsmallobject_soundpath, _MAX_PATH, fp);
+		DeleteLinefeed(addsmallobject_soundpath);
 
-			//テクスチャパス
-			fgets(addsmallobject_texturepath, _MAX_PATH, fp);
-			DeleteLinefeed(addsmallobject_texturepath);
+		//飛び具合
+		fgets(str, 16, fp);
+		DeleteLinefeed(str);
+		addsmallobject_jump = atoi(str);
+#ifdef ENABLE_ADDOBJ_PARAM8BIT
+		addsmallobject_jump = addsmallobject_jump & 0x000000FF;
+#endif
 
-			//当たり判定の大きさ
-			fgets(str, 16, fp);
-			DeleteLinefeed(str);
-			addsmallobject_decide = atoi(str);
-
-			//耐久力
-			fgets(str, 16, fp);
-			DeleteLinefeed(str);
-			addsmallobject_hp = atoi(str);
-
-			//サウンドデータパス
-			fgets(addsmallobject_soundpath, _MAX_PATH, fp);
-			DeleteLinefeed(addsmallobject_soundpath);
-
-			//飛び具合
-			fgets(str, 16, fp);
-			DeleteLinefeed(str);
-			addsmallobject_jump = atoi(str);
-
-			//ファイルハンドルを開放
-			fclose( fp );
-		}
+		//ファイルハンドルを開放
+		fclose( fp );
 
 #ifdef ENABLE_DEBUGLOG
 		//ログに出力
 		OutputLog.WriteLog(LOG_COMPLETE, "", "");
 #endif
+		return 0;
 	}
-#ifdef ENABLE_DEBUGLOG
-	else{
-		//ログに出力
-		OutputLog.WriteLog(LOG_CHECK, "（追加小物）", "ファイルなし");
-	}
-#endif
 
-	return 0;
+#ifdef ENABLE_DEBUGLOG
+	//ログに出力
+	OutputLog.WriteLog(LOG_ERROR, "", "");
+#endif
+	return 1;
 }
 
 //! @brief 読み込んだデータファイルの形式を取得
