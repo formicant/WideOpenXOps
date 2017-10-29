@@ -220,6 +220,35 @@ void WindowControl::CloseWindow()
 	PostMessage(hWnd, WM_CLOSE, 0L, 0L);
 }
 
+#ifdef ENABLE_DEBUGLOG
+//! @brief デバック用ログにユーザー環境を出力
+//! @note 現時点ではOS情報のみ
+void GetOperatingEnvironment()
+{
+	char str[128];
+	char str2[128];
+
+	//OSのバージョン取得
+	OSVERSIONINFO OSver;
+	OSver.dwOSVersionInfoSize = sizeof(OSVERSIONINFO); 
+    GetVersionEx(&OSver);
+
+	//OSビット数取得
+	SYSTEM_INFO SystemInfo = {0};
+	GetNativeSystemInfo(&SystemInfo);
+	switch(SystemInfo.wProcessorArchitecture){
+		case PROCESSOR_ARCHITECTURE_AMD64: strcpy(str2, "64bit"); break;
+		case PROCESSOR_ARCHITECTURE_IA64:  strcpy(str2, "64bit"); break;
+		case PROCESSOR_ARCHITECTURE_INTEL: strcpy(str2, "32bit"); break;
+		default: strcpy(str2, "unknown bit");
+	}
+
+	//ログに出力
+	sprintf(str, "OS：Windows Version %d.%d.%d (%s)", OSver.dwMajorVersion, OSver.dwMinorVersion, OSver.dwBuildNumber, str2);
+	OutputLog.WriteLog(LOG_CHECK, "環境", str);
+}
+#endif
+
 //! @brief fps（Frames Per Second：フレームレート）計算
 //! @param getcnt fpsを取得する周期（フレーム単位）
 //! @return fps数

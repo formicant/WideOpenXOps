@@ -67,6 +67,10 @@ public:
 	void CloseWindow();
 };
 
+#ifdef ENABLE_DEBUGLOG
+ void GetOperatingEnvironment();
+#endif
+
 float GetFps(int getcnt);
 bool ControlFps();
 unsigned int GetTimeMS();
