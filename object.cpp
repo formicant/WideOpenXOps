@@ -190,9 +190,7 @@ human::human(class ParameterInfo *in_Param, float x, float y, float z, float rx,
 	//else{
 		hp = 0;
 	//}
-#ifdef HUMAN_DEADBODY_COLLISION
 	deadstate = 0;
-#endif
 	add_ry = 0.0f;
 	id_texture = -1;
 
@@ -258,9 +256,7 @@ void human::SetParamData(int id_param, int dataid, signed char p4, int team, boo
 		else{
 			hp = 0;
 		}
-#ifdef HUMAN_DEADBODY_COLLISION
 		deadstate = 0;
-#endif
 		add_ry = 0.0f;
 		MoveFlag = 0x00;
 		MoveFlag_lt = MoveFlag;
@@ -313,13 +309,8 @@ bool human::SetHP(int in_hp)
 //! @warning 完全に静止した状態を「死体」と判定します。倒れている最中の人は対象に含まれないため、hp <= 0 が全て死体と判定されるとは限りません。
 bool human::GetDeadFlag()
 {
-#ifdef HUMAN_DEADBODY_COLLISION
 	if( deadstate == 5 ){ return true; }
 	return false;
-#else
-	if( hp <= 0 ){ return true; }
-	return false;
-#endif
 }
 
 //! @brief チーム番号を設定（上書き）
@@ -1207,6 +1198,7 @@ int human::CheckAndProcessDead(class Collision *CollD)
 		rotation_y += add_ry;
 		if( rotation_y >= DegreeToRadian(90) ){
 			rotation_y = DegreeToRadian(90);
+			deadstate = 5;
 			return 3;
 		}
 		return 2;
@@ -1216,6 +1208,7 @@ int human::CheckAndProcessDead(class Collision *CollD)
 		rotation_y += add_ry;
 		if( rotation_y <= DegreeToRadian(-90) ){
 			rotation_y = DegreeToRadian(-90);
+			deadstate = 5;
 			return 3;
 		}
 		return 2;
@@ -1257,6 +1250,7 @@ int human::CheckAndProcessDead(class Collision *CollD)
 		//スコープモードを解除
 		SetDisableScope();
 
+		deadstate = 1;
 		return 1;
 	}
 
@@ -1596,15 +1590,7 @@ int human::RunFrame(class Collision *CollD, class BlockDataInterface *inblockdat
 	if( CollD == NULL ){ return 0; }
 	if( EnableFlag == false ){ return 0; }
 
-#ifdef HUMAN_DEADBODY_COLLISION
 	if( deadstate == 5 ){ return 3; }
-#else
-	if( hp <= 0 ){
-		if( fabs(rotation_y) >= DegreeToRadian(90) ){
-			return 3;
-		}
-	}
-#endif
 
 	int WeaponReloadCnt;
 	float FallDistance;
@@ -2390,14 +2376,16 @@ void bullet::SetPosData(float x, float y, float z, float rx, float ry)
 //! @param _speed 弾速
 //! @param _teamid チーム番号
 //! @param _humanid 人のデータ番号
+//! @param _ontargetcnt 命中時のカウント数
 //! @param init オブジェクトを初期化
-void bullet::SetParamData(int _attacks, int _penetration, int _speed, int _teamid, int _humanid, bool init)
+void bullet::SetParamData(int _attacks, int _penetration, int _speed, int _teamid, int _humanid, float _ontargetcnt, bool init)
 {
 	attacks = _attacks;
 	penetration = _penetration;
 	speed = _speed;
 	teamid = _teamid;
 	humanid = _humanid;
+	ontargetcnt = _ontargetcnt;
 
 	if( init == true ){
 		cnt = 0;
@@ -2425,13 +2413,15 @@ void bullet::GetPosData(float *x, float *y, float *z, float *rx, float *ry)
 //! @param _speed 弾速を受け取るポインタ（NULL可）
 //! @param _teamid チーム番号を受け取るポインタ（NULL可）
 //! @param _humanid 人のデータ番号を受け取るポインタ（NULL可）
-void bullet::GetParamData(int *_attacks, int *_penetration, int *_speed, int *_teamid, int *_humanid)
+//! @param _ontargetcnt 命中時のカウント数を受け取るポインタ（NULL可）
+void bullet::GetParamData(int *_attacks, int *_penetration, int *_speed, int *_teamid, int *_humanid, float *_ontargetcnt)
 {
 	if( _attacks != NULL ){ *_attacks = attacks; }
 	if( _penetration != NULL ){ *_penetration = penetration; }
 	if( _speed != NULL ){ *_speed = speed; }
 	if( _teamid != NULL ){ *_teamid = teamid; }
 	if( _humanid != NULL ){ *_humanid = humanid; }
+	if( _ontargetcnt != NULL ){ *_ontargetcnt = ontargetcnt; }
 }
 
 //! @brief 計算を実行（弾の進行・時間消滅）
@@ -2493,15 +2483,17 @@ grenade::~grenade()
 //! @param speed 初速
 //! @param _teamid チーム番号
 //! @param _humanid 人のデータ番号
+//! @param _ontargetcnt 命中時のカウント数
 //! @param init オブジェクトを初期化
 //! @attention 先に SetPosData() を実行してください。
-void grenade::SetParamData(float speed, int _teamid, int _humanid, bool init)
+void grenade::SetParamData(float speed, int _teamid, int _humanid, float _ontargetcnt, bool init)
 {
 	move_x = cos(rotation_x) * cos(rotation_y) * speed;
 	move_y = sin(rotation_y) * speed;
 	move_z = sin(rotation_x) * cos(rotation_y) * speed;
 	teamid = _teamid;
 	humanid = _humanid;
+	ontargetcnt = _ontargetcnt;
 
 	if( init == true ){
 		cnt = 0;
@@ -2512,11 +2504,13 @@ void grenade::SetParamData(float speed, int _teamid, int _humanid, bool init)
 //! @param _speed 速度を受け取るポインタ（NULL可）
 //! @param _teamid チーム番号を受け取るポインタ（NULL可）
 //! @param _humanid 人のデータ番号を受け取るポインタ（NULL可）
-void grenade::GetParamData(float *_speed, int *_teamid, int *_humanid)
+//! @param _ontargetcnt 命中時のカウント数を受け取るポインタ（NULL可）
+void grenade::GetParamData(float *_speed, int *_teamid, int *_humanid, float *_ontargetcnt)
 {
 	if( _speed != NULL ){ *_speed = GetSpeed(); }
 	if( _teamid != NULL ){ *_teamid = teamid; }
 	if( _humanid != NULL ){ *_humanid = humanid; }
+	if( _ontargetcnt != NULL ){ *_ontargetcnt = ontargetcnt; }
 }
 
 //! @brief 速度を取得

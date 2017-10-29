@@ -145,9 +145,7 @@ protected:
 	int selectweapon;			//!< 武器A/Bの選択
 	int selectweaponcnt;		//!< 武器の切り替えカウント
 	int hp;						//!< 体力
-#ifdef HUMAN_DEADBODY_COLLISION
 	int deadstate;				//!< 死体になっているか
-#endif
 	float add_ry;				//!< 死体の倒れる加速度
 	float move_rx;				//!< 移動角度
 	int MoveFlag;				//!< 移動方向を表すフラグ
@@ -290,15 +288,16 @@ protected:
 	int speed;			//!< 弾速
 	int teamid;			//!< チーム番号
 	int humanid;		//!< 人のデータ番号
+	float ontargetcnt;	//!< 命中時のカウント数
 	int cnt;			//!< カウント
 
 public:
 	bullet(int modelid = -1, int textureid = -1);
 	~bullet();
 	virtual void SetPosData(float x, float y, float z, float rx, float ry);
-	virtual void SetParamData(int _attacks, int _penetration, int _speed, int _teamid, int _humanid, bool init);
+	virtual void SetParamData(int _attacks, int _penetration, int _speed, int _teamid, int _humanid, float _ontargetcnt, bool init);
 	virtual void GetPosData(float *x, float *y, float *z, float *rx, float *ry);
-	virtual void GetParamData(int *_attacks, int *_penetration, int *_speed, int *_teamid, int *_humanid);
+	virtual void GetParamData(int *_attacks, int *_penetration, int *_speed, int *_teamid, int *_humanid, float *_ontargetcnt);
 	virtual int RunFrame();
 	virtual void Render(class D3DGraphics *d3dg);
 };
@@ -313,8 +312,8 @@ class grenade : public bullet
 public:
 	grenade(int modelid = -1, int textureid = -1);
 	~grenade();
-	void SetParamData(float speed, int _teamid, int _humanid, bool init);
-	void GetParamData(float *_speed, int *_teamid, int *_humanid);
+	void SetParamData(float speed, int _teamid, int _humanid, float _ontargetcnt, bool init);
+	void GetParamData(float *_speed, int *_teamid, int *_humanid, float *_ontargetcnt);
 	float GetSpeed();
 	int RunFrame(class Collision *CollD);
 	virtual void Render(D3DGraphics *d3dg);

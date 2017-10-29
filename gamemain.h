@@ -82,7 +82,7 @@ struct GameInfo{
 	bool missioncomplete;	//!< ƒ~ƒbƒVƒ‡ƒ“Š®—¹
 	unsigned int framecnt;	//!< ƒtƒŒ[ƒ€”
 	int fire;		//!< ŽËŒ‚‰ñ”
-	int ontarget;	//!< –½’†”
+	float ontarget;	//!< –½’†”
 	int kill;		//!< “|‚µ‚½“G‚Ì”	
 	int headshot;	//!< “G‚Ì“ª•”‚É–½’†‚µ‚½”
 };

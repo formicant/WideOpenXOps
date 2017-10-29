@@ -72,6 +72,13 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine
 	GetModuleFileName(NULL, path, MAX_PATH);
 	PathRemoveFileSpec(path);
 	SetCurrentDirectory(path);
+
+	//char str[24];
+	//GameConfig.GetPlayerName(str);
+	//MessageBox(NULL, str, "プレイヤー名", MB_OK);
+	char str[255];
+	strcpy(str, "[Information]\nThe compiler is the Debug mode.\nIf release the software, Switch compiler to Release mode.");
+	MessageBox(NULL, str, GAMENAME, MB_OK);
 #endif
 
 #ifdef ENABLE_DEBUGLOG
@@ -89,8 +96,28 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine
 		}
 	}
 
+	//ユーザー環境を出力
+	GetOperatingEnvironment();
+
+	char infostr[64];
+
+	/*
+	//ログに出力
+	sprintf(infostr, "%d個", __argc);
+	OutputLog.WriteLog(LOG_CHECK, "引数", infostr);
+	for(int i=0; i<__argc; i++){
+		sprintf(infostr, "引数[%d]", i);
+		OutputLog.WriteLog(LOG_CHECK, infostr, __argv[i]);
+	}
+	*/
+
 	//ログに出力
 	OutputLog.WriteLog(LOG_CHECK, "起動", "エントリーポイント開始");
+#endif
+
+#ifdef _DEBUG
+	//ログに出力
+	OutputLog.WriteLog(LOG_CHECK, "起動", "Visual C++ デバッグモード");
 #endif
 
 	//設定ファイル読み込み
@@ -99,13 +126,16 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine
 		return 1;
 	}
 
-#ifdef _DEBUG
-	//char str[24];
-	//GameConfig.GetPlayerName(str);
-	//MessageBox(NULL, str, "プレイヤー名", MB_OK);
-	char str[255];
-	strcpy(str, "[Information]\nThe compiler is the Debug mode.\nIf release the software, Switch compiler to Release mode.");
-	MessageBox(NULL, str, GAMENAME, MB_OK);
+#ifdef ENABLE_DEBUGLOG
+	//ログに出力
+	sprintf(infostr, "解像度：%d x %d", SCREEN_WIDTH, SCREEN_HEIGHT);
+	OutputLog.WriteLog(LOG_CHECK, "環境", infostr);
+	if( GameConfig.GetFullscreenFlag() == false ){
+		OutputLog.WriteLog(LOG_CHECK, "環境", "ウィンドウモード：ウィンドウ");
+	}
+	else{
+		OutputLog.WriteLog(LOG_CHECK, "環境", "ウィンドウモード：フルスクリーン");
+	}
 #endif
 
 	//ウィンドウ初期化

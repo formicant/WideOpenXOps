@@ -1805,7 +1805,8 @@ void maingame::Process()
 	//プレイヤーのクラスを取得
 	human *myHuman = ObjMgr.GetPlayerHumanObject();
 
-	int ontarget, kill, headshot;
+	float ontarget;
+	int kill, headshot;
 
 	//-----------------------------------
 
@@ -2918,15 +2919,19 @@ void maingame::ProcessConsole()
 
 	//暫定リザルト表示
 	if( strcmp(NewCommand, "result") == 0 ){
+		int intontarget;
 		float rate;
+
+		//命中率計算
+		intontarget = (int)floor(MainGameInfo.ontarget);
 		if( MainGameInfo.fire == 0 ){
 			rate = 0.0f;
 		}
 		else{
-			rate = (float)MainGameInfo.ontarget / MainGameInfo.fire * 100;
+			rate = (float)intontarget / MainGameInfo.fire * 100;
 		}
 
-		sprintf(str, "Time %02d:%02d  /  Fired %d  /  On target %d", framecnt/(int)GAMEFPS/60, framecnt/(int)GAMEFPS%60, MainGameInfo.fire, MainGameInfo.ontarget);
+		sprintf(str, "Time %02d:%02d  /  Fired %d  /  On target %d(%0.2f)", framecnt/(int)GAMEFPS/60, framecnt/(int)GAMEFPS%60, MainGameInfo.fire, intontarget, MainGameInfo.ontarget);
 		AddInfoConsole(d3dg->GetColorCode(1.0f,1.0f,1.0f,1.0f), str);
 		sprintf(str, "AR rate %.1f%%  /  Kill %d  /  HS %d", rate, MainGameInfo.kill, MainGameInfo.headshot);
 		AddInfoConsole(d3dg->GetColorCode(1.0f,1.0f,1.0f,1.0f), str);
@@ -3728,12 +3733,16 @@ void result::Render2D()
 	char mname[64];
 	char str[32];
 	float effectA = GetEffectAlphaLoop(framecnt, 1.0f, 0.8f, true);
+	int intontarget;
 	float rate;
+
+	//命中率計算
+	intontarget = (int)floor(GameInfoData.ontarget);
 	if( GameInfoData.fire == 0 ){
 		rate = 0.0f;
 	}
 	else{
-		rate = (float)GameInfoData.ontarget / GameInfoData.fire * 100;
+		rate = (float)intontarget / GameInfoData.fire * 100;
 	}
 
 	//メモ：背景画像の描画は、自動的に行われる。
@@ -3763,7 +3772,7 @@ void result::Render2D()
 	d3dg->Draw2DTextureFontText(SCREEN_WIDTH/2-strlen(str)*20/2, 210, str, d3dg->GetColorCode(1.0f,1.0f,1.0f,1.0f), 20, 32);
 	sprintf(str, "Rounds fired  %d", GameInfoData.fire);
 	d3dg->Draw2DTextureFontText(SCREEN_WIDTH/2-strlen(str)*20/2, 260, str, d3dg->GetColorCode(1.0f,1.0f,1.0f,1.0f), 20, 32);
-	sprintf(str, "Rounds on target  %d", GameInfoData.ontarget);
+	sprintf(str, "Rounds on target  %d", intontarget);
 	d3dg->Draw2DTextureFontText(SCREEN_WIDTH/2-strlen(str)*20/2, 310, str, d3dg->GetColorCode(1.0f,1.0f,1.0f,1.0f), 20, 32);
 	sprintf(str, "Accuracy rate  %.1f%%", rate);
 	d3dg->Draw2DTextureFontText(SCREEN_WIDTH/2-strlen(str)*20/2, 360, str, d3dg->GetColorCode(1.0f,1.0f,1.0f,1.0f), 20, 32);

@@ -42,7 +42,7 @@ ObjectManager::ObjectManager()
 	EffectIndex = new effect[MAX_EFFECT];
 
 	framecnt = 0;
-	Human_ontarget = new int[MAX_HUMAN];
+	Human_ontarget = new float[MAX_HUMAN];
 	Human_kill = new int[MAX_HUMAN];
 	Human_headshot = new int[MAX_HUMAN];
 	Human_ShotFlag = new bool[MAX_HUMAN];
@@ -648,6 +648,7 @@ bool ObjectManager::CollideBullet(bullet *in_bullet)
 	int speed;
 	int teamid;
 	int humanid;
+	float ontargetcnt;
 	float vx, vy, vz;
 	int HumanHead_id;
 	int HumanUp_id;
@@ -669,7 +670,7 @@ bool ObjectManager::CollideBullet(bullet *in_bullet)
 
 	//弾丸の座標を取得し、ベクトルを算出。
 	in_bullet->GetPosData(&bx, &by, &bz, &brx, &bry);
-	in_bullet->GetParamData(&attacks, &penetration, &speed, &teamid, &humanid);
+	in_bullet->GetParamData(&attacks, &penetration, &speed, &teamid, &humanid, &ontargetcnt);
 	vx = cos(brx)*cos(bry);
 	vy = sin(bry);
 	vz = sin(brx)*cos(bry);
@@ -712,9 +713,9 @@ bool ObjectManager::CollideBullet(bullet *in_bullet)
 			//その人自身が発砲した弾なら処理しない。
 			if( i == humanid ){ continue; }
 
-			//使用されていないか、死亡していれば処理しない。
+			//使用されていないか、死体ならば処理しない。
 			if( HumanIndex[i].GetEnableFlag() == false ){ continue; }
-			if( HumanIndex[i].GetHP() <= 0 ){ continue; }
+			if( HumanIndex[i].GetDeadFlag() == true ){ continue; }
 
 			//既に当たった人なら、処理しない。
 			if( BulletObj_HumanIndex[objectID].GetIndexFlag(i) == true ){ continue; }
@@ -816,7 +817,7 @@ bool ObjectManager::CollideBullet(bullet *in_bullet)
 		//人の頭との衝突距離が最短ならば～
 		if( (HumanHead_Dist <= speed)&&(HumanHead_Dist < map_Dist)&&(HumanHead_Dist < HumanUp_Dist)&&(HumanHead_Dist < HumanLeg_Dist)&&(HumanHead_Dist < SmallObject_Dist) ){
 			//人に当たった処理
-			HitBulletHuman(HumanHead_id, 0, bx + vx*(HumanHead_Dist+TotalDist), by + vy*(HumanHead_Dist+TotalDist), bz + vz*(HumanHead_Dist+TotalDist), brx, attacks, humanid);
+			HitBulletHuman(HumanHead_id, 0, bx + vx*(HumanHead_Dist+TotalDist), by + vy*(HumanHead_Dist+TotalDist), bz + vz*(HumanHead_Dist+TotalDist), brx, attacks, humanid, ontargetcnt);
 
 			//対人判定用リスト設定
 			BulletObj_HumanIndex[objectID].SetIndexFlag(HumanHead_id);
@@ -831,7 +832,7 @@ bool ObjectManager::CollideBullet(bullet *in_bullet)
 		//人の上半身との衝突距離が最短ならば～
 		if( (HumanUp_Dist <= speed)&&(HumanUp_Dist < map_Dist)&&(HumanUp_Dist < HumanHead_Dist)&&(HumanUp_Dist < HumanLeg_Dist)&&(HumanUp_Dist < SmallObject_Dist) ){
 			//人に当たった処理
-			HitBulletHuman(HumanUp_id, 1, bx + vx*(HumanUp_Dist+TotalDist), by + vy*(HumanUp_Dist+TotalDist), bz + vz*(HumanUp_Dist+TotalDist), brx, attacks, humanid);
+			HitBulletHuman(HumanUp_id, 1, bx + vx*(HumanUp_Dist+TotalDist), by + vy*(HumanUp_Dist+TotalDist), bz + vz*(HumanUp_Dist+TotalDist), brx, attacks, humanid, ontargetcnt);
 
 			//対人判定用リスト設定
 			BulletObj_HumanIndex[objectID].SetIndexFlag(HumanUp_id);
@@ -846,7 +847,7 @@ bool ObjectManager::CollideBullet(bullet *in_bullet)
 		//人の足との衝突距離が最短ならば～
 		if( (HumanLeg_Dist <= speed)&&(HumanLeg_Dist < map_Dist)&&(HumanLeg_Dist < HumanHead_Dist)&&(HumanLeg_Dist < HumanUp_Dist)&&(HumanLeg_Dist < SmallObject_Dist) ){
 			//人に当たった処理
-			HitBulletHuman(HumanLeg_id, 2, bx + vx*(HumanLeg_Dist+TotalDist), by + vy*(HumanLeg_Dist+TotalDist), bz + vz*(HumanLeg_Dist+TotalDist), brx, attacks, humanid);
+			HitBulletHuman(HumanLeg_id, 2, bx + vx*(HumanLeg_Dist+TotalDist), by + vy*(HumanLeg_Dist+TotalDist), bz + vz*(HumanLeg_Dist+TotalDist), brx, attacks, humanid, ontargetcnt);
 
 			//対人判定用リスト設定
 			BulletObj_HumanIndex[objectID].SetIndexFlag(HumanLeg_id);
@@ -887,7 +888,7 @@ bool ObjectManager::CollideBullet(bullet *in_bullet)
 		}
 
 		//設定を適用（特に攻撃力・貫通力）
-		in_bullet->SetParamData(attacks, penetration, speed, teamid, humanid, false);
+		in_bullet->SetParamData(attacks, penetration, speed, teamid, humanid, ontargetcnt, false);
 	}
 
 	return CollideFlag;
@@ -916,22 +917,27 @@ void ObjectManager::HitBulletMap(float x, float y, float z, int teamID)
 //! @param brx 水平角度
 //! @param attacks 攻撃力
 //! @param Shothuman_id 発射した人の番号
-void ObjectManager::HitBulletHuman(int HitHuman_id, int Hit_id, float x, float y, float z, float brx, int attacks, int Shothuman_id)
+//! @param ontargetcnt 命中時のカウント数
+void ObjectManager::HitBulletHuman(int HitHuman_id, int Hit_id, float x, float y, float z, float brx, int attacks, int Shothuman_id, float ontargetcnt)
 {
 	int Shothuman_TeamID;
 	int HitHuman_TeamID;
+	int hp_old;
 	int damage = 0;
 	int paramid;
 	HumanParameter Paraminfo;
 	bool NotRobot;
 
-	//使用されていないか、死亡していれば処理しない。
+	//使用されていないか、死体ならば処理しない。
 	if( HumanIndex[HitHuman_id].GetEnableFlag() == false ){ return; }
-	if( HumanIndex[HitHuman_id].GetHP() <= 0 ){ return; }
+	if( HumanIndex[HitHuman_id].GetDeadFlag() == true ){ return; }
 
 	//発射元と対象人物のチーム番号取得
 	HumanIndex[Shothuman_id].GetParamData(NULL, NULL, NULL, &Shothuman_TeamID);
 	HumanIndex[HitHuman_id].GetParamData(NULL, NULL, NULL, &HitHuman_TeamID);
+
+	//ダメージ計算前のHP取得
+	hp_old = HumanIndex[HitHuman_id].GetHP();
 
 	//人にダメージと衝撃を与える
 	if( Hit_id == 0 ){ HumanIndex[HitHuman_id].HitBulletHead(attacks); }
@@ -976,14 +982,15 @@ void ObjectManager::HitBulletHuman(int HitHuman_id, int Hit_id, float x, float y
 	GameSound->HitHuman(x, y, z, Shothuman_TeamID);
 
 	//弾を発射した人の成果に加算
-	Human_ontarget[Shothuman_id] += 1;
+	Human_ontarget[Shothuman_id] += ontargetcnt;
 	if( Hit_id == 0 ){ Human_headshot[Shothuman_id] += 1; }
-	if( HumanIndex[HitHuman_id].GetHP() <= 0 ){
+	if( (hp_old > 0)&&(HumanIndex[HitHuman_id].GetHP() <= 0) ){
+		//ダメージ計算前に hp>0 でかつ、計算後に hp <= 0 なら、今回死亡した。
 		Human_kill[Shothuman_id] += 1;
 	}
 
 	//ログ関係の処理
-	if( HumanIndex[HitHuman_id].GetHP() <= 0 ){
+	if( (hp_old > 0)&&(HumanIndex[HitHuman_id].GetHP() <= 0) ){
 		//ダメージ計算前に hp>0 でかつ、計算後に hp <= 0 なら、今回死亡した。
 
 		int player_teamid;
@@ -1043,13 +1050,13 @@ bool ObjectManager::GrenadeExplosion(grenade *in_grenade)
 	float gx, gy, gz;
 	int teamid, humanid;
 	in_grenade->GetPosData(&gx, &gy, &gz, NULL, NULL);
-	in_grenade->GetParamData(NULL, &teamid, &humanid);
+	in_grenade->GetParamData(NULL, &teamid, &humanid, NULL);
 
 	//人に爆風の当たり判定
 	for(int i=0; i<MAX_HUMAN; i++){
-		//初期化されていないか、死亡していれば処理しない。
+		//初期化されていないか、死体ならば処理しない。
 		if( HumanIndex[i].GetEnableFlag() == false ){ continue; }
-		if( HumanIndex[i].GetHP() <= 0 ){ continue; }
+		if( HumanIndex[i].GetDeadFlag() == true ){ continue; }
 
 		int HitHuman_TeamID;
 		float hx, hy, hz;
@@ -1094,6 +1101,11 @@ bool ObjectManager::GrenadeExplosion(grenade *in_grenade)
 		}
 
 		if( total_damage > 0 ){
+			int hp_old;
+
+			//ダメージ計算前のHP取得
+			hp_old = HumanIndex[i].GetHP();
+
 			//ダメージを反映
 			HumanIndex[i].HitGrenadeExplosion(total_damage);
 
@@ -1147,7 +1159,7 @@ bool ObjectManager::GrenadeExplosion(grenade *in_grenade)
 			HumanIndex[i].AddPosOrder(arx, ary, 2.2f/MAX_DAMAGE_GRENADE_DISTANCE * (MAX_DAMAGE_GRENADE_DISTANCE - sqrt(x*x + y*y + z*z)));
 
 			//ログ関係の処理
-			if( HumanIndex[i].GetHP() <= 0 ){
+			if( (hp_old > 0)&&(HumanIndex[i].GetHP() <= 0) ){
 				//ダメージ計算前に hp>0 でかつ、計算後に hp <= 0 なら、今回死亡した。
 
 				int player_teamid;
@@ -1898,13 +1910,15 @@ int ObjectManager::ShotWeapon(int human_id)
 		//（ショットガンなど）発射する弾の数分繰り返す
 		for(int i=0; i<ParamData.burst; i++){
 			int attacks;
+			float ontargetcnt;
 			float rx2, ry2;
 
 			//（ショットガンなど）発射する弾が複数あれば
 			if( ParamData.burst > 1 ){
-				//1個の弾あたりの攻撃力を算出
-				//　　全弾合わせて、攻撃力の2倍になるようにする。
+				//1個の弾あたりの攻撃力と命中時のカウント数を算出
+				//　　全弾合わせて、2倍になるようにする。
 				attacks = (int)( (float)ParamData.attacks / ((float)ParamData.burst/2) );
+				ontargetcnt = 1.0f / ((float)ParamData.burst/2);
 
 				//さらに誤差を増やして拡散させる
 				int len;
@@ -1914,8 +1928,9 @@ int ObjectManager::ShotWeapon(int human_id)
 				ry2 = ry + sin(a)*len * DegreeToRadian(0.15f);
 			}
 			else{
-				//そのまま攻撃力へ反映
+				//そのまま攻撃力と命中時のカウント数を反映
 				attacks = ParamData.attacks;
+				ontargetcnt = 1.0f;
 
 				//発射誤差はそのまま
 				rx2 = rx;
@@ -1928,7 +1943,7 @@ int ObjectManager::ShotWeapon(int human_id)
 
 			//銃弾を発射
 			newbullet->SetPosData(pos_x, pos_y + WEAPONSHOT_HEIGHT, pos_z, rx2, ry2);
-			newbullet->SetParamData(attacks, ParamData.penetration, ParamData.speed * BULLET_SPEEDSCALE, teamid, human_id, true);
+			newbullet->SetParamData(attacks, ParamData.penetration, ParamData.speed * BULLET_SPEEDSCALE, teamid, human_id, ontargetcnt, true);
 			newbullet->SetEnableFlag(true);
 
 			//対人判定用リスト初期化
@@ -1947,7 +1962,7 @@ int ObjectManager::ShotWeapon(int human_id)
 
 		//手榴弾発射
 		newgrenade->SetPosData(pos_x, pos_y + WEAPONSHOT_HEIGHT, pos_z, rx, ry);
-		newgrenade->SetParamData(8.0f, teamid, human_id, true);
+		newgrenade->SetParamData(8.0f, teamid, human_id, 1.0f, true);
 		newgrenade->SetEnableFlag(true);
 	}
 
@@ -2207,7 +2222,7 @@ bool ObjectManager::CheckZombieAttack(human* MyHuman, human* EnemyHuman)
 	if( MyHuman->GetEnableFlag() == false ){ return false; }
 	if( MyHuman->GetHP() <= 0 ){ return false; }
 	if( EnemyHuman->GetEnableFlag() == false ){ return false; }
-	if( EnemyHuman->GetHP() <= 0 ){ return false; }
+	if( EnemyHuman->GetDeadFlag() == true ){ return false; }
 
 	float mx, my, mz, mrx, tx, ty, tz;
 	int mteam, tteam;
@@ -2250,7 +2265,7 @@ void ObjectManager::HitZombieAttack(human* MyHuman, human* EnemyHuman)
 
 	//使用されていないか、死亡していれば処理しない。
 	if( EnemyHuman->GetEnableFlag() == false ){ return; }
-	if( EnemyHuman->GetHP() <= 0 ){ return; }
+	if( EnemyHuman->GetDeadFlag() == true ){ return; }
 
 	int MyHuman_dataID, MyHuman_TeamID;
 	int EnemyHuman_dataID, EnemyHuman_TeamID;
@@ -2260,6 +2275,7 @@ void ObjectManager::HitZombieAttack(human* MyHuman, human* EnemyHuman)
 	int paramid;
 	HumanParameter Paraminfo;
 	bool NotRobot;
+	int hp_old;
 
 	//ゾンビ側と攻撃を受ける側チーム番号取得
 	MyHuman->GetParamData(NULL, &MyHuman_dataID, NULL, &MyHuman_TeamID);
@@ -2281,6 +2297,9 @@ void ObjectManager::HitZombieAttack(human* MyHuman, human* EnemyHuman)
 	else{
 		NotRobot = true;
 	}
+
+	//ダメージ計算前のHP取得
+	hp_old = EnemyHuman->GetHP();
 
 	//ダメージなどを計算
 	EnemyHuman->HitZombieAttack();
@@ -2309,7 +2328,7 @@ void ObjectManager::HitZombieAttack(human* MyHuman, human* EnemyHuman)
 	GameSound->HitHuman(tx, ty, tz, MyHuman_TeamID);
 
 	//ログ関係の処理
-	if( EnemyHuman->GetHP() <= 0 ){
+	if( (hp_old > 0)&&(EnemyHuman->GetHP() <= 0) ){
 		//ダメージ計算前に hp>0 でかつ、計算後に hp <= 0 なら、今回死亡した。
 
 		int player_teamid;
@@ -2505,7 +2524,7 @@ int ObjectManager::Process(int cmdF5id, bool demomode, float camera_rx, float ca
 {
 	//このフレームの戦歴を初期化
 	for(int i=0; i<MAX_HUMAN; i++){
-		Human_ontarget[i] = 0;
+		Human_ontarget[i] = 0.0f;
 		Human_kill[i] = 0;
 		Human_headshot[i] = 0;
 	}
@@ -2582,7 +2601,7 @@ int ObjectManager::Process(int cmdF5id, bool demomode, float camera_rx, float ca
 
 			if( BulletIndex[i].GetEnableFlag() == true ){
 				//弾の座標と角度を取得
-				BulletIndex[i].GetParamData(NULL, NULL, &speed, &teamid, NULL);
+				BulletIndex[i].GetParamData(NULL, NULL, &speed, &teamid, NULL, NULL);
 				BulletIndex[i].GetPosData(&bx, &by, &bz, &brx, &bry);
 				mx = cos(brx)*cos(bry)*speed;
 				my = sin(bry)*speed;
@@ -2638,7 +2657,7 @@ int ObjectManager::Process(int cmdF5id, bool demomode, float camera_rx, float ca
 					float x, y, z;
 					int teamid;
 					GrenadeIndex[i].GetPosData(&x, &y, &z, NULL, NULL);
-					GrenadeIndex[i].GetParamData(NULL, &teamid, NULL);
+					GrenadeIndex[i].GetParamData(NULL, &teamid, NULL, NULL);
 					GameSound->GrenadeBound(x, y, z, teamid);
 				}
 			}
@@ -2697,7 +2716,7 @@ int ObjectManager::Process(int cmdF5id, bool demomode, float camera_rx, float ca
 //! @param kill 倒した敵の数を受け取るポインタ
 //! @param headshot 敵の頭部に命中した数を受け取るポインタ
 //! @return 成功：true　失敗：false
-bool ObjectManager::GetHumanShotInfo(int id, int *ontarget, int *kill, int *headshot)
+bool ObjectManager::GetHumanShotInfo(int id, float *ontarget, int *kill, int *headshot)
 {
 	if( (id < 0)||(MAX_HUMAN-1 < id) ){ return false; }
 	*ontarget = Human_ontarget[id];

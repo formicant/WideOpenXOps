@@ -81,7 +81,7 @@ class ObjectManager
 
 	unsigned int framecnt;		//!< フレーム数のカウント
 
-	int *Human_ontarget;	//!< 命中数
+	float *Human_ontarget;	//!< 命中数
 	int *Human_kill;		//!< 倒した敵の数
 	int *Human_headshot;	//!< 敵の頭部に命中した数
 	bool *Human_ShotFlag;	//!< 発砲フラグ（マズルフラッシュ用）
@@ -112,7 +112,7 @@ class ObjectManager
 	bool CollideHuman(human *in_humanA, human *in_humanB);
 	bool CollideBullet(bullet *in_bullet);
 	void HitBulletMap(float x, float y, float z, int teamID);
-	void HitBulletHuman(int HitHuman_id, int Hit_id, float x, float y, float z, float brx, int attacks, int humanid);
+	void HitBulletHuman(int HitHuman_id, int Hit_id, float x, float y, float z, float brx, int attacks, int humanid, float ontargetcnt);
 	void HitBulletSmallObject(int HitSmallObject_id, float x, float y, float z, int attacks, int teamID);
 	bool GrenadeExplosion(grenade *in_grenade);
 	void DeadEffect(human *in_human);
@@ -169,7 +169,7 @@ public:
 	int CheckGameOverorComplete();
 	bool GetObjectInfoTag(float camera_x, float camera_y, float camera_z, float camera_rx, float camera_ry, int *color, char *infostr);
 	int Process(int cmdF5id, bool demomode, float camera_rx, float camera_ry, bool screen);
-	bool GetHumanShotInfo(int id, int *ontarget, int *kill, int *headshot);
+	bool GetHumanShotInfo(int id, float *ontarget, int *kill, int *headshot);
 	void Render(float camera_x, float camera_y, float camera_z, int HidePlayer);
 	void RenderLog(int x, int y);
 	void Cleanup();
