@@ -231,7 +231,7 @@ void GetOperatingEnvironment()
 	//OSのバージョン取得
 	OSVERSIONINFO OSver;
 	OSver.dwOSVersionInfoSize = sizeof(OSVERSIONINFO); 
-    GetVersionEx(&OSver);
+	GetVersionEx(&OSver);
 
 	//OSビット数取得
 	SYSTEM_INFO SystemInfo = {0};

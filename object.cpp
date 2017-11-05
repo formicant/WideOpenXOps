@@ -2539,39 +2539,37 @@ int grenade::RunFrame(class Collision *CollD)
 		return 0;
 	}
 
-	/*
-	//静止に近い状態ならば、移動処理をしない。
-	if( (move_x*move_x + move_y*move_y + move_z*move_z) < 0.1f*0.1f ){
-		cnt += 1;
-		return 0;
-	}
-	*/
-
-	//移動速度を計算
-	move_x *= 0.98f;
-	move_y = (move_y - 0.17f) * 0.98f;
-	move_z *= 0.98f;
-
 	int id, face;
 	float Dist;
 	float maxDist = sqrt(move_x*move_x + move_y*move_y + move_z*move_z);
 
 	//マップに対して当たり判定を実行
 	if( CollD->CheckALLBlockIntersectRay(pos_x, pos_y, pos_z, move_x/maxDist, move_y/maxDist, move_z/maxDist, &id, &face, &Dist, maxDist) == true ){
+		//衝突している場合～
+
+		float Angle, Acceleration;
 		float vx, vy, vz;
 
-		//マップと衝突する座標まで移動
-		pos_x += move_x/maxDist * (Dist - 0.1f);
-		pos_y += move_y/maxDist * (Dist - 0.1f);
-		pos_z += move_z/maxDist * (Dist - 0.1f);
+		//角度を求める
+		CollD->AngleVector(id, face, move_x, move_y, move_z, &Angle);
 
 		//反射するベクトルを求める
 		CollD->ReflectVector(id, face, move_x, move_y, move_z, &vx, &vy, &vz);
 
-		//減速
-		move_x = vx * GRENADE_BOUND_ACCELERATION;
-		move_y = vy * GRENADE_BOUND_ACCELERATION;
-		move_z = vz * GRENADE_BOUND_ACCELERATION;
+		//減速率を求める
+		Acceleration = Angle*-1 * 0.2546f + 0.7f;
+
+		//反射 and 減速
+		move_x = vx * Acceleration;
+		move_y = vy * Acceleration;
+		move_z = vz * Acceleration;
+
+		//　※衝突した瞬間（フレーム）は、移動しない。
+
+		//移動速度を計算
+		move_x *= 0.98f;
+		move_y = (move_y - 0.17f) * 0.98f;
+		move_z *= 0.98f;
 
 		cnt += 1;
 		return 1;
@@ -2581,6 +2579,11 @@ int grenade::RunFrame(class Collision *CollD)
 	pos_x += move_x;
 	pos_y += move_y;
 	pos_z += move_z;
+
+	//移動速度を計算
+	move_x *= 0.98f;
+	move_y = (move_y - 0.17f) * 0.98f;
+	move_z *= 0.98f;
 
 	cnt += 1;
 	return 0;

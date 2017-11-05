@@ -82,7 +82,6 @@
 #define BULLET_SPEEDSCALE 3				//!< ’e‘¬‚Ì”{—¦
 #define BULLET_DESTROYFRAME 40			//!< ’e‚ÌÁ–ÅƒtƒŒ[ƒ€”
 #define GRENADE_DESTROYFRAME 100		//!< ŽèžÖ’e‚Ì”š”­ƒtƒŒ[ƒ€”
-#define GRENADE_BOUND_ACCELERATION 0.565f 	//!< ŽèžÖ’e‚Ì”½ŽËŒ¸Š—¦
 
 #ifndef H_LAYERLEVEL
  #define H_LAYERLEVEL 2		//!< Select include file.

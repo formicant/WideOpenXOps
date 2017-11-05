@@ -845,6 +845,29 @@ void Collision::ReflectVector(int id, int face, float in_vx, float in_vy, float 
 	*out_vz = in_vz - 2.0f * Dot * bdata.material[face].vz;
 }
 
+//! @brief ブロックに対するベクトルの進入角度を求める
+//! @return 成功：true　失敗：false
+//! @attention 表向き：0.0～PI/2（0.0度～90.0度）、裏向き：-0.0～-PI/2（-0.0度～-90.0度）
+bool Collision::AngleVector(int id, int face, float in_vx, float in_vy, float in_vz, float *out_angle)
+{
+	if( blockdata == NULL ){ return false; }
+	if( (id < 0)||(blockdata->GetTotaldatas() <= id) ){ return false; }
+	if( (face < 0)||(6 < face) ){ return false; }
+
+	struct blockdata bdata;
+	blockdata->Getdata(&bdata, id);
+
+	float maxDist = sqrt(in_vx*in_vx + in_vy*in_vy + in_vz*in_vz);
+	if( maxDist == 0.0f ){ return false; }
+
+	//内積
+	float Dot = in_vx/maxDist * bdata.material[face].vx + in_vy/maxDist * bdata.material[face].vy + in_vz/maxDist * bdata.material[face].vz;
+
+	//角度を求める
+	*out_angle = asin(Dot) * -1;
+
+	return true;
+}
 
 //! @brief AABBによる当たり判定
 //! @param box1_min_x 物体Aの最少 X座標
