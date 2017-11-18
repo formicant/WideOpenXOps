@@ -100,7 +100,7 @@ int Collision::InitCollision(BlockDataInterface* in_blockdata)
 			r = sqrt(x*x + y*y + z*z);
 
 			//大きくする
-			r += 0.1f;
+			r += COLLISION_ADDSIZE;
 
 			//座標を再計算
 			cbdata[i].x[j] = cx + cos(rx) * cos(ry) * r;
@@ -210,12 +210,12 @@ void Collision::GetBlockPosMINMAX(int id, float *min_x, float *min_y, float *min
 	}
 
 	//計算誤差対策のため、わずかに大きめにする。
-	*min_x -= 0.1f;
-	*min_y -= 0.1f;
-	*min_z -= 0.1f;
-	*max_x += 0.1f;
-	*max_y += 0.1f;
-	*max_z += 0.1f;
+	*min_x -= COLLISION_ADDSIZE;
+	*min_y -= COLLISION_ADDSIZE;
+	*min_z -= COLLISION_ADDSIZE;
+	*max_x += COLLISION_ADDSIZE;
+	*max_y += COLLISION_ADDSIZE;
+	*max_z += COLLISION_ADDSIZE;
 }
 
 //! @brief 空間分割のグループを算出
@@ -538,12 +538,12 @@ bool Collision::CheckBlockIntersectRay(int blockid, float RayPos_x, float RayPos
 		if( rmax_z < RayPos_z ){ rmax_z = RayPos_z; }
 
 		//計算誤差対策のため、わずかに大きめにする。
-		rmin_x -= 0.1f;
-		rmin_y -= 0.1f;
-		rmin_z -= 0.1f;
-		rmax_x += 0.1f;
-		rmax_y += 0.1f;
-		rmax_z += 0.1f;
+		rmin_x -= COLLISION_ADDSIZE;
+		rmin_y -= COLLISION_ADDSIZE;
+		rmin_z -= COLLISION_ADDSIZE;
+		rmax_x += COLLISION_ADDSIZE;
+		rmax_y += COLLISION_ADDSIZE;
+		rmax_z += COLLISION_ADDSIZE;
 	}
 
 	if( maxDist > 0.0f ){
@@ -656,12 +656,12 @@ bool Collision::CheckALLBlockIntersectRay(float RayPos_x, float RayPos_y, float 
 		if( rmax_z < RayPos_z ){ rmax_z = RayPos_z; }
 
 		//計算誤差対策のため、わずかに大きめにする。
-		rmin_x -= 0.1f;
-		rmin_y -= 0.1f;
-		rmin_z -= 0.1f;
-		rmax_x += 0.1f;
-		rmax_y += 0.1f;
-		rmax_z += 0.1f;
+		rmin_x -= COLLISION_ADDSIZE;
+		rmin_y -= COLLISION_ADDSIZE;
+		rmin_z -= COLLISION_ADDSIZE;
+		rmax_x += COLLISION_ADDSIZE;
+		rmax_y += COLLISION_ADDSIZE;
+		rmax_z += COLLISION_ADDSIZE;
 	}
 
 	if( maxDist > 0.0f ){
@@ -976,12 +976,12 @@ bool CollideSphereRay(float s_x, float s_y, float s_z, float s_r, float RayPos_x
 		if( pmax_z < RayPos_z ){ pmax_z = RayPos_z; }
 
 		//計算誤差対策のため、わずかに大きめにする。
-		pmin_x -= 0.1f;
-		pmin_y -= 0.1f;
-		pmin_z -= 0.1f;
-		pmax_x += 0.1f;
-		pmax_y += 0.1f;
-		pmax_z += 0.1f;
+		pmin_x -= COLLISION_ADDSIZE;
+		pmin_y -= COLLISION_ADDSIZE;
+		pmin_z -= COLLISION_ADDSIZE;
+		pmax_x += COLLISION_ADDSIZE;
+		pmax_y += COLLISION_ADDSIZE;
+		pmax_z += COLLISION_ADDSIZE;
 
 		//境界ボックス同士で判定
 		if( CollideBoxAABB(s_x - s_r, s_y - s_r, s_z - s_r, s_x + s_r, s_y + s_r, s_z + s_r, pmin_x, pmin_y, pmin_z, pmax_x, pmax_y, pmax_z) == false ){
@@ -1071,12 +1071,12 @@ bool CollideAABBRay(float box_min_x, float box_min_y, float box_min_z, float box
 		if( pmax_z < RayPos_z ){ pmax_z = RayPos_z; }
 
 		//計算誤差対策のため、わずかに大きめにする。
-		pmin_x -= 0.1f;
-		pmin_y -= 0.1f;
-		pmin_z -= 0.1f;
-		pmax_x += 0.1f;
-		pmax_y += 0.1f;
-		pmax_z += 0.1f;
+		pmin_x -= COLLISION_ADDSIZE;
+		pmin_y -= COLLISION_ADDSIZE;
+		pmin_z -= COLLISION_ADDSIZE;
+		pmax_x += COLLISION_ADDSIZE;
+		pmax_y += COLLISION_ADDSIZE;
+		pmax_z += COLLISION_ADDSIZE;
 
 		//境界ボックス同士で判定
 		if( CollideBoxAABB(box_min_x, box_min_y, box_min_z, box_max_x, box_max_y, box_max_z, pmin_x, pmin_y, pmin_z, pmax_x, pmax_y, pmax_z) == false ){

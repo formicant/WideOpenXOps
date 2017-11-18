@@ -823,7 +823,7 @@ bool ObjectManager::CollideBullet(bullet *in_bullet)
 			BulletObj_HumanIndex[objectID].SetIndexFlag(HumanHead_id);
 
 			//UŒ‚—Í‚ÆŠÑ’Ê—Í‚ğŒvZ
-			attacks = (int)((float)attacks * 0.6f);
+			attacks = (int)((float)attacks * 0.5f);
 			penetration -= 1;
 
 			CheckDist = HumanHead_Dist + 1.0f;

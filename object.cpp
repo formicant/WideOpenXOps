@@ -2204,6 +2204,7 @@ int smallobject::GetHP()
 //! @brief ブロックの上に移動
 //! @param CollD Collisionのポインタ
 //! @return 元の座標からの移動量（0で移動なし）
+//! @attention ブロックに埋まっている場合でも、下のブロックまで すり抜けます。
 float smallobject::CollisionMap(class Collision *CollD)
 {
 	//クラスが設定されていなければ失敗
@@ -2212,11 +2213,8 @@ float smallobject::CollisionMap(class Collision *CollD)
 	float Dist;
 	SmallObjectParameter ParamData;
 
-	//ブロックに埋まっていれば、そのまま
-	if( CollD->CheckALLBlockInside(pos_x, pos_y, pos_z) == true ){ return 0.0f; }
-
 	//下方向に当たり判定
-	if( CollD->CheckALLBlockIntersectRay(pos_x, pos_y, pos_z, 0, -1, 0, NULL, NULL, &Dist, 1000.0f) == true ){
+	if( CollD->CheckALLBlockIntersectRay(pos_x, pos_y + COLLISION_ADDSIZE, pos_z, 0, -1, 0, NULL, NULL, &Dist, 1000.0f) == true ){
 		//当たり判定の大きさを取得
 		if( id_parameter == TOTAL_PARAMETERINFO_SMALLOBJECT+1 -1 ){
 			Dist -= (float)MIFdata->GetAddSmallobjectDecide()/10.0f;

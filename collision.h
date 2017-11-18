@@ -32,6 +32,8 @@
 #ifndef COLLISION_H
 #define COLLISION_H
 
+#define COLLISION_ADDSIZE 0.1f			//!< “–‚½‚è”»’è”ÍˆÍ‚Ì‰ÁŽZ—Ê
+
 #ifndef H_LAYERLEVEL
  #define H_LAYERLEVEL 2		//!< Select include file.
 #endif
