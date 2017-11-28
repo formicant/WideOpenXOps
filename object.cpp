@@ -694,6 +694,24 @@ int human::ChangeShotMode()
 	//設定を適用
 	weapon[selectweapon]->SetParamData(ChangeWeapon, lnbs, nbs, false);
 
+	//もしスコープ使用中ならば
+	if( scopemode != 0 ){
+		//新しい武器の情報を取得
+		if( Param->GetWeapon(ChangeWeapon, &ParamData) != 0 ){ return 1; }
+
+		if( scopemode == ParamData.scopemode ){
+			//同じスコープが使えるならば、何もせずスコープ維持
+		}
+		else if( ParamData.scopemode == 0 ){
+			//スコープが使えないならば、スコープ解除
+			SetDisableScope();
+		}
+		else{
+			//異なるスコープが使えるならば、スコープ再設定
+			SetEnableScope();
+		}
+	}
+
 	//モーション実行
 	MotionCtrl->ChangeShotMode(ChangeWeapon);
 
@@ -778,6 +796,9 @@ bool human::SetEnableScope()
 
 	//何も武器を装備してなければ失敗
 	if( weapon[selectweapon] == NULL ){ return false; }
+
+	//リロード中なら失敗
+	if( weapon[selectweapon]->GetReloadCnt() > 0 ){ return false; }
 
 	//武器の種類番号を取得
 	weapon[selectweapon]->GetParamData(&param_id, NULL, NULL);
