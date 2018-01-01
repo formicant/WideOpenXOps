@@ -107,14 +107,15 @@ void SoundControl::DestroySound()
 {
 	if( lib == NULL ){ return; }
 
-	//使用中のサウンドデータ数を数える
-	int total = 0;
+	//使用中のサウンドデータを開放
 	for(int i=0; i<MAX_LOADSOUND; i++){
-		if( useflag[i] == true ){ total += 1; }
+		if( useflag[i] == true ){
+			if( DSrelease != NULL ){ DSrelease(i); }
+			useflag[i] = false;
+		}
 	}
 
-	//サウンドデータを開放し、DLLを終了
-	if( DSrelease != NULL ){ DSrelease(total); }
+	//DLLを終了
 	if( DSend != NULL ){ DSend(); }
 
 	//DLLを開放
@@ -195,7 +196,7 @@ int SoundControl::LoadSound(char* filename)
 //! @param id 認識番号
 //! @param volume 再生ボリューム
 //! @param pan パン（左右バランス）
-//! @return 成功：1　失敗：0
+//! @return 成功：1～3　失敗：0
 //! @note 用途：プレイヤー自身が発生する音・ゲーム空間全体で均一に鳴らす音・BGM
 int SoundControl::PlaySound(int id, int volume, int pan)
 {
@@ -214,7 +215,7 @@ int SoundControl::PlaySound(int id, int volume, int pan)
 //! @param y 音源のY座標
 //! @param z 音源のZ座標
 //! @param volume 再生ボリューム
-//! @return 成功：1　失敗：0
+//! @return 成功：1～3　失敗：0
 //! @note 用途：絶対的な位置を持ち距離により減衰する、一般的な効果音。
 int SoundControl::Play3DSound(int id, float x, float y, float z, int volume)
 {
@@ -253,8 +254,8 @@ void SoundControl::CleanupSound(int id)
 	if( (id < 0)||(MAX_LOADSOUND -1 < id) ){ return; }
 	if( useflag[id] == false ){ return; }
 
-	//読み込みを意図的に失敗させ、強制的に初期化
-	if( DSload != NULL ){ DSload("", id); }
+	//使用中のサウンドデータを開放
+	if( DSrelease != NULL ){ DSrelease(id); }
 
 	//使用中フラグを解除
 	useflag[id] = false;
