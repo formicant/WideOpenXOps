@@ -1252,7 +1252,8 @@ int maingame::Recovery()
 		}
 	}
 
-	//追加小物を読み込む
+	//追加小物を解放⇒読み込む
+	Resource.CleanupAddSmallObject();
 	Resource.LoadAddSmallObject(MIFdata.GetAddSmallobjectModelPath(), MIFdata.GetAddSmallobjectTexturePath(), MIFdata.GetAddSmallobjectSoundPath());
 
 	//ブロックデータ初期化
@@ -3706,6 +3707,9 @@ void maingame::Destroy()
 
 	//オブジェクトマネージャー解放
 	ObjMgr.Cleanup();
+
+	//追加小物を解放
+	Resource.CleanupAddSmallObject();
 
 	//背景空解放
 	Resource.CleanupSkyModelTexture();
