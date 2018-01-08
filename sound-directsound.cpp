@@ -290,7 +290,6 @@ int SoundControl::PlaySound(int id, int volume, int pan)
 		//サウンドが停止中ならば
 		if( (status & DSBSTATUS_PLAYING) == 0x00 ){
 			LPDIRECTSOUND3DBUFFER pDS3DBuffer;
-			DWORD status = 0;
 			if( FAILED(pDSBuffer[id][i]->QueryInterface(IID_IDirectSound3DBuffer8, (VOID**)&pDS3DBuffer)) ){
 				//IDirectSound3DBuffer8を取得できない
 				return 0;
@@ -366,8 +365,18 @@ void SoundControl::CleanupSound(int id)
 	if( (id < 0)||(MAX_LOADSOUND -1 < id) ){ return; }
 	if( pDSBuffer[id][0] == NULL ){ return; }
 
-	//対象の全セカンダリバッファーを解放
+	DWORD status = 0;
+
 	for(int i=0; i<MAX_SOUNDLISTS; i++){
+		//再生状況を取得
+		pDSBuffer[id][i]->GetStatus(&status);
+
+		//サウンドが再生中ならば停止する
+		if( (status & DSBSTATUS_PLAYING) != 0x00 ){
+			pDSBuffer[id][i]->Stop();
+		}
+
+		//対象のセカンダリバッファーを解放
 		if( pDSBuffer[id][i] != NULL ){ pDSBuffer[id][i]->Release(); }
 		pDSBuffer[id][i] = NULL;
 	}

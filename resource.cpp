@@ -608,10 +608,6 @@ int ResourceManager::LoadAddSmallObject(char *modelpath, char *texturepath, char
 	int dataid = TOTAL_PARAMETERINFO_SMALLOBJECT+1 -1;
 	int cnt = 0;
 
-	d3dg->CleanupModel(smallobject_model[dataid]);
-	d3dg->CleanupTexture(smallobject_texture[dataid]);
-	SoundCtrl->CleanupSound(smallobject_sound[dataid]);
-
 	smallobject_model[dataid] = d3dg->LoadModel(modelpath);
 	smallobject_texture[dataid] = d3dg->LoadTexture(texturepath, false, false);
 	if( smallobject_model[dataid] == -1 ){ cnt += 1; }
@@ -620,6 +616,19 @@ int ResourceManager::LoadAddSmallObject(char *modelpath, char *texturepath, char
 	if( smallobject_sound[dataid] == -1 ){ cnt += 1; }
 
 	return cnt;
+}
+
+//! @brief 追加小物のモデル・テクスチャ・サウンドを解放
+void ResourceManager::CleanupAddSmallObject()
+{
+	if( d3dg == NULL ){ return; }
+	if( SoundCtrl == NULL ){ return; }
+
+	int dataid = TOTAL_PARAMETERINFO_SMALLOBJECT+1 -1;
+
+	d3dg->CleanupModel(smallobject_model[dataid]);
+	d3dg->CleanupTexture(smallobject_texture[dataid]);
+	SoundCtrl->CleanupSound(smallobject_sound[dataid]);
 }
 
 //! @brief 弾のモデルとテクスチャを読み込む

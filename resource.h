@@ -114,6 +114,7 @@ public:
 	int GetSmallObjectSound(int id);
 	void CleanupSmallObjectSound();
 	int LoadAddSmallObject(char *modelpath, char *texturepath, char *soundpath);
+	void CleanupAddSmallObject();
 	int LoadBulletModelTexture();
 	int GetBulletModelTexture(int id, int *model, int *texture);
 	void CleanupBulletModelTexture();
