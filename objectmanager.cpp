@@ -620,7 +620,7 @@ bool ObjectManager::CollideHuman(human *in_humanA, human *in_humanB)
 	in_humanB->GetPosData(&h2_x, &h2_y, &h2_z, NULL);
 
 	//‰~’Œ‚Ì“–‚½‚è”»’è
-	if( CollideCylinder(h1_x, h1_y, h1_z, 3.0f, HUMAN_HEIGHT-0.5f, h2_x, h2_y, h2_z, 3.0f, HUMAN_HEIGHT-0.5f, &angle, &length) == true ){
+	if( CollideCylinder(h1_x, h1_y, h1_z, HUMAN_HUMANCOLLISION_R, HUMAN_HEIGHT-0.5f, h2_x, h2_y, h2_z, HUMAN_HUMANCOLLISION_R, HUMAN_HEIGHT-0.5f, &angle, &length) == true ){
 		//‚ß‚è‚ñ‚¾•ª‚¾‚¯‰Ÿ‚µo‚·
 		in_humanA->AddPosOrder(angle, 0.0f, length/2);
 		in_humanB->AddPosOrder(angle + (float)M_PI, 0.0f, length/2);
@@ -1342,7 +1342,7 @@ void ObjectManager::PickupWeapon(human *in_human, weapon *in_weapon)
 			z = human_z - weapon_z;
 			r = x*x + z*z;
 			//‹——£‚à”ÍˆÍ“à‚È‚ç‚ÎAE‚í‚¹‚éB
-			if( r < (5.0f * 5.0f) ){
+			if( r < (3.8f * 3.8f) ){
 				in_human->PickupWeapon(in_weapon);
 			}
 		}

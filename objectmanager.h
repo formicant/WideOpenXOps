@@ -44,6 +44,8 @@
 
 #define TOTAL_WEAPON_AUTOBULLET 3	//!< ‰Šú‰»Žž‚ÉŽ©“®“I‚É•â‚Ä‚ñ‚³‚ê‚é’e”i‘•’e”‚Ì‰½”{‚©j
 
+#define HUMAN_HUMANCOLLISION_R 2.5f			//!< l“¯Žm‚Ì“–‚½‚è”»’è‚Ì”¼Œa
+
 #define HUMAN_BULLETCOLLISION_HEAD_H 2.8f	//!< “ª‚Ì“–‚½‚è”»’è‚Ì‚‚³
 #define HUMAN_BULLETCOLLISION_HEAD_R 1.3f	//!< “ª‚Ì“–‚½‚è”»’è‚Ì”¼Œa
 #define HUMAN_BULLETCOLLISION_UP_H 7.5f		//!< ã”¼g‚Ì“–‚½‚è”»’è‚Ì‚‚³
