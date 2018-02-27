@@ -2152,13 +2152,13 @@ void maingame::Render2D()
 		if( weapon[i] != NULL ){
 			if( selectweapon == i ){
 				weapon[i]->GetParamData(&weapon_paramid[i], &lnbs, &nbs);
-				reloadcnt = weapon[i]->GetReloadCnt();
 			}
 			else{
 				weapon[i]->GetParamData(&weapon_paramid[i], NULL, NULL);
 			}
 		}
 	}
+	reloadcnt = myHuman->GetWeaponReloadCnt();
 	selectweaponcnt = myHuman->GetChangeWeaponCnt();
 	GameParamInfo.GetWeapon(weapon_paramid[selectweapon], &weapon_paramdata);
 	strcpy(weaponname, weapon_paramdata.name);

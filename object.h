@@ -143,6 +143,8 @@ protected:
 	class weapon *weapon[TOTAL_HAVEWEAPON];		//!< 武器
 	int selectweapon;			//!< 武器A/Bの選択
 	int selectweaponcnt;		//!< 武器の切り替えカウント
+	int weaponshotcnt;			//!< 武器の連射カウント
+	int weaponreloadcnt;		//!< 武器のリロードカウント
 	int hp;						//!< 体力
 	int deadstate;				//!< 死体になっているか
 	float add_ry;				//!< 死体の倒れる加速度
@@ -182,6 +184,7 @@ public:
 	virtual int PickupWeapon(class weapon *in_weapon);
 	virtual void ChangeWeapon(int id = -1);
 	virtual int GetChangeWeaponCnt();
+	virtual int GetWeaponReloadCnt();
 	virtual void GetWeapon(int *out_selectweapon, class weapon *out_weapon[]);
 	virtual int GetMainWeaponTypeNO();
 	virtual bool GetWeaponBlazingmode();
@@ -226,8 +229,6 @@ protected:
 	bool usingflag;		//!< 使用中を表すフラグ
 	int bullets;		//!< 合計弾数
 	int Loadbullets;	//!< 装弾数
-	int shotcnt;		//!< 連射カウント
-	int reloadcnt;		//!< リロードカウント
 	bool motionflag;	//!< 座標移動中を表すフラグ
 
 public:
@@ -242,7 +243,6 @@ public:
 	virtual int Shot();
 	virtual int StartReload();
 	virtual int RunReload();
-	virtual int GetReloadCnt();
 	virtual bool ResetWeaponParam(class ResourceManager *Resource, int id_param, int lnbs, int nbs);
 	virtual int RunFrame(class Collision *CollD);
 	virtual void Render(class D3DGraphics *d3dg);

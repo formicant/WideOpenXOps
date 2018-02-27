@@ -184,6 +184,8 @@ human::human(class ParameterInfo *in_Param, float x, float y, float z, float rx,
 		weapon[i] = NULL;
 	}
 	selectweapon = 1;
+	weaponshotcnt = 0;
+	weaponreloadcnt = 0;
 	//if( Param->GetHuman(id_param, &data) == 0 ){
 	//	hp = data.hp;
 	//}
@@ -250,6 +252,8 @@ void human::SetParamData(int id_param, int dataid, signed char p4, int team, boo
 			weapon[i] = NULL;
 		}
 		selectweapon = 1;
+		weaponshotcnt = 0;
+		weaponreloadcnt = 0;
 		if( Param->GetHuman(id_param, &data) == 0 ){
 			hp = data.hp;
 		}
@@ -321,7 +325,7 @@ void human::SetTeamID(int id)
 }
 
 //! @brief 無敵フラグを取得
-//! @return true：無敵　false：通常
+//! @return 無敵：true　通常：false
 //! @attention 無敵状態の場合、銃弾・手榴弾の爆発・落下　によるダメージを一切受けません。
 bool human::GetInvincibleFlag()
 {
@@ -329,7 +333,7 @@ bool human::GetInvincibleFlag()
 }
 
 //! @brief 無敵フラグを設定
-//! @param flag true：無敵　false：通常
+//! @param flag 無敵：true　通常：false
 //! @attention 無敵状態の場合、銃弾・手榴弾の爆発・落下　によるダメージを一切受けません。
 void human::SetInvincibleFlag(bool flag)
 {
@@ -423,9 +427,7 @@ void human::ChangeWeapon(int id)
 	if( hp <= 0 ){ return; }
 
 	//リロード中なら失敗
-	if( weapon[selectweapon] != NULL ){
-		if( weapon[selectweapon]->GetReloadCnt() > 0 ){ return; }
-	}
+	if( weaponreloadcnt > 0 ){ return; }
 
 	//同じ武器に切り替えようとしているなら、失敗
 	if( selectweapon == id ){ return; }
@@ -474,6 +476,13 @@ int human::GetChangeWeaponCnt()
 	return selectweaponcnt;
 }
 
+//! @brief 武器のリロードカウントを取得
+//! @return カウント数　（リロード中：1以上）
+int human::GetWeaponReloadCnt()
+{
+	return weaponreloadcnt;
+}
+
 //! @brief 武器を取得
 //! @param out_selectweapon 選択されている武器　（0 ～ [TOTAL_HAVEWEAPON]-1）
 //! @param out_weapon 受け取るweaponクラスのポインタ配列　（配列数：TOTAL_HAVEWEAPON）
@@ -520,7 +529,7 @@ bool human::GetWeaponBlazingmode()
 //! @brief 発砲処理
 //! @param weapon_paramid 発砲した武器の番号を受け取るポインタ
 //! @param GunsightErrorRange 発砲した際の照準誤差を受け取るポインタ
-//! @return 成功：1　失敗：0
+//! @return 成功：true　失敗：false
 //! @attention 弾オブジェクトの処理や、発砲音の再生は別途行う必要があります。
 //! @attention ゲーム上から直接呼び出すことは避け、ObjectManagerクラスから呼び出してください。
 bool human::ShotWeapon(int *weapon_paramid, int *GunsightErrorRange)
@@ -533,6 +542,10 @@ bool human::ShotWeapon(int *weapon_paramid, int *GunsightErrorRange)
 	//武器を装備していなければ、失敗
 	if( weapon[selectweapon] == NULL ){ return false; }
 
+	//発射間隔に満たないか、リロード中ならば失敗
+	if( weaponshotcnt > 0 ){ return false; }
+	if( weaponreloadcnt > 0 ){ return false; }
+
 	//弾の発射処理を行う
 	if( weapon[selectweapon]->Shot() != 0 ){ return false; }
 
@@ -543,6 +556,9 @@ bool human::ShotWeapon(int *weapon_paramid, int *GunsightErrorRange)
 	//武器の設定値を取得
 	WeaponParameter ParamData;
 	if( Param->GetWeapon(param_id, &ParamData) != 0 ){ return false; }
+
+	//連射カウントを設定
+	weaponshotcnt = ParamData.blazings;
 
 	//精密スコープの武器でスコープを覗いていなければ、誤差 20。
 	if( (scopemode == 0)&&(ParamData.scopemode == 2) ){
@@ -620,7 +636,7 @@ bool human::ReloadWeapon()
 	//何かしらの武器を装備していれば～
 	if( weapon[selectweapon] != NULL ){
 		//リロード中なら失敗
-		if( weapon[selectweapon]->GetReloadCnt() > 0 ){ return false; }
+		if( weaponreloadcnt > 0 ){ return false; }
 
 		//リロード処理を開始
 		if( weapon[selectweapon]->StartReload() != 0 ){ return false; }
@@ -634,6 +650,15 @@ bool human::ReloadWeapon()
 		nowweapon = weapon[selectweapon];
 		nowweapon->GetParamData(&id_param, NULL, NULL);
 		MotionCtrl->ReloadWeapon(id_param);
+
+		//武器の性能値を取得
+		int param_id;
+		WeaponParameter ParamData;
+		weapon[selectweapon]->GetParamData(&param_id, NULL, NULL);
+		if( Param->GetWeapon(param_id, &ParamData) != 0 ){ return 1; }
+
+		//リロードカウントを設定
+		weaponreloadcnt = ParamData.reloads + 1;
 
 		return true;
 	}
@@ -651,7 +676,7 @@ bool human::DumpWeapon()
 	//何かしらの武器を装備していれば～
 	if( weapon[selectweapon] != NULL ){
 		//リロード中なら失敗
-		if( weapon[selectweapon]->GetReloadCnt() > 0 ){ return false; }
+		if( weaponreloadcnt > 0 ){ return false; }
 
 		//武器を捨て、装備を解除
 		weapon[selectweapon]->Dropoff(pos_x, pos_y, pos_z, rotation_x, 1.63f);
@@ -798,7 +823,7 @@ bool human::SetEnableScope()
 	if( weapon[selectweapon] == NULL ){ return false; }
 
 	//リロード中なら失敗
-	if( weapon[selectweapon]->GetReloadCnt() > 0 ){ return false; }
+	if( weaponreloadcnt > 0 ){ return false; }
 
 	//武器の種類番号を取得
 	weapon[selectweapon]->GetParamData(&param_id, NULL, NULL);
@@ -1613,7 +1638,7 @@ int human::RunFrame(class Collision *CollD, class BlockDataInterface *inblockdat
 
 	if( deadstate == 5 ){ return 3; }
 
-	int WeaponReloadCnt;
+	int WeaponReloadMotionCnt;
 	float FallDistance;
 	float nowmove_x, nowmove_z;
 	int CheckDead;
@@ -1624,12 +1649,24 @@ int human::RunFrame(class Collision *CollD, class BlockDataInterface *inblockdat
 		selectweaponcnt -= 1;
 	}
 
-	//リロードカウント取得
+	//連射カウントが残っていれば、1 減らす
+	if( weaponshotcnt > 0 ){
+		weaponshotcnt -= 1;
+	}
+	else if( weaponreloadcnt > 0 ){
+		//リロードカウントが残っていれば 1 減らし、カウントが 0 ならばリロード処理を実行
+		weaponreloadcnt -= 1;
+		if( weaponreloadcnt == 0 ){
+			if( weapon[selectweapon] != NULL ){ weapon[selectweapon]->RunReload(); }
+		}
+	}
+
+	//リロードカウント取得（モーション用）
 	if( weapon[selectweapon] != NULL ){
-		WeaponReloadCnt = weapon[selectweapon]->GetReloadCnt();
+		WeaponReloadMotionCnt = weaponreloadcnt;
 	}
 	else{
-		WeaponReloadCnt = 0;
+		WeaponReloadMotionCnt = 0;
 	}
 
 	//照準の状態誤差の処理
@@ -1697,7 +1734,7 @@ int human::RunFrame(class Collision *CollD, class BlockDataInterface *inblockdat
 	}
 
 	//モーション計算
-	MotionCtrl->RunFrame(rotation_x, armrotation_y, weapon_paramid, WeaponReloadCnt, MoveFlag_lt, hp, player);
+	MotionCtrl->RunFrame(rotation_x, armrotation_y, weapon_paramid, WeaponReloadMotionCnt, MoveFlag_lt, hp, player);
 
 	if( CheckDead != 0 ){ return 3; }
 	return 1;
@@ -1792,7 +1829,6 @@ weapon::weapon(class ParameterInfo *in_Param, float x, float y, float z, float r
 	usingflag = false;
 	bullets = nbs;
 	Loadbullets = 0;
-	shotcnt = 0;
 	motionflag = true;
 
 	if( Param != NULL ){
@@ -1840,8 +1876,6 @@ void weapon::SetParamData(int id_param, int lnbs, int nbs, bool init)
 
 	if( init == true ){
 		usingflag = false;
-		shotcnt = 0;
-		reloadcnt = 0;
 		motionflag = true;
 	}
 }
@@ -1904,9 +1938,7 @@ int weapon::Shot()
 	//クラスが設定されていなければ失敗
 	if( Param == NULL ){ return 1; }
 
-	//発射間隔に満たないか、リロード中か、弾が無ければ失敗
-	if( shotcnt > 0 ){ return 1; }
-	if( reloadcnt > 0 ){ return 1; }
+	//弾が無ければ失敗
 	if( Loadbullets == 0 ){ return 1; }
 
 	//設定値を取得
@@ -1915,10 +1947,9 @@ int weapon::Shot()
 
 	//武器が手榴弾ならば～
 	if( id_parameter == ID_WEAPON_GRENADE ){
-		//弾を減らし、連射カウントを設定
+		//弾を減らす
 		bullets -= 1;
 		Loadbullets -= 1;
-		shotcnt = ParamData.blazings;
 
 		if( (bullets - Loadbullets) <= 0 ){		//（リロードしていない）弾が無くなれば、武器ごと消滅させる。
 			EnableFlag = false;
@@ -1930,38 +1961,28 @@ int weapon::Shot()
 		return 0;
 	}
 
-	//弾を減らし、連射カウントを設定
+	//弾を減らす
 	Loadbullets -= 1;
 	bullets -= 1;
-	shotcnt = ParamData.blazings;
 	return 0;
 }
 
 //! @brief リロードを開始
 //! @return 成功：0　失敗：1
 //! @attention リロード時間も考慮されます。
-//! @attention 関数が失敗するのは、いずれかの条件です。　「リロード実行中」「弾がない」「無効な武器の種類が設定されている」
+//! @attention 関数が失敗するのは、いずれかの条件です。　「弾がない」「無効な武器の種類が設定されている」
 int weapon::StartReload()
 {
 	//クラスが設定されていなければ失敗
 	if( Param == NULL ){ return 1; }
 
-	//リロード中か、弾が無ければ失敗
-	if( reloadcnt > 0 ){ return 1; }
+	//弾が無ければ失敗
 	if( (bullets - Loadbullets) == 0 ){ return 1; }
-
-	//武器の性能値を取得
-	WeaponParameter ParamData;
-	if( Param->GetWeapon(id_parameter, &ParamData) != 0 ){ return 1; }
-
-	//リロードカウントを設定
-	reloadcnt = ParamData.reloads + 1;
 	return 0;
 }
 
 //! @brief リロードを実行
 //! @attention StartReload()関数と異なり、瞬時に弾を補充します。リロード時間は考慮されません。
-//! @attention リロード時間を考慮する場合、StartReload()関数を呼び出してください。この関数は自動的に実行されます。
 int weapon::RunReload()
 {
 	//クラスが設定されていなければ失敗
@@ -1989,25 +2010,18 @@ int weapon::RunReload()
 	return 0;
 }
 
-//! @brief リロードカウントを取得
-//! @return カウント数　（リロード中：1以上）
-int weapon::GetReloadCnt()
-{
-	return reloadcnt;
-}
-
 //! @brief 武器の種類・装弾数の変更
 //! @param Resource ResourceManagerのポインタ
 //! @param id_param 種類番号
 //! @param lnbs 装弾数
 //! @param nbs 合計弾数
-//! @return 成功：1　失敗：0
+//! @return 成功：true　失敗：false
 //! @attention プレイヤーによる裏技（F6・F7）用に用意された関数です。手榴弾が選択された場合、自動的に弾を補充します。
 //! @attention 使用されていない武器オブジェクトに対して実行すると、この関数は失敗します。
 bool weapon::ResetWeaponParam(class ResourceManager *Resource, int id_param, int lnbs, int nbs)
 {
 	//初期化されていなければ、失敗
-	if( EnableFlag == false ){ return 0; }
+	if( EnableFlag == false ){ return false; }
 
 	//指定された設定値へ上書き
 	id_parameter = id_param;
@@ -2028,7 +2042,7 @@ bool weapon::ResetWeaponParam(class ResourceManager *Resource, int id_param, int
 		model_size = param.size;
 	}
 
-	return 1;
+	return true;
 }
 
 //! @brief 計算を実行（自由落下）
@@ -2040,18 +2054,6 @@ int weapon::RunFrame(class Collision *CollD)
 
 	//初期化されていなければ、失敗
 	if( EnableFlag == false ){ return 0; }
-
-	//連射カウントが残っていれば、1 減らす
-	if( shotcnt > 0 ){
-		shotcnt -= 1;
-	}
-	else if( reloadcnt > 0 ){
-		//リロードカウントが残っていれば 1 減らし、カウントが 0 ならばリロード処理を実行
-		reloadcnt -= 1;
-		if( reloadcnt == 0 ){
-			RunReload();
-		}
-	}
 
 	//誰にも使われておらず、移動フラグが有効ならば～
 	if( (usingflag == false)&&(motionflag == true) ){
