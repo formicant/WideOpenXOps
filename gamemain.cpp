@@ -2872,7 +2872,7 @@ void maingame::ProcessConsole()
 	//コマンドリスト
 	if( strcmp(NewCommand, "help") == 0 ){
 		AddInfoConsole(d3dg->GetColorCode(1.0f,1.0f,1.0f,1.0f), "help          human        result          event            ver");
-		AddInfoConsole(d3dg->GetColorCode(1.0f,1.0f,1.0f,1.0f), "mif           bd1          pd1");
+		AddInfoConsole(d3dg->GetColorCode(1.0f,1.0f,1.0f,1.0f), "config        mif          bd1             pd1");
 		AddInfoConsole(d3dg->GetColorCode(1.0f,1.0f,1.0f,1.0f), "info          view         center          map              aiinfo <NUM>");
 		AddInfoConsole(d3dg->GetColorCode(1.0f,1.0f,1.0f,1.0f), "tag           radar        inmap           sky <NUM>        dark");
 		AddInfoConsole(d3dg->GetColorCode(1.0f,1.0f,1.0f,1.0f), "ff            revive       kill <NUM>      treat <NUM>      nodamage <NUM>");
@@ -2951,6 +2951,98 @@ void maingame::ProcessConsole()
 			}
 			AddInfoConsole(d3dg->GetColorCode(1.0f,1.0f,1.0f,1.0f), str);
 		}
+	}
+
+	//configの情報
+	if( strcmp(NewCommand, "config") == 0 ){
+		//キーコード表示
+		char str2[8];
+		char str3[MAX_CONSOLELEN];
+		AddInfoConsole(d3dg->GetColorCode(1.0f,1.0f,1.0f,1.0f), "Keycode : ");
+		for(int i=0; i*10<TOTAL_ControlKey; i++){
+			strcpy(str, "");
+			for(int j=0; j<10; j++){
+				if( i*10+j >= TOTAL_ControlKey ){ break; }
+				sprintf(str2, " 0x%02X", GameConfig.GetKeycode(i*10+j));
+				strcat(str, str2);
+			}
+			AddInfoConsole(d3dg->GetColorCode(1.0f,1.0f,1.0f,1.0f), str);
+		}
+
+		//マウス感度
+		sprintf(str3, "MouseSensitivity : %d           ", GameConfig.GetMouseSensitivity());
+		strcpy(str, str3);
+
+		//画面表示モード
+		if( GameConfig.GetFullscreenFlag() == false ){
+			strcat(str, "FullscreenFlag : false (window)");
+		}
+		else{
+			strcat(str, "FullscreenFlag : true (fullscreen)");
+		}
+
+		//表示
+		AddInfoConsole(d3dg->GetColorCode(1.0f,1.0f,1.0f,1.0f), str);
+
+		//効果音設定
+		if( GameConfig.GetSoundFlag() == false ){
+			strcpy(str, "SoundFlag : false (OFF)         ");
+		}
+		else{
+			strcpy(str, "SoundFlag : true (ON)           ");
+		}
+
+		//出血設定
+		if( GameConfig.GetBloodFlag() == false ){
+			strcat(str, "BloodFlag : false (OFF)");
+		}
+		else{
+			strcat(str, "BloodFlag : true (ON)");
+		}
+
+		//表示
+		AddInfoConsole(d3dg->GetColorCode(1.0f,1.0f,1.0f,1.0f), str);
+
+		//画面の明るさ設定
+		sprintf(str3, "Brightness : %d                  ", GameConfig.GetBrightness());
+		strcpy(str, str3);
+
+		//マウス反転設定
+		if( GameConfig.GetInvertMouseFlag() == false ){
+			strcat(str, "InvertMouseFlag : false (OFF)");
+		}
+		else{
+			strcat(str, "InvertMouseFlag : true (ON)");
+		}
+
+		//表示
+		AddInfoConsole(d3dg->GetColorCode(1.0f,1.0f,1.0f,1.0f), str);
+
+		//フレームスキップ設定
+		if( GameConfig.GetFrameskipFlag() == false ){
+			strcpy(str, "FrameskipFlag : false (OFF)     ");
+		}
+		else{
+			strcpy(str, "FrameskipFlag : true (ON)       ");
+		}
+
+		//別の照準を使用設定
+		if( GameConfig.GetAnotherGunsightFlag() == false ){
+			strcat(str, "AnotherGunsightFlag : false (OFF)");
+		}
+		else{
+			strcat(str, "AnotherGunsightFlag : true (ON)");
+		}
+
+		//表示
+		AddInfoConsole(d3dg->GetColorCode(1.0f,1.0f,1.0f,1.0f), str);
+
+		//プレイヤー名表示
+		char namestr[MAX_PLAYERNAME+1];
+		GameConfig.GetPlayerName(namestr);
+		strcpy(str, "PlayerName : ");
+		strcat(str, namestr);
+		AddInfoConsole(d3dg->GetColorCode(1.0f,1.0f,1.0f,1.0f), str);
 	}
 
 	//MIFの情報表示
