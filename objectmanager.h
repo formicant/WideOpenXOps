@@ -4,7 +4,7 @@
 //--------------------------------------------------------------------------------
 // 
 // OpenXOPS
-// Copyright (c) 2014-2017, OpenXOPS Project / [-_-;](mikan) All rights reserved.
+// Copyright (c) 2014-2018, OpenXOPS Project / [-_-;](mikan) All rights reserved.
 // 
 // Redistribution and use in source and binary forms, with or without
 // modification, are permitted provided that the following conditions are met:
@@ -79,7 +79,7 @@ class ObjectManager
 	class smallobject *SmallObjectIndex;		//!< 小物オブジェクト
 	class bullet *BulletIndex;					//!< 弾オブジェクト
 	class grenade *GrenadeIndex;				//!< 手榴弾オブジェクト
-	class effect *EffectIndex;					//!< 手榴弾オブジェクト
+	class effect *EffectIndex;					//!< エフェクトオブジェクト
 
 	unsigned int framecnt;		//!< フレーム数のカウント
 

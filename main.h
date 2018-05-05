@@ -4,7 +4,7 @@
 //--------------------------------------------------------------------------------
 // 
 // OpenXOPS
-// Copyright (c) 2014-2017, OpenXOPS Project / [-_-;](mikan) All rights reserved.
+// Copyright (c) 2014-2018, OpenXOPS Project / [-_-;](mikan) All rights reserved.
 // 
 // Redistribution and use in source and binary forms, with or without
 // modification, are permitted provided that the following conditions are met:
@@ -47,7 +47,7 @@
 
 //定数
 #define GAMENAME "OpenXOPS"		//!< ゲーム名
-#define GAMEVERSION "1.040"		//!< ゲームのバージョン
+#define GAMEVERSION "1.045"		//!< ゲームのバージョン
 #define GAMEFRAMEMS 30			//!< フレームあたりの処理時間（ms）
 #define GAMEFPS (1000.0f/GAMEFRAMEMS)	//!< FPS（フレームレート）　1000 / 30 = 33.333[FPS]
 #define SCREEN_WIDTH 640		//!< スクリーンの幅
