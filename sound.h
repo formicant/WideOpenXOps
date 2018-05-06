@@ -32,7 +32,7 @@
 #ifndef SOUND2_H
 #define SOUND2_H
 
-#define MAX_LOADSOUND 24		//!< サウンドを読み込める最大数（ezds.dll）
+#define MAX_LOADSOUND 24		//!< サウンドを読み込める最大数
 #define MAX_SOUNDLISTS 100		//!< サウンドを再生する最大数（DirectSound）
 #define MAX_SOUNDDIST 335		//!< サウンドを再生する最大距離
 

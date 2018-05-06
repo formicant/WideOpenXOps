@@ -1625,7 +1625,7 @@ void ObjectManager::SetPlayerID(int id)
 //! @brief 指定したデータ番号のhumanクラスを取得
 //! @param id データ番号
 //! @return 人オブジェクトのポインタ　（無効なデータ番号で NULL）
-human* ObjectManager::GeHumanObject(int id)
+human* ObjectManager::GetHumanObject(int id)
 {
 	if( (id < 0)||(MAX_HUMAN-1 < id) ){ return NULL; }
 	return &(HumanIndex[id]);
@@ -1635,7 +1635,7 @@ human* ObjectManager::GeHumanObject(int id)
 //! @return 人オブジェクト（プレイヤー）のポインタ
 human* ObjectManager::GetPlayerHumanObject()
 {
-	return GeHumanObject(Player_HumanID);
+	return GetHumanObject(Player_HumanID);
 }
 
 //! @brief 指定したhumanポインタのデータ番号を取得

@@ -1534,7 +1534,7 @@ void maingame::InputPlayer(human *myHuman, int mouse_x, int mouse_y, float Mouse
 			}
 			else{
 				for(int i=0; i<MAX_HUMAN; i++){
-					human *EnemyHuman = ObjMgr.GeHumanObject(i);
+					human *EnemyHuman = ObjMgr.GetHumanObject(i);
 					if( ObjMgr.CheckZombieAttack(myHuman, EnemyHuman) == true ){
 						ObjMgr.HitZombieAttack(myHuman, EnemyHuman);
 					}
@@ -2081,7 +2081,7 @@ void maingame::Render3D()
 			int EnemyID;
 			float mposx, mposz;
 			int movemode;
-			ObjMgr.GeHumanObject(AIdebuginfoID)->GetPosData(&posx, &posy, &posz, &rx);
+			ObjMgr.GetHumanObject(AIdebuginfoID)->GetPosData(&posx, &posy, &posz, &rx);
 			EnemyID = HumanAI[AIdebuginfoID].GetEnemyHumanID();
 			HumanAI[AIdebuginfoID].GetMoveTargetPos(&mposx, &mposz, &movemode);
 
@@ -2098,7 +2098,7 @@ void maingame::Render3D()
 			d3dg->Drawline(mposx, posy, mposz+10.0f, mposx, posy, mposz-10.0f, d3dg->GetColorCode(1.0f,1.0f,0.0f,1.0f));
 
 			if( EnemyID != -1 ){
-				ObjMgr.GeHumanObject(EnemyID)->GetPosData(&posx, &posy, &posz, &rx);
+				ObjMgr.GetHumanObject(EnemyID)->GetPosData(&posx, &posy, &posz, &rx);
 
 				//攻撃対象
 				d3dg->Drawline(posx+3.0f, posy, posz+3.0f, posx+3.0f, posy, posz-3.0f, d3dg->GetColorCode(1.0f,0.0f,0.0f,1.0f));
@@ -2445,8 +2445,8 @@ void maingame::Render2D()
 			float mposx, mposz;
 			int movemode;
 			pointdata ppdata;
-			ObjMgr.GeHumanObject(AIdebuginfoID)->GetPosData(&posx, &posy, &posz, &rx);
-			hp = ObjMgr.GeHumanObject(AIdebuginfoID)->GetHP();
+			ObjMgr.GetHumanObject(AIdebuginfoID)->GetPosData(&posx, &posy, &posz, &rx);
+			hp = ObjMgr.GetHumanObject(AIdebuginfoID)->GetHP();
 			HumanAI[AIdebuginfoID].GetBattleMode(NULL, modestr);
 			EnemyID = HumanAI[AIdebuginfoID].GetEnemyHumanID();
 			HumanAI[AIdebuginfoID].GetMoveTargetPos(&mposx, &mposz, &movemode);
@@ -2700,7 +2700,7 @@ void maingame::RenderRadar()
 	//プレイヤーの情報を取得
 	int PlayerID = ObjMgr.GetPlayerID();
 	int myteamid;
-	ObjMgr.GeHumanObject(PlayerID)->GetParamData(NULL, NULL, NULL, &myteamid);
+	ObjMgr.GetHumanObject(PlayerID)->GetParamData(NULL, NULL, NULL, &myteamid);
 
 	//人を描画
 	for(int i=0; i<MAX_HUMAN; i++){
@@ -2713,7 +2713,7 @@ void maingame::RenderRadar()
 		int color;
 
 		//人のオブジェクトを取得
-		thuman = ObjMgr.GeHumanObject(i);
+		thuman = ObjMgr.GetHumanObject(i);
 
 		//使われていない人や死体は無視する
 		if( thuman->GetEnableFlag() == false ){ continue; }
@@ -2895,7 +2895,7 @@ void maingame::ProcessConsole()
 		for(int i=0; i<MAX_HUMAN; i++){
 			int teamid;
 			bool deadflag;
-			human *thuman = ObjMgr.GeHumanObject(i);
+			human *thuman = ObjMgr.GetHumanObject(i);
 			if( thuman->GetEnableFlag() == true ){
 				//死亡状態とチーム番号を取得
 				deadflag = thuman->GetDeadFlag();
@@ -3408,7 +3408,7 @@ void maingame::ProcessConsole()
 		if( (0 <= id)&&(id < MAX_HUMAN) ){
 			int param, hp;
 			HumanParameter data;
-			human *thuman = ObjMgr.GeHumanObject(id);
+			human *thuman = ObjMgr.GetHumanObject(id);
 			
 			//初期時のHPを取得
 			thuman->GetParamData(&param, NULL, NULL, NULL);
@@ -3429,21 +3429,21 @@ void maingame::ProcessConsole()
 			if( InvincibleID == id ){
 				//同じ番号が指定されたらなら、無効化
 				InvincibleID = -1;
-				ObjMgr.GeHumanObject(id)->SetInvincibleFlag(false);
+				ObjMgr.GetHumanObject(id)->SetInvincibleFlag(false);
 				sprintf(str, "Not invincible Human[%d].", id);
 				AddInfoConsole(d3dg->GetColorCode(1.0f,1.0f,1.0f,1.0f), str);
 			}
 			else{
 				//既に誰かが指定されていたら、既に指定されている人を無効化
 				if( InvincibleID != -1 ){
-					ObjMgr.GeHumanObject(InvincibleID)->SetInvincibleFlag(false);
+					ObjMgr.GetHumanObject(InvincibleID)->SetInvincibleFlag(false);
 					sprintf(str, "Not invincible Human[%d].", InvincibleID);
 					AddInfoConsole(d3dg->GetColorCode(1.0f,1.0f,1.0f,1.0f), str);
 				}
 
 				//新たに無敵状態の人を指定
 				InvincibleID = id;
-				ObjMgr.GeHumanObject(id)->SetInvincibleFlag(true);
+				ObjMgr.GetHumanObject(id)->SetInvincibleFlag(true);
 				sprintf(str, "Invincible Human[%d].", id);
 				AddInfoConsole(d3dg->GetColorCode(1.0f,1.0f,1.0f,1.0f), str);
 			}
@@ -3453,7 +3453,7 @@ void maingame::ProcessConsole()
 	//殺害
 	if( GetCommandNum("kill", &id) == true ){
 		if( (0 <= id)&&(id < MAX_HUMAN) ){
-			human *thuman = ObjMgr.GeHumanObject(id);
+			human *thuman = ObjMgr.GetHumanObject(id);
 			if( thuman->GetEnableFlag() == true ){
 				if( thuman->SetHP(0) == true ){
 					sprintf(str, "Killed Human[%d].", id);
@@ -3489,7 +3489,7 @@ void maingame::ProcessConsole()
 	//人を削除
 	if( GetCommandNum("delhuman", &id) == true ){
 		if( (0 <= id)&&(id < MAX_HUMAN) ){
-			human *thuman = ObjMgr.GeHumanObject(id);
+			human *thuman = ObjMgr.GetHumanObject(id);
 			if( thuman->GetEnableFlag() == true ){
 
 				//人が持っている武器もすべて無効にする
@@ -3521,7 +3521,7 @@ void maingame::ProcessConsole()
 				int dummy;
 				class weapon *weaponlist[TOTAL_HAVEWEAPON];
 				for(int i=0; i<MAX_HUMAN; i++){
-					human *thuman = ObjMgr.GeHumanObject(i);
+					human *thuman = ObjMgr.GetHumanObject(i);
 					if( thuman->GetEnableFlag() == true ){
 						thuman->GetWeapon(&dummy, weaponlist);
 						for(int j=0; j<TOTAL_HAVEWEAPON; j++){

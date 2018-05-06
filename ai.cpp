@@ -36,7 +36,7 @@ AIcontrol::AIcontrol(class ObjectManager *in_ObjMgr, int in_ctrlid, class BlockD
 {
 	ObjMgr = in_ObjMgr;
 	ctrlid = in_ctrlid;
-	ctrlhuman = in_ObjMgr->GeHumanObject(in_ctrlid);
+	ctrlhuman = in_ObjMgr->GetHumanObject(in_ctrlid);
 	blocks = in_blocks;
 	Param = in_Param;
 	CollD = in_CollD;
@@ -72,7 +72,7 @@ void AIcontrol::SetClass(class ObjectManager *in_ObjMgr, int in_ctrlid, class Bl
 {
 	ObjMgr = in_ObjMgr;
 	ctrlid = in_ctrlid;
-	ctrlhuman = in_ObjMgr->GeHumanObject(in_ctrlid);
+	ctrlhuman = in_ObjMgr->GetHumanObject(in_ctrlid);
 	blocks = in_blocks;
 	Param = in_Param;
 	CollD = in_CollD;
@@ -853,7 +853,7 @@ int AIcontrol::HaveWeapon()
 {
 	int selectweapon;
 	class weapon *weapon[TOTAL_HAVEWEAPON];
-	int nbs;
+	int nbs = 0;
 
 	for(int i=0; i<TOTAL_HAVEWEAPON; i++){
 		weapon[i] = NULL;
@@ -1327,7 +1327,7 @@ bool AIcontrol::CheckLookEnemy(int id, float search_rx, float search_ry, float m
 
 	//人のオブジェクトを取得
 	class human* thuman;
-	thuman = ObjMgr->GeHumanObject(id);
+	thuman = ObjMgr->GetHumanObject(id);
 	if( thuman == NULL ){ return false; }
 
 	//同名関数をオーバーロード
@@ -1392,7 +1392,7 @@ bool AIcontrol::CheckCorpse(int id)
 
 	//ターゲットのクラスを取得
 	class human* thuman;
-	thuman = ObjMgr->GeHumanObject(id);
+	thuman = ObjMgr->GetHumanObject(id);
 	if( thuman == NULL ){ return false; }
 	if( thuman->GetEnableFlag() == false ){ return false; }
 
@@ -1580,7 +1580,7 @@ bool AIcontrol::CautionMain()
 	if( (MoveNavi->GetMoveMode() == AI_TRACKING)&&(GetRand(3) == 0) ){
 		float x, z;
 		float tx, tz;
-		class human *targethuman = ObjMgr->GeHumanObject(MoveNavi->GetTargetHumanID());
+		class human *targethuman = ObjMgr->GetHumanObject(MoveNavi->GetTargetHumanID());
 		targethuman->GetPosData(&tx, NULL, &tz, NULL);
 		x = posx - tx;
 		z = posz - tz;
@@ -1909,7 +1909,7 @@ void AIMoveNavi::Init()
 	hold = false;
 	path_pointid = 0;
 
-	ObjMgr->GeHumanObject(ctrlid)->GetParamData(NULL, &path_pointid, NULL, NULL);
+	ObjMgr->GetHumanObject(ctrlid)->GetParamData(NULL, &path_pointid, NULL, NULL);
 	MovePathNextState();
 }
 
@@ -1921,7 +1921,7 @@ bool AIMoveNavi::MovePathNowState()
 	if( hold == true ){
 		if( movemode == AI_TRACKING ){
 			class human *targethuman;
-			targethuman = ObjMgr->GeHumanObject(target_humanid);
+			targethuman = ObjMgr->GetHumanObject(target_humanid);
 			targethuman->GetPosData(&target_posx, NULL, &target_posz, &target_rx);
 		}
 		return true;
@@ -1969,7 +1969,7 @@ bool AIMoveNavi::MovePathNowState()
 				target_humanid = ObjMgr->GetHumanObjectID(targethuman);
 			}
 
-			targethuman = ObjMgr->GeHumanObject(target_humanid);
+			targethuman = ObjMgr->GetHumanObject(target_humanid);
 			targethuman->GetPosData(&target_posx, NULL, &target_posz, &target_rx);
 		}
 		else{
@@ -2235,7 +2235,7 @@ void AIObjectDriver::ControlObject()
 	}
 
 	//角度を取得
-	ObjMgr->GeHumanObject(ctrlid)->GetRxRy(&rx, &ry);
+	ObjMgr->GetHumanObject(ctrlid)->GetRxRy(&rx, &ry);
 
 	//角度に加算
 	rx += addrx;
@@ -2246,7 +2246,7 @@ void AIObjectDriver::ControlObject()
 	if( ry < DegreeToRadian(-70) ){ ry = DegreeToRadian(-70); }
 
 	//角度を設定
-	ObjMgr->GeHumanObject(ctrlid)->SetRxRy(rx, ry);
+	ObjMgr->GetHumanObject(ctrlid)->SetRxRy(rx, ry);
 
 	//回転速度の減衰
 	addrx *= 0.8f;

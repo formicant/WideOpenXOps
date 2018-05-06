@@ -140,7 +140,7 @@ public:
 	void SetFriendlyFireFlag(bool flag);
 	int GetPlayerID();
 	void SetPlayerID(int id);
-	human* GeHumanObject(int id);
+	human* GetHumanObject(int id);
 	human* GetPlayerHumanObject();
 	int GetHumanObjectID(human* object);
 	weapon* GetWeaponObject(int id);
