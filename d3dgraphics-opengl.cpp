@@ -1020,6 +1020,12 @@ bool D3DGraphics::LoadBMPTexture(char* filename, bool BlackTransparent, TEXTURED
 					}
 				}
 			}
+
+			if( (((int)width/2)%4) != 0 ){
+				//4の倍数になるようにパディング
+				unsigned char dummy[3];
+				fread(&dummy, 1, 4 - (((int)width/2)%4), fp);
+			}
 		}
 
 		delete []pallet;
@@ -1047,6 +1053,12 @@ bool D3DGraphics::LoadBMPTexture(char* filename, bool BlackTransparent, TEXTURED
 					}
 				}
 			}
+
+			if( (width%4) != 0 ){
+				//4の倍数になるようにパディング
+				unsigned char dummy[3];
+				fread(&dummy, 1, 4 - (width%4), fp);
+			}
 		}
 
 		delete []pallet;
@@ -1071,6 +1083,12 @@ bool D3DGraphics::LoadBMPTexture(char* filename, bool BlackTransparent, TEXTURED
 					}
 				}
 			}
+
+			if( (width%4) != 0 ){
+				//4の倍数になるようにパディング
+				unsigned char dummy[3];
+				fread(&dummy, 1, 4 - (width%4), fp);
+			}
 		}
 	}
 
@@ -1093,6 +1111,8 @@ bool D3DGraphics::LoadBMPTexture(char* filename, bool BlackTransparent, TEXTURED
 					}
 				}
 			}
+
+			//メモ：1ピクセル＝4バイト ならば、パディング不要。
 		}
 	}
 
