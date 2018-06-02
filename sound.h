@@ -86,6 +86,7 @@ public:
 	int PlaySound(int id, int volume, int pan);
 	int Play3DSound(int id, float x, float y, float z, int volume);
 	void CleanupSound(int id);
+	int GetTotalSounds();
 #else	//#ifdef SOUND_DIRECTSOUND
 	HINSTANCE lib;		//!< DLLファイルのインスタンス
 	FARPROC DSver;		//!< DSver()
@@ -116,6 +117,7 @@ public:
 	int LoadSound(char* filename);
 	int PlaySound(int id, int volume, int pan);
 	int Play3DSound(int id, float x, float y, float z, int volume);
+	int GetTotalSounds();
 	void CleanupSound(int id);
 #endif	//#ifdef SOUND_DIRECTSOUND
 };

@@ -1764,6 +1764,58 @@ smallobject* ObjectManager::SearchSmallobject(signed char p4)
 	return NULL;
 }
 
+//! @brief 有効なオブジェクト数を取得
+//! @param HumanCnt 人オブジェクトの有効数を受け取るポインタ　（NULL可）
+//! @param WeaponCnt 武器オブジェクトの有効数を受け取るポインタ　（NULL可）
+//! @param SmallobjectCnt 小物オブジェクトの有効数を受け取るポインタ　（NULL可）
+//! @param BulletCnt 弾オブジェクトの有効数を受け取るポインタ　（NULL可）
+//! @param GrenadeCnt 手榴弾オブジェクトの有効数を受け取るポインタ　（NULL可）
+//! @param EffectCnt エフェクトオブジェクトの有効数を受け取るポインタ　（NULL可）
+void ObjectManager::GetTotalObjects(int *HumanCnt, int *WeaponCnt, int *SmallobjectCnt, int *BulletCnt, int *GrenadeCnt, int *EffectCnt)
+{
+	if( HumanCnt != NULL ){
+		*HumanCnt = 0;
+		for(int i=0; i<MAX_HUMAN; i++){
+			if( HumanIndex[i].GetEnableFlag() == true ){ *HumanCnt += 1; }
+		}
+	}
+
+	if( WeaponCnt != NULL ){
+		*WeaponCnt = 0;
+		for(int i=0; i<MAX_WEAPON; i++){
+			if( WeaponIndex[i].GetEnableFlag() == true ){ *WeaponCnt += 1; }
+		}
+	}
+
+	if( SmallobjectCnt != NULL ){
+		*SmallobjectCnt = 0;
+		for(int i=0; i<MAX_SMALLOBJECT; i++){
+			if( SmallObjectIndex[i].GetEnableFlag() == true ){ *SmallobjectCnt += 1; }
+		}
+	}
+
+	if( BulletCnt != NULL ){
+		*BulletCnt = 0;
+		for(int i=0; i<MAX_BULLET; i++){
+			if( BulletIndex[i].GetEnableFlag() == true ){ *BulletCnt += 1; }
+		}
+	}
+
+	if( GrenadeCnt != NULL ){
+		*GrenadeCnt = 0;
+		for(int i=0; i<MAX_GRENADE; i++){
+			if( GrenadeIndex[i].GetEnableFlag() == true ){ *GrenadeCnt += 1; }
+		}
+	}
+
+	if( EffectCnt != NULL ){
+		*EffectCnt = 0;
+		for(int i=0; i<MAX_EFFECT; i++){
+			if( EffectIndex[i].GetEnableFlag() == true ){ *EffectCnt += 1; }
+		}
+	}
+}
+
 //! @brief 前進（走り）を実行
 //! @param human_id 人の番号（0～MAX_HUMAN-1）
 void ObjectManager::MoveForward(int human_id)

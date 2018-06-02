@@ -246,6 +246,20 @@ int SoundControl::Play3DSound(int id, float x, float y, float z, int volume)
 	return PlaySound(id, playvolume, pan);
 }
 
+//! @brief 読み込み済みのサウンド数を取得
+//! @return サウンド数
+int SoundControl::GetTotalSounds()
+{
+	int cnt = 0;
+
+	//使用中の要素を数える
+	for(int i=0; i<MAX_LOADSOUND; i++){
+		if( useflag[i] == true ){ cnt += 1; }
+	}
+
+	return cnt;
+}
+
 //! @brief サウンドを解放
 //! @param id 認識番号
 void SoundControl::CleanupSound(int id)

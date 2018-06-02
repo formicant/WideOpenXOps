@@ -105,6 +105,7 @@ public:
 	bool GrenadeExplosion(float x, float y, float z, int teamID);
 	bool SetFootsteps(float x, float y, float z, int teamID);
 	bool ReloadWeapon(float x, float y, float z, int teamID);
+	int GetTotalSoundList();
 	int GetWorldSound(float pos_x, float pos_y, float pos_z, int teamID, soundlist *psoundlist);
 	void PlayWorldSound(float camera_x, float camera_y, float camera_z, float camera_rx, int teamID);
 };

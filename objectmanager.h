@@ -151,6 +151,7 @@ public:
 	grenade* GetNewGrenadeObject();
 	human* SearchHuman(signed char p4);
 	smallobject* SearchSmallobject(signed char p4);
+	void GetTotalObjects(int *HumanCnt, int *WeaponCnt, int *SmallobjectCnt, int *BulletCnt, int *GrenadeCnt, int *EffectCnt);
 	void MoveForward(int human_id);
 	void MoveBack(int human_id);
 	void MoveLeft(int human_id);

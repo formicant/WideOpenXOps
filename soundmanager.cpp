@@ -268,6 +268,18 @@ bool SoundManager::ReloadWeapon(float x, float y, float z, int teamID)
 	return true;
 }
 
+//! @brief 空間（サウンドリスト）上で有効な音源数を取得
+//! @return 有効な音源数
+int SoundManager::GetTotalSoundList()
+{
+	if( changeAB == false ){
+		return listBdatas;
+	}
+	//else{
+		return listAdatas;
+	//}
+}
+
 //! @brief 指定した位置の周辺にある音源を取得
 //! @param pos_x 音源のX座標
 //! @param pos_y 音源のY座標

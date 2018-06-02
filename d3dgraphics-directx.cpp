@@ -510,6 +510,20 @@ int D3DGraphics::MorphingModel(int idA, int idB)
 	return idN;
 }
 
+//! @brief 読み込み済みのモデル数を取得
+//! @return モデル数
+int D3DGraphics::GetTotalModels()
+{
+	int cnt = 0;
+
+	//使用中の要素を数える
+	for(int i=0; i<MAX_MODEL; i++){
+		if( pmesh[i] != NULL ){ cnt += 1; }
+	}
+
+	return cnt;
+}
+
 //! @brief モデルファイルを解放
 //! @param id モデル認識番号
 void D3DGraphics::CleanupModel(int id)
@@ -751,6 +765,20 @@ int D3DGraphics::GetTextureSize(int id, int *width, int *height)
 	surface->Release();
 
 	return 0;
+}
+
+//! @brief 読み込み済みのテクスチャ数を取得
+//! @return テクスチャ数
+int D3DGraphics::GetTotalTextures()
+{
+	int cnt = 0;
+
+	//使用中の要素を数える
+	for(int i=0; i<MAX_TEXTURE; i++){
+		if( ptextures[i] != NULL ){ cnt += 1; }
+	}
+
+	return cnt;
 }
 
 //! @brief テクスチャを解放

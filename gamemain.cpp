@@ -2872,7 +2872,7 @@ void maingame::ProcessConsole()
 	//コマンドリスト
 	if( strcmp(NewCommand, "help") == 0 ){
 		AddInfoConsole(d3dg->GetColorCode(1.0f,1.0f,1.0f,1.0f), "help          human        result          event            ver");
-		AddInfoConsole(d3dg->GetColorCode(1.0f,1.0f,1.0f,1.0f), "config        mif          bd1             pd1");
+		AddInfoConsole(d3dg->GetColorCode(1.0f,1.0f,1.0f,1.0f), "config        mif          bd1             pd1              resinfo");
 		AddInfoConsole(d3dg->GetColorCode(1.0f,1.0f,1.0f,1.0f), "info          view         center          map              aiinfo <NUM>");
 		AddInfoConsole(d3dg->GetColorCode(1.0f,1.0f,1.0f,1.0f), "tag           radar        inmap           sky <NUM>        dark");
 		AddInfoConsole(d3dg->GetColorCode(1.0f,1.0f,1.0f,1.0f), "ff            revive       kill <NUM>      treat <NUM>      nodamage <NUM>");
@@ -2970,7 +2970,7 @@ void maingame::ProcessConsole()
 		}
 
 		//マウス感度
-		sprintf(str3, "MouseSensitivity : %d           ", GameConfig.GetMouseSensitivity());
+		sprintf(str3, "MouseSensitivity : %2d           ", GameConfig.GetMouseSensitivity());
 		strcpy(str, str3);
 
 		//画面表示モード
@@ -3004,7 +3004,7 @@ void maingame::ProcessConsole()
 		AddInfoConsole(d3dg->GetColorCode(1.0f,1.0f,1.0f,1.0f), str);
 
 		//画面の明るさ設定
-		sprintf(str3, "Brightness : %d                  ", GameConfig.GetBrightness());
+		sprintf(str3, "Brightness : %2d                 ", GameConfig.GetBrightness());
 		strcpy(str, str3);
 
 		//マウス反転設定
@@ -3230,6 +3230,41 @@ void maingame::ProcessConsole()
 
 		//人のテクスチャ数を取得
 		sprintf(str, "HumanTextures : %d/%d", Resource.GetHumanTextures(), MAX_LOADHUMANTEXTURE);
+		AddInfoConsole(d3dg->GetColorCode(1.0f,1.0f,1.0f,1.0f), str);
+	}
+
+	//リソース情報表示
+	if( strcmp(NewCommand, "resinfo") == 0 ){
+		int human = 0;
+		int weapon = 0;
+		int smallobject = 0;
+		int bullet = 0;
+		int grenade = 0;
+		int effect = 0;
+
+		//グラフィック
+		AddInfoConsole(d3dg->GetColorCode(1.0f,1.0f,1.0f,1.0f), "[Graphics]");
+		sprintf(str, " model : %2d/%2d        texture : %2d/%2d", d3dg->GetTotalModels(), MAX_MODEL, d3dg->GetTotalTextures(), MAX_TEXTURE);
+		AddInfoConsole(d3dg->GetColorCode(1.0f,1.0f,1.0f,1.0f), str);
+
+		//サウンド
+		AddInfoConsole(d3dg->GetColorCode(1.0f,1.0f,1.0f,1.0f), "[Sound]");
+		sprintf(str, " sound : %2d/%2d", SoundCtrl.GetTotalSounds(), MAX_LOADSOUND);
+		AddInfoConsole(d3dg->GetColorCode(1.0f,1.0f,1.0f,1.0f), str);
+
+		//データファイル
+		AddInfoConsole(d3dg->GetColorCode(1.0f,1.0f,1.0f,1.0f), "[Datafile]");
+		sprintf(str, " blocks : %3d/%3d     points : %3d/%3d", BlockData.GetTotaldatas(), MAX_BLOCKS, PointData.GetTotaldatas(), MAX_POINTS);
+		AddInfoConsole(d3dg->GetColorCode(1.0f,1.0f,1.0f,1.0f), str);
+
+		//オブジェクト数
+		ObjMgr.GetTotalObjects(&human, &weapon, &smallobject, &bullet, &grenade, &effect);
+		AddInfoConsole(d3dg->GetColorCode(1.0f,1.0f,1.0f,1.0f), "[Object]");
+		sprintf(str, " human : %3d/%3d      weapon : %3d/%3d      smallobject : %2d/%2d", human, MAX_HUMAN, weapon, MAX_WEAPON, smallobject, MAX_SMALLOBJECT);
+		AddInfoConsole(d3dg->GetColorCode(1.0f,1.0f,1.0f,1.0f), str);
+		sprintf(str, " bullet : %3d/%3d     grenade : %3d/%3d     effect : %3d/%3d", bullet, MAX_BULLET, grenade, MAX_GRENADE, effect, MAX_EFFECT);
+		AddInfoConsole(d3dg->GetColorCode(1.0f,1.0f,1.0f,1.0f), str);
+		sprintf(str, " sound : %3d/%3d", GameSound->GetTotalSoundList(), MAX_SOUNDMGR_LIST);
 		AddInfoConsole(d3dg->GetColorCode(1.0f,1.0f,1.0f,1.0f), str);
 	}
 

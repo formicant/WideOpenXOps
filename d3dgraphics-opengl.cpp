@@ -746,6 +746,20 @@ void D3DGraphics::CleanupModel(int id)
 #endif
 }
 
+//! @brief 読み込み済みのモデル数を取得
+//! @return モデル数
+int D3DGraphics::GetTotalModels()
+{
+	int cnt = 0;
+
+	//使用中の要素を数える
+	for(int i=0; i<MAX_MODEL; i++){
+		if( pmodel[i].useflag == true ){ cnt += 1; }
+	}
+
+	return cnt;
+}
+
 //! @brief テクスチャフォーマットを拡張子で判定
 //! @param filename ファイル名
 //! @param nowformat 現在の判別値
@@ -1639,6 +1653,20 @@ void D3DGraphics::CleanupTexture(int id)
 	//ログに出力
 	OutputLog.WriteLog(LOG_CLEANUP, "テクスチャ", id);
 #endif
+}
+
+//! @brief 読み込み済みのテクスチャ数を取得
+//! @return テクスチャ数
+int D3DGraphics::GetTotalTextures()
+{
+	int cnt = 0;
+
+	//使用中の要素を数える
+	for(int i=0; i<MAX_TEXTURE; i++){
+		if( ptextures[i].useflag == true ){ cnt += 1; }
+	}
+
+	return cnt;
 }
 
 //! @brief 全ての描画処理を開始

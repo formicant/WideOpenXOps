@@ -271,9 +271,11 @@ public:
 	void DestroyD3D();
 	int LoadModel(char* filename);
 	int MorphingModel(int idA, int idB);
+	int GetTotalModels();
 	void CleanupModel(int id);
 	int LoadTexture(char* filename, bool texturefont, bool BlackTransparent);
 	int GetTextureSize(int id, int *width, int *height);
+	int GetTotalTextures();
 	void CleanupTexture(int id);
 	int StartRender();
 	bool EndRender();
