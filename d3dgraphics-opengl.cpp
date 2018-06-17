@@ -1973,7 +1973,7 @@ void D3DGraphics::LoadMapdata(BlockDataInterface* in_blockdata, char *directory)
 
 //! @brief マップデータを描画
 //! @param wireframe ワイヤーフレーム表示
-void D3DGraphics::DrawMapdata(bool wireframe)
+void D3DGraphics::RenderMapdata(bool wireframe)
 {
 	//ブロックデータが読み込まれていなければ、処理しない。
 	if( blockdata == NULL ){ return; }
@@ -1990,18 +1990,18 @@ void D3DGraphics::DrawMapdata(bool wireframe)
 		//ワイヤーフレーム表示
 		for(int i=0; i<bs; i++){
 			blockdata->Getdata(&data, i);
-			Drawline(data.x[0], data.y[0], data.z[0], data.x[1], data.y[1], data.z[1], GetColorCode(0.0f,1.0f,0.0f,1.0f));
-			Drawline(data.x[1], data.y[1], data.z[1], data.x[2], data.y[2], data.z[2], GetColorCode(0.0f,1.0f,0.0f,1.0f));
-			Drawline(data.x[2], data.y[2], data.z[2], data.x[3], data.y[3], data.z[3], GetColorCode(0.0f,1.0f,0.0f,1.0f));
-			Drawline(data.x[3], data.y[3], data.z[3], data.x[0], data.y[0], data.z[0], GetColorCode(0.0f,1.0f,0.0f,1.0f));
-			Drawline(data.x[4], data.y[4], data.z[4], data.x[5], data.y[5], data.z[5], GetColorCode(0.0f,1.0f,0.0f,1.0f));
-			Drawline(data.x[5], data.y[5], data.z[5], data.x[6], data.y[6], data.z[6], GetColorCode(0.0f,1.0f,0.0f,1.0f));
-			Drawline(data.x[6], data.y[6], data.z[6], data.x[7], data.y[7], data.z[7], GetColorCode(0.0f,1.0f,0.0f,1.0f));
-			Drawline(data.x[7], data.y[7], data.z[7], data.x[4], data.y[4], data.z[4], GetColorCode(0.0f,1.0f,0.0f,1.0f));
-			Drawline(data.x[0], data.y[0], data.z[0], data.x[4], data.y[4], data.z[4], GetColorCode(0.0f,1.0f,0.0f,1.0f));
-			Drawline(data.x[1], data.y[1], data.z[1], data.x[5], data.y[5], data.z[5], GetColorCode(0.0f,1.0f,0.0f,1.0f));
-			Drawline(data.x[2], data.y[2], data.z[2], data.x[6], data.y[6], data.z[6], GetColorCode(0.0f,1.0f,0.0f,1.0f));
-			Drawline(data.x[3], data.y[3], data.z[3], data.x[7], data.y[7], data.z[7], GetColorCode(0.0f,1.0f,0.0f,1.0f));
+			Renderline(data.x[0], data.y[0], data.z[0], data.x[1], data.y[1], data.z[1], GetColorCode(0.0f,1.0f,0.0f,1.0f));
+			Renderline(data.x[1], data.y[1], data.z[1], data.x[2], data.y[2], data.z[2], GetColorCode(0.0f,1.0f,0.0f,1.0f));
+			Renderline(data.x[2], data.y[2], data.z[2], data.x[3], data.y[3], data.z[3], GetColorCode(0.0f,1.0f,0.0f,1.0f));
+			Renderline(data.x[3], data.y[3], data.z[3], data.x[0], data.y[0], data.z[0], GetColorCode(0.0f,1.0f,0.0f,1.0f));
+			Renderline(data.x[4], data.y[4], data.z[4], data.x[5], data.y[5], data.z[5], GetColorCode(0.0f,1.0f,0.0f,1.0f));
+			Renderline(data.x[5], data.y[5], data.z[5], data.x[6], data.y[6], data.z[6], GetColorCode(0.0f,1.0f,0.0f,1.0f));
+			Renderline(data.x[6], data.y[6], data.z[6], data.x[7], data.y[7], data.z[7], GetColorCode(0.0f,1.0f,0.0f,1.0f));
+			Renderline(data.x[7], data.y[7], data.z[7], data.x[4], data.y[4], data.z[4], GetColorCode(0.0f,1.0f,0.0f,1.0f));
+			Renderline(data.x[0], data.y[0], data.z[0], data.x[4], data.y[4], data.z[4], GetColorCode(0.0f,1.0f,0.0f,1.0f));
+			Renderline(data.x[1], data.y[1], data.z[1], data.x[5], data.y[5], data.z[5], GetColorCode(0.0f,1.0f,0.0f,1.0f));
+			Renderline(data.x[2], data.y[2], data.z[2], data.x[6], data.y[6], data.z[6], GetColorCode(0.0f,1.0f,0.0f,1.0f));
+			Renderline(data.x[3], data.y[3], data.z[3], data.x[7], data.y[7], data.z[7], GetColorCode(0.0f,1.0f,0.0f,1.0f));
 		}
 		return;
 	}
@@ -2164,9 +2164,9 @@ void D3DGraphics::RenderModel(int id_model, int id_texture, bool darkflag)
 	glDisableClientState(GL_TEXTURE_COORD_ARRAY);
 
 	/*
-	Drawline(1.0f, 0.0f, 0.0f, -1.0f, 0.0f, 0.0f);
-	Drawline(0.0f, 1.0f, 0.0f, 0.0f, -1.0f, 0.0f);
-	Drawline(0.0f, 0.0f, 1.0f, 0.0f, 0.0f, -1.0f);
+	Renderline(1.0f, 0.0f, 0.0f, -1.0f, 0.0f, 0.0f);
+	Renderline(0.0f, 1.0f, 0.0f, 0.0f, -1.0f, 0.0f);
+	Renderline(0.0f, 0.0f, 1.0f, 0.0f, 0.0f, -1.0f);
 	*/
 }
 
@@ -2242,16 +2242,16 @@ void D3DGraphics::ScreenBrightness(int Width, int Height, int Brightness)
 }
 
 //! @brief 【デバック用】中心線表示
-void D3DGraphics::Centerline()
+void D3DGraphics::RenderCenterline()
 {
 	ResetWorldTransform();
-	Drawline(100.0f, 0.0f, 0.0f, -100.0f, 0.0f, 0.0f, GetColorCode(1.0f,0.0f,0.0f,1.0f));
-	Drawline(0.0f, 100.0f, 0.0f, 0.0f, -100.0f, 0.0f, GetColorCode(0.0f,1.0f,0.0f,1.0f));
-	Drawline(0.0f, 0.0f, 100.0f, 0.0f, 0.0f, -100.0f, GetColorCode(0.0f,0.0f,1.0f,1.0f));
+	Renderline(100.0f, 0.0f, 0.0f, -100.0f, 0.0f, 0.0f, GetColorCode(1.0f,0.0f,0.0f,1.0f));
+	Renderline(0.0f, 100.0f, 0.0f, 0.0f, -100.0f, 0.0f, GetColorCode(0.0f,1.0f,0.0f,1.0f));
+	Renderline(0.0f, 0.0f, 100.0f, 0.0f, 0.0f, -100.0f, GetColorCode(0.0f,0.0f,1.0f,1.0f));
 }
 
 //! @brief 【デバック用】線表示
-void D3DGraphics::Drawline(float x1, float y1, float z1, float x2, float y2, float z2, int color)
+void D3DGraphics::Renderline(float x1, float y1, float z1, float x2, float y2, float z2, int color)
 {
 	float VertexAry[2*3];
 	unsigned char ColorAry[2*4];

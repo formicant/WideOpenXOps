@@ -352,7 +352,7 @@ void opening::Render3D()
 
 	//マップを描画
 	d3dg->ResetWorldTransform();
-	d3dg->DrawMapdata(false);
+	d3dg->RenderMapdata(false);
 
 	//オブジェクトを描画
 	ObjMgr.Render(camera_x, camera_y, camera_z, 0);
@@ -730,7 +730,7 @@ void mainmenu::Render3D()
 
 	//マップを描画
 	d3dg->ResetWorldTransform();
-	d3dg->DrawMapdata(false);
+	d3dg->RenderMapdata(false);
 
 	//オブジェクトを描画
 	ObjMgr.Render(camera_x, camera_y, camera_z, 0);
@@ -2054,12 +2054,12 @@ void maingame::Render3D()
 
 	if( CenterLine == true ){
 		//中心線表示（デバック用）
-		d3dg->Centerline();
+		d3dg->RenderCenterline();
 	}
 
 	//マップを描画
 	d3dg->ResetWorldTransform();
-	d3dg->DrawMapdata(wireframe);
+	d3dg->RenderMapdata(wireframe);
 
 	//プレイヤーの描画有無の決定
 	int DrawPlayer = 0;
@@ -2088,31 +2088,31 @@ void maingame::Render3D()
 			d3dg->ResetWorldTransform();
 
 			//本人
-			d3dg->Drawline(posx+10.0f, posy, posz, posx-10.0f, posy, posz, d3dg->GetColorCode(0.0f,0.0f,1.0f,1.0f));
-			d3dg->Drawline(posx, posy+10.0f, posz, posx, posy-10.0f, posz, d3dg->GetColorCode(0.0f,0.0f,1.0f,1.0f));
-			d3dg->Drawline(posx, posy, posz+10.0f, posx, posy, posz-10.0f, d3dg->GetColorCode(0.0f,0.0f,1.0f,1.0f));
+			d3dg->Renderline(posx+10.0f, posy, posz, posx-10.0f, posy, posz, d3dg->GetColorCode(0.0f,0.0f,1.0f,1.0f));
+			d3dg->Renderline(posx, posy+10.0f, posz, posx, posy-10.0f, posz, d3dg->GetColorCode(0.0f,0.0f,1.0f,1.0f));
+			d3dg->Renderline(posx, posy, posz+10.0f, posx, posy, posz-10.0f, d3dg->GetColorCode(0.0f,0.0f,1.0f,1.0f));
 
 			//移動先
-			d3dg->Drawline(mposx+10.0f, posy, mposz, mposx-10.0f, posy, mposz, d3dg->GetColorCode(1.0f,1.0f,0.0f,1.0f));
-			d3dg->Drawline(mposx, 5000.0f, mposz, mposx, -500.0f,mposz, d3dg->GetColorCode(1.0f,1.0f,0.0f,1.0f));
-			d3dg->Drawline(mposx, posy, mposz+10.0f, mposx, posy, mposz-10.0f, d3dg->GetColorCode(1.0f,1.0f,0.0f,1.0f));
+			d3dg->Renderline(mposx+10.0f, posy, mposz, mposx-10.0f, posy, mposz, d3dg->GetColorCode(1.0f,1.0f,0.0f,1.0f));
+			d3dg->Renderline(mposx, 5000.0f, mposz, mposx, -500.0f,mposz, d3dg->GetColorCode(1.0f,1.0f,0.0f,1.0f));
+			d3dg->Renderline(mposx, posy, mposz+10.0f, mposx, posy, mposz-10.0f, d3dg->GetColorCode(1.0f,1.0f,0.0f,1.0f));
 
 			if( EnemyID != -1 ){
 				ObjMgr.GetHumanObject(EnemyID)->GetPosData(&posx, &posy, &posz, &rx);
 
 				//攻撃対象
-				d3dg->Drawline(posx+3.0f, posy, posz+3.0f, posx+3.0f, posy, posz-3.0f, d3dg->GetColorCode(1.0f,0.0f,0.0f,1.0f));
-				d3dg->Drawline(posx+3.0f, posy, posz-3.0f, posx-3.0f, posy, posz-3.0f, d3dg->GetColorCode(1.0f,0.0f,0.0f,1.0f));
-				d3dg->Drawline(posx-3.0f, posy, posz-3.0f, posx-3.0f, posy, posz+3.0f, d3dg->GetColorCode(1.0f,0.0f,0.0f,1.0f));
-				d3dg->Drawline(posx-3.0f, posy, posz+3.0f, posx+3.0f, posy, posz+3.0f, d3dg->GetColorCode(1.0f,0.0f,0.0f,1.0f));
-				d3dg->Drawline(posx+3.0f, posy+HUMAN_HEIGHT, posz+3.0f, posx+3.0f, posy+HUMAN_HEIGHT, posz-3.0f, d3dg->GetColorCode(1.0f,0.0f,0.0f,1.0f));
-				d3dg->Drawline(posx+3.0f, posy+HUMAN_HEIGHT, posz-3.0f, posx-3.0f, posy+HUMAN_HEIGHT, posz-3.0f, d3dg->GetColorCode(1.0f,0.0f,0.0f,1.0f));
-				d3dg->Drawline(posx-3.0f, posy+HUMAN_HEIGHT, posz-3.0f, posx-3.0f, posy+HUMAN_HEIGHT, posz+3.0f, d3dg->GetColorCode(1.0f,0.0f,0.0f,1.0f));
-				d3dg->Drawline(posx-3.0f, posy+HUMAN_HEIGHT, posz+3.0f, posx+3.0f, posy+HUMAN_HEIGHT, posz+3.0f, d3dg->GetColorCode(1.0f,0.0f,0.0f,1.0f));
-				d3dg->Drawline(posx+3.0f, posy, posz+3.0f, posx+3.0f, posy+HUMAN_HEIGHT, posz+3.0f, d3dg->GetColorCode(1.0f,0.0f,0.0f,1.0f));
-				d3dg->Drawline(posx+3.0f, posy, posz-3.0f, posx+3.0f, posy+HUMAN_HEIGHT, posz-3.0f, d3dg->GetColorCode(1.0f,0.0f,0.0f,1.0f));
-				d3dg->Drawline(posx-3.0f, posy, posz-3.0f, posx-3.0f, posy+HUMAN_HEIGHT, posz-3.0f, d3dg->GetColorCode(1.0f,0.0f,0.0f,1.0f));
-				d3dg->Drawline(posx-3.0f, posy, posz+3.0f, posx-3.0f, posy+HUMAN_HEIGHT, posz+3.0f, d3dg->GetColorCode(1.0f,0.0f,0.0f,1.0f));
+				d3dg->Renderline(posx+3.0f, posy, posz+3.0f, posx+3.0f, posy, posz-3.0f, d3dg->GetColorCode(1.0f,0.0f,0.0f,1.0f));
+				d3dg->Renderline(posx+3.0f, posy, posz-3.0f, posx-3.0f, posy, posz-3.0f, d3dg->GetColorCode(1.0f,0.0f,0.0f,1.0f));
+				d3dg->Renderline(posx-3.0f, posy, posz-3.0f, posx-3.0f, posy, posz+3.0f, d3dg->GetColorCode(1.0f,0.0f,0.0f,1.0f));
+				d3dg->Renderline(posx-3.0f, posy, posz+3.0f, posx+3.0f, posy, posz+3.0f, d3dg->GetColorCode(1.0f,0.0f,0.0f,1.0f));
+				d3dg->Renderline(posx+3.0f, posy+HUMAN_HEIGHT, posz+3.0f, posx+3.0f, posy+HUMAN_HEIGHT, posz-3.0f, d3dg->GetColorCode(1.0f,0.0f,0.0f,1.0f));
+				d3dg->Renderline(posx+3.0f, posy+HUMAN_HEIGHT, posz-3.0f, posx-3.0f, posy+HUMAN_HEIGHT, posz-3.0f, d3dg->GetColorCode(1.0f,0.0f,0.0f,1.0f));
+				d3dg->Renderline(posx-3.0f, posy+HUMAN_HEIGHT, posz-3.0f, posx-3.0f, posy+HUMAN_HEIGHT, posz+3.0f, d3dg->GetColorCode(1.0f,0.0f,0.0f,1.0f));
+				d3dg->Renderline(posx-3.0f, posy+HUMAN_HEIGHT, posz+3.0f, posx+3.0f, posy+HUMAN_HEIGHT, posz+3.0f, d3dg->GetColorCode(1.0f,0.0f,0.0f,1.0f));
+				d3dg->Renderline(posx+3.0f, posy, posz+3.0f, posx+3.0f, posy+HUMAN_HEIGHT, posz+3.0f, d3dg->GetColorCode(1.0f,0.0f,0.0f,1.0f));
+				d3dg->Renderline(posx+3.0f, posy, posz-3.0f, posx+3.0f, posy+HUMAN_HEIGHT, posz-3.0f, d3dg->GetColorCode(1.0f,0.0f,0.0f,1.0f));
+				d3dg->Renderline(posx-3.0f, posy, posz-3.0f, posx-3.0f, posy+HUMAN_HEIGHT, posz-3.0f, d3dg->GetColorCode(1.0f,0.0f,0.0f,1.0f));
+				d3dg->Renderline(posx-3.0f, posy, posz+3.0f, posx-3.0f, posy+HUMAN_HEIGHT, posz+3.0f, d3dg->GetColorCode(1.0f,0.0f,0.0f,1.0f));
 			}
 		}
 	}

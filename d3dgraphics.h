@@ -290,14 +290,14 @@ public:
 	void SetFog(int skynumber);
 	void SetCamera(float camera_x, float camera_y, float camera_z, float camera_rx, float camera_ry, float viewangle);
 	void LoadMapdata(class BlockDataInterface* in_blockdata, char *directory);
-	void DrawMapdata(bool wireframe);
+	void RenderMapdata(bool wireframe);
 	int GetMapTextureID(int id);
 	void CleanupMapdata();
 	void RenderModel(int id_model, int id_texture, bool darkflag);
 	void RenderBoard(int id_texture, float alpha);
 	void ScreenBrightness(int Width, int Height, int Brightness);
-	void Centerline();
-	void Drawline(float x1, float y1, float z1, float x2, float y2, float z2, int color);
+	void RenderCenterline();
+	void Renderline(float x1, float y1, float z1, float x2, float y2, float z2, int color);
 	void Draw2DMSFontText(int x, int y, char *str, int color);
 	void Draw2DMSFontTextCenter(int x, int y, int w, int h, char *str, int color);
 	void Draw2DTextureFontText(int x, int y, char *str, int color, int fontwidth, int fontheight);
