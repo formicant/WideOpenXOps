@@ -69,6 +69,7 @@
 #define ENABLE_ADDOBJ_PARAM8BIT	//!< 追加小物の設定値をchar型 8bitにする（コメント化で無効）
 #define ENABLE_DEBUGCONSOLE		//!< デバック用コンソールの有効化（コメント化で機能無効）
 #define ENABLE_DEBUGLOG			//!< デバック用ログ出力の有効化（コメント化で機能無効）
+#define ENABLE_CHECKOPENXOPSEVENT		//!< OpenXOPS動作判定用イベントの有効化（コメント化で機能無効）
 //#define ENABLE_PATH_DELIMITER_SLASH	//!< パス区切り文字を、'\'から‘/’へ変換する。
 
 //windows.hを使用しないならば

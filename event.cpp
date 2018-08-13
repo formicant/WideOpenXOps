@@ -120,7 +120,13 @@ int EventControl::Execution(int *endcnt, bool *complete, int *MessageID, bool *S
 		if( Point->SearchPointdata(&data, 0x08, 0, 0, 0, nextp4, 0) == 0 ){ return cnt; }
 
 		//無効な番号なら処理しない
-		if( (data.p1 < 10)||(19 < data.p1) ){ return cnt; }
+		if( (data.p1 < 10)||(19 < data.p1) ){
+#ifdef ENABLE_CHECKOPENXOPSEVENT
+			if( data.p1 != 29 ){ return cnt; }
+#else
+			return cnt;
+#endif
+		}
 
 		switch(data.p1){
 			case 10:	//任務達成
@@ -207,6 +213,13 @@ int EventControl::Execution(int *endcnt, bool *complete, int *MessageID, bool *S
 				thuman->SetTeamID(0);
 				nextp4 = data.p3;
 				break;
+
+#ifdef ENABLE_CHECKOPENXOPSEVENT
+			case 29:	//OpenXOPS判定
+				if( data.p2 != 0 ){ return cnt; }
+				nextp4 = data.p3;
+				break;
+#endif
 
 			//新たなイベントポイントを追加する場合、ここに書く。
 			//　※ 種類番号の競合 厳禁
