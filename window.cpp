@@ -37,12 +37,14 @@ WindowControl::WindowControl()
 	hInstance = 0;
 	nCmdShow = 0;
 	hWnd = NULL;
+
+	timeBeginPeriod(1);		//timeEndPeriodと対
 }
 
 //! @brief ディストラクタ
 WindowControl::~WindowControl()
 {
-	//
+	timeEndPeriod(1);		//timeBeginPeriodと対
 }
 
 //! @brief アプリケーションの情報を設定
@@ -276,6 +278,7 @@ float GetFps(int getcnt)
 
 //! @brief fps（Frames Per Second：フレームレート）調整
 //! @return 調整を実施：true　　調整を実施せず：false
+//! @attention WindowControlクラスを初期化しないと、タイマーの精度が出ません。
 bool ControlFps()
 {
 	static unsigned int ptimec = 0;
@@ -285,7 +288,10 @@ bool ControlFps()
 	nowtime = GetTimeMS();
 	waittime = GAMEFRAMEMS - (nowtime - ptimec);
 	if( (0 < waittime)&&(waittime <= GAMEFRAMEMS) ){
+		//timeBeginPeriod(1);
 		Sleep(waittime);
+		//timeEndPeriod(1);
+		
 		ptimec = GetTimeMS();
 		return true;
 	}
@@ -296,13 +302,14 @@ bool ControlFps()
 
 //! @brief ミリ秒単位を返す
 //! @return ミリ秒
+//! @attention WindowControlクラスを初期化しないと、タイマーの精度が出ません。
 unsigned int GetTimeMS()
 {
 	unsigned int time;
 
-	timeBeginPeriod(1);
+	//timeBeginPeriod(1);
 	time = timeGetTime();
-	timeEndPeriod(1);
+	//timeEndPeriod(1);
 
 	return time;
 }
