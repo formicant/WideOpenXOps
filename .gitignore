@@ -1,7 +1,7 @@
 # VisualStudio files
-.vs
+/.vs
 *.user
 
 # Output
-trunk/Debug
-trunk/Release
+/Debug
+/Release
