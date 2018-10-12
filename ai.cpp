@@ -1,5 +1,5 @@
-//! @file ai.cpp
-//! @brief AIcontrolƒNƒ‰ƒX‚Ì’è‹`
+ï»¿//! @file ai.cpp
+//! @brief AIcontrolã‚¯ãƒ©ã‚¹ã®å®šç¾©
 
 //--------------------------------------------------------------------------------
 // 
@@ -31,7 +31,7 @@
 
 #include "ai.h"
 
-//! @brief ƒRƒ“ƒXƒgƒ‰ƒNƒ^
+//! @brief ã‚³ãƒ³ã‚¹ãƒˆãƒ©ã‚¯ã‚¿
 AIcontrol::AIcontrol(class ObjectManager *in_ObjMgr, int in_ctrlid, class BlockDataInterface *in_blocks, class PointDataInterface *in_Points, class ParameterInfo *in_Param, class Collision *in_CollD, class SoundManager *in_GameSound)
 {
 	ObjMgr = in_ObjMgr;
@@ -59,15 +59,15 @@ AIcontrol::AIcontrol(class ObjectManager *in_ObjMgr, int in_ctrlid, class BlockD
 	ObjDriver->SetClass(in_ObjMgr, in_ctrlid);
 }
 
-//! @brief ƒfƒBƒXƒgƒ‰ƒNƒ^
+//! @brief ãƒ‡ã‚£ã‚¹ãƒˆãƒ©ã‚¯ã‚¿
 AIcontrol::~AIcontrol()
 {
 	delete MoveNavi;
 	delete ObjDriver;
 }
 
-//! @brief ‘ÎÛƒNƒ‰ƒX‚ğİ’è
-//! @attention ‚±‚ÌŠÖ”‚Åİ’è‚ğs‚í‚È‚¢‚ÆAƒNƒ‰ƒX©‘Ì‚ª³‚µ‚­‹@”\‚µ‚Ü‚¹‚ñB
+//! @brief å¯¾è±¡ã‚¯ãƒ©ã‚¹ã‚’è¨­å®š
+//! @attention ã“ã®é–¢æ•°ã§è¨­å®šã‚’è¡Œã‚ãªã„ã¨ã€ã‚¯ãƒ©ã‚¹è‡ªä½“ãŒæ­£ã—ãæ©Ÿèƒ½ã—ã¾ã›ã‚“ã€‚
 void AIcontrol::SetClass(class ObjectManager *in_ObjMgr, int in_ctrlid, class BlockDataInterface *in_blocks, class PointDataInterface *in_Points, class ParameterInfo *in_Param, class Collision *in_CollD, class SoundManager *in_GameSound)
 {
 	ObjMgr = in_ObjMgr;
@@ -82,8 +82,8 @@ void AIcontrol::SetClass(class ObjectManager *in_ObjMgr, int in_ctrlid, class Bl
 	ObjDriver->SetClass(in_ObjMgr, in_ctrlid);
 }
 
-//! @brief –Ú•W’n“_‚ÉˆÚ“®‚µ‚Ä‚¢‚é‚©Šm”F
-//! @return “’BFtrue@”ñ“’BFfalse
+//! @brief ç›®æ¨™åœ°ç‚¹ã«ç§»å‹•ã—ã¦ã„ã‚‹ã‹ç¢ºèª
+//! @return åˆ°é”ï¼štrueã€€éåˆ°é”ï¼šfalse
 bool AIcontrol::CheckTargetPos(bool back)
 {
 	float target_posx, target_posz;
@@ -97,17 +97,17 @@ bool AIcontrol::CheckTargetPos(bool back)
 		movemode = AI_NAVI_MOVE_RUN;
 	}
 
-	//‹——£‚ğZo
+	//è·é›¢ã‚’ç®—å‡º
 	float x = posx - target_posx;
 	float z = posz - target_posz;
 	float r = x * x + z * z;
 
-	if( movemode == AI_NAVI_MOVE_TRACKING ){	//’Ç”ö’†‚È‚ç
+	if( movemode == AI_NAVI_MOVE_TRACKING ){	//è¿½å°¾ä¸­ãªã‚‰
 		if( r < AI_ARRIVALDIST_TRACKING * AI_ARRIVALDIST_TRACKING ){
 			return true;
 		}
 	}
-	else{							//‚»‚êˆÈŠO‚È‚ç
+	else{							//ãã‚Œä»¥å¤–ãªã‚‰
 		if( r < (AI_ARRIVALDIST_PATH * AI_ARRIVALDIST_PATH) ){
 			return true;
 		}
@@ -116,7 +116,7 @@ bool AIcontrol::CheckTargetPos(bool back)
 	return false;
 }
 
-//! @brief –Ú•W’n“_‚ÉˆÚ“®
+//! @brief ç›®æ¨™åœ°ç‚¹ã«ç§»å‹•
 void AIcontrol::MoveTarget(bool back)
 {
 	float r, atan;
@@ -135,7 +135,7 @@ void AIcontrol::MoveTarget(bool back)
 		movemode = AI_NAVI_MOVE_RUN;
 	}
 
-	//ƒ]ƒ“ƒr‚©‚Ç‚¤‚©”»’è
+	//ã‚¾ãƒ³ãƒ“ã‹ã©ã†ã‹åˆ¤å®š
 	ctrlhuman->GetParamData(&paramid, NULL, NULL, NULL);
 	Param->GetHuman(paramid, &Paraminfo);
 	if( Paraminfo.type == 2 ){
@@ -145,13 +145,13 @@ void AIcontrol::MoveTarget(bool back)
 		zombie = false;
 	}
 
-	//ˆê“x‘S‚Ä‚Ì“®‚«‚ğ~‚ß‚é
+	//ä¸€åº¦å…¨ã¦ã®å‹•ãã‚’æ­¢ã‚ã‚‹
 	ObjDriver->ResetMode();
 
-	//–Ú•W’n“_‚Ö‚ÌŠp“x‚ğ‹‚ß‚é
+	//ç›®æ¨™åœ°ç‚¹ã¸ã®è§’åº¦ã‚’æ±‚ã‚ã‚‹
 	CheckTargetAngle(posx, 0.0f, posz, rx*-1 + (float)M_PI/2, 0.0f, target_posx, 0.0f, target_posz, 0.0f, &atan, NULL, &r);
 
-	//ù‰ñ
+	//æ—‹å›
 	if( atan > DegreeToRadian(0.5f) ){
 		ObjDriver->SetModeFlag(AI_CTRL_TURNLEFT);
 	}
@@ -159,7 +159,7 @@ void AIcontrol::MoveTarget(bool back)
 		ObjDriver->SetModeFlag(AI_CTRL_TURNRIGHT);
 	}
 
-	//‘Oi‚·‚é
+	//å‰é€²ã™ã‚‹
 	if( zombie == true ){
 		if( fabs(atan) < DegreeToRadian(20) ){
 			ObjDriver->SetModeFlag(AI_CTRL_MOVEWALK);
@@ -191,12 +191,12 @@ void AIcontrol::MoveTarget(bool back)
 		}
 	}
 
-	//ƒWƒƒƒ“ƒv
+	//ã‚¸ãƒ£ãƒ³ãƒ—
 	if( GetRand(16) == 0 ){
 		MoveJump();
 	}
 
-	//ˆø‚ÁŠ|‚©‚Á‚Ä‚¢‚½‚çA¶‰E‚Ö‚Ì‰ñ“]‚ğƒ‰ƒ“ƒ_ƒ€‚És‚¤
+	//å¼•ã£æ›ã‹ã£ã¦ã„ãŸã‚‰ã€å·¦å³ã¸ã®å›è»¢ã‚’ãƒ©ãƒ³ãƒ€ãƒ ã«è¡Œã†
 	if( GetRand(28) == 0 ){
 		if( ctrlhuman->GetMovemode(true) != 0 ){
 			if( ctrlhuman->GetTotalMove() - total_move < 0.1f ){
@@ -208,7 +208,7 @@ void AIcontrol::MoveTarget(bool back)
 	total_move = ctrlhuman->GetTotalMove();
 }
 
-//! @brief –Ú•W’n“_‚ÉˆÚ“®i—Dæ“I‚È‘–‚è—pj
+//! @brief ç›®æ¨™åœ°ç‚¹ã«ç§»å‹•ï¼ˆå„ªå…ˆçš„ãªèµ°ã‚Šç”¨ï¼‰
 void AIcontrol::MoveTarget2(bool back)
 {
 	float atan;
@@ -222,10 +222,10 @@ void AIcontrol::MoveTarget2(bool back)
 		target_posz = cautionback_posz;
 	}
 
-	//–Ú•W’n“_‚Ö‚ÌŠp“x‚ğ‹‚ß‚é
+	//ç›®æ¨™åœ°ç‚¹ã¸ã®è§’åº¦ã‚’æ±‚ã‚ã‚‹
 	CheckTargetAngle(posx, 0.0f, posz, rx*-1 + (float)M_PI/2, 0.0f, target_posx, 0.0f, target_posz, 0.0f, &atan, NULL, NULL);
 
-	//‘OŒãˆÚ“®‚Ìˆ—
+	//å‰å¾Œç§»å‹•ã®å‡¦ç†
 	if( fabs(atan) < DegreeToRadian(56) ){
 		ObjDriver->SetModeFlag(AI_CTRL_MOVEFORWARD);
 	}
@@ -233,7 +233,7 @@ void AIcontrol::MoveTarget2(bool back)
 		ObjDriver->SetModeFlag(AI_CTRL_MOVEBACKWARD);
 	}
 
-	//¶‰EˆÚ“®‚Ìˆ—
+	//å·¦å³ç§»å‹•ã®å‡¦ç†
 	if( (DegreeToRadian(-146) < atan)&&(atan < DegreeToRadian(-33)) ){
 		ObjDriver->SetModeFlag(AI_CTRL_TURNRIGHT);
 	}
@@ -241,12 +241,12 @@ void AIcontrol::MoveTarget2(bool back)
 		ObjDriver->SetModeFlag(AI_CTRL_TURNLEFT);
 	}
 
-	//ƒWƒƒƒ“ƒv
+	//ã‚¸ãƒ£ãƒ³ãƒ—
 	if( GetRand(16) == 0 ){
 		MoveJump();
 	}
 
-	//ˆø‚ÁŠ|‚©‚Á‚Ä‚¢‚½‚çA¶‰E‚Ö‚Ì‰ñ“]‚ğƒ‰ƒ“ƒ_ƒ€‚És‚¤
+	//å¼•ã£æ›ã‹ã£ã¦ã„ãŸã‚‰ã€å·¦å³ã¸ã®å›è»¢ã‚’ãƒ©ãƒ³ãƒ€ãƒ ã«è¡Œã†
 	if( GetRand(28) == 0 ){
 		if( ctrlhuman->GetMovemode(true) != 0 ){
 			if( ctrlhuman->GetTotalMove() - total_move < 0.1f ){
@@ -258,7 +258,7 @@ void AIcontrol::MoveTarget2(bool back)
 	total_move = ctrlhuman->GetTotalMove();
 }
 
-//! @brief ‘OŒã¶‰Eƒ‰ƒ“ƒ_ƒ€‚ÉˆÚ“®iUŒ‚’†—pj
+//! @brief å‰å¾Œå·¦å³ãƒ©ãƒ³ãƒ€ãƒ ã«ç§»å‹•ï¼ˆæ”»æ’ƒä¸­ç”¨ï¼‰
 void AIcontrol::MoveRandom()
 {
 	int forwardstart, backstart, sidestart;
@@ -274,7 +274,7 @@ void AIcontrol::MoveRandom()
 		sidestart = 130;
 	}
 
-	//ƒ‰ƒ“ƒ_ƒ€‚ÉˆÚ“®‚ğn‚ß‚é
+	//ãƒ©ãƒ³ãƒ€ãƒ ã«ç§»å‹•ã‚’å§‹ã‚ã‚‹
 	if( GetRand(forwardstart) == 0 ){
 		ObjDriver->SetModeFlag(AI_CTRL_MOVEFORWARD);
 	}
@@ -288,40 +288,40 @@ void AIcontrol::MoveRandom()
 		ObjDriver->SetModeFlag(AI_CTRL_MOVERIGHT);
 	}
 
-	//•Ší‚ğ‚Á‚Ä‚¨‚ç‚¸Aè‚Ô‚ç‚È‚ç‚Î
+	//æ­¦å™¨ã‚’æŒã£ã¦ãŠã‚‰ãšã€æ‰‹ã¶ã‚‰ãªã‚‰ã°
 	if( ctrlhuman->GetMainWeaponTypeNO() == ID_WEAPON_NONE ){
-		// 1/80‚ÌŠm—¦‚Å‰º‚ª‚èn‚ß‚é
+		// 1/80ã®ç¢ºç‡ã§ä¸‹ãŒã‚Šå§‹ã‚ã‚‹
 		if( GetRand(80) == 0 ){
 			ObjDriver->SetModeFlag(AI_CTRL_MOVEBACKWARD);
 		}
 	}
 
-	// 1/3‚ÌŠm—¦‚©AˆÚ“®ƒtƒ‰ƒO‚ªİ’è‚³‚ê‚Ä‚¢‚½‚ç
+	// 1/3ã®ç¢ºç‡ã‹ã€ç§»å‹•ãƒ•ãƒ©ã‚°ãŒè¨­å®šã•ã‚Œã¦ã„ãŸã‚‰
 	if( (GetRand(3) == 0)||(ObjDriver->GetModeFlag(AI_CTRL_MOVEFORWARD | AI_CTRL_MOVEBACKWARD | AI_CTRL_MOVELEFT | AI_CTRL_MOVERIGHT)) ){
 		float vx, vz;
 		float Dist;
 
 		if( GetRand(2) == 0 ){
-			//‘O•ûŒü‚ÌƒxƒNƒgƒ‹‚ğŒvZ
+			//å‰æ–¹å‘ã®ãƒ™ã‚¯ãƒˆãƒ«ã‚’è¨ˆç®—
 			vx = cos(rx*-1 + (float)M_PI/2);
 			vz = sin(rx*-1 + (float)M_PI/2);
 			if(
-				(CollD->CheckALLBlockIntersectDummyRay(posx, posy + HUMAN_MAPCOLLISION_HEIGHT, posz, vx, 0, vz, NULL, NULL, &Dist, HUMAN_MAPCOLLISION_R) == true)||		//˜‚Ì‚‚³‚ÉƒuƒƒbƒN‚ª‚ ‚éi‚Ô‚Â‚©‚éj
-				(CollD->CheckALLBlockIntersectDummyRay(posx, posy - 1.0f, posz, vx, 0, vz, NULL, NULL, &Dist, HUMAN_MAPCOLLISION_R) == false)							//‘«Œ³‚ÉƒuƒƒbƒN‚ª‚È‚¢i—‚¿‚éj
+				(CollD->CheckALLBlockIntersectDummyRay(posx, posy + HUMAN_MAPCOLLISION_HEIGHT, posz, vx, 0, vz, NULL, NULL, &Dist, HUMAN_MAPCOLLISION_R) == true)||		//è…°ã®é«˜ã•ã«ãƒ–ãƒ­ãƒƒã‚¯ãŒã‚ã‚‹ï¼ˆã¶ã¤ã‹ã‚‹ï¼‰
+				(CollD->CheckALLBlockIntersectDummyRay(posx, posy - 1.0f, posz, vx, 0, vz, NULL, NULL, &Dist, HUMAN_MAPCOLLISION_R) == false)							//è¶³å…ƒã«ãƒ–ãƒ­ãƒƒã‚¯ãŒãªã„ï¼ˆè½ã¡ã‚‹ï¼‰
 			){
-				//‘Oiƒtƒ‰ƒO‚ğíœ‚µAŒã‘Şƒtƒ‰ƒO‚ğİ’è
+				//å‰é€²ãƒ•ãƒ©ã‚°ã‚’å‰Šé™¤ã—ã€å¾Œé€€ãƒ•ãƒ©ã‚°ã‚’è¨­å®š
 				ObjDriver->DelModeFlag(AI_CTRL_MOVEFORWARD);
 				ObjDriver->SetModeFlag(AI_CTRL_MOVEBACKWARD);
 			}
 
-			//Œã•ûŒü‚ÌƒxƒNƒgƒ‹‚ğŒvZ
+			//å¾Œæ–¹å‘ã®ãƒ™ã‚¯ãƒˆãƒ«ã‚’è¨ˆç®—
 			vx = cos(rx*-1 + (float)M_PI/2 + (float)M_PI);
 			vz = sin(rx*-1 + (float)M_PI/2 + (float)M_PI);
 			if(
-				(CollD->CheckALLBlockIntersectDummyRay(posx, posy + HUMAN_MAPCOLLISION_HEIGHT, posz, vx, 0, vz, NULL, NULL, &Dist, HUMAN_MAPCOLLISION_R) == true)||		//˜‚Ì‚‚³‚ÉƒuƒƒbƒN‚ª‚ ‚éi‚Ô‚Â‚©‚éj
-				(CollD->CheckALLBlockIntersectDummyRay(posx, posy - 1.0f, posz, vx, 0, vz, NULL, NULL, &Dist, HUMAN_MAPCOLLISION_R) == false)							//‘«Œ³‚ÉƒuƒƒbƒN‚ª‚È‚¢i—‚¿‚éj
+				(CollD->CheckALLBlockIntersectDummyRay(posx, posy + HUMAN_MAPCOLLISION_HEIGHT, posz, vx, 0, vz, NULL, NULL, &Dist, HUMAN_MAPCOLLISION_R) == true)||		//è…°ã®é«˜ã•ã«ãƒ–ãƒ­ãƒƒã‚¯ãŒã‚ã‚‹ï¼ˆã¶ã¤ã‹ã‚‹ï¼‰
+				(CollD->CheckALLBlockIntersectDummyRay(posx, posy - 1.0f, posz, vx, 0, vz, NULL, NULL, &Dist, HUMAN_MAPCOLLISION_R) == false)							//è¶³å…ƒã«ãƒ–ãƒ­ãƒƒã‚¯ãŒãªã„ï¼ˆè½ã¡ã‚‹ï¼‰
 			){
-				//Œã‘Şƒtƒ‰ƒO‚ğíœ‚µA‘Oiƒtƒ‰ƒO‚ğİ’è
+				//å¾Œé€€ãƒ•ãƒ©ã‚°ã‚’å‰Šé™¤ã—ã€å‰é€²ãƒ•ãƒ©ã‚°ã‚’è¨­å®š
 				ObjDriver->DelModeFlag(AI_CTRL_MOVEBACKWARD);
 				ObjDriver->SetModeFlag(AI_CTRL_MOVEFORWARD);
 			}
@@ -331,10 +331,10 @@ void AIcontrol::MoveRandom()
 			vx = cos(rx*-1);
 			vz = sin(rx*-1);
 			if(
-				(CollD->CheckALLBlockIntersectDummyRay(posx, posy + HUMAN_MAPCOLLISION_HEIGHT, posz, vx, 0, vz, NULL, NULL, &Dist, HUMAN_MAPCOLLISION_R) == true)||		//˜‚Ì‚‚³‚ÉƒuƒƒbƒN‚ª‚ ‚éi‚Ô‚Â‚©‚éj
-				(CollD->CheckALLBlockIntersectDummyRay(posx, posy - 1.0f, posz, vx, 0, vz, NULL, NULL, &Dist, HUMAN_MAPCOLLISION_R) == false)							//‘«Œ³‚ÉƒuƒƒbƒN‚ª‚È‚¢i—‚¿‚éj
+				(CollD->CheckALLBlockIntersectDummyRay(posx, posy + HUMAN_MAPCOLLISION_HEIGHT, posz, vx, 0, vz, NULL, NULL, &Dist, HUMAN_MAPCOLLISION_R) == true)||		//è…°ã®é«˜ã•ã«ãƒ–ãƒ­ãƒƒã‚¯ãŒã‚ã‚‹ï¼ˆã¶ã¤ã‹ã‚‹ï¼‰
+				(CollD->CheckALLBlockIntersectDummyRay(posx, posy - 1.0f, posz, vx, 0, vz, NULL, NULL, &Dist, HUMAN_MAPCOLLISION_R) == false)							//è¶³å…ƒã«ãƒ–ãƒ­ãƒƒã‚¯ãŒãªã„ï¼ˆè½ã¡ã‚‹ï¼‰
 			){
-				//‰EˆÚ“®ƒtƒ‰ƒO‚ğíœ‚µA¶ˆÚ“®ƒtƒ‰ƒO‚ğİ’è
+				//å³ç§»å‹•ãƒ•ãƒ©ã‚°ã‚’å‰Šé™¤ã—ã€å·¦ç§»å‹•ãƒ•ãƒ©ã‚°ã‚’è¨­å®š
 				ObjDriver->DelModeFlag(AI_CTRL_MOVERIGHT);
 				ObjDriver->SetModeFlag(AI_CTRL_MOVELEFT);
 			}
@@ -342,17 +342,17 @@ void AIcontrol::MoveRandom()
 			vx = cos(rx*-1 + (float)M_PI);
 			vz = sin(rx*-1 + (float)M_PI);
 			if(
-				(CollD->CheckALLBlockIntersectDummyRay(posx, posy + HUMAN_MAPCOLLISION_HEIGHT, posz, vx, 0, vz, NULL, NULL, &Dist, HUMAN_MAPCOLLISION_R) == true)||		//˜‚Ì‚‚³‚ÉƒuƒƒbƒN‚ª‚ ‚éi‚Ô‚Â‚©‚éj
-				(CollD->CheckALLBlockIntersectDummyRay(posx, posy - 1.0f, posz, vx, 0, vz, NULL, NULL, &Dist, HUMAN_MAPCOLLISION_R) == false)							//‘«Œ³‚ÉƒuƒƒbƒN‚ª‚È‚¢i—‚¿‚éj
+				(CollD->CheckALLBlockIntersectDummyRay(posx, posy + HUMAN_MAPCOLLISION_HEIGHT, posz, vx, 0, vz, NULL, NULL, &Dist, HUMAN_MAPCOLLISION_R) == true)||		//è…°ã®é«˜ã•ã«ãƒ–ãƒ­ãƒƒã‚¯ãŒã‚ã‚‹ï¼ˆã¶ã¤ã‹ã‚‹ï¼‰
+				(CollD->CheckALLBlockIntersectDummyRay(posx, posy - 1.0f, posz, vx, 0, vz, NULL, NULL, &Dist, HUMAN_MAPCOLLISION_R) == false)							//è¶³å…ƒã«ãƒ–ãƒ­ãƒƒã‚¯ãŒãªã„ï¼ˆè½ã¡ã‚‹ï¼‰
 			){
-				//¶ˆÚ“®ƒtƒ‰ƒO‚ğíœ‚µA‰EˆÚ“®ƒtƒ‰ƒO‚ğİ’è
+				//å·¦ç§»å‹•ãƒ•ãƒ©ã‚°ã‚’å‰Šé™¤ã—ã€å³ç§»å‹•ãƒ•ãƒ©ã‚°ã‚’è¨­å®š
 				ObjDriver->DelModeFlag(AI_CTRL_MOVELEFT);
 				ObjDriver->SetModeFlag(AI_CTRL_MOVERIGHT);
 			}
 		}
 	}
 
-	//UŒ‚‘ÎÛ‚ª‚¢‚é‚È‚ç
+	//æ”»æ’ƒå¯¾è±¡ãŒã„ã‚‹ãªã‚‰
 	if( enemyhuman != NULL ){
 		float tx, ty, tz;
 
@@ -363,7 +363,7 @@ void AIcontrol::MoveRandom()
 		float z = posz - tz;
 		float r = x * x + y * y + z * z;
 
-		//“G‚É‹ß‚Ã‚«‚·‚¬‚½‚È‚çŒã‘Ş‚·‚é
+		//æ•µã«è¿‘ã¥ãã™ããŸãªã‚‰å¾Œé€€ã™ã‚‹
 		if( r < 20.0f * 20.0f ){
 			ObjDriver->DelModeFlag(AI_CTRL_MOVEFORWARD);
 			if( GetRand(70) == 0 ){
@@ -373,7 +373,7 @@ void AIcontrol::MoveRandom()
 	}
 }
 
-//! @brief ‚»‚Ìê‚ğŒ©‚Ü‚í‚·
+//! @brief ãã®å ´ã‚’è¦‹ã¾ã‚ã™
 void AIcontrol::TurnSeen()
 {
 	int turnstart, turnstop;
@@ -382,16 +382,16 @@ void AIcontrol::TurnSeen()
 	int pointmode;
 	MoveNavi->GetTargetPos(NULL, NULL, &target_rx, NULL, &pointmode);
 
-	//Œ‚‚½‚ê‚ÄŒx‰ú‚µ‚½‚È‚çAŒ‚‚½‚ê‚½•ûŒü‚ğŒü‚­
+	//æ’ƒãŸã‚Œã¦è­¦æˆ’ã—ãŸãªã‚‰ã€æ’ƒãŸã‚ŒãŸæ–¹å‘ã‚’å‘ã
 	if( (battlemode == AI_CAUTION)&&(FaceCaution_flag == true) ){
 		float tr;
 
-		//•ûŒü‚ğŒvZ
+		//æ–¹å‘ã‚’è¨ˆç®—
 		tr = FaceCaution_rx - rx;
 		for(; tr > (float)M_PI; tr -= (float)M_PI*2){}
 		for(; tr < (float)M_PI*-1; tr += (float)M_PI*2){}
 
-		//ù‰ñ
+		//æ—‹å›
 		if( tr > DegreeToRadian(2.5f) ){
 			ObjDriver->SetModeFlag(AI_CTRL_TURNRIGHT);
 		}
@@ -399,7 +399,7 @@ void AIcontrol::TurnSeen()
 			ObjDriver->SetModeFlag(AI_CTRL_TURNLEFT);
 		}
 
-		//“Á’è•ûŒü‚ÉŒü‚«I‚í‚ê‚ÎA•’Ê‚ÌŒx‰ú‚ÉˆÚs‚·‚é
+		//ç‰¹å®šæ–¹å‘ã«å‘ãçµ‚ã‚ã‚Œã°ã€æ™®é€šã®è­¦æˆ’ã«ç§»è¡Œã™ã‚‹
 		if( fabs(tr) <= DegreeToRadian(2.5f) ){
 			FaceCaution_flag = false;
 		}
@@ -407,7 +407,7 @@ void AIcontrol::TurnSeen()
 		return;
 	}
 
-	//‰ñ“]‚ÌŠJnEI—¹Šm—¦‚ğİ’è
+	//å›è»¢ã®é–‹å§‹ãƒ»çµ‚äº†ç¢ºç‡ã‚’è¨­å®š
 	if( battlemode == AI_ACTION ){
 		return;
 	}
@@ -421,7 +421,7 @@ void AIcontrol::TurnSeen()
 		turnstop = 18;
 	}
 
-	//ƒ‰ƒ“ƒ_ƒ€‚É‰ñ“]‚ğn‚ß‚é
+	//ãƒ©ãƒ³ãƒ€ãƒ ã«å›è»¢ã‚’å§‹ã‚ã‚‹
 	if( GetRand(turnstart) == 0 ){
 		ObjDriver->SetModeFlag(AI_CTRL_TURNRIGHT);
 	}
@@ -430,8 +430,8 @@ void AIcontrol::TurnSeen()
 	}
 
 	if( (battlemode == AI_NORMAL)&&(pointmode == AI_NAVI_POINT_WAIT) ){
-		//ƒ‰ƒ“ƒ_ƒ€‚Éƒ|ƒCƒ“ƒg‚Ì•û‚ğŒü‚±‚¤‚Æ‚·‚é
-		//uƒ|ƒCƒ“ƒg‚Ì•ûŒü‚ğ­‚µd‹‚·‚év‚ÌÄŒ» 
+		//ãƒ©ãƒ³ãƒ€ãƒ ã«ãƒã‚¤ãƒ³ãƒˆã®æ–¹ã‚’å‘ã“ã†ã¨ã™ã‚‹
+		//ã€Œãƒã‚¤ãƒ³ãƒˆã®æ–¹å‘ã‚’å°‘ã—é‡è¦–ã™ã‚‹ã€ã®å†ç¾ 
 		if( GetRand(80) == 0 ){
 			float tr;
 			tr = target_rx - rx;
@@ -447,7 +447,7 @@ void AIcontrol::TurnSeen()
 		}
 	}
 
-	//‰ñ“]‚ğƒ‰ƒ“ƒ_ƒ€‚É~‚ß‚é
+	//å›è»¢ã‚’ãƒ©ãƒ³ãƒ€ãƒ ã«æ­¢ã‚ã‚‹
 	if( GetRand(turnstop) == 0 ){
 		ObjDriver->DelModeFlag(AI_CTRL_TURNRIGHT);
 	}
@@ -456,7 +456,7 @@ void AIcontrol::TurnSeen()
 	}
 }
 
-//! @brief “Á’è‚Ì•ûŒü‚ğŒ©‘±‚¯‚é
+//! @brief ç‰¹å®šã®æ–¹å‘ã‚’è¦‹ç¶šã‘ã‚‹
 bool AIcontrol::StopSeen()
 {
 	float tr;
@@ -472,7 +472,7 @@ bool AIcontrol::StopSeen()
 	ObjDriver->DelModeFlag(AI_CTRL_TURNRIGHT);
 	ObjDriver->DelModeFlag(AI_CTRL_TURNLEFT);
 
-	//ù‰ñ
+	//æ—‹å›
 	if( tr > DegreeToRadian(2.5f) ){
 		ObjDriver->SetModeFlag(AI_CTRL_TURNRIGHT);
 		returnflag = false;
@@ -482,7 +482,7 @@ bool AIcontrol::StopSeen()
 		returnflag = false;
 	}
 
-	//“Á’è•ûŒü‚ÉŒü‚¯‚Ä‚¢‚é‚©”»’è
+	//ç‰¹å®šæ–¹å‘ã«å‘ã‘ã¦ã„ã‚‹ã‹åˆ¤å®š
 	if( fabs(tr) <= DegreeToRadian(2.5f) ){
 		returnflag = true;
 	}
@@ -490,17 +490,17 @@ bool AIcontrol::StopSeen()
 	return returnflag;
 }
 
-//! @brief is•ûŒü‚ÉáŠQ•¨‚ª‚ ‚ê‚ÎƒWƒƒƒ“ƒv‚·‚é
+//! @brief é€²è¡Œæ–¹å‘ã«éšœå®³ç‰©ãŒã‚ã‚Œã°ã‚¸ãƒ£ãƒ³ãƒ—ã™ã‚‹
 bool AIcontrol::MoveJump()
 {
-	//—§‚¿~‚Ü‚Á‚Ä‚¢‚ê‚Îˆ—‚µ‚È‚¢
+	//ç«‹ã¡æ­¢ã¾ã£ã¦ã„ã‚Œã°å‡¦ç†ã—ãªã„
 	if( ctrlhuman->GetMovemode(false) == 0 ){ return false; }
 
 	float dist_dummy;
 
 	float new_posx, new_posy, new_posz;
 
-	//˜•t‹ß‚Ì“–‚½‚è”»’è
+	//è…°ä»˜è¿‘ã®å½“ãŸã‚Šåˆ¤å®š
 	new_posx = posx + cos(rx*-1 + (float)M_PI/2) * (AI_CHECKJUMP_DIST + HUMAN_MAPCOLLISION_R);
 	new_posy = posy + HUMAN_MAPCOLLISION_HEIGHT;
 	new_posz = posz + sin(rx*-1 + (float)M_PI/2) * (AI_CHECKJUMP_DIST + HUMAN_MAPCOLLISION_R);
@@ -509,7 +509,7 @@ bool AIcontrol::MoveJump()
 		return true;
 	}
 
-	//‘Ì‘S‘Ì‚Ì“–‚½‚è”»’è
+	//ä½“å…¨ä½“ã®å½“ãŸã‚Šåˆ¤å®š
 	new_posx = posx + cos(rx*-1 + (float)M_PI/2) * AI_CHECKJUMP_DIST;
 	new_posy = posy + AI_CHECKJUMP_HEIGHT;
 	new_posz = posz + sin(rx*-1 + (float)M_PI/2) * AI_CHECKJUMP_DIST;
@@ -525,8 +525,8 @@ bool AIcontrol::MoveJump()
 	return false;
 }
 
-//! @brief UŒ‚
-//! @todo ƒ]ƒ“ƒr‚Ì‘Šè‚ğ•ß‚Ü‚¦‚éˆ—
+//! @brief æ”»æ’ƒ
+//! @todo ã‚¾ãƒ³ãƒ“ã®ç›¸æ‰‹ã‚’æ•ã¾ãˆã‚‹å‡¦ç†
 void AIcontrol::Action()
 {
 	human* EnemyHuman = NULL;
@@ -538,12 +538,12 @@ void AIcontrol::Action()
 
 	EnemyHuman = enemyhuman;
 
-	//À•W‚ğæ“¾
+	//åº§æ¨™ã‚’å–å¾—
 	EnemyHuman->GetPosData(&tx, &ty, &tz, NULL);
 	posy2 = posy + VIEW_HEIGHT;
 	ty += VIEW_HEIGHT;
 
-	//ƒ]ƒ“ƒr‚©‚Ç‚¤‚©”»’è
+	//ã‚¾ãƒ³ãƒ“ã‹ã©ã†ã‹åˆ¤å®š
 	ctrlhuman->GetParamData(&paramid, NULL, NULL, NULL);
 	Param->GetHuman(paramid, &Paraminfo);
 	if( Paraminfo.type == 2 ){
@@ -553,12 +553,12 @@ void AIcontrol::Action()
 		zombie = false;
 	}
 
-	//Š‚µ‚Ä‚¢‚é•Ší‚Ìí—Ş‚ğæ“¾
+	//æ‰€æŒã—ã¦ã„ã‚‹æ­¦å™¨ã®ç¨®é¡ã‚’å–å¾—
 	int weaponid = ctrlhuman->GetMainWeaponTypeNO();
 
 	float atanx, atany, r;
 
-	//©•ª‚ªèÖ’e‚ğ‚Á‚Ä‚¢‚ê‚Î`
+	//è‡ªåˆ†ãŒæ‰‹æ¦´å¼¾ã‚’æŒã£ã¦ã„ã‚Œã°ï½
 	if( weaponid == ID_WEAPON_GRENADE ){
 		if( zombie == false ){
 			float x = posx - tx;
@@ -568,7 +568,7 @@ void AIcontrol::Action()
 			if( longattack == false ){ scale = 0.12f; }
 			else{ scale = 0.4f; }
 
-			//‹——£‚É‰‚¶‚Ä‚‚³‚ğ•Ï‚¦‚é
+			//è·é›¢ã«å¿œã˜ã¦é«˜ã•ã‚’å¤‰ãˆã‚‹
 			ty += (sqrt(r) - 200.0f) * scale;
 		}
 	}
@@ -585,21 +585,21 @@ void AIcontrol::Action()
 			scale = sqrt(r) * 0.12f;
 		}
 
-		//“G‚ÌˆÚ“®‚ğŒ©’´‚·
+		//æ•µã®ç§»å‹•ã‚’è¦‹è¶…ã™
 		tx += mx * scale;
 		tz += mz * scale;
 	}
 
-	//–Ú•W’n“_‚Ö‚ÌŠp“x‚ğ‹‚ß‚é
+	//ç›®æ¨™åœ°ç‚¹ã¸ã®è§’åº¦ã‚’æ±‚ã‚ã‚‹
 	CheckTargetAngle(posx, posy2, posz, rx*-1 + (float)M_PI/2, ry, tx, ty, tz, 0.0f, &atanx, &atany, &r);
 
-	//Œü‚«‚ğ•Ï‚¦‚éƒ^ƒCƒ~ƒ“ƒO‚©Œˆ’è
+	//å‘ãã‚’å¤‰ãˆã‚‹ã‚¿ã‚¤ãƒŸãƒ³ã‚°ã‹æ±ºå®š
 	int randr = LevelParam->aiming;
 	if( longattack == false ){ randr += 1; }
 	else{ randr += 2; }
 
 	if( randr != 0 ){
-		//ù‰ñ
+		//æ—‹å›
 		if( atanx > 0.0f ){
 			ObjDriver->SetModeFlag(AI_CTRL_TURNLEFT);
 			ObjDriver->DelModeFlag(AI_CTRL_TURNRIGHT);
@@ -609,11 +609,11 @@ void AIcontrol::Action()
 			ObjDriver->DelModeFlag(AI_CTRL_TURNLEFT);
 		}
 
-		//˜r‚ÌŠp“x
+		//è…•ã®è§’åº¦
 		if( zombie == true ){
 			//ry = AI_ZOMBIEATTACK_ARMRY;
 
-			//ù‰ñ
+			//æ—‹å›
 			if( ry < AI_ZOMBIEATTACK_ARMRY ){
 				ObjDriver->SetModeFlag(AI_CTRL_TURNUP);
 				ObjDriver->DelModeFlag(AI_CTRL_TURNDOWN);
@@ -624,21 +624,21 @@ void AIcontrol::Action()
 			}
 		}
 		else{
-			//©•ª‚ªè‚Ô‚ç‚È‚ç‚Î`
+			//è‡ªåˆ†ãŒæ‰‹ã¶ã‚‰ãªã‚‰ã°ï½
 			if( weaponid == ID_WEAPON_NONE ){
-				if( EnemyHuman->GetMainWeaponTypeNO() == ID_WEAPON_NONE ){	//“G‚àè‚Ô‚ç‚È‚ç‚Î`
-					//‰º‚ÉŒü‚¯‘±‚¯‚é
+				if( EnemyHuman->GetMainWeaponTypeNO() == ID_WEAPON_NONE ){	//æ•µã‚‚æ‰‹ã¶ã‚‰ãªã‚‰ã°ï½
+					//ä¸‹ã«å‘ã‘ç¶šã‘ã‚‹
 					ObjDriver->SetModeFlag(AI_CTRL_TURNDOWN);
 					ObjDriver->DelModeFlag(AI_CTRL_TURNUP);
 				}
-				else{														//“G‚ª•Ší‚ğ‚Á‚Ä‚¢‚ê‚Î`
-					//ã‚ÉŒü‚¯‘±‚¯‚é
+				else{														//æ•µãŒæ­¦å™¨ã‚’æŒã£ã¦ã„ã‚Œã°ï½
+					//ä¸Šã«å‘ã‘ç¶šã‘ã‚‹
 					ObjDriver->SetModeFlag(AI_CTRL_TURNUP);
 					ObjDriver->DelModeFlag(AI_CTRL_TURNDOWN);
 				}
 			}
 			else{
-				//ù‰ñ
+				//æ—‹å›
 				if( atany > 0.0f ){
 					ObjDriver->SetModeFlag(AI_CTRL_TURNUP);
 					ObjDriver->DelModeFlag(AI_CTRL_TURNDOWN);
@@ -651,10 +651,10 @@ void AIcontrol::Action()
 		}
 	}
 
-	//ƒ]ƒ“ƒrˆÈŠO‚Åè‚Ô‚ç‚È‚ç‚Î
+	//ã‚¾ãƒ³ãƒ“ä»¥å¤–ã§æ‰‹ã¶ã‚‰ãªã‚‰ã°
 	if( zombie == false ){
 		if( weaponid == ID_WEAPON_NONE ){
-			//ˆê’è‚ÌŠm—¦‚ÅŒã‘Ş‚·‚é
+			//ä¸€å®šã®ç¢ºç‡ã§å¾Œé€€ã™ã‚‹
 			if( GetRand(80) == 0 ){
 				ObjDriver->SetModeFlag(AI_CTRL_MOVEBACKWARD);
 			}
@@ -662,19 +662,19 @@ void AIcontrol::Action()
 	}
 
 	
-	if( zombie == true ){	//ƒ]ƒ“ƒr‚ÌUŒ‚
+	if( zombie == true ){	//ã‚¾ãƒ³ãƒ“ã®æ”»æ’ƒ
 		float y = posy2 - ty;
 
-		//‚à‚µ‘–‚Á‚Ä‚¢‚ê‚ÎAˆê“x•à‚«‚ÉØ‚è‘Ö‚¦‚é
+		//ã‚‚ã—èµ°ã£ã¦ã„ã‚Œã°ã€ä¸€åº¦æ­©ãã«åˆ‡ã‚Šæ›¿ãˆã‚‹
 		if( ObjDriver->GetModeFlag(AI_CTRL_MOVEFORWARD) ){
 			ObjDriver->DelModeFlag(AI_CTRL_MOVEFORWARD);
 			ObjDriver->SetModeFlag(AI_CTRL_MOVEWALK);
 		}
 
-		//“G‚ÉŒü‚©‚Á‚Ä‘Oi‚·‚é
+		//æ•µã«å‘ã‹ã£ã¦å‰é€²ã™ã‚‹
 		if( fabs(atanx) <= DegreeToRadian(25) ){
 			if( (fabs(atanx) <= DegreeToRadian(15)) && (r < 24.0f*24.0f) && (actioncnt%50 > 20) ){
-				//•à‚«‚ğæ‚èÁ‚µA‘–‚é
+				//æ­©ãã‚’å–ã‚Šæ¶ˆã—ã€èµ°ã‚‹
 				ObjDriver->SetModeFlag(AI_CTRL_MOVEFORWARD);
 				ObjDriver->DelModeFlag(AI_CTRL_MOVEWALK);
 			}
@@ -684,7 +684,7 @@ void AIcontrol::Action()
 		}
 
 		/*
-		//ƒWƒƒƒ“ƒv
+		//ã‚¸ãƒ£ãƒ³ãƒ—
 		if( GetRand(16) == 0 ){
 			MoveJump();
 		}
@@ -694,10 +694,10 @@ void AIcontrol::Action()
 			float x = posx - tx;
 			float z = posz - tz;
 
-			//•ß‚Ü‚¦‚é@i“G‚ğˆø‚«•t‚¯‚éj
+			//æ•ã¾ãˆã‚‹ã€€ï¼ˆæ•µã‚’å¼•ãä»˜ã‘ã‚‹ï¼‰
 			EnemyHuman->AddPosOrder(atan2(z, x), 0.0f, 0.5f);
 
-			//“G‚Ì‹“_‚ğƒ‰ƒ“ƒ_ƒ€‚É“®‚©‚·
+			//æ•µã®è¦–ç‚¹ã‚’ãƒ©ãƒ³ãƒ€ãƒ ã«å‹•ã‹ã™
 			float erx, ery;
 			EnemyHuman->GetRxRy(&erx, &ery);
 			switch(GetRand(3)){
@@ -719,10 +719,10 @@ void AIcontrol::Action()
 			}
 		}
 	}
-	else{					//”­–C‚·‚é
+	else{					//ç™ºç ²ã™ã‚‹
 		float ShotAngle;
 		if( longattack == false ){
-			//“G‚ğ‘¨‚¦‚½‚Æ”»’è‚·‚éA‹–—eŒë·‚ğŒvZ‚·‚é
+			//æ•µã‚’æ‰ãˆãŸã¨åˆ¤å®šã™ã‚‹ã€è¨±å®¹èª¤å·®ã‚’è¨ˆç®—ã™ã‚‹
 			ShotAngle = DegreeToRadian(8);
 			if( weaponid != ID_WEAPON_NONE ){
 				WeaponParameter wparam;
@@ -735,7 +735,7 @@ void AIcontrol::Action()
 				}
 			}
 
-			//AIƒŒƒxƒ‹‚²‚Æ‚É’²®
+			//AIãƒ¬ãƒ™ãƒ«ã”ã¨ã«èª¿æ•´
 			ShotAngle += DegreeToRadian(0.5f) * LevelParam->limitserror;
 
 			if( MoveNavi->GetRun2() == true ){
@@ -743,7 +743,7 @@ void AIcontrol::Action()
 			}
 		}
 		else{
-			//“G‚ğ‘¨‚¦‚½‚Æ”»’è‚·‚éA‹–—eŒë·‚ğŒvZ‚·‚é
+			//æ•µã‚’æ‰ãˆãŸã¨åˆ¤å®šã™ã‚‹ã€è¨±å®¹èª¤å·®ã‚’è¨ˆç®—ã™ã‚‹
 			ShotAngle = DegreeToRadian(4);
 			if( weaponid != ID_WEAPON_NONE ){
 				WeaponParameter wparam;
@@ -756,25 +756,25 @@ void AIcontrol::Action()
 				}
 			}
 
-			//AIƒŒƒxƒ‹‚²‚Æ‚É’²®
+			//AIãƒ¬ãƒ™ãƒ«ã”ã¨ã«èª¿æ•´
 			ShotAngle += DegreeToRadian(0.2f) * LevelParam->limitserror;
 		}
 
-		//“G‚ğ‘¨‚¦‚Ä‚¢‚ê‚Î
+		//æ•µã‚’æ‰ãˆã¦ã„ã‚Œã°
 		float atanxy = fabs(atanx) + fabs(atany);
 		if( atanxy < ShotAngle ){
 			int rand = LevelParam->attack;
 			if( longattack == true ){ rand += 1; }
 
-			//”­–C
+			//ç™ºç ²
 			if( GetRand(rand) == 0 ){
 				ObjMgr->ShotWeapon(ctrlid);
 			}
 		}
 	}
 
-	//‹——£‚É‰‚¶‚Ä‹ß‹——£E‰“‹——£‚ğØ‚è‘Ö‚¦‚é
-	//@200.0fƒsƒbƒ^ƒŠ‚Åİ’è’lˆÛ
+	//è·é›¢ã«å¿œã˜ã¦è¿‘è·é›¢ãƒ»é è·é›¢ã‚’åˆ‡ã‚Šæ›¿ãˆã‚‹
+	//ã€€200.0fãƒ”ãƒƒã‚¿ãƒªã§è¨­å®šå€¤ç¶­æŒ
 	if( r < 200.0f * 200.0f ){
 		longattack = false;
 	}
@@ -783,27 +783,27 @@ void AIcontrol::Action()
 	}
 
 	if( zombie == false ){
-		//ƒ‰ƒ“ƒ_ƒ€‚ÉˆÚ“®
+		//ãƒ©ãƒ³ãƒ€ãƒ ã«ç§»å‹•
 		MoveRandom();
 	}
 
 	actioncnt += 1;
 }
 
-//! @brief UŒ‚‚ğƒLƒƒƒ“ƒZƒ‹
+//! @brief æ”»æ’ƒã‚’ã‚­ãƒ£ãƒ³ã‚»ãƒ«
 bool AIcontrol::ActionCancel()
 {
-	//”ñí“¬‰»ƒtƒ‰ƒO‚ª—LŒø‚È‚çI—¹
+	//éæˆ¦é—˜åŒ–ãƒ•ãƒ©ã‚°ãŒæœ‰åŠ¹ãªã‚‰çµ‚äº†
 	if( NoFight == true ){
 		return true;
 	}
 
-	//“G‚ª€–S‚µ‚½‚çI—¹
+	//æ•µãŒæ­»äº¡ã—ãŸã‚‰çµ‚äº†
 	if( enemyhuman->GetDeadFlag() == true ){
 		return true;
 	}
 
-	//‹——£‚ğæ“¾
+	//è·é›¢ã‚’å–å¾—
 	float tx, ty, tz;
 	enemyhuman->GetPosData(&tx, &ty, &tz, NULL);
 	float x = posx - tx;
@@ -811,35 +811,35 @@ bool AIcontrol::ActionCancel()
 	float z = posz - tz;
 	float r = x*x + y*y + z*z;
 
-	//‹——£‚ª—£‚ê‰ß‚¬‚Ä‚¢‚½‚çI—¹
+	//è·é›¢ãŒé›¢ã‚Œéãã¦ã„ãŸã‚‰çµ‚äº†
 	if( r > 620.0f*620.0f ){
 		return true;
 	}
 
 	if( longattack == false ){
-		//“K“–‚Èƒ^ƒCƒ~ƒ“ƒO‚Å“G‚ªŒ©‚¦‚é‚©Šm”F
+		//é©å½“ãªã‚¿ã‚¤ãƒŸãƒ³ã‚°ã§æ•µãŒè¦‹ãˆã‚‹ã‹ç¢ºèª
 		if( GetRand(40) == 0 ){
-			//ƒuƒƒbƒN‚ªÕ‚Á‚Ä‚¢‚½iŒ©‚¦‚È‚¢j‚È‚ç‚ÎI—¹
+			//ãƒ–ãƒ­ãƒƒã‚¯ãŒé®ã£ã¦ã„ãŸï¼ˆï¼è¦‹ãˆãªã„ï¼‰ãªã‚‰ã°çµ‚äº†
 			if( CheckLookEnemy(enemyhuman, AI_SEARCH_RX, AI_SEARCH_RY, 620.0f, NULL) == false ){
 				return true;
 			}
 		}
 
-		//‹­§“I‚ÉI—¹
+		//å¼·åˆ¶çš„ã«çµ‚äº†
 		if( GetRand(550) == 0 ){
 			return true;
 		}
 	}
 	else{
-		//“K“–‚Èƒ^ƒCƒ~ƒ“ƒO‚Å“G‚ªŒ©‚¦‚é‚©Šm”F
+		//é©å½“ãªã‚¿ã‚¤ãƒŸãƒ³ã‚°ã§æ•µãŒè¦‹ãˆã‚‹ã‹ç¢ºèª
 		if( GetRand(30) == 0 ){
-			//ƒuƒƒbƒN‚ªÕ‚Á‚Ä‚¢‚½iŒ©‚¦‚È‚¢j‚È‚ç‚ÎI—¹
+			//ãƒ–ãƒ­ãƒƒã‚¯ãŒé®ã£ã¦ã„ãŸï¼ˆï¼è¦‹ãˆãªã„ï¼‰ãªã‚‰ã°çµ‚äº†
 			if( CheckLookEnemy(enemyhuman, AI_SEARCH_RX, AI_SEARCH_RY, 620.0f, NULL) == false ){
 				return true;
 			}
 		}
 
-		//‹­§“I‚ÉI—¹
+		//å¼·åˆ¶çš„ã«çµ‚äº†
 		if( GetRand(450) == 0 ){
 			return true;
 		}
@@ -848,7 +848,7 @@ bool AIcontrol::ActionCancel()
 	return false;
 }
 
-//! @brief •Ší‚ğ‚Â
+//! @brief æ­¦å™¨ã‚’æŒã¤
 int AIcontrol::HaveWeapon()
 {
 	int selectweapon;
@@ -859,26 +859,26 @@ int AIcontrol::HaveWeapon()
 		weapon[i] = NULL;
 	}
 
-	//•Ší‚Ìî•ñ‚ğæ“¾
+	//æ­¦å™¨ã®æƒ…å ±ã‚’å–å¾—
 	ctrlhuman->GetWeapon(&selectweapon, weapon);
 
-	//•Ší‚ğ‚Á‚Ä‚¢‚ê‚ÎA‡Œv’e”‚ğæ“¾
+	//æ­¦å™¨ã‚’æŒã£ã¦ã„ã‚Œã°ã€åˆè¨ˆå¼¾æ•°ã‚’å–å¾—
 	if( weapon[selectweapon] != NULL ){
 		weapon[selectweapon]->GetParamData(NULL, NULL, &nbs);
 	}
 
-	//•Ší‚ğ‚Á‚Ä‚¢‚È‚¢‚©A’e‚ª0‚È‚ç‚Î
+	//æ­¦å™¨ã‚’æŒã£ã¦ã„ãªã„ã‹ã€å¼¾ãŒ0ãªã‚‰ã°
 	if( (weapon[selectweapon] == NULL)||(nbs == 0) ){
-		//Ÿ‚Ì•Ší‚ğw’è
+		//æ¬¡ã®æ­¦å™¨ã‚’æŒ‡å®š
 		int notselectweapon = selectweapon + 1;
 		if( notselectweapon == TOTAL_HAVEWEAPON ){ notselectweapon = 0; }
 
-		//Ÿ‚Ì•Ší‚ğ‚Á‚Ä‚¢‚ê‚Î
+		//æ¬¡ã®æ­¦å™¨ã‚’æŒã£ã¦ã„ã‚Œã°
 		if( weapon[notselectweapon] != NULL ){
-			//Ÿ‚Ì•Ší‚Ì’e”‚ª0‚Å‚È‚¯‚ê‚Î
+			//æ¬¡ã®æ­¦å™¨ã®å¼¾æ•°ãŒ0ã§ãªã‘ã‚Œã°
 			weapon[notselectweapon]->GetParamData(NULL, NULL, &nbs);
 			if( nbs > 0 ){
-				//‚¿‘Ö‚¦‚é
+				//æŒã¡æ›¿ãˆã‚‹
 				ObjMgr->ChangeWeapon(ctrlid);
 				return 1;
 			}
@@ -888,13 +888,13 @@ int AIcontrol::HaveWeapon()
 	return 0;
 }
 
-//! @brief ˆÚ“®‚â•ûŒü“]Š·‚ğƒ‰ƒ“ƒ_ƒ€‚ÉI—¹
+//! @brief ç§»å‹•ã‚„æ–¹å‘è»¢æ›ã‚’ãƒ©ãƒ³ãƒ€ãƒ ã«çµ‚äº†
 void AIcontrol::CancelMoveTurn()
 {
 	int forward, back, side, updown, rightleft;
 
-	if( battlemode == AI_ACTION ){			//UŒ‚’†
-		if( MoveNavi->GetRun2() == true ){	//—Dæ“I‚È‘–‚è
+	if( battlemode == AI_ACTION ){			//æ”»æ’ƒä¸­
+		if( MoveNavi->GetRun2() == true ){	//å„ªå…ˆçš„ãªèµ°ã‚Š
 			ObjDriver->DelModeFlag(AI_CTRL_MOVEFORWARD);
 			ObjDriver->DelModeFlag(AI_CTRL_MOVEBACKWARD);
 			ObjDriver->DelModeFlag(AI_CTRL_MOVELEFT);
@@ -908,7 +908,7 @@ void AIcontrol::CancelMoveTurn()
 			}
 			return;
 		}
-		else{									//—Dæ“I‚È‘–‚è ˆÈŠO
+		else{									//å„ªå…ˆçš„ãªèµ°ã‚Š ä»¥å¤–
 			if( longattack == false ){
 				forward = 6;
 				back = 6;
@@ -925,7 +925,7 @@ void AIcontrol::CancelMoveTurn()
 			}
 		}
 	}
-	else if( battlemode == AI_CAUTION ){	//Œx‰ú’†
+	else if( battlemode == AI_CAUTION ){	//è­¦æˆ’ä¸­
 		forward = 10;
 		back = 10;
 		side = 10;
@@ -940,7 +940,7 @@ void AIcontrol::CancelMoveTurn()
 		rightleft = 18;
 	}
 
-	//ˆÚ“®‚ğƒ‰ƒ“ƒ_ƒ€‚É~‚ß‚é
+	//ç§»å‹•ã‚’ãƒ©ãƒ³ãƒ€ãƒ ã«æ­¢ã‚ã‚‹
 	if( GetRand(forward) == 0 ){
 		ObjDriver->DelModeFlag(AI_CTRL_MOVEFORWARD);
 	}
@@ -957,7 +957,7 @@ void AIcontrol::CancelMoveTurn()
 		ObjDriver->DelModeFlag(AI_CTRL_MOVEWALK);
 	}
 
-	//‰ñ“]‚ğƒ‰ƒ“ƒ_ƒ€‚É~‚ß‚é
+	//å›è»¢ã‚’ãƒ©ãƒ³ãƒ€ãƒ ã«æ­¢ã‚ã‚‹
 	if( GetRand(updown) == 0 ){
 		ObjDriver->DelModeFlag(AI_CTRL_TURNUP);
 	}
@@ -972,8 +972,8 @@ void AIcontrol::CancelMoveTurn()
 	}
 }
 
-//! @brief •Ší‚ğƒŠƒ[ƒhEÌ‚Ä‚é
-//! @return Ì‚Ä‚éF1@ƒŠƒ[ƒhF2@‚¿‘Ö‚¦‚éF3@FULL/SEMIØ‚è‘Ö‚¦F4@‰½‚à‚µ‚È‚¢F0
+//! @brief æ­¦å™¨ã‚’ãƒªãƒ­ãƒ¼ãƒ‰ãƒ»æ¨ã¦ã‚‹
+//! @return æ¨ã¦ã‚‹ï¼š1ã€€ãƒªãƒ­ãƒ¼ãƒ‰ï¼š2ã€€æŒã¡æ›¿ãˆã‚‹ï¼š3ã€€FULL/SEMIåˆ‡ã‚Šæ›¿ãˆï¼š4ã€€ä½•ã‚‚ã—ãªã„ï¼š0
 int AIcontrol::ControlWeapon()
 {
 	int selectweapon;
@@ -986,26 +986,26 @@ int AIcontrol::ControlWeapon()
 		weapon[i] = NULL;
 	}
 
-	//•Ší‚Ìî•ñ‚ğæ“¾
+	//æ­¦å™¨ã®æƒ…å ±ã‚’å–å¾—
 	ctrlhuman->GetWeapon(&selectweapon, weapon);
 	if( weapon[selectweapon] == NULL ){ return 0; }
 	weapon[selectweapon]->GetParamData(&weaponid, &lnbs, &nbs);
 
-	//•Ší‚Ì«”\‚ğæ“¾
+	//æ­¦å™¨ã®æ€§èƒ½ã‚’å–å¾—
 	if( Param->GetWeapon(weaponid, &paramdata) == 1 ){ return 0; }
 
-	//ƒXƒR[ƒv‰ğœ
+	//ã‚¹ã‚³ãƒ¼ãƒ—è§£é™¤
 	ctrlhuman->SetDisableScope();
 
-	//uƒP[ƒXv‚È‚ç‰½‚à‚µ‚È‚¢
+	//ã€Œã‚±ãƒ¼ã‚¹ã€ãªã‚‰ä½•ã‚‚ã—ãªã„
 	if( weaponid == ID_WEAPON_CASE ){ return 0; }
 
-	//í“¬’†‚ÉƒOƒŒƒl[ƒh‚ğ‚Á‚Ä‚¢‚ê‚Î
+	//æˆ¦é—˜ä¸­ã«ã‚°ãƒ¬ãƒãƒ¼ãƒ‰ã‚’æŒã£ã¦ã„ã‚Œã°
 	if( battlemode == AI_ACTION ){
 		if( weaponid == ID_WEAPON_GRENADE ){
 			int nextselectweapon, nextnds;
 
-			//Ÿ‚Ì•Ší‚Ì’e”‚ğæ“¾
+			//æ¬¡ã®æ­¦å™¨ã®å¼¾æ•°ã‚’å–å¾—
 			nextselectweapon = selectweapon + 1;
 			nextnds = 0;
 			if( nextselectweapon == TOTAL_HAVEWEAPON ){
@@ -1016,14 +1016,14 @@ int AIcontrol::ControlWeapon()
 			}
 
 			if( longattack == false ){
-				// 1/100‚ÌŠm—¦‚Å‚¿‘Ö‚¦‚é
+				// 1/100ã®ç¢ºç‡ã§æŒã¡æ›¿ãˆã‚‹
 				if( (GetRand(100) == 0)&&(nextnds > 0) ){
 					ObjMgr->ChangeWeapon(ctrlid);
 					return 3;
 				}
 			}
 			else{
-				// 1/66‚ÌŠm—¦‚Å‚¿‘Ö‚¦‚é
+				// 1/66ã®ç¢ºç‡ã§æŒã¡æ›¿ãˆã‚‹
 				if( (GetRand(66) == 0)&&(nextnds > 0) ){
 					ObjMgr->ChangeWeapon(ctrlid);
 					return 3;
@@ -1032,20 +1032,20 @@ int AIcontrol::ControlWeapon()
 		}
 	}
 
-	//c’e”‚ª–³‚¯‚ê‚Î
+	//æ®‹å¼¾æ•°ãŒç„¡ã‘ã‚Œã°
 	if( lnbs == 0 ){
 		int ways;
 
-		//ˆ—Šm—¦Œˆ’è
+		//å‡¦ç†ç¢ºç‡æ±ºå®š
 		if( battlemode == AI_NORMAL ){ ways = 1; }
 		else if( battlemode == AI_CAUTION ){ ways = 10; }
 		else{ ways = 8; }
 
-		// 1/ways‚ÌŠm—¦‚Åˆ—
+		// 1/waysã®ç¢ºç‡ã§å‡¦ç†
 		if( GetRand(ways) == 0 ){
 			int under;
 
-			//ƒŠƒ[ƒhŠm—¦
+			//ãƒªãƒ­ãƒ¼ãƒ‰ç¢ºç‡
 			if( battlemode == AI_NORMAL ){
 				ways = 1;
 				under = 0;
@@ -1056,24 +1056,24 @@ int AIcontrol::ControlWeapon()
 			}
 			else{
 				if( longattack == false ){
-					// Šm—¦‚Í@3/4
+					// ç¢ºç‡ã¯ã€€3/4
 					ways = 4;
 					under = 2;
 				}
 				else{
-					// Šm—¦‚Í@2/3
+					// ç¢ºç‡ã¯ã€€2/3
 					ways = 3;
 					under = 1;
 				}
 			}
 
-			//’e‚ª–³‚¯‚ê‚ÎÌ‚Ä‚é
+			//å¼¾ãŒç„¡ã‘ã‚Œã°æ¨ã¦ã‚‹
 			if( nbs == 0 ){
 				ObjMgr->DumpWeapon(ctrlid);
 				return 1;
 			}
 
-			//ƒ‰ƒ“ƒ_ƒ€‚É ƒŠƒ[ƒhÀs or •Ší‚ğ‚¿‚©‚¦
+			//ãƒ©ãƒ³ãƒ€ãƒ ã« ãƒªãƒ­ãƒ¼ãƒ‰å®Ÿè¡Œ or æ­¦å™¨ã‚’æŒã¡ã‹ãˆ
 			if( GetRand(ways) <= under ){
 				ObjMgr->ReloadWeapon(ctrlid);
 				return 2;
@@ -1085,26 +1085,26 @@ int AIcontrol::ControlWeapon()
 		}
 	}
 
-	//˜AËØ‚è‘Ö‚¦‚ª‰Â”\‚È•Ší‚È‚ç
+	//é€£å°„åˆ‡ã‚Šæ›¿ãˆãŒå¯èƒ½ãªæ­¦å™¨ãªã‚‰
 	if( paramdata.ChangeWeapon != -1 ){
-		//Œ»İ‚Ì•Ší‚Ì˜AËİ’è‚ğæ“¾
+		//ç¾åœ¨ã®æ­¦å™¨ã®é€£å°„è¨­å®šã‚’å–å¾—
 		blazingmodeS = paramdata.blazingmode;
 
-		//V‚½‚È•Ší‚Ì˜AËİ’è‚ğæ“¾
+		//æ–°ãŸãªæ­¦å™¨ã®é€£å°„è¨­å®šã‚’å–å¾—
 		if( Param->GetWeapon(paramdata.ChangeWeapon, &paramdata) == 1 ){ return 0; }
 		blazingmodeN = paramdata.blazingmode;
 
 		if( longattack == false ){
-			//‹ß‹——£UŒ‚’†‚ÅAŒ»İSEMIEØ‚è‘Ö‚¦‚é‚ÆFULL‚É‚È‚é‚È‚ç
+			//è¿‘è·é›¢æ”»æ’ƒä¸­ã§ã€ç¾åœ¨SEMIãƒ»åˆ‡ã‚Šæ›¿ãˆã‚‹ã¨FULLã«ãªã‚‹ãªã‚‰
 			if( (blazingmodeS == false)||(blazingmodeN == true) ){
-				ObjMgr->ChangeShotMode(ctrlid);	//Ø‚è‘Ö‚¦‚é
+				ObjMgr->ChangeShotMode(ctrlid);	//åˆ‡ã‚Šæ›¿ãˆã‚‹
 				return 4;
 			}
 		}
 		else{
-			//‰“‹——£UŒ‚’†‚ÅAŒ»İFULLEØ‚è‘Ö‚¦‚é‚ÆSEMI‚É‚È‚é‚È‚ç
+			//é è·é›¢æ”»æ’ƒä¸­ã§ã€ç¾åœ¨FULLãƒ»åˆ‡ã‚Šæ›¿ãˆã‚‹ã¨SEMIã«ãªã‚‹ãªã‚‰
 			if( (blazingmodeS == true)||(blazingmodeN == false) ){
-				ObjMgr->ChangeShotMode(ctrlid);	//Ø‚è‘Ö‚¦‚é
+				ObjMgr->ChangeShotMode(ctrlid);	//åˆ‡ã‚Šæ›¿ãˆã‚‹
 				return 4;
 			}
 		}
@@ -1113,9 +1113,9 @@ int AIcontrol::ControlWeapon()
 	return 0;
 }
 
-//! @brief èÖ’e‚ğ“Š‚°‚é
-//! @return ˆ—’†F0@“Š‚°I‚í‚Á‚½F1@èÖ’e‚ğ‚Á‚Ä‚¢‚È‚¢F2
-//! @attention èÖ’e‚ğ“Š‚°‚éƒpƒX‚É‰‚¶‚½ˆ—‚Å‚·B“G”­Œ©‚ÌUŒ‚‚ÍAction()ŠÖ”‚ğQÆ‚µ‚Ä‚­‚¾‚³‚¢B
+//! @brief æ‰‹æ¦´å¼¾ã‚’æŠ•ã’ã‚‹
+//! @return å‡¦ç†ä¸­ï¼š0ã€€æŠ•ã’çµ‚ã‚ã£ãŸï¼š1ã€€æ‰‹æ¦´å¼¾ã‚’æŒã£ã¦ã„ãªã„ï¼š2
+//! @attention æ‰‹æ¦´å¼¾ã‚’æŠ•ã’ã‚‹ãƒ‘ã‚¹ã«å¿œã˜ãŸå‡¦ç†ã§ã™ã€‚æ•µç™ºè¦‹æ™‚ã®æ”»æ’ƒã¯Action()é–¢æ•°ã‚’å‚ç…§ã—ã¦ãã ã•ã„ã€‚
 int AIcontrol::ThrowGrenade()
 {
 	int selectweapon;
@@ -1129,7 +1129,7 @@ int AIcontrol::ThrowGrenade()
 		weapon[i] = NULL;
 	}
 
-	//èÖ’e‚ğ‚Á‚Ä‚¢‚é‚©Šm”F
+	//æ‰‹æ¦´å¼¾ã‚’æŒã£ã¦ã„ã‚‹ã‹ç¢ºèª
 	ctrlhuman->GetWeapon(&selectweapon, weapon);
 	for(i=0; i<TOTAL_HAVEWEAPON; i++){
 		if( weapon[i] != NULL ){
@@ -1140,28 +1140,28 @@ int AIcontrol::ThrowGrenade()
 		}
 	}
 
-	//èÖ’e‚ÉØ‚è‘Ö‚¦‚ç‚ê‚é‚È‚çAØ‚è‘Ö‚¦‚é
+	//æ‰‹æ¦´å¼¾ã«åˆ‡ã‚Šæ›¿ãˆã‚‰ã‚Œã‚‹ãªã‚‰ã€åˆ‡ã‚Šæ›¿ãˆã‚‹
 	if( (i != TOTAL_HAVEWEAPON)&&(i != selectweapon) ){
 		ObjMgr->ChangeWeapon(ctrlid, i);
 	}
 
-	//ƒpƒX‚Æl‚Ì‚‚³‚ğæ“¾
+	//ãƒ‘ã‚¹ã¨äººã®é«˜ã•ã‚’å–å¾—
 	MoveNavi->GetPathPointData(&pdata);
 	posy2 = posy + VIEW_HEIGHT;
 
-	//ˆê“x‘S‚Ä‚Ì“®‚«‚ğ~‚ß‚é
+	//ä¸€åº¦å…¨ã¦ã®å‹•ãã‚’æ­¢ã‚ã‚‹
 	ObjDriver->ResetMode();
 
-	//–Ú•W’n“_‚Ö‚ÌŠp“x‚ğ‹‚ß‚é
+	//ç›®æ¨™åœ°ç‚¹ã¸ã®è§’åº¦ã‚’æ±‚ã‚ã‚‹
 	CheckTargetAngle(posx, posy2, posz, rx*-1 + (float)M_PI/2, ry, pdata.x, pdata.y, pdata.z, 0.0f, &atan_rx, &atan_ry, NULL);
 
-	//èÖ’e‚ğ‚Á‚Ä‚¢‚È‚¯‚ê‚Î
+	//æ‰‹æ¦´å¼¾ã‚’æŒã£ã¦ã„ãªã‘ã‚Œã°
 	if( i == TOTAL_HAVEWEAPON ){
-		//¦èÖ’e‚ğ‚Á‚Ä‚¢‚È‚¢ê‡‚Å‚àA‚±‚ÌƒtƒŒ[ƒ€‚Å‚Í‚»‚Ì•ûŒü‚ÖŒü‚©‚¹‚é‚æ‚¤ˆ—‚·‚éB
-		//@‚±‚Ìˆ—‚É‚æ‚èAèÖ’e‚ğ‚Á‚Ä‚¢‚È‚¢ó‘Ô‚Å ‚©‚ÂèÖ’e“Š‚°‚Ì–³ŒÀƒ‹[ƒv‚ÉŠ×‚Á‚½ê‡AèÖ’e“Š‚°ƒpƒX‚Ì•ûŠp‚ğŒü‚«‘±‚¯‚éB
-		//@i–{‰ÆXOPS‚Ìd—lj
+		//â€»æ‰‹æ¦´å¼¾ã‚’æŒã£ã¦ã„ãªã„å ´åˆã§ã‚‚ã€ã“ã®ãƒ•ãƒ¬ãƒ¼ãƒ ã§ã¯ãã®æ–¹å‘ã¸å‘ã‹ã›ã‚‹ã‚ˆã†å‡¦ç†ã™ã‚‹ã€‚
+		//ã€€ã“ã®å‡¦ç†ã«ã‚ˆã‚Šã€æ‰‹æ¦´å¼¾ã‚’æŒã£ã¦ã„ãªã„çŠ¶æ…‹ã§ ã‹ã¤æ‰‹æ¦´å¼¾æŠ•ã’ã®ç„¡é™ãƒ«ãƒ¼ãƒ—ã«é™¥ã£ãŸå ´åˆã€æ‰‹æ¦´å¼¾æŠ•ã’ãƒ‘ã‚¹ã®æ–¹è§’ã‚’å‘ãç¶šã‘ã‚‹ã€‚
+		//ã€€ï¼ˆæœ¬å®¶XOPSã®ä»•æ§˜ï¼‰
 
-		//ù‰ñ
+		//æ—‹å›
 		if( atan_rx > 0.0f ){
 			ObjDriver->SetModeFlag(AI_CTRL_TURNLEFT);
 		}
@@ -1173,7 +1173,7 @@ int AIcontrol::ThrowGrenade()
 		return 2;
 	}
 
-	//ù‰ñ
+	//æ—‹å›
 	if( atan_rx > 0.0f ){
 		ObjDriver->SetModeFlag(AI_CTRL_TURNLEFT);
 	}
@@ -1187,9 +1187,9 @@ int AIcontrol::ThrowGrenade()
 		ObjDriver->SetModeFlag(AI_CTRL_TURNDOWN);
 	}
 
-	//“Š‚°‚é
+	//æŠ•ã’ã‚‹
 	if( (fabs(atan_rx) < DegreeToRadian(1.5f))&&(fabs(atan_ry) < DegreeToRadian(1.5f)) ){
-		//Šp“x‚ğİ’è
+		//è§’åº¦ã‚’è¨­å®š
 		ctrlhuman->SetRxRy(rx, ry);
 
 		if( ObjMgr->ShotWeapon(ctrlid) != 0 ){
@@ -1200,20 +1200,20 @@ int AIcontrol::ThrowGrenade()
 	return 0;
 }
 
-//! @brief ˜r‚ÌŠp“x‚ğİ’è
+//! @brief è…•ã®è§’åº¦ã‚’è¨­å®š
 void AIcontrol::ArmAngle()
 {
 	ObjDriver->DelModeFlag(AI_CTRL_TURNUP);
 	ObjDriver->DelModeFlag(AI_CTRL_TURNDOWN);
 
-	if( ctrlhuman->GetMainWeaponTypeNO() == ID_WEAPON_NONE ){	//è‚Ô‚ç
-		//‰º‚ÉŒü‚¯‘±‚¯‚é
+	if( ctrlhuman->GetMainWeaponTypeNO() == ID_WEAPON_NONE ){	//æ‰‹ã¶ã‚‰
+		//ä¸‹ã«å‘ã‘ç¶šã‘ã‚‹
 		ObjDriver->SetModeFlag(AI_CTRL_TURNDOWN);
 	}
-	else if( (battlemode == AI_CAUTION)&&(cautioncnt > 0) ){	//Œx‰ú’†
+	else if( (battlemode == AI_CAUTION)&&(cautioncnt > 0) ){	//è­¦æˆ’ä¸­
 		float addry2 = 0.0f - ry;
 
-		//ù‰ñ
+		//æ—‹å›
 		if( addry2 > DegreeToRadian(1.0f) ){
 			ObjDriver->SetModeFlag(AI_CTRL_TURNUP);
 		}
@@ -1221,8 +1221,8 @@ void AIcontrol::ArmAngle()
 			ObjDriver->SetModeFlag(AI_CTRL_TURNDOWN);
 		}
 	}
-	else{									//•½í‚Å•ŠíŠ—L’†
-		//ù‰ñ
+	else{									//å¹³å¸¸æ™‚ã§æ­¦å™¨æ‰€æœ‰ä¸­
+		//æ—‹å›
 		if( ry < DegreeToRadian(-32) ){
 			ObjDriver->SetModeFlag(AI_CTRL_TURNUP);
 		}
@@ -1232,10 +1232,10 @@ void AIcontrol::ArmAngle()
 	}
 }
 
-//! @brief “G‚ğ’T‚·
+//! @brief æ•µã‚’æ¢ã™
 int AIcontrol::SearchEnemy()
 {
-	//”ñí“¬‰»ƒtƒ‰ƒO‚ª—LŒø‚È‚ç“G‚ğŒ©‚Â‚¯‚È‚¢
+	//éæˆ¦é—˜åŒ–ãƒ•ãƒ©ã‚°ãŒæœ‰åŠ¹ãªã‚‰æ•µã‚’è¦‹ã¤ã‘ãªã„
 	if( NoFight == true ){
 		return 0;
 	}
@@ -1248,7 +1248,7 @@ int AIcontrol::SearchEnemy()
 	float maxDist;
 	float A_rx, A_ry, B_rx, B_ry;
 
-	//•Ší‚ğ‚Á‚Ä‚¢‚ê‚ÎAƒXƒR[ƒvƒ‚[ƒh‚ğæ“¾
+	//æ­¦å™¨ã‚’æŒã£ã¦ã„ã‚Œã°ã€ã‚¹ã‚³ãƒ¼ãƒ—ãƒ¢ãƒ¼ãƒ‰ã‚’å–å¾—
 	if( weaponid != ID_WEAPON_NONE ){
 		WeaponParameter Wparam;
 
@@ -1256,7 +1256,7 @@ int AIcontrol::SearchEnemy()
 		weaponscope = Wparam.scopemode;
 	}
 
-	//“G‚Ì’Tõ‰ñ”‚Æ’Tõ”ÍˆÍi‹——£‚ÆŠp“xj‚ğİ’è
+	//æ•µã®æ¢ç´¢å›æ•°ã¨æ¢ç´¢ç¯„å›²ï¼ˆè·é›¢ã¨è§’åº¦ï¼‰ã‚’è¨­å®š
 	if( battlemode == AI_NORMAL ){
 		searchloops = (LevelParam->search) * AI_TOTALHUMAN_SCALE;
 
@@ -1282,7 +1282,7 @@ int AIcontrol::SearchEnemy()
 		B_ry = DegreeToRadian(80);
 	}
 
-	//w’è‰ñ”A“G‚ğ’Tõ
+	//æŒ‡å®šå›æ•°ã€æ•µã‚’æ¢ç´¢
 	for(int i=0; i<searchloops; i++){
 		int targetid = GetRand(MAX_HUMAN);
 
@@ -1302,7 +1302,7 @@ int AIcontrol::SearchEnemy()
 	return 0;
 }
 
-//! @brief “G‚ğ’T‚·i‰“‹——£UŒ‚’†‚É‹ß‹——£‚ğ’T‚·j
+//! @brief æ•µã‚’æ¢ã™ï¼ˆé è·é›¢æ”»æ’ƒä¸­ã«è¿‘è·é›¢ã‚’æ¢ã™ï¼‰
 int AIcontrol::SearchShortEnemy()
 {
 	float A_rx, A_ry;
@@ -1320,58 +1320,58 @@ int AIcontrol::SearchShortEnemy()
 	return 0;
 }
 
-//! @brief “G‚ªŒ©‚¦‚é‚©”»’è
+//! @brief æ•µãŒè¦‹ãˆã‚‹ã‹åˆ¤å®š
 bool AIcontrol::CheckLookEnemy(int id, float search_rx, float search_ry, float maxDist, float *out_minDist)
 {
 	if( ObjMgr == NULL ){ return false; }
 
-	//l‚ÌƒIƒuƒWƒFƒNƒg‚ğæ“¾
+	//äººã®ã‚ªãƒ–ã‚¸ã‚§ã‚¯ãƒˆã‚’å–å¾—
 	class human* thuman;
 	thuman = ObjMgr->GetHumanObject(id);
 	if( thuman == NULL ){ return false; }
 
-	//“¯–¼ŠÖ”‚ğƒI[ƒo[ƒ[ƒh
+	//åŒåé–¢æ•°ã‚’ã‚ªãƒ¼ãƒãƒ¼ãƒ­ãƒ¼ãƒ‰
 	return CheckLookEnemy(thuman, search_rx, search_ry, maxDist, out_minDist);
 }
 
-//! @brief “G‚ªŒ©‚¦‚é‚©”»’è
+//! @brief æ•µãŒè¦‹ãˆã‚‹ã‹åˆ¤å®š
 bool AIcontrol::CheckLookEnemy(class human* thuman, float search_rx, float search_ry, float maxDist, float *out_minDist)
 {
 	//return false;
 
-	//–³Œø‚Èƒf[ƒ^‚È‚çI—¹
+	//ç„¡åŠ¹ãªãƒ‡ãƒ¼ã‚¿ãªã‚‰çµ‚äº†
 	if( ctrlhuman == NULL ){ return false; }
 	if( thuman == NULL ){ return false; }
 	if( thuman->GetEnableFlag() == false ){ return false; }
 	if( thuman->GetDeadFlag() == true ){ return false; }
 
-	//©•ª‚Æ“G‚ÌÀ•W‚ğæ“¾
+	//è‡ªåˆ†ã¨æ•µã®åº§æ¨™ã‚’å–å¾—
 	int ctrlteam, targetteam;
 	float tx, ty, tz;
 	ctrlhuman->GetParamData(NULL, NULL, NULL, &ctrlteam);
 	thuman->GetParamData(NULL, NULL, NULL, &targetteam);
 	thuman->GetPosData(&tx, &ty, &tz, NULL);
 
-	//©•ª‚Æ“G‚ª“¯ˆêl•¨‚Å‚È‚¯‚ê‚Î
+	//è‡ªåˆ†ã¨æ•µãŒåŒä¸€äººç‰©ã§ãªã‘ã‚Œã°
 	if( ctrlteam != targetteam ){
 		float mrx, mry;
 		float Dist2 , Dist;
 		float Dist_dummy; 
 
-		//‹——£‚ğ”»’è‚µAŠp“x‚àæ“¾
+		//è·é›¢ã‚’åˆ¤å®šã—ã€è§’åº¦ã‚‚å–å¾—
 		if( CheckTargetAngle(posx, posy, posz, rx*-1 + (float)M_PI/2, 0.0f, tx, ty, tz, maxDist, &mrx, &mry, &Dist2) == true ){
-			//Šp“xãA‹ŠE‚É“ü‚Á‚Ä‚¢‚ê‚Î
+			//è§’åº¦ä¸Šã€è¦–ç•Œã«å…¥ã£ã¦ã„ã‚Œã°
 			if( (fabs(mrx) < search_rx/2)&&(fabs(mry) < search_ry/2) ){
 				float vx, vy, vz;
 
 				Dist = sqrt(Dist2);
 
-				//ƒxƒNƒgƒ‹‚ğæ“¾
+				//ãƒ™ã‚¯ãƒˆãƒ«ã‚’å–å¾—
 				vx = (tx - posx)/Dist;
 				vy = (ty - posy)/Dist;
 				vz = (tz - posz)/Dist;
 
-				//ƒuƒƒbƒN‚ªÕ‚Á‚Ä‚¢‚È‚¯‚ê‚Î@iƒŒƒC‚Å“–‚½‚è”»’è‚ğs‚¢A“–‚½‚Á‚Ä‚¢‚È‚¯‚ê‚Îj
+				//ãƒ–ãƒ­ãƒƒã‚¯ãŒé®ã£ã¦ã„ãªã‘ã‚Œã°ã€€ï¼ˆãƒ¬ã‚¤ã§å½“ãŸã‚Šåˆ¤å®šã‚’è¡Œã„ã€å½“ãŸã£ã¦ã„ãªã‘ã‚Œã°ï¼‰
 				if( CollD->CheckALLBlockIntersectRay(posx, posy + VIEW_HEIGHT, posz, vx, vy, vz, NULL, NULL, &Dist_dummy, Dist) == false ){
 					if( out_minDist != NULL ){ *out_minDist = Dist; }
 					enemyhuman = thuman;
@@ -1383,36 +1383,36 @@ bool AIcontrol::CheckLookEnemy(class human* thuman, float search_rx, float searc
 	return false;
 }
 
-//! @brief €‘Ì‚ª‚ ‚é‚©Šm”F
+//! @brief æ­»ä½“ãŒã‚ã‚‹ã‹ç¢ºèª
 bool AIcontrol::CheckCorpse(int id)
 {
-	//ƒNƒ‰ƒXİ’è‚ª‚¨‚©‚µ‚¯‚ê‚Îˆ—‚µ‚È‚¢
+	//ã‚¯ãƒ©ã‚¹è¨­å®šãŒãŠã‹ã—ã‘ã‚Œã°å‡¦ç†ã—ãªã„
 	if( ObjMgr == NULL ){ return false; }
 	if( ctrlhuman == NULL ){ return false; }
 
-	//ƒ^[ƒQƒbƒg‚ÌƒNƒ‰ƒX‚ğæ“¾
+	//ã‚¿ãƒ¼ã‚²ãƒƒãƒˆã®ã‚¯ãƒ©ã‚¹ã‚’å–å¾—
 	class human* thuman;
 	thuman = ObjMgr->GetHumanObject(id);
 	if( thuman == NULL ){ return false; }
 	if( thuman->GetEnableFlag() == false ){ return false; }
 
-	//€–S‚µ‚Ä‚¢‚ê‚Î
+	//æ­»äº¡ã—ã¦ã„ã‚Œã°
 	if( thuman->GetDeadFlag() == true ){
 
-		//ƒ`[ƒ€”Ô†‚ğæ“¾
+		//ãƒãƒ¼ãƒ ç•ªå·ã‚’å–å¾—
 		int ctrlteam, targetteam;
 		ctrlhuman->GetParamData(NULL, NULL, NULL, &ctrlteam);
 		thuman->GetParamData(NULL, NULL, NULL, &targetteam);
 
-		//–¡•û‚È‚ç‚Î
+		//å‘³æ–¹ãªã‚‰ã°
 		if( ctrlteam == targetteam ){
 			float tposx, tposy, tposz;
 			float atan;
 
-			//À•W‚©‚ç‹——£‚ğæ“¾
+			//åº§æ¨™ã‹ã‚‰è·é›¢ã‚’å–å¾—
 			thuman->GetPosData(&tposx, &tposy, &tposz, NULL);
 
-			//‹——£‚ÆŠp“x‚ğŒvZ
+			//è·é›¢ã¨è§’åº¦ã‚’è¨ˆç®—
 			if( CheckTargetAngle(posx, posy, posz, rx*-1 + (float)M_PI/2, 0.0f, tposx, tposy, tposz, 22.0f, &atan, NULL, NULL) == true ){
 				if( fabs(atan) < DegreeToRadian(40) ){
 					return true;
@@ -1423,13 +1423,13 @@ bool AIcontrol::CheckCorpse(int id)
 	return false;
 }
 
-//! @brief ƒpƒX‚É‚æ‚éˆÚ“®
+//! @brief ãƒ‘ã‚¹ã«ã‚ˆã‚‹ç§»å‹•
 void AIcontrol::MovePath()
 {
 	int movemode, pointmode;
 	MoveNavi->GetTargetPos(NULL, NULL, NULL, &movemode, &pointmode);
 
-	if( movemode == AI_NAVI_MOVE_NULL ){			//ˆÙí‚ÈƒpƒX
+	if( movemode == AI_NAVI_MOVE_NULL ){			//ç•°å¸¸ãªãƒ‘ã‚¹
 		return;
 	}
 
@@ -1465,17 +1465,17 @@ void AIcontrol::MovePath()
 	}
 }
 
-//! @brief UŒ‚ƒƒCƒ“ˆ—
-//! @return •s•ÏFfalse@•ÏXFtrue
+//! @brief æ”»æ’ƒãƒ¡ã‚¤ãƒ³å‡¦ç†
+//! @return ä¸å¤‰ï¼šfalseã€€å¤‰æ›´ï¼štrue
 bool AIcontrol::ActionMain()
 {
 	int newbattlemode = AI_ACTION;
 
-	//UŒ‚ˆ—
+	//æ”»æ’ƒå‡¦ç†
 	Action();
 
-	if( MoveNavi->GetRun2() == true ){				//—Dæ“I‚È‘–‚è
-		//–Ú•W’n“_‚ÖˆÚ“®
+	if( MoveNavi->GetRun2() == true ){				//å„ªå…ˆçš„ãªèµ°ã‚Š
+		//ç›®æ¨™åœ°ç‚¹ã¸ç§»å‹•
 		if( CheckTargetPos(false) == true ){
 			newbattlemode = AI_NORMAL;
 			MoveNavi->MovePathNextState();
@@ -1485,14 +1485,14 @@ bool AIcontrol::ActionMain()
 			MoveTarget2(false);
 		}
 	}
-	else{									//—Dæ“I‚È‘–‚è ˆÈŠO
-		//‰“‹——£UŒ‚’†‚È‚çA‹ß‚­‚Ì“G‚ğ’T‚·
+	else{									//å„ªå…ˆçš„ãªèµ°ã‚Š ä»¥å¤–
+		//é è·é›¢æ”»æ’ƒä¸­ãªã‚‰ã€è¿‘ãã®æ•µã‚’æ¢ã™
 		if( longattack == true ){
 			SearchShortEnemy();
 		}
 	}
 
-	//UŒ‚I—¹”»’è
+	//æ”»æ’ƒçµ‚äº†åˆ¤å®š
 	if( ActionCancel() == true ){
 		enemyhuman = NULL;
 
@@ -1507,7 +1507,7 @@ bool AIcontrol::ActionMain()
 		}
 	}
 
-	//İ’è‚ğ”»’è
+	//è¨­å®šã‚’åˆ¤å®š
 	if( battlemode != newbattlemode ){
 		battlemode = newbattlemode;
 		return true;
@@ -1515,54 +1515,54 @@ bool AIcontrol::ActionMain()
 	return false;
 }
 
-//! @brief Œx‰úƒƒCƒ“ˆ—
-//! @return •s•ÏFfalse@•ÏXFtrue
+//! @brief è­¦æˆ’ãƒ¡ã‚¤ãƒ³å‡¦ç†
+//! @return ä¸å¤‰ï¼šfalseã€€å¤‰æ›´ï¼štrue
 bool AIcontrol::CautionMain()
 {
 	int newbattlemode = AI_CAUTION;
 	float caution_rx;
 
-	//À•W‚Æƒ`[ƒ€”Ô†‚ğæ“¾
+	//åº§æ¨™ã¨ãƒãƒ¼ãƒ ç•ªå·ã‚’å–å¾—
 	int teamid;
 	ctrlhuman->GetParamData(NULL, NULL, NULL, &teamid);
 
-	//”í’e‚Æ‰¹‚Ìó‹µ‚ğæ“¾
+	//è¢«å¼¾ã¨éŸ³ã®çŠ¶æ³ã‚’å–å¾—
 	bool HitFlag = ctrlhuman->CheckHit(&caution_rx);
 	soundlist soundlist[MAX_SOUNDMGR_LIST];
 	int soundlists = GameSound->GetWorldSound(posx, posy + VIEW_HEIGHT, posz, teamid, soundlist);
 
-	//”ñí“¬‰»ƒtƒ‰ƒO‚ª—LŒø‚È‚çA‰¹‚Í•·‚±‚¦‚È‚¢‚±‚Æ‚É‚·‚é
+	//éæˆ¦é—˜åŒ–ãƒ•ãƒ©ã‚°ãŒæœ‰åŠ¹ãªã‚‰ã€éŸ³ã¯èã“ãˆãªã„ã“ã¨ã«ã™ã‚‹
 	if( NoFight == true ){
 		soundlists = 0;
 	}
 
-	//ƒƒCƒ“ˆ—
-	if( enemyhuman != NULL ){		//Šù‚É“G‚ğŒ©‚Â‚¯‚Ä‚¢‚ê‚Î
+	//ãƒ¡ã‚¤ãƒ³å‡¦ç†
+	if( enemyhuman != NULL ){		//æ—¢ã«æ•µã‚’è¦‹ã¤ã‘ã¦ã„ã‚Œã°
 		newbattlemode = AI_ACTION;
 		actioncnt = 0;
 	}
-	else if( SearchEnemy() != 0 ){	//“G‚ªŒ©‚Â‚©‚ê‚Î
+	else if( SearchEnemy() != 0 ){	//æ•µãŒè¦‹ã¤ã‹ã‚Œã°
 		newbattlemode = AI_ACTION;
 		actioncnt = 0;
 	}
-	else if( HitFlag == true ){		//”í’e‚µ‚½
-		cautioncnt = 160;					//Œx‰ú‚ğÄŠJ
+	else if( HitFlag == true ){		//è¢«å¼¾ã—ãŸ
+		cautioncnt = 160;					//è­¦æˆ’ã‚’å†é–‹
 		FaceCaution_flag = true;
 		FaceCaution_rx = caution_rx;
 	}
-	else if( soundlists > 0 ){		//‰¹‚ª•·‚±‚¦‚½
-		cautioncnt = 160;					//Œx‰ú‚ğÄŠJ
+	else if( soundlists > 0 ){		//éŸ³ãŒèã“ãˆãŸ
+		cautioncnt = 160;					//è­¦æˆ’ã‚’å†é–‹
 	}
-	else if( cautioncnt == 0 ){		//Œx‰ú‚ğI—¹‚·‚é‚È‚ç
-		if( CheckTargetPos(true) == false ){				//Œx‰úŠJn’n“_‚æ‚è—£‚ê‚Ä‚¢‚é‚©
-			MoveTarget(true);				//Œx‰úŠJn’n“_‚É‹ß‚Ã‚­
+	else if( cautioncnt == 0 ){		//è­¦æˆ’ã‚’çµ‚äº†ã™ã‚‹ãªã‚‰
+		if( CheckTargetPos(true) == false ){				//è­¦æˆ’é–‹å§‹åœ°ç‚¹ã‚ˆã‚Šé›¢ã‚Œã¦ã„ã‚‹ã‹
+			MoveTarget(true);				//è­¦æˆ’é–‹å§‹åœ°ç‚¹ã«è¿‘ã¥ã
 		}
 		else{
 			newbattlemode = AI_NORMAL;
 			FaceCaution_flag = false;
 			FaceCaution_rx = 0.0f;
 
-			//Œx‰ú‘Ò‚¿ƒpƒX‚È‚çŸ‚Öi‚ß‚é
+			//è­¦æˆ’å¾…ã¡ãƒ‘ã‚¹ãªã‚‰æ¬¡ã¸é€²ã‚ã‚‹
 			pointdata pdata;
 			MoveNavi->GetPathPointData(&pdata);
 			if( (pdata.p1 == 3)&&(pdata.p2 == 4) ){
@@ -1571,12 +1571,12 @@ bool AIcontrol::CautionMain()
 			}
 		}
 	}
-	else if( (cautioncnt < 100)&&(FaceCaution_flag == false) ){		//100ƒtƒŒ[ƒ€‚ğØ‚Á‚½‚çAƒ‰ƒ“ƒ_ƒ€‚ÉŒx‰úI—¹iƒJƒEƒ“ƒgF0‚Éj
+	else if( (cautioncnt < 100)&&(FaceCaution_flag == false) ){		//100ãƒ•ãƒ¬ãƒ¼ãƒ ã‚’åˆ‡ã£ãŸã‚‰ã€ãƒ©ãƒ³ãƒ€ãƒ ã«è­¦æˆ’çµ‚äº†ï¼ˆã‚«ã‚¦ãƒ³ãƒˆï¼š0ã«ï¼‰
 		if( GetRand(50) == 0 ){ cautioncnt = 0; }
 	}
 	else{ cautioncnt -= 1; }
 
-	//’Ç”ö’†‚Å‘ÎÛ‚©‚ç—£‚ê‚·‚¬‚½‚çAƒ‰ƒ“ƒ_ƒ€‚ÉŒx‰úI—¹
+	//è¿½å°¾ä¸­ã§å¯¾è±¡ã‹ã‚‰é›¢ã‚Œã™ããŸã‚‰ã€ãƒ©ãƒ³ãƒ€ãƒ ã«è­¦æˆ’çµ‚äº†
 	if( (MoveNavi->GetMoveMode() == AI_TRACKING)&&(GetRand(3) == 0) ){
 		float x, z;
 		float tx, tz;
@@ -1589,11 +1589,11 @@ bool AIcontrol::CautionMain()
 		}
 	}
 
-	//‰ñ“]‚Æ˜r‚ÌŠp“x
+	//å›è»¢ã¨è…•ã®è§’åº¦
 	TurnSeen();
 	ArmAngle();
 
-	//İ’è‚ğ”»’è
+	//è¨­å®šã‚’åˆ¤å®š
 	if( battlemode != newbattlemode ){
 		battlemode = newbattlemode;
 		return true;
@@ -1601,8 +1601,8 @@ bool AIcontrol::CautionMain()
 	return false;
 }
 
-//! @brief ’ÊíƒƒCƒ“ˆ—
-//! @return •s•ÏFfalse@•ÏXFtrue
+//! @brief é€šå¸¸ãƒ¡ã‚¤ãƒ³å‡¦ç†
+//! @return ä¸å¤‰ï¼šfalseã€€å¤‰æ›´ï¼štrue
 bool AIcontrol::NormalMain()
 {
 	int newbattlemode = AI_NORMAL;
@@ -1611,27 +1611,27 @@ bool AIcontrol::NormalMain()
 	MoveNavi->MovePathNowState();
 	enemyhuman = NULL;
 
-	//À•W‚Æƒ`[ƒ€”Ô†‚ğæ“¾
+	//åº§æ¨™ã¨ãƒãƒ¼ãƒ ç•ªå·ã‚’å–å¾—
 	int teamid;
 	ctrlhuman->GetParamData(NULL, NULL, NULL, &teamid);
 
-	//”í’e‚Æ‰¹‚Ìó‹µ‚ğæ“¾
+	//è¢«å¼¾ã¨éŸ³ã®çŠ¶æ³ã‚’å–å¾—
 	bool HitFlag = ctrlhuman->CheckHit(&caution_rx);
 	soundlist soundlist[MAX_SOUNDMGR_LIST];
 	int soundlists = GameSound->GetWorldSound(posx, posy + VIEW_HEIGHT, posz, teamid, soundlist);
 
-	//”ñí“¬‰»ƒtƒ‰ƒO‚ª—LŒø‚È‚çA‰¹‚Í•·‚±‚¦‚È‚¢‚±‚Æ‚É‚·‚é
+	//éæˆ¦é—˜åŒ–ãƒ•ãƒ©ã‚°ãŒæœ‰åŠ¹ãªã‚‰ã€éŸ³ã¯èã“ãˆãªã„ã“ã¨ã«ã™ã‚‹
 	if( NoFight == true ){
 		soundlists = 0;
 	}
 
-	//ƒ‰ƒ“ƒ_ƒ€ƒpƒX‚È‚çˆ—Às
+	//ãƒ©ãƒ³ãƒ€ãƒ ãƒ‘ã‚¹ãªã‚‰å‡¦ç†å®Ÿè¡Œ
 	if( MoveNavi->GetMoveMode() == AI_RANDOM ){
 		MoveNavi->MovePathNextState();
 		MoveNavi->MovePathNowState();
 	}
 
-	//èÖ’eƒpƒX
+	//æ‰‹æ¦´å¼¾ãƒ‘ã‚¹
 	if( MoveNavi->GetMoveMode() == AI_GRENADE ){
 		if( ThrowGrenade() != 0 ){
 			MoveNavi->MovePathNextState();
@@ -1639,20 +1639,20 @@ bool AIcontrol::NormalMain()
 		}
 	}
 
-	if( MoveNavi->GetMoveMode() == AI_RUN2 ){		//—Dæ“I‚È‘–‚è‚Ìˆ—
-		//“G‚ğŒ©‚Â‚¯‚½‚çUŒ‚‚É“ü‚é
+	if( MoveNavi->GetMoveMode() == AI_RUN2 ){		//å„ªå…ˆçš„ãªèµ°ã‚Šã®å‡¦ç†
+		//æ•µã‚’è¦‹ã¤ã‘ãŸã‚‰æ”»æ’ƒã«å…¥ã‚‹
 		if( SearchEnemy() != 0 ){
 			newbattlemode = AI_ACTION;
 			//cautionback_posx = posx;
 			//cautionback_posz = posz;
 		}
 		else{
-			MovePath();		//ˆÚ“®Às
+			MovePath();		//ç§»å‹•å®Ÿè¡Œ
 		}
 	}
-	else{							//—Dæ“I‚È‘–‚èˆÈŠO‚Ìˆ—
-		//Œx‰ú”»’è‚É“ü‚éˆ—
-		if( HitFlag == true ){							//”í’e‚µ‚½
+	else{							//å„ªå…ˆçš„ãªèµ°ã‚Šä»¥å¤–ã®å‡¦ç†
+		//è­¦æˆ’åˆ¤å®šã«å…¥ã‚‹å‡¦ç†
+		if( HitFlag == true ){							//è¢«å¼¾ã—ãŸ
 			newbattlemode = AI_CAUTION;
 			cautioncnt = 160;
 			cautionback_posx = posx;
@@ -1661,9 +1661,9 @@ bool AIcontrol::NormalMain()
 			FaceCaution_rx = caution_rx;
 		}
 		else if(
-			(SearchEnemy() != 0)||						//“G‚ğŒ©‚Â‚¯‚½
-			(soundlists > 0)||							//‰¹‚ª•·‚±‚¦‚½
-			(CheckCorpse( GetRand(MAX_HUMAN) ) == true)	//€‘Ì‚ğŒ©‚Â‚¯‚½
+			(SearchEnemy() != 0)||						//æ•µã‚’è¦‹ã¤ã‘ãŸ
+			(soundlists > 0)||							//éŸ³ãŒèã“ãˆãŸ
+			(CheckCorpse( GetRand(MAX_HUMAN) ) == true)	//æ­»ä½“ã‚’è¦‹ã¤ã‘ãŸ
 		){
 			newbattlemode = AI_CAUTION;
 			cautioncnt = 160;
@@ -1673,16 +1673,16 @@ bool AIcontrol::NormalMain()
 			FaceCaution_rx = 0.0f;
 		}
 		else{
-			MovePath();		//ˆÚ“®Às
+			MovePath();		//ç§»å‹•å®Ÿè¡Œ
 		}
 	}
 
-	//˜r‚ÌŠp“x‚ğİ’è
+	//è…•ã®è§’åº¦ã‚’è¨­å®š
 	if( MoveNavi->GetMoveMode() != AI_GRENADE ){
 		ArmAngle();
 	}
 
-	//İ’è‚ğ”»’è
+	//è¨­å®šã‚’åˆ¤å®š
 	if( battlemode != newbattlemode ){
 		battlemode = newbattlemode;
 		return true;
@@ -1690,18 +1690,18 @@ bool AIcontrol::NormalMain()
 	return false;
 }
 
-//! @brief ‰Šú‰»ŒnŠÖ”
+//! @brief åˆæœŸåŒ–ç³»é–¢æ•°
 void AIcontrol::Init()
 {
-	//ƒNƒ‰ƒXİ’è‚ª‚¨‚©‚µ‚¯‚ê‚Îˆ—‚µ‚È‚¢
+	//ã‚¯ãƒ©ã‚¹è¨­å®šãŒãŠã‹ã—ã‘ã‚Œã°å‡¦ç†ã—ãªã„
 	if( ctrlhuman == NULL ){ return; }
 	if( blocks == NULL ){ return; }
 	if( CollD == NULL ){ return; }
 
-	//g—p‚³‚ê‚Ä‚¢‚È‚¢l‚È‚çˆ—‚µ‚È‚¢
+	//ä½¿ç”¨ã•ã‚Œã¦ã„ãªã„äººãªã‚‰å‡¦ç†ã—ãªã„
 	if( ctrlhuman->GetEnableFlag() == false ){ return; }
 
-	//ƒXƒe[ƒg‚ğ‰Šú‰»
+	//ã‚¹ãƒ†ãƒ¼ãƒˆã‚’åˆæœŸåŒ–
 	NoFight = false;
 	battlemode = AI_NORMAL;
 	enemyhuman = NULL;
@@ -1716,7 +1716,7 @@ void AIcontrol::Init()
 	MoveNavi->Init();
 	ObjDriver->Init();
 
-	//AIƒŒƒxƒ‹‚Æİ’è’l‚ğæ“¾
+	//AIãƒ¬ãƒ™ãƒ«ã¨è¨­å®šå€¤ã‚’å–å¾—
 	int paramid;
 	HumanParameter paramdata;
 	ctrlhuman->GetParamData(&paramid, NULL, NULL, NULL);
@@ -1724,34 +1724,34 @@ void AIcontrol::Init()
 	AIlevel = paramdata.AIlevel;
 	Param->GetAIlevel(AIlevel, &LevelParam);
 
-	//Ÿ‚Ìƒ|ƒCƒ“ƒg‚ğŒŸõ
+	//æ¬¡ã®ãƒã‚¤ãƒ³ãƒˆã‚’æ¤œç´¢
 	//MoveNavi->MovePathNextState();
 	MoveNavi->MovePathNowState();
 }
 
-//! @brief w’è‚µ‚½êŠ‚Ö‘Ò‹@‚³‚¹‚é
-//! @param px XÀ•W
-//! @param pz ZÀ•W
-//! @param rx d‹‚·‚éŒü‚«
-//! @attention ˆÚ“®ƒpƒX‚ÉŠÖ‚í‚ç‚¸Aw’è‚µ‚½À•W‚Ö‚Ì‘Ò‹@‚ğ‹­§‚µ‚Ü‚·BInit()ŠÖ”‚ğÄ“xÀs‚·‚é‚Ü‚ÅŒ³‚É–ß‚¹‚Ü‚¹‚ñB
+//! @brief æŒ‡å®šã—ãŸå ´æ‰€ã¸å¾…æ©Ÿã•ã›ã‚‹
+//! @param px Xåº§æ¨™
+//! @param pz Zåº§æ¨™
+//! @param rx é‡è¦–ã™ã‚‹å‘ã
+//! @attention ç§»å‹•ãƒ‘ã‚¹ã«é–¢ã‚ã‚‰ãšã€æŒ‡å®šã—ãŸåº§æ¨™ã¸ã®å¾…æ©Ÿã‚’å¼·åˆ¶ã—ã¾ã™ã€‚Init()é–¢æ•°ã‚’å†åº¦å®Ÿè¡Œã™ã‚‹ã¾ã§å…ƒã«æˆ»ã›ã¾ã›ã‚“ã€‚
 void AIcontrol::SetHoldWait(float px, float pz, float rx)
 {
 	MoveNavi->SetHoldWait(px, pz, rx);
 }
 
-//! @brief w’è‚µ‚½l‚ğ’Ç”ö‚³‚¹‚é
-//! @param id l‚Ìƒf[ƒ^”Ô†
-//! @attention ˆÚ“®ƒpƒX‚ÉŠÖ‚í‚ç‚¸Aw’è‚µ‚½l‚Ö‚Ì’Ç”ö‚ğ‹­§‚µ‚Ü‚·BInit()ŠÖ”‚ğÄ“xÀs‚·‚é‚Ü‚ÅŒ³‚É–ß‚¹‚Ü‚¹‚ñB
+//! @brief æŒ‡å®šã—ãŸäººã‚’è¿½å°¾ã•ã›ã‚‹
+//! @param id äººã®ãƒ‡ãƒ¼ã‚¿ç•ªå·
+//! @attention ç§»å‹•ãƒ‘ã‚¹ã«é–¢ã‚ã‚‰ãšã€æŒ‡å®šã—ãŸäººã¸ã®è¿½å°¾ã‚’å¼·åˆ¶ã—ã¾ã™ã€‚Init()é–¢æ•°ã‚’å†åº¦å®Ÿè¡Œã™ã‚‹ã¾ã§å…ƒã«æˆ»ã›ã¾ã›ã‚“ã€‚
 void AIcontrol::SetHoldTracking(int id)
 {
 	MoveNavi->SetHoldTracking(id);
 }
 
-//! @brief ‹­§“I‚ÉŒx‰ú‚³‚¹‚é
-//! @warning —Dæ“I‚È‘–‚è ‚ğÀs’†‚Ìê‡A‚±‚ÌŠÖ”‚Í‰½‚à‚µ‚Ü‚¹‚ñB
+//! @brief å¼·åˆ¶çš„ã«è­¦æˆ’ã•ã›ã‚‹
+//! @warning å„ªå…ˆçš„ãªèµ°ã‚Š ã‚’å®Ÿè¡Œä¸­ã®å ´åˆã€ã“ã®é–¢æ•°ã¯ä½•ã‚‚ã—ã¾ã›ã‚“ã€‚
 void AIcontrol::SetCautionMode()
 {
-	//—Dæ“I‚È‘–‚è‚È‚ç‚Î‰½‚à‚µ‚È‚¢
+	//å„ªå…ˆçš„ãªèµ°ã‚Šãªã‚‰ã°ä½•ã‚‚ã—ãªã„
 	if( MoveNavi->GetRun2() == true ){ return; }
 
 	if( battlemode == AI_NORMAL ){
@@ -1764,17 +1764,17 @@ void AIcontrol::SetCautionMode()
 	FaceCaution_rx = 0.0f;
 }
 
-//! @brief ”ñí“¬‰»ƒtƒ‰ƒO‚ğİ’è
-//! @param flag trueFí“¬‚ğs‚í‚È‚¢i”ñí“¬‰»j@falseFí“¬‚ğs‚¤i’Êíj
-//! @attention ƒtƒ‰ƒO‚ğ—LŒø‚É‚·‚é‚Æ“G‚ğ”F¯‚µ‚È‚­‚È‚è‚Ü‚·B
+//! @brief éæˆ¦é—˜åŒ–ãƒ•ãƒ©ã‚°ã‚’è¨­å®š
+//! @param flag trueï¼šæˆ¦é—˜ã‚’è¡Œã‚ãªã„ï¼ˆéæˆ¦é—˜åŒ–ï¼‰ã€€falseï¼šæˆ¦é—˜ã‚’è¡Œã†ï¼ˆé€šå¸¸ï¼‰
+//! @attention ãƒ•ãƒ©ã‚°ã‚’æœ‰åŠ¹ã«ã™ã‚‹ã¨æ•µã‚’èªè­˜ã—ãªããªã‚Šã¾ã™ã€‚
 void AIcontrol::SetNoFightFlag(bool flag)
 {
 	NoFight = flag;
 }
 
-//! @brief í“¬ƒ‚[ƒhæ“¾
-//! @param *mode í“¬ƒ‚[ƒhi”šj‚ğó‚¯æ‚éƒ|ƒCƒ“ƒ^
-//! @param *modestr í“¬ƒ‚[ƒh–¼‚Ì•¶š—ñ‚ğó‚¯æ‚éƒ|ƒCƒ“ƒ^
+//! @brief æˆ¦é—˜ãƒ¢ãƒ¼ãƒ‰å–å¾—
+//! @param *mode æˆ¦é—˜ãƒ¢ãƒ¼ãƒ‰ï¼ˆæ•°å­—ï¼‰ã‚’å—ã‘å–ã‚‹ãƒã‚¤ãƒ³ã‚¿
+//! @param *modestr æˆ¦é—˜ãƒ¢ãƒ¼ãƒ‰åã®æ–‡å­—åˆ—ã‚’å—ã‘å–ã‚‹ãƒã‚¤ãƒ³ã‚¿
 void AIcontrol::GetBattleMode(int *mode, char *modestr)
 {
 	if( mode != NULL ){
@@ -1791,8 +1791,8 @@ void AIcontrol::GetBattleMode(int *mode, char *modestr)
 	}
 }
 
-//! @brief UŒ‚‘ÎÛ‚Ìlƒf[ƒ^”Ô†
-//! @return lƒf[ƒ^”Ô†iƒ^[ƒQƒbƒg‚ª‚¢‚È‚¢ê‡‚Í -1j
+//! @brief æ”»æ’ƒå¯¾è±¡ã®äººãƒ‡ãƒ¼ã‚¿ç•ªå·
+//! @return äººãƒ‡ãƒ¼ã‚¿ç•ªå·ï¼ˆã‚¿ãƒ¼ã‚²ãƒƒãƒˆãŒã„ãªã„å ´åˆã¯ -1ï¼‰
 int AIcontrol::GetEnemyHumanID()
 {
 	if( enemyhuman == NULL ){
@@ -1803,77 +1803,77 @@ int AIcontrol::GetEnemyHumanID()
 	//}
 }
 
-//! @brief ˆÚ“®‚·‚é–Ú•W’n“_iƒ^[ƒQƒbƒgj‚ğæ“¾
-//! @param posx –Ú•W’n“_‚ÌXÀ•W‚ğó‚¯æ‚éƒ|ƒCƒ“ƒ^
-//! @param posz –Ú•W’n“_‚ÌZÀ•W‚ğó‚¯æ‚éƒ|ƒCƒ“ƒ^
-//! @param movemode –Ú•W’n“_‚Ö‚ÌˆÚ“®ƒ‚[ƒh‚ğó‚¯æ‚éƒ|ƒCƒ“ƒ^
+//! @brief ç§»å‹•ã™ã‚‹ç›®æ¨™åœ°ç‚¹ï¼ˆã‚¿ãƒ¼ã‚²ãƒƒãƒˆï¼‰ã‚’å–å¾—
+//! @param posx ç›®æ¨™åœ°ç‚¹ã®Xåº§æ¨™ã‚’å—ã‘å–ã‚‹ãƒã‚¤ãƒ³ã‚¿
+//! @param posz ç›®æ¨™åœ°ç‚¹ã®Zåº§æ¨™ã‚’å—ã‘å–ã‚‹ãƒã‚¤ãƒ³ã‚¿
+//! @param movemode ç›®æ¨™åœ°ç‚¹ã¸ã®ç§»å‹•ãƒ¢ãƒ¼ãƒ‰ã‚’å—ã‘å–ã‚‹ãƒã‚¤ãƒ³ã‚¿
 void AIcontrol::GetMoveTargetPos(float *posx, float *posz, int *movemode)
 {
 	MoveNavi->GetTargetPos(posx, posz, NULL, movemode, NULL);
 }
 
-//! @brief Œ»İ“Ç‚İ‚ñ‚Å‚¢‚éƒ|ƒCƒ“ƒgƒf[ƒ^ƒpƒX
-//! @param out_data ƒ|ƒCƒ“ƒgƒf[ƒ^‚ğó‚¯æ‚éƒ|ƒCƒ“ƒ^
+//! @brief ç¾åœ¨èª­ã¿è¾¼ã‚“ã§ã„ã‚‹ãƒã‚¤ãƒ³ãƒˆãƒ‡ãƒ¼ã‚¿ãƒ‘ã‚¹
+//! @param out_data ãƒã‚¤ãƒ³ãƒˆãƒ‡ãƒ¼ã‚¿ã‚’å—ã‘å–ã‚‹ãƒã‚¤ãƒ³ã‚¿
 void AIcontrol::GetPathPointData(pointdata *out_data)
 {
 	MoveNavi->GetPathPointData(out_data);
 }
 
-//! @brief ˆ—ŒnŠÖ”
+//! @brief å‡¦ç†ç³»é–¢æ•°
 void AIcontrol::Process()
 {
-	//ƒNƒ‰ƒXİ’è‚ª‚¨‚©‚µ‚¯‚ê‚Îˆ—‚µ‚È‚¢
+	//ã‚¯ãƒ©ã‚¹è¨­å®šãŒãŠã‹ã—ã‘ã‚Œã°å‡¦ç†ã—ãªã„
 	if( ctrlhuman == NULL ){ return; }
 	if( blocks == NULL ){ return; }
 	if( CollD == NULL ){ return; }
 
-	//–³Œø‚ÈlƒNƒ‰ƒX‚È‚çˆ—‚µ‚È‚¢
+	//ç„¡åŠ¹ãªäººã‚¯ãƒ©ã‚¹ãªã‚‰å‡¦ç†ã—ãªã„
 	if( ctrlhuman->GetEnableFlag() == false ){ return; }
 
-	//€–S‚µ‚½‚ç
+	//æ­»äº¡ã—ãŸã‚‰
 	if( ctrlhuman->GetHP() <= 0 ){
 		battlemode = AI_DEAD;
 		return;
 	}
 
-	//HP‚ª0‚Å‚È‚¢‚Ì‚É €–S‚µ‚½‚±‚Æ‚É‚È‚Á‚Ä‚é@EEE¶‚«•Ô‚Á‚½H
+	//HPãŒ0ã§ãªã„ã®ã« æ­»äº¡ã—ãŸã“ã¨ã«ãªã£ã¦ã‚‹ã€€ãƒ»ãƒ»ãƒ»ç”Ÿãè¿”ã£ãŸï¼Ÿ
 	if( battlemode == AI_DEAD ){
 		battlemode = AI_NORMAL;
 		MoveNavi->MovePathNowState();
 	}
 
-	//À•W‚ÆŠp“x‚ğæ“¾
+	//åº§æ¨™ã¨è§’åº¦ã‚’å–å¾—
 	ctrlhuman->GetPosData(&posx, &posy, &posz, NULL);
 	ctrlhuman->GetRxRy(&rx, &ry);
 
-	//ƒ‰ƒ“ƒ_ƒ€‚É“®ì‚ğ~‚ß‚é
+	//ãƒ©ãƒ³ãƒ€ãƒ ã«å‹•ä½œã‚’æ­¢ã‚ã‚‹
 	CancelMoveTurn();
 
-	//UŒ‚’†‚©Œx‰ú’†‚È‚ç‚Î
+	//æ”»æ’ƒä¸­ã‹è­¦æˆ’ä¸­ãªã‚‰ã°
 	if( (battlemode == AI_ACTION)||(battlemode == AI_CAUTION) ){
-		//•Ší‚ğ‚Â
+		//æ­¦å™¨ã‚’æŒã¤
 		HaveWeapon();
 	}
 
-	//åŒvZÀs
-	if( battlemode == AI_ACTION ){			//UŒ‚’†
+	//ä¸»è¨ˆç®—å®Ÿè¡Œ
+	if( battlemode == AI_ACTION ){			//æ”»æ’ƒä¸­
 		ActionMain();
 	}
-	else if( battlemode == AI_CAUTION ){	//Œx‰ú’†
+	else if( battlemode == AI_CAUTION ){	//è­¦æˆ’ä¸­
 		CautionMain();
 	}
-	else{									//•½í
+	else{									//å¹³å¸¸æ™‚
 		NormalMain();
 	}
 
-	//ˆÚ“®E•ûŒü“]Š·ˆ—
+	//ç§»å‹•ãƒ»æ–¹å‘è»¢æ›å‡¦ç†
 	ObjDriver->ControlObject();
 
-	//•Ší‚ğæ‚èˆµ‚¢
+	//æ­¦å™¨ã‚’å–ã‚Šæ‰±ã„
 	ControlWeapon();
 }
 
-//! @brief ƒRƒ“ƒXƒgƒ‰ƒNƒ^
+//! @brief ã‚³ãƒ³ã‚¹ãƒˆãƒ©ã‚¯ã‚¿
 AIMoveNavi::AIMoveNavi(class ObjectManager *in_ObjMgr, int in_ctrlid, class PointDataInterface *in_Points)
 {
 	ObjMgr = in_ObjMgr;
@@ -1889,12 +1889,12 @@ AIMoveNavi::AIMoveNavi(class ObjectManager *in_ObjMgr, int in_ctrlid, class Poin
 	target_rx = 0.0f;
 }
 
-//! @brief ƒfƒBƒXƒgƒ‰ƒNƒ^
+//! @brief ãƒ‡ã‚£ã‚¹ãƒˆãƒ©ã‚¯ã‚¿
 AIMoveNavi::~AIMoveNavi()
 {}
 
-//! @brief ‘ÎÛƒNƒ‰ƒX‚ğİ’è
-//! @attention ‚±‚ÌŠÖ”‚Åİ’è‚ğs‚í‚È‚¢‚ÆAƒNƒ‰ƒX©‘Ì‚ª³‚µ‚­‹@”\‚µ‚Ü‚¹‚ñB
+//! @brief å¯¾è±¡ã‚¯ãƒ©ã‚¹ã‚’è¨­å®š
+//! @attention ã“ã®é–¢æ•°ã§è¨­å®šã‚’è¡Œã‚ãªã„ã¨ã€ã‚¯ãƒ©ã‚¹è‡ªä½“ãŒæ­£ã—ãæ©Ÿèƒ½ã—ã¾ã›ã‚“ã€‚
 void AIMoveNavi::SetClass(class ObjectManager *in_ObjMgr, int in_ctrlid, class PointDataInterface *in_Points)
 {
 	ObjMgr = in_ObjMgr;
@@ -1902,7 +1902,7 @@ void AIMoveNavi::SetClass(class ObjectManager *in_ObjMgr, int in_ctrlid, class P
 	Points = in_Points;
 }
 
-//! @brief ‰Šú‰»ŒnŠÖ”
+//! @brief åˆæœŸåŒ–ç³»é–¢æ•°
 void AIMoveNavi::Init()
 {
 	movemode = AI_NULL;
@@ -1913,9 +1913,9 @@ void AIMoveNavi::Init()
 	MovePathNextState();
 }
 
-//! @brief ˆÚ“®‚·‚é–Ú•W’n“_‚ğ“K—p
-//! @return Š®—¹Ftrue@¸”sFfalse
-//! @attention ’Ç”ö‚É‘ÎÛl•¨‚ÌÀ•W‚ğ”½‰f‚³‚¹‚é‚½‚ßA–{ŠÖ”‚ğ–ˆƒtƒŒ[ƒ€ŒÄ‚Ño‚µ‚ÄAÅV‚ÌˆÊ’uî•ñ‚ğŒvZ‚·‚é•K—v‚ª‚ ‚è‚Ü‚·B
+//! @brief ç§»å‹•ã™ã‚‹ç›®æ¨™åœ°ç‚¹ã‚’é©ç”¨
+//! @return å®Œäº†ï¼štrueã€€å¤±æ•—ï¼šfalse
+//! @attention è¿½å°¾æ™‚ã«å¯¾è±¡äººç‰©ã®åº§æ¨™ã‚’åæ˜ ã•ã›ã‚‹ãŸã‚ã€æœ¬é–¢æ•°ã‚’æ¯ãƒ•ãƒ¬ãƒ¼ãƒ å‘¼ã³å‡ºã—ã¦ã€æœ€æ–°ã®ä½ç½®æƒ…å ±ã‚’è¨ˆç®—ã™ã‚‹å¿…è¦ãŒã‚ã‚Šã¾ã™ã€‚
 bool AIMoveNavi::MovePathNowState()
 {
 	if( hold == true ){
@@ -1928,16 +1928,16 @@ bool AIMoveNavi::MovePathNowState()
 	}
 
 
-	//ƒ|ƒCƒ“ƒg‚Ìî•ñ‚ğæ“¾
+	//ãƒã‚¤ãƒ³ãƒˆã®æƒ…å ±ã‚’å–å¾—
 	pointdata pdata;
 	if( Points->Getdata(&pdata, path_pointid) != 0 ){
 		movemode = AI_NULL;
 		return false;
 	}
 
-	//ˆÚ“®ƒpƒX‚È‚ç`
+	//ç§»å‹•ãƒ‘ã‚¹ãªã‚‰ï½
 	if( pdata.p1 == 3 ){
-		//ˆÚ“®ƒXƒe[ƒgİ’è
+		//ç§»å‹•ã‚¹ãƒ†ãƒ¼ãƒˆè¨­å®š
 		switch(pdata.p2){
 			case 0: movemode = AI_WALK; break;
 			case 1: movemode = AI_RUN; break;
@@ -1956,16 +1956,16 @@ bool AIMoveNavi::MovePathNowState()
 			if( target_humanid == -1 ){
 				signed char nextpointp4 = pdata.p3;
 
-				//ƒ|ƒCƒ“ƒgilj‚Ìî•ñ‚ğæ“¾
+				//ãƒã‚¤ãƒ³ãƒˆï¼ˆäººï¼‰ã®æƒ…å ±ã‚’å–å¾—
 				if( Points->SearchPointdata(&pdata, 0x08, 0, 0, 0, nextpointp4, 0) == 0 ){
 					return false;
 				}
 
-				//l‚ğŒŸõ‚µ‚ÄƒNƒ‰ƒX‚ğæ“¾
+				//äººã‚’æ¤œç´¢ã—ã¦ã‚¯ãƒ©ã‚¹ã‚’å–å¾—
 				targethuman = ObjMgr->SearchHuman(pdata.p4);
 				if( targethuman == NULL ){ return false; }
 
-				//l‚Ìƒf[ƒ^”Ô†‚ğæ“¾
+				//äººã®ãƒ‡ãƒ¼ã‚¿ç•ªå·ã‚’å–å¾—
 				target_humanid = ObjMgr->GetHumanObjectID(targethuman);
 			}
 
@@ -1973,7 +1973,7 @@ bool AIMoveNavi::MovePathNowState()
 			targethuman->GetPosData(&target_posx, NULL, &target_posz, &target_rx);
 		}
 		else{
-			//î•ñ“K—p
+			//æƒ…å ±é©ç”¨
 			target_posx = pdata.x;
 			target_posz = pdata.z;
 			target_rx = pdata.r;
@@ -1982,7 +1982,7 @@ bool AIMoveNavi::MovePathNowState()
 		return true;
 	}
 
-	//ƒ‰ƒ“ƒ_ƒ€ƒpƒX‚È‚ç
+	//ãƒ©ãƒ³ãƒ€ãƒ ãƒ‘ã‚¹ãªã‚‰
 	if( pdata.p1 == 8 ){
 		movemode = AI_RANDOM;
 		return false;
@@ -1992,11 +1992,11 @@ bool AIMoveNavi::MovePathNowState()
 	return false;
 }
 
-//! @brief Ÿ‚Ì–Ú•W’n“_‚ğŒŸõ
-//! @return Š®—¹Ftrue@¸”sFfalse
+//! @brief æ¬¡ã®ç›®æ¨™åœ°ç‚¹ã‚’æ¤œç´¢
+//! @return å®Œäº†ï¼štrueã€€å¤±æ•—ï¼šfalse
 bool AIMoveNavi::MovePathNextState()
 {
-	//ƒ|ƒCƒ“ƒg‚Ìî•ñ‚ğæ“¾
+	//ãƒã‚¤ãƒ³ãƒˆã®æƒ…å ±ã‚’å–å¾—
 	pointdata pdata;
 	if( Points->Getdata(&pdata, path_pointid) != 0 ){
 		movemode = AI_NULL;
@@ -2005,7 +2005,7 @@ bool AIMoveNavi::MovePathNextState()
 
 	signed char nextpointp4 = pdata.p3;
 
-	//ƒ‰ƒ“ƒ_ƒ€ƒpƒXˆ—
+	//ãƒ©ãƒ³ãƒ€ãƒ ãƒ‘ã‚¹å‡¦ç†
 	if( pdata.p1 == 8 ){
 		if( GetRand(2) == 0 ){
 			nextpointp4 = pdata.p2;
@@ -2016,7 +2016,7 @@ bool AIMoveNavi::MovePathNextState()
 		movemode = AI_RANDOM;
 	}
 
-	//ƒ|ƒCƒ“ƒg‚ğŒŸõ
+	//ãƒã‚¤ãƒ³ãƒˆã‚’æ¤œç´¢
 	if( Points->SearchPointdata(&pdata, 0x08, 0, 0, 0, nextpointp4, 0) == 0 ){
 		return false;
 	}
@@ -2026,11 +2026,11 @@ bool AIMoveNavi::MovePathNextState()
 	return true;
 }
 
-//! @brief w’è‚µ‚½êŠ‚Ö‘Ò‹@‚³‚¹‚é
-//! @param px XÀ•W
-//! @param pz ZÀ•W
-//! @param rx d‹‚·‚éŒü‚«
-//! @attention ˆÚ“®ƒpƒX‚ÉŠÖ‚í‚ç‚¸Aw’è‚µ‚½À•W‚Ö‚Ì‘Ò‹@‚ğ‹­§‚µ‚Ü‚·BInit()ŠÖ”‚ğÄ“xÀs‚·‚é‚Ü‚ÅŒ³‚É–ß‚¹‚Ü‚¹‚ñB
+//! @brief æŒ‡å®šã—ãŸå ´æ‰€ã¸å¾…æ©Ÿã•ã›ã‚‹
+//! @param px Xåº§æ¨™
+//! @param pz Zåº§æ¨™
+//! @param rx é‡è¦–ã™ã‚‹å‘ã
+//! @attention ç§»å‹•ãƒ‘ã‚¹ã«é–¢ã‚ã‚‰ãšã€æŒ‡å®šã—ãŸåº§æ¨™ã¸ã®å¾…æ©Ÿã‚’å¼·åˆ¶ã—ã¾ã™ã€‚Init()é–¢æ•°ã‚’å†åº¦å®Ÿè¡Œã™ã‚‹ã¾ã§å…ƒã«æˆ»ã›ã¾ã›ã‚“ã€‚
 void AIMoveNavi::SetHoldWait(float px, float pz, float rx)
 {
 	movemode = AI_WAIT;
@@ -2040,9 +2040,9 @@ void AIMoveNavi::SetHoldWait(float px, float pz, float rx)
 	target_rx = rx;
 }
 
-//! @brief w’è‚µ‚½l‚ğ’Ç”ö‚³‚¹‚é
-//! @param id l‚Ìƒf[ƒ^”Ô†
-//! @attention ˆÚ“®ƒpƒX‚ÉŠÖ‚í‚ç‚¸Aw’è‚µ‚½l‚Ö‚Ì’Ç”ö‚ğ‹­§‚µ‚Ü‚·BInit()ŠÖ”‚ğÄ“xÀs‚·‚é‚Ü‚ÅŒ³‚É–ß‚¹‚Ü‚¹‚ñB
+//! @brief æŒ‡å®šã—ãŸäººã‚’è¿½å°¾ã•ã›ã‚‹
+//! @param id äººã®ãƒ‡ãƒ¼ã‚¿ç•ªå·
+//! @attention ç§»å‹•ãƒ‘ã‚¹ã«é–¢ã‚ã‚‰ãšã€æŒ‡å®šã—ãŸäººã¸ã®è¿½å°¾ã‚’å¼·åˆ¶ã—ã¾ã™ã€‚Init()é–¢æ•°ã‚’å†åº¦å®Ÿè¡Œã™ã‚‹ã¾ã§å…ƒã«æˆ»ã›ã¾ã›ã‚“ã€‚
 void AIMoveNavi::SetHoldTracking(int id)
 {
 	movemode = AI_TRACKING;
@@ -2050,15 +2050,15 @@ void AIMoveNavi::SetHoldTracking(int id)
 	target_humanid = id;
 }
 
-//! @brief ˆÚ“®ƒ‚[ƒh‚ğæ“¾
-//! @return ˆÚ“®ƒ‚[ƒh
+//! @brief ç§»å‹•ãƒ¢ãƒ¼ãƒ‰ã‚’å–å¾—
+//! @return ç§»å‹•ãƒ¢ãƒ¼ãƒ‰
 int AIMoveNavi::GetMoveMode()
 {
 	return movemode;
 }
 
-//! @brief —Dæ“I‚È‘–‚èƒtƒ‰ƒO‚ğæ“¾
-//! @return —Dæ“I‚È‘–‚è‚Å‚ ‚éFtrue@—Dæ“I‚È‘–‚è‚Å‚È‚¢Ffalse
+//! @brief å„ªå…ˆçš„ãªèµ°ã‚Šãƒ•ãƒ©ã‚°ã‚’å–å¾—
+//! @return å„ªå…ˆçš„ãªèµ°ã‚Šã§ã‚ã‚‹ï¼štrueã€€å„ªå…ˆçš„ãªèµ°ã‚Šã§ãªã„ï¼šfalse
 bool AIMoveNavi::GetRun2()
 {
 	if( movemode == AI_RUN2 ){
@@ -2069,27 +2069,27 @@ bool AIMoveNavi::GetRun2()
 	//}
 }
 
-//! @brief ƒ^[ƒQƒbƒgilj‚Ìƒf[ƒ^”Ô†‚ğæ“¾
-//! @return l‚Ìƒf[ƒ^”Ô†
+//! @brief ã‚¿ãƒ¼ã‚²ãƒƒãƒˆï¼ˆäººï¼‰ã®ãƒ‡ãƒ¼ã‚¿ç•ªå·ã‚’å–å¾—
+//! @return äººã®ãƒ‡ãƒ¼ã‚¿ç•ªå·
 int AIMoveNavi::GetTargetHumanID()
 {
 	return target_humanid;
 }
 
-//! @brief Œ»İ“Ç‚İ‚ñ‚Å‚¢‚éƒ|ƒCƒ“ƒgƒf[ƒ^ƒpƒX
-//! @param out_data ƒ|ƒCƒ“ƒgƒf[ƒ^‚ğó‚¯æ‚éƒ|ƒCƒ“ƒ^
+//! @brief ç¾åœ¨èª­ã¿è¾¼ã‚“ã§ã„ã‚‹ãƒã‚¤ãƒ³ãƒˆãƒ‡ãƒ¼ã‚¿ãƒ‘ã‚¹
+//! @param out_data ãƒã‚¤ãƒ³ãƒˆãƒ‡ãƒ¼ã‚¿ã‚’å—ã‘å–ã‚‹ãƒã‚¤ãƒ³ã‚¿
 void AIMoveNavi::GetPathPointData(pointdata *out_data)
 {
 	Points->Getdata(out_data, path_pointid);
 }
 
-//! @brief ˆÚ“®‚·‚é–Ú•W’n“_iƒ^[ƒQƒbƒgj‚ğæ“¾
-//! @param posx –Ú•W’n“_‚ÌXÀ•W‚ğó‚¯æ‚éƒ|ƒCƒ“ƒ^
-//! @param posz –Ú•W’n“_‚ÌZÀ•W‚ğó‚¯æ‚éƒ|ƒCƒ“ƒ^
-//! @param rx –Ú•W’n“_‚Ì…•½Šp“x‚ğó‚¯æ‚éƒ|ƒCƒ“ƒ^
-//! @param out_movemode –Ú•W’n“_‚Ö‚ÌˆÚ“®ƒ‚[ƒh‚ğó‚¯æ‚éƒ|ƒCƒ“ƒ^
-//! @param out_pointmode –Ú•W’n“_‚Ìƒ|ƒCƒ“ƒgƒ‚[ƒh‚ğó‚¯æ‚éƒ|ƒCƒ“ƒ^
-//! @warning –{ŠÖ”‚Å‚ÍÀ•W‚ÍXV‚³‚ê‚Ü‚¹‚ñBæ‚É MovePathNowState() ŠÖ”‚ÅÀ•W‚ğXV‚µ‚½ŒãA–{ŠÖ”‚ğŒÄ‚Ño‚µ‚Ä‚­‚¾‚³‚¢B
+//! @brief ç§»å‹•ã™ã‚‹ç›®æ¨™åœ°ç‚¹ï¼ˆã‚¿ãƒ¼ã‚²ãƒƒãƒˆï¼‰ã‚’å–å¾—
+//! @param posx ç›®æ¨™åœ°ç‚¹ã®Xåº§æ¨™ã‚’å—ã‘å–ã‚‹ãƒã‚¤ãƒ³ã‚¿
+//! @param posz ç›®æ¨™åœ°ç‚¹ã®Zåº§æ¨™ã‚’å—ã‘å–ã‚‹ãƒã‚¤ãƒ³ã‚¿
+//! @param rx ç›®æ¨™åœ°ç‚¹ã®æ°´å¹³è§’åº¦ã‚’å—ã‘å–ã‚‹ãƒã‚¤ãƒ³ã‚¿
+//! @param out_movemode ç›®æ¨™åœ°ç‚¹ã¸ã®ç§»å‹•ãƒ¢ãƒ¼ãƒ‰ã‚’å—ã‘å–ã‚‹ãƒã‚¤ãƒ³ã‚¿
+//! @param out_pointmode ç›®æ¨™åœ°ç‚¹ã®ãƒã‚¤ãƒ³ãƒˆãƒ¢ãƒ¼ãƒ‰ã‚’å—ã‘å–ã‚‹ãƒã‚¤ãƒ³ã‚¿
+//! @warning æœ¬é–¢æ•°ã§ã¯åº§æ¨™ã¯æ›´æ–°ã•ã‚Œã¾ã›ã‚“ã€‚å…ˆã« MovePathNowState() é–¢æ•°ã§åº§æ¨™ã‚’æ›´æ–°ã—ãŸå¾Œã€æœ¬é–¢æ•°ã‚’å‘¼ã³å‡ºã—ã¦ãã ã•ã„ã€‚
 void AIMoveNavi::GetTargetPos(float *posx, float *posz, float *rx, int *out_movemode, int *out_pointmode)
 {
 	if( posx != NULL ){ *posx = target_posx; }
@@ -2124,16 +2124,16 @@ void AIMoveNavi::GetTargetPos(float *posx, float *posz, float *rx, int *out_move
 		else if( movemode == AI_TRACKING ){
 			*out_pointmode = AI_NAVI_POINT_TRACKING;
 		}
-		else if( movemode == AI_GRENADE ){	//èÖ’eƒpƒX
+		else if( movemode == AI_GRENADE ){	//æ‰‹æ¦´å¼¾ãƒ‘ã‚¹
 			*out_pointmode = AI_NAVI_POINT_GRENADE;
 		}
-		else{								//ˆÚ“®ƒpƒXEˆÙí‚ÈƒpƒX
+		else{								//ç§»å‹•ãƒ‘ã‚¹ãƒ»ç•°å¸¸ãªãƒ‘ã‚¹
 			*out_pointmode = AI_NAVI_POINT_NULL;
 		}
 	}
 }
 
-//! @brief ƒRƒ“ƒXƒgƒ‰ƒNƒ^
+//! @brief ã‚³ãƒ³ã‚¹ãƒˆãƒ©ã‚¯ã‚¿
 AIObjectDriver::AIObjectDriver(class ObjectManager *in_ObjMgr, int in_ctrlid)
 {
 	ObjMgr = in_ObjMgr;
@@ -2144,19 +2144,19 @@ AIObjectDriver::AIObjectDriver(class ObjectManager *in_ObjMgr, int in_ctrlid)
 	addry = 0.0f;
 }
 
-//! @brief ƒfƒBƒXƒgƒ‰ƒNƒ^
+//! @brief ãƒ‡ã‚£ã‚¹ãƒˆãƒ©ã‚¯ã‚¿
 AIObjectDriver::~AIObjectDriver()
 {}
 
-//! @brief ‘ÎÛƒNƒ‰ƒX‚ğİ’è
-//! @attention ‚±‚ÌŠÖ”‚Åİ’è‚ğs‚í‚È‚¢‚ÆAƒNƒ‰ƒX©‘Ì‚ª³‚µ‚­‹@”\‚µ‚Ü‚¹‚ñB
+//! @brief å¯¾è±¡ã‚¯ãƒ©ã‚¹ã‚’è¨­å®š
+//! @attention ã“ã®é–¢æ•°ã§è¨­å®šã‚’è¡Œã‚ãªã„ã¨ã€ã‚¯ãƒ©ã‚¹è‡ªä½“ãŒæ­£ã—ãæ©Ÿèƒ½ã—ã¾ã›ã‚“ã€‚
 void AIObjectDriver::SetClass(class ObjectManager *in_ObjMgr, int in_ctrlid)
 {
 	ObjMgr = in_ObjMgr;
 	ctrlid = in_ctrlid;
 }
 
-//! @brief ‰Šú‰»ŒnŠÖ”
+//! @brief åˆæœŸåŒ–ç³»é–¢æ•°
 void AIObjectDriver::Init()
 {
 	addrx = 0.0f;
@@ -2165,28 +2165,28 @@ void AIObjectDriver::Init()
 	ResetMode();
 }
 
-//! @brief ˆÚ“®‰ñ“]§Œäƒtƒ‰ƒO‚ğƒNƒŠƒAiˆê“x‘S‚Ä‚Ì“®‚«‚ğ~‚ß‚éj
+//! @brief ç§»å‹•å›è»¢åˆ¶å¾¡ãƒ•ãƒ©ã‚°ã‚’ã‚¯ãƒªã‚¢ï¼ˆä¸€åº¦å…¨ã¦ã®å‹•ãã‚’æ­¢ã‚ã‚‹ï¼‰
 void AIObjectDriver::ResetMode()
 {
 	moveturn_mode = 0;
 }
 
-//! @brief ˆÚ“®‰ñ“]§Œäƒtƒ‰ƒO İ’è
-//! @param flag ‘€ìƒ‚[ƒh‚ğ•\‚·’è”iAIcontrolFlag—ñ‹“Œ^j
+//! @brief ç§»å‹•å›è»¢åˆ¶å¾¡ãƒ•ãƒ©ã‚° è¨­å®š
+//! @param flag æ“ä½œãƒ¢ãƒ¼ãƒ‰ã‚’è¡¨ã™å®šæ•°ï¼ˆAIcontrolFlagåˆ—æŒ™å‹ï¼‰
 void AIObjectDriver::SetModeFlag(int flag)
 {
 	SetFlag(moveturn_mode, flag);
 }
 
-//! @brief ˆÚ“®‰ñ“]§Œäƒtƒ‰ƒO ‰ğœ
-//! @param flag ‘€ìƒ‚[ƒh‚ğ•\‚·’è”iAIcontrolFlag—ñ‹“Œ^j
+//! @brief ç§»å‹•å›è»¢åˆ¶å¾¡ãƒ•ãƒ©ã‚° è§£é™¤
+//! @param flag æ“ä½œãƒ¢ãƒ¼ãƒ‰ã‚’è¡¨ã™å®šæ•°ï¼ˆAIcontrolFlagåˆ—æŒ™å‹ï¼‰
 void AIObjectDriver::DelModeFlag(int flag)
 {
 	DelFlag(moveturn_mode, flag);
 }
 
-//! @brief ˆÚ“®‰ñ“]§Œäƒtƒ‰ƒO æ“¾
-//! @param flag ‘€ìƒ‚[ƒh‚ğ•\‚·’è”iAIcontrolFlag—ñ‹“Œ^j
+//! @brief ç§»å‹•å›è»¢åˆ¶å¾¡ãƒ•ãƒ©ã‚° å–å¾—
+//! @param flag æ“ä½œãƒ¢ãƒ¼ãƒ‰ã‚’è¡¨ã™å®šæ•°ï¼ˆAIcontrolFlagåˆ—æŒ™å‹ï¼‰
 bool AIObjectDriver::GetModeFlag(int flag)
 {
 	if( GetFlag(moveturn_mode, flag) == 0 ){
@@ -2197,13 +2197,13 @@ bool AIObjectDriver::GetModeFlag(int flag)
 	//}
 }
 
-//! @brief ˆÚ“®‰ñ“]§Œä‚ğÀs
-//! @attention –ˆƒtƒŒ[ƒ€1‰ñ‚¾‚¯ŒÄ‚Ño‚µ‚Ä‚­‚¾‚³‚¢B
+//! @brief ç§»å‹•å›è»¢åˆ¶å¾¡ã‚’å®Ÿè¡Œ
+//! @attention æ¯ãƒ•ãƒ¬ãƒ¼ãƒ 1å›ã ã‘å‘¼ã³å‡ºã—ã¦ãã ã•ã„ã€‚
 void AIObjectDriver::ControlObject()
 {
 	float rx, ry;
 
-	//ˆÚ“®‚ÌÀs
+	//ç§»å‹•ã®å®Ÿè¡Œ
 	if( GetFlag(moveturn_mode, AI_CTRL_MOVEFORWARD) ){
 		ObjMgr->MoveForward(ctrlid);
 	}
@@ -2220,7 +2220,7 @@ void AIObjectDriver::ControlObject()
 		ObjMgr->MoveWalk(ctrlid);
 	}
 
-	//•ûŒü“]Š·‚ÌÀsi‰ñ“]‘¬“x‚Ì‰ÁZj
+	//æ–¹å‘è»¢æ›ã®å®Ÿè¡Œï¼ˆå›è»¢é€Ÿåº¦ã®åŠ ç®—ï¼‰
 	if( GetFlag(moveturn_mode, AI_CTRL_TURNUP) ){
 		addry += AI_ADDTURNRAD;
 	}
@@ -2234,25 +2234,25 @@ void AIObjectDriver::ControlObject()
 		addrx += AI_ADDTURNRAD;
 	}
 
-	//Šp“x‚ğæ“¾
+	//è§’åº¦ã‚’å–å¾—
 	ObjMgr->GetHumanObject(ctrlid)->GetRxRy(&rx, &ry);
 
-	//Šp“x‚É‰ÁZ
+	//è§’åº¦ã«åŠ ç®—
 	rx += addrx;
 	ry += addry;
 
-	//c‚Ì‰ñ“]”ÍˆÍ‚ğû‚ß‚é
+	//ç¸¦ã®å›è»¢ç¯„å›²ã‚’åã‚ã‚‹
 	if( ry > DegreeToRadian(70) ){ ry = DegreeToRadian(70); }
 	if( ry < DegreeToRadian(-70) ){ ry = DegreeToRadian(-70); }
 
-	//Šp“x‚ğİ’è
+	//è§’åº¦ã‚’è¨­å®š
 	ObjMgr->GetHumanObject(ctrlid)->SetRxRy(rx, ry);
 
-	//‰ñ“]‘¬“x‚ÌŒ¸Š
+	//å›è»¢é€Ÿåº¦ã®æ¸›è¡°
 	addrx *= 0.8f;
 	addry *= 0.8f;
 
-	//0.0f‚Ö•â³
+	//0.0fã¸è£œæ­£
 	if( fabs(addrx) < DegreeToRadian(0.2f) ){ addrx = 0.0f; }
 	if( fabs(addry) < DegreeToRadian(0.2f) ){ addry = 0.0f; }
 }

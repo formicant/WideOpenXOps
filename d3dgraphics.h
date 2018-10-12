@@ -1,5 +1,5 @@
-//! @file d3dgraphics.h
-//! @brief D3DGraphicsƒNƒ‰ƒX‚ÌéŒ¾
+ï»¿//! @file d3dgraphics.h
+//! @brief D3DGraphicsã‚¯ãƒ©ã‚¹ã®å®£è¨€
 
 //--------------------------------------------------------------------------------
 // 
@@ -46,31 +46,31 @@
 #ifndef D3DGRAPHICS_H
 #define D3DGRAPHICS_H
 
-#define MAX_MODEL 72		//!< Å‘åƒ‚ƒfƒ‹”
-#define MAX_TEXTURE 72		//!< Å‘åƒeƒNƒXƒ`ƒƒ”
+#define MAX_MODEL 72		//!< æœ€å¤§ãƒ¢ãƒ‡ãƒ«æ•°
+#define MAX_TEXTURE 72		//!< æœ€å¤§ãƒ†ã‚¯ã‚¹ãƒãƒ£æ•°
 
-#define CLIPPINGPLANE_NEAR 1.0f		//!< ‹ßƒNƒŠƒbƒv–Êià•`‰æ‚·‚éÅ¬‹——£j
-#define CLIPPINGPLANE_FAR 800.0f	//!< ‰“ƒNƒŠƒbƒv–Êià•`‰æ‚·‚éÅ‘å‹——£j
+#define CLIPPINGPLANE_NEAR 1.0f		//!< è¿‘ã‚¯ãƒªãƒƒãƒ—é¢ï¼ˆâ‰’æç”»ã™ã‚‹æœ€å°è·é›¢ï¼‰
+#define CLIPPINGPLANE_FAR 800.0f	//!< é ã‚¯ãƒªãƒƒãƒ—é¢ï¼ˆâ‰’æç”»ã™ã‚‹æœ€å¤§è·é›¢ï¼‰
 
 #ifndef H_LAYERLEVEL
  #define H_LAYERLEVEL 1		//!< Select include file.
 #endif
 #include "main.h"
 
-//#define ENABLE_GRAPHICS_OPENGL		//!< @brief g—p‚·‚éƒOƒ‰ƒtƒBƒbƒNƒXƒRƒA‚Ì‘I‘ğ @details ’è”éŒ¾—LŒøFOpenGL 1.1@’è”éŒ¾–³ŒøiƒRƒƒ“ƒg‰»jFDirectX 9.0c
+//#define ENABLE_GRAPHICS_OPENGL		//!< @brief ä½¿ç”¨ã™ã‚‹ã‚°ãƒ©ãƒ•ã‚£ãƒƒã‚¯ã‚¹ã‚³ã‚¢ã®é¸æŠ @details å®šæ•°å®£è¨€æœ‰åŠ¹ï¼šOpenGL 1.1ã€€å®šæ•°å®£è¨€ç„¡åŠ¹ï¼ˆã‚³ãƒ¡ãƒ³ãƒˆåŒ–ï¼‰ï¼šDirectX 9.0c
 
 #ifndef ENABLE_GRAPHICS_OPENGL
 
-#define BLOCKDATA_GPUMEMORY	//!< @brief ƒuƒƒbƒNƒf[ƒ^‚ğŠi”[‚·‚éƒƒ‚ƒŠ[‚ğ‘I‘ğ @details ’è”éŒ¾—LŒøFGPUƒƒ‚ƒŠ[@’è”éŒ¾–³ŒøiƒRƒƒ“ƒg‰»jFƒƒCƒ“ƒƒ‚ƒŠ[
+#define BLOCKDATA_GPUMEMORY	//!< @brief ãƒ–ãƒ­ãƒƒã‚¯ãƒ‡ãƒ¼ã‚¿ã‚’æ ¼ç´ã™ã‚‹ãƒ¡ãƒ¢ãƒªãƒ¼ã‚’é¸æŠ @details å®šæ•°å®£è¨€æœ‰åŠ¹ï¼šGPUãƒ¡ãƒ¢ãƒªãƒ¼ã€€å®šæ•°å®£è¨€ç„¡åŠ¹ï¼ˆã‚³ãƒ¡ãƒ³ãƒˆåŒ–ï¼‰ï¼šãƒ¡ã‚¤ãƒ³ãƒ¡ãƒ¢ãƒªãƒ¼
 
-#pragma warning(disable:4819)		//VC++Œx–h~
+#pragma warning(disable:4819)		//VC++è­¦å‘Šé˜²æ­¢
 #include <d3dx9.h>
 #pragma warning(default:4819)
 
 #pragma comment(lib, "d3d9.lib")
 #pragma comment(lib, "d3dx9.lib")
 
-#define GRAPHICS_CORE "DirectX 9.0"		//!< ƒo[ƒWƒ‡ƒ“•\¦—pî•ñ
+#define GRAPHICS_CORE "DirectX 9.0"		//!< ãƒãƒ¼ã‚¸ãƒ§ãƒ³è¡¨ç¤ºç”¨æƒ…å ±
 
 #else	//ENABLE_GRAPHICS_OPENGL
 
@@ -89,13 +89,13 @@
 #pragma comment(lib, "lib/zlib/zlib.lib")
 #pragma comment(lib, "lib/libpng/libpng.lib")
 
-#define GRAPHICS_CORE "OpenGL 1.1"		//!< ƒo[ƒWƒ‡ƒ“•\¦—pî•ñ
+#define GRAPHICS_CORE "OpenGL 1.1"		//!< ãƒãƒ¼ã‚¸ãƒ§ãƒ³è¡¨ç¤ºç”¨æƒ…å ±
 
 #endif	//ENABLE_GRAPHICS_OPENGL
 
 #ifndef ENABLE_GRAPHICS_OPENGL
 
-//! 3Dƒ|ƒŠƒSƒ“•`‰æ—p\‘¢‘Ì
+//! 3Dãƒãƒªã‚´ãƒ³æç”»ç”¨æ§‹é€ ä½“
 struct VERTEXTXTA
 {
 	D3DXVECTOR3 position;	//!< The position
@@ -104,7 +104,7 @@ struct VERTEXTXTA
 	FLOAT       tv;			//!< The texture coordinates
 };
 
-//! 2Dƒ|ƒŠƒSƒ“•`‰æ—p\‘¢‘Ì
+//! 2Dãƒãƒªã‚´ãƒ³æç”»ç”¨æ§‹é€ ä½“
 struct TLVERTX
 {
 	FLOAT    x;		//!< position
@@ -118,7 +118,7 @@ struct TLVERTX
 
 #else	//ENABLE_GRAPHICS_OPENGL
 
-//! ƒ‚ƒfƒ‹ƒf[ƒ^‚Ì’¸“_Ši”[\‘¢‘Ì
+//! ãƒ¢ãƒ‡ãƒ«ãƒ‡ãƒ¼ã‚¿ã®é ‚ç‚¹æ ¼ç´æ§‹é€ ä½“
 struct MODELVDATA
 {
 	float x;	//!< position
@@ -128,64 +128,64 @@ struct MODELVDATA
 	float v;	//!< texture coordinates
 };
 
-//! ƒ‚ƒfƒ‹ƒf[ƒ^\‘¢‘Ì
+//! ãƒ¢ãƒ‡ãƒ«ãƒ‡ãƒ¼ã‚¿æ§‹é€ ä½“
 struct MODELDATA
 {
-	bool useflag;			//!< —LŒø‰»ƒtƒ‰ƒO
-	int polygons;			//!< ƒ|ƒŠƒSƒ“”
-	float *VertexAry;		//!< ’¸“_Ši”[”z—ñ
-	float *ColorAry;		//!< FŠi”[”z—ñ
-	float *ColorGrayAry;		//!< FŠi”[”z—ñiˆÃ‚¢j
-	float *TexCoordAry;		//!< ƒeƒNƒXƒ`ƒƒÀ•WŠi”[”z—ñ
+	bool useflag;			//!< æœ‰åŠ¹åŒ–ãƒ•ãƒ©ã‚°
+	int polygons;			//!< ãƒãƒªã‚´ãƒ³æ•°
+	float *VertexAry;		//!< é ‚ç‚¹æ ¼ç´é…åˆ—
+	float *ColorAry;		//!< è‰²æ ¼ç´é…åˆ—
+	float *ColorGrayAry;		//!< è‰²æ ¼ç´é…åˆ—ï¼ˆæš—ã„ï¼‰
+	float *TexCoordAry;		//!< ãƒ†ã‚¯ã‚¹ãƒãƒ£åº§æ¨™æ ¼ç´é…åˆ—
 };
 
-//! ƒeƒNƒXƒ`ƒƒ\‘¢‘Ì
+//! ãƒ†ã‚¯ã‚¹ãƒãƒ£æ§‹é€ ä½“
 struct TEXTUREDATA
 {
-	bool useflag;			//!< —LŒø‰»ƒtƒ‰ƒO
-	int width;				//!< •
-	int height;				//!< ‚‚³
-	unsigned char *data;	//!< Àƒf[ƒ^
+	bool useflag;			//!< æœ‰åŠ¹åŒ–ãƒ•ãƒ©ã‚°
+	int width;				//!< å¹…
+	int height;				//!< é«˜ã•
+	unsigned char *data;	//!< å®Ÿãƒ‡ãƒ¼ã‚¿
 };
 
 #endif	//ENABLE_GRAPHICS_OPENGL
 
 
-//! @brief ‰æ–Ê•`‰æ‚ğs‚¤ƒNƒ‰ƒX
-//! @details ‰æ–Ê‚Ì•`‰æ‹@”\‚â‚»‚ê‚É’¼ÚŠÖ˜A‚·‚éˆ—‚ğs‚¢‚Ü‚·B
-//! @details ‹ï‘Ì“I‚ÉA3D•`‰æE2D•`‰æEƒ‚ƒfƒ‹ƒtƒ@ƒCƒ‹‚âƒeƒNƒXƒ`ƒƒŠÇ—@‚ğs‚¤‹@”\‚ª‚ ‚è‚Ü‚·B
+//! @brief ç”»é¢æç”»ã‚’è¡Œã†ã‚¯ãƒ©ã‚¹
+//! @details ç”»é¢ã®æç”»æ©Ÿèƒ½ã‚„ãã‚Œã«ç›´æ¥é–¢é€£ã™ã‚‹å‡¦ç†ã‚’è¡Œã„ã¾ã™ã€‚
+//! @details å…·ä½“çš„ã«ã€3Dæç”»ãƒ»2Dæç”»ãƒ»ãƒ¢ãƒ‡ãƒ«ãƒ•ã‚¡ã‚¤ãƒ«ã‚„ãƒ†ã‚¯ã‚¹ãƒãƒ£ç®¡ç†ã€€ã‚’è¡Œã†æ©Ÿèƒ½ãŒã‚ã‚Šã¾ã™ã€‚
 class D3DGraphics
 {
 
 #ifndef ENABLE_GRAPHICS_OPENGL
 
-	LPDIRECT3D9 pD3D;					//!< DIRECT3D9‚Ìƒ|ƒCƒ“ƒ^
-	LPDIRECT3DDEVICE9 pd3dDevice;		//!< DIRECT3DDEVICE9‚Ìƒ|ƒCƒ“ƒ^
-	float aspect;						//!< ‰æ–Ê‚ÌƒAƒXƒyƒNƒg”ä
-	bool fullscreenflag;				//!< ƒtƒ‹ƒXƒNƒŠ[ƒ“•\¦
-	LPD3DXMESH pmesh[MAX_MODEL];				//!< iXƒtƒ@ƒCƒ‹—pjD3DXMESH‚Ìƒ|ƒCƒ“ƒ^
-	DWORD nummaterials[MAX_MODEL];				//!< iXƒtƒ@ƒCƒ‹—pjƒ}ƒeƒŠƒAƒ‹”
-	LPDIRECT3DTEXTURE9 ptextures[MAX_TEXTURE];	//!< ƒeƒNƒXƒ`ƒƒ‚ğŠi”[
+	LPDIRECT3D9 pD3D;					//!< DIRECT3D9ã®ãƒã‚¤ãƒ³ã‚¿
+	LPDIRECT3DDEVICE9 pd3dDevice;		//!< DIRECT3DDEVICE9ã®ãƒã‚¤ãƒ³ã‚¿
+	float aspect;						//!< ç”»é¢ã®ã‚¢ã‚¹ãƒšã‚¯ãƒˆæ¯”
+	bool fullscreenflag;				//!< ãƒ•ãƒ«ã‚¹ã‚¯ãƒªãƒ¼ãƒ³è¡¨ç¤º
+	LPD3DXMESH pmesh[MAX_MODEL];				//!< ï¼ˆXãƒ•ã‚¡ã‚¤ãƒ«ç”¨ï¼‰D3DXMESHã®ãƒã‚¤ãƒ³ã‚¿
+	DWORD nummaterials[MAX_MODEL];				//!< ï¼ˆXãƒ•ã‚¡ã‚¤ãƒ«ç”¨ï¼‰ãƒãƒ†ãƒªã‚¢ãƒ«æ•°
+	LPDIRECT3DTEXTURE9 ptextures[MAX_TEXTURE];	//!< ãƒ†ã‚¯ã‚¹ãƒãƒ£ã‚’æ ¼ç´
 
-	class BlockDataInterface* blockdata;		//!< “Ç‚İ‚ñ‚¾ƒuƒƒbƒNƒf[ƒ^‚ğŠi”[‚·‚éƒNƒ‰ƒX‚Ö‚Ìƒ|ƒCƒ“ƒ^
-	int bs;										//!< ƒuƒƒbƒN”
-	int mapTextureID[TOTAL_BLOCKTEXTURE];		//!< ƒeƒNƒXƒ`ƒƒ”Ô†
+	class BlockDataInterface* blockdata;		//!< èª­ã¿è¾¼ã‚“ã ãƒ–ãƒ­ãƒƒã‚¯ãƒ‡ãƒ¼ã‚¿ã‚’æ ¼ç´ã™ã‚‹ã‚¯ãƒ©ã‚¹ã¸ã®ãƒã‚¤ãƒ³ã‚¿
+	int bs;										//!< ãƒ–ãƒ­ãƒƒã‚¯æ•°
+	int mapTextureID[TOTAL_BLOCKTEXTURE];		//!< ãƒ†ã‚¯ã‚¹ãƒãƒ£ç•ªå·
 #ifdef BLOCKDATA_GPUMEMORY
-	LPDIRECT3DVERTEXBUFFER9 g_pVB;				//!< ’¸“_î•ñiGPUŠÇ—j
+	LPDIRECT3DVERTEXBUFFER9 g_pVB;				//!< é ‚ç‚¹æƒ…å ±ï¼ˆGPUç®¡ç†ï¼‰
 #else
-	VERTEXTXTA g_pVertices[MAX_BLOCKS][6][4];	//!< ’¸“_î•ñiCPUŠÇ—j
+	VERTEXTXTA g_pVertices[MAX_BLOCKS][6][4];	//!< é ‚ç‚¹æƒ…å ±ï¼ˆCPUç®¡ç†ï¼‰
 #endif
 
-	float HUD_myweapon_x[TOTAL_HAVEWEAPON];		//!< HUD‚Ì•Ší•`‰æ XÀ•W
-	float HUD_myweapon_y[TOTAL_HAVEWEAPON];		//!< HUD‚Ì•Ší•`‰æ YÀ•W
-	float HUD_myweapon_z[TOTAL_HAVEWEAPON];		//!< HUD‚Ì•Ší•`‰æ ZÀ•W
+	float HUD_myweapon_x[TOTAL_HAVEWEAPON];		//!< HUDã®æ­¦å™¨æç”» Xåº§æ¨™
+	float HUD_myweapon_y[TOTAL_HAVEWEAPON];		//!< HUDã®æ­¦å™¨æç”» Yåº§æ¨™
+	float HUD_myweapon_z[TOTAL_HAVEWEAPON];		//!< HUDã®æ­¦å™¨æç”» Zåº§æ¨™
 
-	bool StartRenderFlag;			//!< StartRender()ŠÖ” Às’†‚ğ•\‚·ƒtƒ‰ƒO
+	bool StartRenderFlag;			//!< StartRender()é–¢æ•° å®Ÿè¡Œä¸­ã‚’è¡¨ã™ãƒ•ãƒ©ã‚°
 
-	LPD3DXSPRITE ptextsprite;		//!< 2DƒeƒNƒXƒ`ƒƒƒXƒvƒ‰ƒCƒg
-	LPD3DXFONT pxmsfont;			//!< ƒVƒXƒeƒ€ƒtƒHƒ“ƒg
-	char TextureFontFname[_MAX_PATH];	//!< ƒeƒNƒXƒ`ƒƒƒtƒHƒ“ƒg‚Ìƒtƒ@ƒCƒ‹–¼
-	int TextureFont;				//!< ƒeƒNƒXƒ`ƒƒƒtƒHƒ“ƒg‚ÌƒeƒNƒXƒ`ƒƒID
+	LPD3DXSPRITE ptextsprite;		//!< 2Dãƒ†ã‚¯ã‚¹ãƒãƒ£ã‚¹ãƒ—ãƒ©ã‚¤ãƒˆ
+	LPD3DXFONT pxmsfont;			//!< ã‚·ã‚¹ãƒ†ãƒ ãƒ•ã‚©ãƒ³ãƒˆ
+	char TextureFontFname[_MAX_PATH];	//!< ãƒ†ã‚¯ã‚¹ãƒãƒ£ãƒ•ã‚©ãƒ³ãƒˆã®ãƒ•ã‚¡ã‚¤ãƒ«å
+	int TextureFont;				//!< ãƒ†ã‚¯ã‚¹ãƒãƒ£ãƒ•ã‚©ãƒ³ãƒˆã®ãƒ†ã‚¯ã‚¹ãƒãƒ£ID
 
 	int InitSubset();
 	void CleanupD3Dresource();
@@ -195,47 +195,47 @@ class D3DGraphics
 	void End2DRender();
 
 #ifdef ENABLE_DEBUGCONSOLE
-	unsigned char DebugFontData[96][16];	//!< ƒfƒoƒbƒN—pƒtƒHƒ“ƒgƒf[ƒ^Ši”[”z—ñ
-	int TextureDebugFont;					//!< ƒfƒoƒbƒN—pƒtƒHƒ“ƒg‚ÌƒeƒNƒXƒ`ƒƒID
+	unsigned char DebugFontData[96][16];	//!< ãƒ‡ãƒãƒƒã‚¯ç”¨ãƒ•ã‚©ãƒ³ãƒˆãƒ‡ãƒ¼ã‚¿æ ¼ç´é…åˆ—
+	int TextureDebugFont;					//!< ãƒ‡ãƒãƒƒã‚¯ç”¨ãƒ•ã‚©ãƒ³ãƒˆã®ãƒ†ã‚¯ã‚¹ãƒãƒ£ID
 	void InitDebugFontData();
 	bool LoadDebugFontTexture();
 #endif
 
 #else	//ENABLE_GRAPHICS_OPENGL
 
-	HWND hWnd;				//!< ƒEƒBƒ“ƒhƒEƒnƒ“ƒhƒ‹
-	HGLRC hGLRC;			//!< OpenGL‚ÌƒRƒ“ƒeƒLƒXƒg
-	int width;				//!< •
-	int height;				//!< ‚‚³
-	bool fullscreenflag;	//!< ƒtƒ‹ƒXƒNƒŠ[ƒ“•\¦
-	PAINTSTRUCT Paint_ps;					//!< BeginPaint()ŠÖ”‚ÆEndPaint()ŠÖ”—p
-	MODELDATA pmodel[MAX_MODEL];			//!< ƒ‚ƒfƒ‹ƒf[ƒ^‚ğŠi”[
-	TEXTUREDATA ptextures[MAX_TEXTURE];		//!< ƒeƒNƒXƒ`ƒƒ‚ğŠi”[
-	GLuint textureobjname[MAX_TEXTURE];		//!< ƒeƒNƒXƒ`ƒƒƒIƒuƒWƒFƒNƒg
-	HFONT SystemFont;				//!< ƒVƒXƒeƒ€ƒtƒHƒ“ƒg—p‚Ì˜_—ƒtƒHƒ“ƒg
-	WCHAR *now_SystemFontUStr;		//!< Œ»İ•\¦’†‚ÌƒVƒXƒeƒ€ƒtƒHƒ“ƒg‚É‚æ‚é•¶š—ñiUnicodej
-	GLuint SystemFontListIdx;		//!< ƒVƒXƒeƒ€ƒtƒHƒ“ƒg‚ÌƒfƒBƒXƒvƒŒƒCƒŠƒXƒg
-	int SystemFontListIdxSize;		//!< ƒVƒXƒeƒ€ƒtƒHƒ“ƒg‚ÌƒfƒBƒXƒvƒŒƒCƒŠƒXƒg‚ÌƒTƒCƒY
-	float SystemFont_posz;				//!< ƒVƒXƒeƒ€ƒtƒHƒ“ƒg‚ÌZÀ•W
-	int now_textureid;		//!< Œ»İİ’è’†‚ÌƒeƒNƒXƒ`ƒƒ”Ô†
+	HWND hWnd;				//!< ã‚¦ã‚£ãƒ³ãƒ‰ã‚¦ãƒãƒ³ãƒ‰ãƒ«
+	HGLRC hGLRC;			//!< OpenGLã®ã‚³ãƒ³ãƒ†ã‚­ã‚¹ãƒˆ
+	int width;				//!< å¹…
+	int height;				//!< é«˜ã•
+	bool fullscreenflag;	//!< ãƒ•ãƒ«ã‚¹ã‚¯ãƒªãƒ¼ãƒ³è¡¨ç¤º
+	PAINTSTRUCT Paint_ps;					//!< BeginPaint()é–¢æ•°ã¨EndPaint()é–¢æ•°ç”¨
+	MODELDATA pmodel[MAX_MODEL];			//!< ãƒ¢ãƒ‡ãƒ«ãƒ‡ãƒ¼ã‚¿ã‚’æ ¼ç´
+	TEXTUREDATA ptextures[MAX_TEXTURE];		//!< ãƒ†ã‚¯ã‚¹ãƒãƒ£ã‚’æ ¼ç´
+	GLuint textureobjname[MAX_TEXTURE];		//!< ãƒ†ã‚¯ã‚¹ãƒãƒ£ã‚ªãƒ–ã‚¸ã‚§ã‚¯ãƒˆ
+	HFONT SystemFont;				//!< ã‚·ã‚¹ãƒ†ãƒ ãƒ•ã‚©ãƒ³ãƒˆç”¨ã®è«–ç†ãƒ•ã‚©ãƒ³ãƒˆ
+	WCHAR *now_SystemFontUStr;		//!< ç¾åœ¨è¡¨ç¤ºä¸­ã®ã‚·ã‚¹ãƒ†ãƒ ãƒ•ã‚©ãƒ³ãƒˆã«ã‚ˆã‚‹æ–‡å­—åˆ—ï¼ˆUnicodeï¼‰
+	GLuint SystemFontListIdx;		//!< ã‚·ã‚¹ãƒ†ãƒ ãƒ•ã‚©ãƒ³ãƒˆã®ãƒ‡ã‚£ã‚¹ãƒ—ãƒ¬ã‚¤ãƒªã‚¹ãƒˆ
+	int SystemFontListIdxSize;		//!< ã‚·ã‚¹ãƒ†ãƒ ãƒ•ã‚©ãƒ³ãƒˆã®ãƒ‡ã‚£ã‚¹ãƒ—ãƒ¬ã‚¤ãƒªã‚¹ãƒˆã®ã‚µã‚¤ã‚º
+	float SystemFont_posz;				//!< ã‚·ã‚¹ãƒ†ãƒ ãƒ•ã‚©ãƒ³ãƒˆã®Zåº§æ¨™
+	int now_textureid;		//!< ç¾åœ¨è¨­å®šä¸­ã®ãƒ†ã‚¯ã‚¹ãƒãƒ£ç•ªå·
 
-	float camera_x;			//!< ƒJƒƒ‰À•W
-	float camera_y;			//!< ƒJƒƒ‰À•W
-	float camera_z;			//!< ƒJƒƒ‰À•W
-	float camera_rx;		//!< ƒJƒƒ‰‰ñ“]Šp“x
-	float camera_ry;		//!< ƒJƒƒ‰‰ñ“]Šp“x
-	float viewangle;		//!< ƒJƒƒ‰‚Ì‹–ìŠp
+	float camera_x;			//!< ã‚«ãƒ¡ãƒ©åº§æ¨™
+	float camera_y;			//!< ã‚«ãƒ¡ãƒ©åº§æ¨™
+	float camera_z;			//!< ã‚«ãƒ¡ãƒ©åº§æ¨™
+	float camera_rx;		//!< ã‚«ãƒ¡ãƒ©å›è»¢è§’åº¦
+	float camera_ry;		//!< ã‚«ãƒ¡ãƒ©å›è»¢è§’åº¦
+	float viewangle;		//!< ã‚«ãƒ¡ãƒ©ã®è¦–é‡è§’
 
-	class BlockDataInterface* blockdata;		//!< “Ç‚İ‚ñ‚¾ƒuƒƒbƒNƒf[ƒ^‚ğŠi”[‚·‚éƒNƒ‰ƒX‚Ö‚Ìƒ|ƒCƒ“ƒ^
-	int bs;										//!< ƒuƒƒbƒN”
-	int mapTextureID[TOTAL_BLOCKTEXTURE];		//!< ƒeƒNƒXƒ`ƒƒ”Ô†
+	class BlockDataInterface* blockdata;		//!< èª­ã¿è¾¼ã‚“ã ãƒ–ãƒ­ãƒƒã‚¯ãƒ‡ãƒ¼ã‚¿ã‚’æ ¼ç´ã™ã‚‹ã‚¯ãƒ©ã‚¹ã¸ã®ãƒã‚¤ãƒ³ã‚¿
+	int bs;										//!< ãƒ–ãƒ­ãƒƒã‚¯æ•°
+	int mapTextureID[TOTAL_BLOCKTEXTURE];		//!< ãƒ†ã‚¯ã‚¹ãƒãƒ£ç•ªå·
 
-	char TextureFontFname[_MAX_PATH];	//!< ƒeƒNƒXƒ`ƒƒƒtƒHƒ“ƒg‚Ìƒtƒ@ƒCƒ‹–¼
-	int TextureFont;				//!< ƒeƒNƒXƒ`ƒƒƒtƒHƒ“ƒg‚ÌƒeƒNƒXƒ`ƒƒID
+	char TextureFontFname[_MAX_PATH];	//!< ãƒ†ã‚¯ã‚¹ãƒãƒ£ãƒ•ã‚©ãƒ³ãƒˆã®ãƒ•ã‚¡ã‚¤ãƒ«å
+	int TextureFont;				//!< ãƒ†ã‚¯ã‚¹ãƒãƒ£ãƒ•ã‚©ãƒ³ãƒˆã®ãƒ†ã‚¯ã‚¹ãƒãƒ£ID
 
-	float HUD_myweapon_x[TOTAL_HAVEWEAPON];		//!< HUD_A‚Ì•Ší•`‰æ XÀ•W
-	float HUD_myweapon_y[TOTAL_HAVEWEAPON];		//!< HUD_A‚Ì•Ší•`‰æ YÀ•W
-	float HUD_myweapon_z[TOTAL_HAVEWEAPON];		//!< HUD_A‚Ì•Ší•`‰æ ZÀ•W
+	float HUD_myweapon_x[TOTAL_HAVEWEAPON];		//!< HUD_Aã®æ­¦å™¨æç”» Xåº§æ¨™
+	float HUD_myweapon_y[TOTAL_HAVEWEAPON];		//!< HUD_Aã®æ­¦å™¨æç”» Yåº§æ¨™
+	float HUD_myweapon_z[TOTAL_HAVEWEAPON];		//!< HUD_Aã®æ­¦å™¨æç”» Zåº§æ¨™
 
 	jpeg_decompress_struct cinfo;	//!< libjpeg
 	jpeg_error_mgr jerr;			//!< libjpeg
@@ -253,8 +253,8 @@ class D3DGraphics
 	void End2DRender();
 
 #ifdef ENABLE_DEBUGCONSOLE
-	unsigned char DebugFontData[96][16];	//!< ƒfƒoƒbƒN—pƒtƒHƒ“ƒgƒf[ƒ^Ši”[”z—ñ
-	int TextureDebugFont;					//!< ƒfƒoƒbƒN—pƒtƒHƒ“ƒg‚ÌƒeƒNƒXƒ`ƒƒID
+	unsigned char DebugFontData[96][16];	//!< ãƒ‡ãƒãƒƒã‚¯ç”¨ãƒ•ã‚©ãƒ³ãƒˆãƒ‡ãƒ¼ã‚¿æ ¼ç´é…åˆ—
+	int TextureDebugFont;					//!< ãƒ‡ãƒãƒƒã‚¯ç”¨ãƒ•ã‚©ãƒ³ãƒˆã®ãƒ†ã‚¯ã‚¹ãƒãƒ£ID
 	void InitDebugFontData();
 	bool LoadDebugFontTexture();
 #endif

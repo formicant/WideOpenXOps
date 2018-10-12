@@ -1,5 +1,5 @@
-//! @file soundmanager.h
-//! @brief SoundManagerƒNƒ‰ƒX‚ÌéŒ¾
+ï»¿//! @file soundmanager.h
+//! @brief SoundManagerã‚¯ãƒ©ã‚¹ã®å®£è¨€
 
 //--------------------------------------------------------------------------------
 // 
@@ -32,59 +32,59 @@
 #ifndef SOUNDMANAGER_H
 #define SOUNDMANAGER_H
 
-#define MAX_SOUNDMGR_LIST 100		//!< ƒTƒEƒ“ƒhƒŠƒXƒg‚ÌÅ‘å”
+#define MAX_SOUNDMGR_LIST 100		//!< ã‚µã‚¦ãƒ³ãƒ‰ãƒªã‚¹ãƒˆã®æœ€å¤§æ•°
 
-#define MAX_SOUNDHITMAP 95			//!< ƒ}ƒbƒv’…’e‰¹‚ÌÅ‘å‰¹—Ê
-#define MAX_SOUNDHITSMALLOBJ 110	//!< ¬•¨’…’e‰¹‚ÌÅ‘å‰¹—Ê
-#define MAX_SOUNDHITHUMAN 75		//!< l’…’ei”í’ej‰¹‚ÌÅ‘å‰¹—Ê
-#define MAX_SOUNDPASSING 80			//!< ’e‚ª‰¡Ø‚é‰¹‚ÌÅ‘å‰¹—Ê
-#define MAX_SOUNDCCOGRENADE 100		//!< èÖ’e ƒoƒEƒ“ƒhE’µ‚Ë•Ô‚è‰¹‚ÌÅ‘å‰¹—Ê
-#define MAX_SOUNDHITGRENADE 120		//!< èÖ’e ”š”­‰¹‚ÌÅ‘å‰¹—Ê
+#define MAX_SOUNDHITMAP 95			//!< ãƒãƒƒãƒ—ç€å¼¾éŸ³ã®æœ€å¤§éŸ³é‡
+#define MAX_SOUNDHITSMALLOBJ 110	//!< å°ç‰©ç€å¼¾éŸ³ã®æœ€å¤§éŸ³é‡
+#define MAX_SOUNDHITHUMAN 75		//!< äººç€å¼¾ï¼ˆè¢«å¼¾ï¼‰éŸ³ã®æœ€å¤§éŸ³é‡
+#define MAX_SOUNDPASSING 80			//!< å¼¾ãŒæ¨ªåˆ‡ã‚‹éŸ³ã®æœ€å¤§éŸ³é‡
+#define MAX_SOUNDCCOGRENADE 100		//!< æ‰‹æ¦´å¼¾ ãƒã‚¦ãƒ³ãƒ‰ãƒ»è·³ã­è¿”ã‚ŠéŸ³ã®æœ€å¤§éŸ³é‡
+#define MAX_SOUNDHITGRENADE 120		//!< æ‰‹æ¦´å¼¾ çˆ†ç™ºéŸ³ã®æœ€å¤§éŸ³é‡
 
 #ifndef H_LAYERLEVEL
  #define H_LAYERLEVEL 2		//!< Select include file.
 #endif
 #include "main.h"
 
-//! ƒTƒEƒ“ƒhƒŠƒXƒguparamidv—p’è”
+//! ã‚µã‚¦ãƒ³ãƒ‰ãƒªã‚¹ãƒˆã€Œparamidã€ç”¨å®šæ•°
 enum SoundmgrID {
-	SHOT_WEAPON = 0,	//!< ”­–C‰¹
-	SHOT_WEAPON_PLAYER,	//!< ƒvƒŒƒCƒ„[©g‚Ì”­–C‰¹
-	HIT_MAP,			//!< ƒ}ƒbƒv’…’e‰¹
-	HIT_HUMAN,			//!< ”í’e‰¹
-	HIT_SMALLOBJECT,	//!< ¬•¨”j‰ó‰¹
-	BULLET,				//!< e’e‚Ì‰¹E‰¡Ø‚é‰¹
-	GRE_BOUND,			//!< èÖ’e ƒoƒEƒ“ƒh‰¹
-	GRE_EXPLOSION,		//!< èÖ’e ”š”­‰¹
-	FOOTSTEPS,			//!< ‘«‰¹E‘–‚é‰¹
-	WEAPON_RELOAD		//!< ƒŠƒ[ƒh‰¹
+	SHOT_WEAPON = 0,	//!< ç™ºç ²éŸ³
+	SHOT_WEAPON_PLAYER,	//!< ãƒ—ãƒ¬ã‚¤ãƒ¤ãƒ¼è‡ªèº«ã®ç™ºç ²éŸ³
+	HIT_MAP,			//!< ãƒãƒƒãƒ—ç€å¼¾éŸ³
+	HIT_HUMAN,			//!< è¢«å¼¾éŸ³
+	HIT_SMALLOBJECT,	//!< å°ç‰©ç ´å£ŠéŸ³
+	BULLET,				//!< éŠƒå¼¾ã®éŸ³ãƒ»æ¨ªåˆ‡ã‚‹éŸ³
+	GRE_BOUND,			//!< æ‰‹æ¦´å¼¾ ãƒã‚¦ãƒ³ãƒ‰éŸ³
+	GRE_EXPLOSION,		//!< æ‰‹æ¦´å¼¾ çˆ†ç™ºéŸ³
+	FOOTSTEPS,			//!< è¶³éŸ³ãƒ»èµ°ã‚‹éŸ³
+	WEAPON_RELOAD		//!< ãƒªãƒ­ãƒ¼ãƒ‰éŸ³
 };
 
-//! ƒTƒEƒ“ƒhƒŠƒXƒg—p\‘¢‘Ì
+//! ã‚µã‚¦ãƒ³ãƒ‰ãƒªã‚¹ãƒˆç”¨æ§‹é€ ä½“
 struct soundlist{
-	int paramid;	//!< ‰¹Œ¹‚Ìí—Ş”Ô†ESoundmgrID’è”
-	int dataid;		//!< ƒf[ƒ^”Ô†
-	float x;		//!< XÀ•W
-	float y;		//!< YÀ•W
-	float z;		//!< ZÀ•W
-	float move_x;	//!< 1ƒtƒŒ[ƒ€Œã‚Ì XÀ•WˆÚ“®—Ê
-	float move_y;	//!< 1ƒtƒŒ[ƒ€Œã‚Ì YÀ•WˆÚ“®—Ê
-	float move_z;	//!< 1ƒtƒŒ[ƒ€Œã‚Ì ZÀ•WˆÚ“®—Ê
-	int teamid;		//!< ƒ`[ƒ€”Ô†
+	int paramid;	//!< éŸ³æºã®ç¨®é¡ç•ªå·ãƒ»SoundmgrIDå®šæ•°
+	int dataid;		//!< ãƒ‡ãƒ¼ã‚¿ç•ªå·
+	float x;		//!< Xåº§æ¨™
+	float y;		//!< Yåº§æ¨™
+	float z;		//!< Zåº§æ¨™
+	float move_x;	//!< 1ãƒ•ãƒ¬ãƒ¼ãƒ å¾Œã® Xåº§æ¨™ç§»å‹•é‡
+	float move_y;	//!< 1ãƒ•ãƒ¬ãƒ¼ãƒ å¾Œã® Yåº§æ¨™ç§»å‹•é‡
+	float move_z;	//!< 1ãƒ•ãƒ¬ãƒ¼ãƒ å¾Œã® Zåº§æ¨™ç§»å‹•é‡
+	int teamid;		//!< ãƒãƒ¼ãƒ ç•ªå·
 };
 
-//! @brief ƒTƒEƒ“ƒhŠÇ—ƒNƒ‰ƒX
-//! @details ŠeƒTƒEƒ“ƒh‚Ì‰Šú‰»EŒvZEÄ¶‚È‚Ç‚ğs‚¢ŠÇ—‚µ‚Ü‚·B
+//! @brief ã‚µã‚¦ãƒ³ãƒ‰ç®¡ç†ã‚¯ãƒ©ã‚¹
+//! @details å„ã‚µã‚¦ãƒ³ãƒ‰ã®åˆæœŸåŒ–ãƒ»è¨ˆç®—ãƒ»å†ç”Ÿãªã©ã‚’è¡Œã„ç®¡ç†ã—ã¾ã™ã€‚
 class SoundManager
 {
-	class SoundControl *SoundCtrl;		//!< ƒTƒEƒ“ƒhÄ¶ƒNƒ‰ƒX
-	class ResourceManager *Resource;	//!< ƒŠƒ\[ƒXŠÇ—ƒNƒ‰ƒX
-	class ParameterInfo *Param;			//!< İ’è’l‚ğŠÇ—‚·‚éƒNƒ‰ƒX
-	soundlist *soundlistA;		//!< ƒTƒEƒ“ƒhƒŠƒXƒg A
-	soundlist *soundlistB;		//!< ƒTƒEƒ“ƒhƒŠƒXƒg B
-	bool changeAB;				//!< ƒTƒEƒ“ƒhƒŠƒXƒg‚Ì”½“]
-	int listAdatas;				//!< ƒTƒEƒ“ƒhƒŠƒXƒg A ‚Ì“o˜^”
-	int listBdatas;				//!< ƒTƒEƒ“ƒhƒŠƒXƒg B ‚Ì“o˜^”
+	class SoundControl *SoundCtrl;		//!< ã‚µã‚¦ãƒ³ãƒ‰å†ç”Ÿã‚¯ãƒ©ã‚¹
+	class ResourceManager *Resource;	//!< ãƒªã‚½ãƒ¼ã‚¹ç®¡ç†ã‚¯ãƒ©ã‚¹
+	class ParameterInfo *Param;			//!< è¨­å®šå€¤ã‚’ç®¡ç†ã™ã‚‹ã‚¯ãƒ©ã‚¹
+	soundlist *soundlistA;		//!< ã‚µã‚¦ãƒ³ãƒ‰ãƒªã‚¹ãƒˆ A
+	soundlist *soundlistB;		//!< ã‚µã‚¦ãƒ³ãƒ‰ãƒªã‚¹ãƒˆ B
+	bool changeAB;				//!< ã‚µã‚¦ãƒ³ãƒ‰ãƒªã‚¹ãƒˆã®åè»¢
+	int listAdatas;				//!< ã‚µã‚¦ãƒ³ãƒ‰ãƒªã‚¹ãƒˆ A ã®ç™»éŒ²æ•°
+	int listBdatas;				//!< ã‚µã‚¦ãƒ³ãƒ‰ãƒªã‚¹ãƒˆ B ã®ç™»éŒ²æ•°
 
 	bool GetNewList(soundlist **plist);
 	int GetTargetList(soundlist **plist);

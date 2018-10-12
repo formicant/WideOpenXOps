@@ -1,5 +1,5 @@
-//! @file d3dgraphics-debugfont.cpp
-//! @brief D3DGraphicsŽg—pƒtƒHƒ“ƒgƒf[ƒ^Ši”[
+ï»¿//! @file d3dgraphics-debugfont.cpp
+//! @brief D3DGraphicsä½¿ç”¨ãƒ•ã‚©ãƒ³ãƒˆãƒ‡ãƒ¼ã‚¿æ ¼ç´
 
 //--------------------------------------------------------------------------------
 // 
@@ -29,14 +29,14 @@
 // SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 //--------------------------------------------------------------------------------
 
-// ƒtƒHƒ“ƒgƒf[ƒ^‚Í "OSASK version 4.7" ‚Ì•¨‚ð‚¨ŽØ‚è‚µ‚Ä‚¢‚Ü‚·B
-// ƒtƒHƒ“ƒg‚Ìì¬ŽÒ‚Í •½–ØŒh‘¾˜Y‚³‚ñ ‚Æ ¹liKiyotoj‚³‚ñ ‚Å‚·B
-// Œ³ƒtƒ@ƒCƒ‹inewstyle.txtj‚Í KL-01ƒ‰ƒCƒZƒ“ƒX ‚ÅŒöŠJ‚³‚ê‚Ä‚¢‚Ü‚·B
+// ãƒ•ã‚©ãƒ³ãƒˆãƒ‡ãƒ¼ã‚¿ã¯ "OSASK version 4.7" ã®ç‰©ã‚’ãŠå€Ÿã‚Šã—ã¦ã„ã¾ã™ã€‚
+// ãƒ•ã‚©ãƒ³ãƒˆã®ä½œæˆè€…ã¯ å¹³æœ¨æ•¬å¤ªéƒŽã•ã‚“ ã¨ è–äººï¼ˆKiyotoï¼‰ã•ã‚“ ã§ã™ã€‚
+// å…ƒãƒ•ã‚¡ã‚¤ãƒ«ï¼ˆnewstyle.txtï¼‰ã¯ KL-01ãƒ©ã‚¤ã‚»ãƒ³ã‚¹ ã§å…¬é–‹ã•ã‚Œã¦ã„ã¾ã™ã€‚
 //  http://osask.net/
 //  https://osdn.jp/projects/osask/scm/svn/tree/211/OSAKA/tags/4.7.0/
 //
 //
-// [1]@ƒtƒHƒ“ƒg‚ÌŒ`ó‚ð 8x16 ‚Ì2i”‚Å•\‚·iu0F.vu1F*v‚Å•\Œ»j
+// [1]ã€€ãƒ•ã‚©ãƒ³ãƒˆã®å½¢çŠ¶ã‚’ 8x16 ã®2é€²æ•°ã§è¡¨ã™ï¼ˆã€Œ0ï¼š.ã€ã€Œ1ï¼š*ã€ã§è¡¨ç¾ï¼‰
 //  ........
 //  ...*....
 //  ..***...
@@ -54,27 +54,27 @@
 //  ........
 //  ........
 //  
-//  [2]@Šes‚ð16i”‚É•ÏŠ·
-//  ........@¨@00000000@¨@0x00
-//  ...*....@¨@00010000@¨@0x10
-//  ..***...@¨@00111000@¨@0x38
-//  .**.**..@¨@01101100@¨@0x6C
-//  @@`````
-//  ........@¨@00000000@¨@0x00
+//  [2]ã€€å„è¡Œã‚’16é€²æ•°ã«å¤‰æ›
+//  ........ã€€â†’ã€€00000000ã€€â†’ã€€0x00
+//  ...*....ã€€â†’ã€€00010000ã€€â†’ã€€0x10
+//  ..***...ã€€â†’ã€€00111000ã€€â†’ã€€0x38
+//  .**.**..ã€€â†’ã€€01101100ã€€â†’ã€€0x6C
+//  ã€€ã€€ï½žï½žï½žï½žï½ž
+//  ........ã€€â†’ã€€00000000ã€€â†’ã€€0x00
 //  
-//  [3]@ƒ}ƒNƒ‚Å”z—ñ•Ï”‚ÉŠi”[
-//  SetDebugFontData( DebugFontData[xxx], 0x00, 0x10, 0x38, 0x6C,@`````@0x00 );
+//  [3]ã€€ãƒžã‚¯ãƒ­ã§é…åˆ—å¤‰æ•°ã«æ ¼ç´
+//  SetDebugFontData( DebugFontData[xxx], 0x00, 0x10, 0x38, 0x6C,ã€€ï½žï½žï½žï½žï½žã€€0x00 );
 //
-// OpenXOPS‹N“®Žž‚É‚Í‹t“WŠJ‚ðs‚¢ADirectX‚¨‚æ‚ÑOpenGL‚ÅƒeƒNƒXƒ`ƒƒƒtƒHƒ“ƒg‚ð¶¬‚µ‚Ü‚·B
+// OpenXOPSèµ·å‹•æ™‚ã«ã¯é€†å±•é–‹ã‚’è¡Œã„ã€DirectXãŠã‚ˆã³OpenGLã§ãƒ†ã‚¯ã‚¹ãƒãƒ£ãƒ•ã‚©ãƒ³ãƒˆã‚’ç”Ÿæˆã—ã¾ã™ã€‚
 //
 //
-// ¦OpenXOPS‚É‚¨‚¢‚ÄA–{ƒtƒHƒ“ƒgƒf[ƒ^‚ð•ÒWE‰ü•Ï‚·‚é‘O’ñ‚Í‚ ‚è‚Ü‚¹‚ñB
+// â€»OpenXOPSã«ãŠã„ã¦ã€æœ¬ãƒ•ã‚©ãƒ³ãƒˆãƒ‡ãƒ¼ã‚¿ã‚’ç·¨é›†ãƒ»æ”¹å¤‰ã™ã‚‹å‰æã¯ã‚ã‚Šã¾ã›ã‚“ã€‚
 
 #include "d3dgraphics.h"
 
 #ifdef ENABLE_DEBUGCONSOLE
 
-//! @brief ƒfƒoƒbƒN—pƒtƒHƒ“ƒg‰Šú‰»‚Ì‚½‚ß‚Ìƒ}ƒNƒ
+//! @brief ãƒ‡ãƒãƒƒã‚¯ç”¨ãƒ•ã‚©ãƒ³ãƒˆåˆæœŸåŒ–ã®ãŸã‚ã®ãƒžã‚¯ãƒ­
 #define SetDebugFontData( out16, in0, in1, in2, in3, in4, in5, in6, in7, in8, in9, inA, inB, inC, inD, inE, inF ){\
 	/*! buffer */\
 	unsigned char *Data = out16;\
@@ -84,8 +84,8 @@
 	Data[12] = inC; Data[13] = inD; Data[14] = inE; Data[15] = inF;\
 }
 
-//! @brief ƒfƒoƒbƒN—pƒtƒHƒ“ƒg‰Šú‰»iƒpƒ‰ƒ[ƒ^‚ÌÝ’èj
-//! @attention ‚±‚ÌŠÖ”‚ðŒÄ‚Ño‚³‚È‚¢‚ÆAƒfƒoƒbƒN—pƒtƒHƒ“ƒgŽ©‘Ì‚ª³‚µ‚­‹@”\‚µ‚Ü‚¹‚ñB
+//! @brief ãƒ‡ãƒãƒƒã‚¯ç”¨ãƒ•ã‚©ãƒ³ãƒˆåˆæœŸåŒ–ï¼ˆãƒ‘ãƒ©ãƒ¡ãƒ¼ã‚¿ã®è¨­å®šï¼‰
+//! @attention ã“ã®é–¢æ•°ã‚’å‘¼ã³å‡ºã•ãªã„ã¨ã€ãƒ‡ãƒãƒƒã‚¯ç”¨ãƒ•ã‚©ãƒ³ãƒˆè‡ªä½“ãŒæ­£ã—ãæ©Ÿèƒ½ã—ã¾ã›ã‚“ã€‚
 void D3DGraphics::InitDebugFontData()
 {
 	SetDebugFontData( DebugFontData[0], 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00 );	//char 0x20 (' ')

@@ -1,5 +1,5 @@
-//! @file sound-directsound.cpp
-//! @brief SoundControlƒNƒ‰ƒX‚Ì’è‹`iDirectSound”Åj
+ï»¿//! @file sound-directsound.cpp
+//! @brief SoundControlã‚¯ãƒ©ã‚¹ã®å®šç¾©ï¼ˆDirectSoundç‰ˆï¼‰
 
 //--------------------------------------------------------------------------------
 // 
@@ -33,39 +33,39 @@
 
 #ifdef SOUND_DIRECTSOUND
 
-//! @brief ƒRƒ“ƒXƒgƒ‰ƒNƒ^
+//! @brief ã‚³ãƒ³ã‚¹ãƒˆãƒ©ã‚¯ã‚¿
 SoundControl::SoundControl()
 {
 	pDSound = NULL;
 }
 
-//! @brief ƒfƒBƒXƒgƒ‰ƒNƒ^
+//! @brief ãƒ‡ã‚£ã‚¹ãƒˆãƒ©ã‚¯ã‚¿
 SoundControl::~SoundControl()
 {
 	DestroySound();
 }
 
-//! @brief ‰Šú‰»
-//! @param WindowCtrl WindowControlƒNƒ‰ƒX‚Ìƒ|ƒCƒ“ƒ^
-//! @return ¬Œ÷F0@¸”sF1
+//! @brief åˆæœŸåŒ–
+//! @param WindowCtrl WindowControlã‚¯ãƒ©ã‚¹ã®ãƒã‚¤ãƒ³ã‚¿
+//! @return æˆåŠŸï¼š0ã€€å¤±æ•—ï¼š1
 int SoundControl::InitSound(WindowControl *WindowCtrl)
 {
 #ifdef ENABLE_DEBUGLOG
-	//ƒƒO‚Éo—Í
-	OutputLog.WriteLog(LOG_INIT, "ƒTƒEƒ“ƒh", "DirectSound");
+	//ãƒ­ã‚°ã«å‡ºåŠ›
+	OutputLog.WriteLog(LOG_INIT, "ã‚µã‚¦ãƒ³ãƒ‰", "DirectSound");
 #endif
 
-	//DirectSoundƒIƒuƒWƒFƒNƒg‚ğ¶¬
+	//DirectSoundã‚ªãƒ–ã‚¸ã‚§ã‚¯ãƒˆã‚’ç”Ÿæˆ
 	if( FAILED( DirectSoundCreate8(NULL, &pDSound, NULL) ) ){
 		return 1;
 	}
 
-	//‹¦’²ƒŒƒxƒ‹‚Ìİ’è
+	//å”èª¿ãƒ¬ãƒ™ãƒ«ã®è¨­å®š
 	if( FAILED( pDSound->SetCooperativeLevel(WindowCtrl->GethWnd(), DSSCL_EXCLUSIVE) ) ){
 		return 1;
 	}
 
-	//ƒvƒ‰ƒCƒ}ƒŠ ƒoƒbƒtƒ@‚ğì¬‚µAƒŠƒXƒi[ƒCƒ“ƒ^[ƒtƒFƒCƒX‚ğæ“¾‚·‚é
+	//ãƒ—ãƒ©ã‚¤ãƒãƒª ãƒãƒƒãƒ•ã‚¡ã‚’ä½œæˆã—ã€ãƒªã‚¹ãƒŠãƒ¼ã‚¤ãƒ³ã‚¿ãƒ¼ãƒ•ã‚§ã‚¤ã‚¹ã‚’å–å¾—ã™ã‚‹
 	LPDIRECTSOUNDBUFFER pPrimary;
 	DSBUFFERDESC dsbd;
 	ZeroMemory(&dsbd, sizeof(DSBUFFERDESC));
@@ -76,22 +76,22 @@ int SoundControl::InitSound(WindowControl *WindowCtrl)
 		pPrimary->Release();
 	}
 
-	//ƒhƒbƒvƒ‰[Œø‰Ê‚ğ–³Œø‚É
+	//ãƒ‰ãƒƒãƒ—ãƒ©ãƒ¼åŠ¹æœã‚’ç„¡åŠ¹ã«
 	p3DListener->SetDopplerFactor(DS3D_MINDOPPLERFACTOR, DS3D_IMMEDIATE);
 
-	//ƒ[ƒ‹EƒIƒtiŒ¸Š“x‡‚¢jİ’è
+	//ãƒ­ãƒ¼ãƒ«ãƒ»ã‚ªãƒ•ï¼ˆæ¸›è¡°åº¦åˆã„ï¼‰è¨­å®š
 	p3DListener->SetRolloffFactor(0.05f, DS3D_IMMEDIATE);
 
 #ifdef ENABLE_DEBUGLOG
-	//ƒƒO‚Éo—Í
+	//ãƒ­ã‚°ã«å‡ºåŠ›
 	OutputLog.WriteLog(LOG_COMPLETE, "", "");
 #endif
 
 	return 0;
 }
 
-//! @brief ‰ğ•ú
-//! @attention –{ŠÖ”‚Í©“®“I‚ÉŒÄ‚Ño‚³‚ê‚Ü‚·‚ªA–¾¦“I‚ÉŒÄ‚Ño‚·‚±‚Æ‚à‰Â”\‚Å‚·B
+//! @brief è§£æ”¾
+//! @attention æœ¬é–¢æ•°ã¯è‡ªå‹•çš„ã«å‘¼ã³å‡ºã•ã‚Œã¾ã™ãŒã€æ˜ç¤ºçš„ã«å‘¼ã³å‡ºã™ã“ã¨ã‚‚å¯èƒ½ã§ã™ã€‚
 void SoundControl::DestroySound()
 {
 	if( pDSound == NULL ){ return; }
@@ -110,44 +110,44 @@ void SoundControl::DestroySound()
 	}
 
 #ifdef ENABLE_DEBUGLOG
-	//ƒƒO‚Éo—Í
-	OutputLog.WriteLog(LOG_CLEANUP, "ƒTƒEƒ“ƒh", "DirectSound");
+	//ãƒ­ã‚°ã«å‡ºåŠ›
+	OutputLog.WriteLog(LOG_CLEANUP, "ã‚µã‚¦ãƒ³ãƒ‰", "DirectSound");
 #endif
 }
 
-//! @brief Ä¶‰¹—Ê‚ğİ’è
-//! @param volume Ä¶‰¹—Ê@i0.0–³‰¹@1.0100%j
+//! @brief å†ç”ŸéŸ³é‡ã‚’è¨­å®š
+//! @param volume å†ç”ŸéŸ³é‡ã€€ï¼ˆ0.0ï¼ç„¡éŸ³ã€€1.0ï¼100%ï¼‰
 void SoundControl::SetVolume(float volume)
 {
 	//
 }
 
-//! @brief ƒJƒƒ‰‚ÌÀ•W‚ÆŠp“x‚ğİ’è
-//! @param x ƒJƒƒ‰‚ÌXÀ•W
-//! @param y ƒJƒƒ‰‚ÌYÀ•W
-//! @param z ƒJƒƒ‰‚ÌZÀ•W
-//! @param rx ƒJƒƒ‰‚ÌX²Šp“x@i—\–ñj
-//! @warning –ˆƒtƒŒ[ƒ€ŒÄ‚Ño‚µ‚ÄAÅV‚ÌƒJƒƒ‰À•W‚ğİ’èi“K—pj‚µ‚Ä‚­‚¾‚³‚¢B
+//! @brief ã‚«ãƒ¡ãƒ©ã®åº§æ¨™ã¨è§’åº¦ã‚’è¨­å®š
+//! @param x ã‚«ãƒ¡ãƒ©ã®Xåº§æ¨™
+//! @param y ã‚«ãƒ¡ãƒ©ã®Yåº§æ¨™
+//! @param z ã‚«ãƒ¡ãƒ©ã®Zåº§æ¨™
+//! @param rx ã‚«ãƒ¡ãƒ©ã®Xè»¸è§’åº¦ã€€ï¼ˆäºˆç´„ï¼‰
+//! @warning æ¯ãƒ•ãƒ¬ãƒ¼ãƒ å‘¼ã³å‡ºã—ã¦ã€æœ€æ–°ã®ã‚«ãƒ¡ãƒ©åº§æ¨™ã‚’è¨­å®šï¼ˆé©ç”¨ï¼‰ã—ã¦ãã ã•ã„ã€‚
 void SoundControl::SetCamera(float x, float y, float z, float rx)
 {
 	p3DListener->SetPosition(x, y, z, DS3D_IMMEDIATE);
 	p3DListener->SetOrientation(cos(rx), 0.0f, sin(rx), 0.0f, 1.0f, 0.0f, DS3D_IMMEDIATE);
 }
 
-//! @brief ƒTƒEƒ“ƒh‚ğ“Ç‚İ‚Ş
-//! @param filename ƒtƒ@ƒCƒ‹–¼
-//! @return ¬Œ÷F0ˆÈã‚Ì”F¯”Ô†@¸”sF-1
-//! @attention 2ƒ`ƒƒƒ“ƒlƒ‹iƒXƒeƒŒƒIjƒf[ƒ^‚ªw’è‚³‚ê‚½ê‡A‰E‘¤‚Ìƒf[ƒ^‚¾‚¯æ“¾‚³‚êA¶‘¤‚Ìƒf[ƒ^‚Í–³‹‚³‚ê‚Ü‚·B
+//! @brief ã‚µã‚¦ãƒ³ãƒ‰ã‚’èª­ã¿è¾¼ã‚€
+//! @param filename ãƒ•ã‚¡ã‚¤ãƒ«å
+//! @return æˆåŠŸï¼š0ä»¥ä¸Šã®èªè­˜ç•ªå·ã€€å¤±æ•—ï¼š-1
+//! @attention 2ãƒãƒ£ãƒ³ãƒãƒ«ï¼ˆã‚¹ãƒ†ãƒ¬ã‚ªï¼‰ãƒ‡ãƒ¼ã‚¿ãŒæŒ‡å®šã•ã‚ŒãŸå ´åˆã€å³å´ã®ãƒ‡ãƒ¼ã‚¿ã ã‘å–å¾—ã•ã‚Œã€å·¦å´ã®ãƒ‡ãƒ¼ã‚¿ã¯ç„¡è¦–ã•ã‚Œã¾ã™ã€‚
 int SoundControl::LoadSound(char* filename)
 {
 	if( pDSound == NULL ){ return -1; }
 
 #ifdef ENABLE_DEBUGLOG
-	//ƒƒO‚Éo—Í
-	OutputLog.WriteLog(LOG_LOAD, "ƒTƒEƒ“ƒh", filename);
+	//ãƒ­ã‚°ã«å‡ºåŠ›
+	OutputLog.WriteLog(LOG_LOAD, "ã‚µã‚¦ãƒ³ãƒ‰", filename);
 #endif
 
-	//ŠJ‚¢‚Ä‚¢‚é”Ô†‚ğ’T‚·
+	//é–‹ã„ã¦ã„ã‚‹ç•ªå·ã‚’æ¢ã™
 	int id=0;
 	for(id=0; id<MAX_LOADSOUND; id++){
 		if( pDSBuffer[id][0] == NULL ){ break; }
@@ -159,24 +159,24 @@ int SoundControl::LoadSound(char* filename)
 	int Wavoffset = 0;
 	bool d2channels = false;
 
-	//Waveƒtƒ@ƒCƒ‹‚Ìî•ñ‚ğæ“¾
+	//Waveãƒ•ã‚¡ã‚¤ãƒ«ã®æƒ…å ±ã‚’å–å¾—
 	if( CheckSoundFile(filename, &WavSize, &Wavoffset, &pwfex) == true ){
 		return -1;
 	}
 	pwfex->cbSize = 0;
 
-	//‚à‚µƒXƒeƒŒƒIƒf[ƒ^‚È‚ç
+	//ã‚‚ã—ã‚¹ãƒ†ãƒ¬ã‚ªãƒ‡ãƒ¼ã‚¿ãªã‚‰
 	if( pwfex->nChannels == 2 ){
-		d2channels = true;		//ƒtƒ‰ƒO‚ğİ’è
-		WavSize /= 2;			//ƒTƒCƒY‚ğ”¼•ª‚É
+		d2channels = true;		//ãƒ•ãƒ©ã‚°ã‚’è¨­å®š
+		WavSize /= 2;			//ã‚µã‚¤ã‚ºã‚’åŠåˆ†ã«
 
-		//ƒ‚ƒmƒ‰ƒ‹‚Æ‚µ‚Ä‹­§“I‚ÉÄŒvZ
+		//ãƒ¢ãƒãƒ©ãƒ«ã¨ã—ã¦å¼·åˆ¶çš„ã«å†è¨ˆç®—
 		pwfex->nChannels = 1;
 		pwfex->nAvgBytesPerSec /= 2;
 		pwfex->nBlockAlign /= 2;
 	}
 
-	// DirectSoundƒZƒJƒ“ƒ_ƒŠ[ƒoƒbƒtƒ@[ì¬
+	// DirectSoundã‚»ã‚«ãƒ³ãƒ€ãƒªãƒ¼ãƒãƒƒãƒ•ã‚¡ãƒ¼ä½œæˆ
 	DSBUFFERDESC dsbd;  
 	ZeroMemory( &dsbd, sizeof(DSBUFFERDESC) );
 	dsbd.dwSize = sizeof(DSBUFFERDESC);
@@ -185,17 +185,17 @@ int SoundControl::LoadSound(char* filename)
 	dsbd.guid3DAlgorithm = DS3DALG_NO_VIRTUALIZATION;
 	dsbd.lpwfxFormat = pwfex;
 	if( FAILED( pDSound->CreateSoundBuffer(&dsbd, &pDSBuffer[id][0], NULL) ) ){
-		return -1;	//ƒZƒJƒ“ƒ_ƒŠƒoƒbƒtƒ@[ì¬¸”s
+		return -1;	//ã‚»ã‚«ãƒ³ãƒ€ãƒªãƒãƒƒãƒ•ã‚¡ãƒ¼ä½œæˆå¤±æ•—
 	}
 
-	//ƒƒbƒN‚·‚é
+	//ãƒ­ãƒƒã‚¯ã™ã‚‹
 	VOID* pBuffer = NULL;
 	DWORD dwBufferSize = 0; 
 	if( FAILED(pDSBuffer[id][0]->Lock(0, WavSize, &pBuffer, &dwBufferSize, NULL, NULL, 0) ) ){
-		return -1;	//ƒoƒbƒtƒ@‚ÌƒƒbƒN¸”s
+		return -1;	//ãƒãƒƒãƒ•ã‚¡ã®ãƒ­ãƒƒã‚¯å¤±æ•—
 	}
 
-	//ˆê—Ìˆæ‚ğŠm•Û
+	//ä¸€æ™‚é ˜åŸŸã‚’ç¢ºä¿
 	BYTE* pWavData;
 	int dwSize = dwBufferSize;
 	if( dwSize > WavSize ){ dwSize = WavSize; }
@@ -204,52 +204,52 @@ int SoundControl::LoadSound(char* filename)
 	}
 	pWavData = new BYTE[dwSize];
 	if( pWavData == NULL ){
-		//WAVEƒtƒ@ƒCƒ‹‚ğ“Ç‚İ‚Şƒƒ‚ƒŠ[‚ªŠm•Û‚Å‚«‚È‚¢
+		//WAVEãƒ•ã‚¡ã‚¤ãƒ«ã‚’èª­ã¿è¾¼ã‚€ãƒ¡ãƒ¢ãƒªãƒ¼ãŒç¢ºä¿ã§ããªã„
 		return -1;
 	}
 
 #ifdef ENABLE_PATH_DELIMITER_SLASH
-	//ƒpƒX‹æØ‚è•¶š‚ğ•ÏŠ·
+	//ãƒ‘ã‚¹åŒºåˆ‡ã‚Šæ–‡å­—ã‚’å¤‰æ›
 	filename = ChangePathDelimiter(filename);
 #endif
 
-	//”gŒ`ƒf[ƒ^‚ğæ‚è‚Ş
+	//æ³¢å½¢ãƒ‡ãƒ¼ã‚¿ã‚’å–ã‚Šè¾¼ã‚€
 	FILE* fp;
 	fp = fopen(filename, "rb");
 	fseek(fp, Wavoffset, SEEK_SET);
 	fread(pWavData, 1, dwSize, fp);
 	fclose(fp);
 
-	//ˆê—Ìˆæ‚©‚çƒZƒJƒ“ƒ_ƒŠƒoƒbƒtƒ@[‚ÖƒRƒs[
+	//ä¸€æ™‚é ˜åŸŸã‹ã‚‰ã‚»ã‚«ãƒ³ãƒ€ãƒªãƒãƒƒãƒ•ã‚¡ãƒ¼ã¸ã‚³ãƒ”ãƒ¼
 	if( d2channels == false ){
-		//ƒ‚ƒmƒ‰ƒ‹ƒf[ƒ^‚È‚ç1ƒoƒCƒg‚Ã‚ÂƒRƒs[‚·‚é
+		//ãƒ¢ãƒãƒ©ãƒ«ãƒ‡ãƒ¼ã‚¿ãªã‚‰1ãƒã‚¤ãƒˆã¥ã¤ã‚³ãƒ”ãƒ¼ã™ã‚‹
 		for(int i=0; i<dwSize; i++){
 			*((BYTE*)pBuffer+i) = *((BYTE*) pWavData+i);
 		}
 	}
 	else{
-		//ƒTƒ“ƒvƒŠƒ“ƒOƒoƒCƒg”‚ğæ“¾
+		//ã‚µãƒ³ãƒ—ãƒªãƒ³ã‚°ãƒã‚¤ãƒˆæ•°ã‚’å–å¾—
 		int samplingbytes = pwfex->wBitsPerSample/2;
 		
-		//ƒXƒeƒŒƒIƒf[ƒ^‚È‚çA‰E‘¤‚Ìƒf[ƒ^‚¾‚¯Ši”[
+		//ã‚¹ãƒ†ãƒ¬ã‚ªãƒ‡ãƒ¼ã‚¿ãªã‚‰ã€å³å´ã®ãƒ‡ãƒ¼ã‚¿ã ã‘æ ¼ç´
 		int byte = 0;
 		for(int i=0; i<dwSize; i++){
 			*((BYTE*)pBuffer+byte) = *((BYTE*) pWavData+i);
 			byte += 1;
-			if( i%samplingbytes == samplingbytes-1 ){ i += samplingbytes; }		//¶‘¤‚Ìƒf[ƒ^‚ÍƒXƒLƒbƒv
+			if( i%samplingbytes == samplingbytes-1 ){ i += samplingbytes; }		//å·¦å´ã®ãƒ‡ãƒ¼ã‚¿ã¯ã‚¹ã‚­ãƒƒãƒ—
 		}
 	}
 
-	//ƒƒbƒN‰ğœ
+	//ãƒ­ãƒƒã‚¯è§£é™¤
 	pDSBuffer[id][0]->Unlock(pBuffer, dwBufferSize, NULL, 0);
 
-	//ˆê—Ìˆæ‚ğ‰ğ•ú
+	//ä¸€æ™‚é ˜åŸŸã‚’è§£æ”¾
 	delete pWavData;
 
-	//ƒtƒH[ƒ}ƒbƒgî•ñ‰ğ•ú
+	//ãƒ•ã‚©ãƒ¼ãƒãƒƒãƒˆæƒ…å ±è§£æ”¾
 	delete pwfex;
 
-	//ƒZƒJƒ“ƒ_ƒŠƒoƒbƒtƒ@[‚ÌƒRƒs[‚ğì¬
+	//ã‚»ã‚«ãƒ³ãƒ€ãƒªãƒãƒƒãƒ•ã‚¡ãƒ¼ã®ã‚³ãƒ”ãƒ¼ã‚’ä½œæˆ
 	for(int i=1; i<MAX_SOUNDLISTS; i++){
 		if( pDSound->DuplicateSoundBuffer(pDSBuffer[id][0], &(pDSBuffer[id][i])) != DS_OK ){
 			CleanupSound(id);
@@ -257,24 +257,24 @@ int SoundControl::LoadSound(char* filename)
 		}
 	}
 
-	//‰¹—ÊÅ¬‚Åˆê“xÄ¶‚µ‚Ä‚¨‚­
+	//éŸ³é‡æœ€å°ã§ä¸€åº¦å†ç”Ÿã—ã¦ãŠã
 	pDSBuffer[id][0]->SetVolume(DSBVOLUME_MIN);
 	pDSBuffer[id][0]->Play(NULL, 0, NULL);
 
 #ifdef ENABLE_DEBUGLOG
-	//ƒƒO‚Éo—Í
+	//ãƒ­ã‚°ã«å‡ºåŠ›
 	OutputLog.WriteLog(LOG_COMPLETE, "", id);
 #endif
 
 	return id;
 }
 
-//! @brief ƒTƒEƒ“ƒh‚ğÄ¶i”ñ3DÄ¶j
-//! @param id ”F¯”Ô†
-//! @param volume Ä¶ƒ{ƒŠƒ…[ƒ€
-//! @param pan ƒ–³Œø„
-//! @return ¬Œ÷F1@¸”sF0
-//! @note —p“rFƒvƒŒƒCƒ„[©g‚ª”­¶‚·‚é‰¹EƒQ[ƒ€‹óŠÔ‘S‘Ì‚Å‹Ïˆê‚É–Â‚ç‚·‰¹EBGM
+//! @brief ã‚µã‚¦ãƒ³ãƒ‰ã‚’å†ç”Ÿï¼ˆé3Då†ç”Ÿï¼‰
+//! @param id èªè­˜ç•ªå·
+//! @param volume å†ç”Ÿãƒœãƒªãƒ¥ãƒ¼ãƒ 
+//! @param pan ï¼œç„¡åŠ¹ï¼
+//! @return æˆåŠŸï¼š1ã€€å¤±æ•—ï¼š0
+//! @note ç”¨é€”ï¼šãƒ—ãƒ¬ã‚¤ãƒ¤ãƒ¼è‡ªèº«ãŒç™ºç”Ÿã™ã‚‹éŸ³ãƒ»ã‚²ãƒ¼ãƒ ç©ºé–“å…¨ä½“ã§å‡ä¸€ã«é³´ã‚‰ã™éŸ³ãƒ»BGM
 int SoundControl::PlaySound(int id, int volume, int pan)
 {
 	if( pDSound == NULL ){ return 0; }
@@ -284,21 +284,21 @@ int SoundControl::PlaySound(int id, int volume, int pan)
 	DWORD status = 0;
 
 	for(int i=0; i<MAX_SOUNDLISTS; i++){
-		//Ä¶ó‹µ‚ğæ“¾
+		//å†ç”ŸçŠ¶æ³ã‚’å–å¾—
 		pDSBuffer[id][i]->GetStatus(&status);
 
-		//ƒTƒEƒ“ƒh‚ª’â~’†‚È‚ç‚Î
+		//ã‚µã‚¦ãƒ³ãƒ‰ãŒåœæ­¢ä¸­ãªã‚‰ã°
 		if( (status & DSBSTATUS_PLAYING) == 0x00 ){
 			LPDIRECTSOUND3DBUFFER pDS3DBuffer;
 			if( FAILED(pDSBuffer[id][i]->QueryInterface(IID_IDirectSound3DBuffer8, (VOID**)&pDS3DBuffer)) ){
-				//IDirectSound3DBuffer8‚ğæ“¾‚Å‚«‚È‚¢
+				//IDirectSound3DBuffer8ã‚’å–å¾—ã§ããªã„
 				return 0;
 			}
 
-			//3DÄ¶‚ğ–³Œø
+			//3Då†ç”Ÿã‚’ç„¡åŠ¹
 			pDS3DBuffer->SetMode(DS3DMODE_DISABLE, DS3D_IMMEDIATE);
 
-			//ƒ{ƒŠƒ…[ƒ€‚ğİ’è‚µÄ¶
+			//ãƒœãƒªãƒ¥ãƒ¼ãƒ ã‚’è¨­å®šã—å†ç”Ÿ
 			pDSBuffer[id][i]->SetVolume( GetDSVolume(volume) );
 			pDSBuffer[id][i]->Play(NULL, 0, NULL);
 			return 1;
@@ -308,14 +308,14 @@ int SoundControl::PlaySound(int id, int volume, int pan)
 	return 0;
 }
 
-//! @brief ƒTƒEƒ“ƒh‚ğÄ¶i3DÄ¶j
-//! @param id ”F¯”Ô†
-//! @param x ‰¹Œ¹‚ÌXÀ•W
-//! @param y ‰¹Œ¹‚ÌYÀ•W
-//! @param z ‰¹Œ¹‚ÌZÀ•W
-//! @param volume Ä¶ƒ{ƒŠƒ…[ƒ€
-//! @return ¬Œ÷F1@¸”sF0
-//! @note —p“rFâ‘Î“I‚ÈˆÊ’u‚ğ‚¿‹——£‚É‚æ‚èŒ¸Š‚·‚éAˆê”Ê“I‚ÈŒø‰Ê‰¹B
+//! @brief ã‚µã‚¦ãƒ³ãƒ‰ã‚’å†ç”Ÿï¼ˆ3Då†ç”Ÿï¼‰
+//! @param id èªè­˜ç•ªå·
+//! @param x éŸ³æºã®Xåº§æ¨™
+//! @param y éŸ³æºã®Yåº§æ¨™
+//! @param z éŸ³æºã®Zåº§æ¨™
+//! @param volume å†ç”Ÿãƒœãƒªãƒ¥ãƒ¼ãƒ 
+//! @return æˆåŠŸï¼š1ã€€å¤±æ•—ï¼š0
+//! @note ç”¨é€”ï¼šçµ¶å¯¾çš„ãªä½ç½®ã‚’æŒã¡è·é›¢ã«ã‚ˆã‚Šæ¸›è¡°ã™ã‚‹ã€ä¸€èˆ¬çš„ãªåŠ¹æœéŸ³ã€‚
 int SoundControl::Play3DSound(int id, float x, float y, float z, int volume)
 {
 	if( pDSound == NULL ){ return 0; }
@@ -325,29 +325,29 @@ int SoundControl::Play3DSound(int id, float x, float y, float z, int volume)
 	DWORD status = 0;
 
 	for(int i=0; i<MAX_SOUNDLISTS; i++){
-		//Ä¶ó‹µ‚ğæ“¾
+		//å†ç”ŸçŠ¶æ³ã‚’å–å¾—
 		pDSBuffer[id][i]->GetStatus(&status);
 
-		//ƒTƒEƒ“ƒh‚ª’â~’†‚È‚ç‚Î
+		//ã‚µã‚¦ãƒ³ãƒ‰ãŒåœæ­¢ä¸­ãªã‚‰ã°
 		if( (status & DSBSTATUS_PLAYING) == 0x00 ){
 
 			LPDIRECTSOUND3DBUFFER pDS3DBuffer;
 			if( FAILED(pDSBuffer[id][i]->QueryInterface(IID_IDirectSound3DBuffer8, (VOID**)&pDS3DBuffer)) ){
-				//IDirectSound3DBuffer8‚ğæ“¾‚Å‚«‚È‚¢
+				//IDirectSound3DBuffer8ã‚’å–å¾—ã§ããªã„
 				return 0;
 			}
 
-			//Å¬‹——£‚ÆÅ‘å‹——£‚Ìİ’è
+			//æœ€å°è·é›¢ã¨æœ€å¤§è·é›¢ã®è¨­å®š
 			pDS3DBuffer->SetMinDistance(1, DS3D_IMMEDIATE);
 			pDS3DBuffer->SetMaxDistance(MAX_SOUNDDIST, DS3D_IMMEDIATE);
 
-			//‰¹Œ¹‚ÌÀ•W‚ğİ’è
+			//éŸ³æºã®åº§æ¨™ã‚’è¨­å®š
 			pDS3DBuffer->SetPosition(x, y, z, DS3D_IMMEDIATE);
 
-			//3DÄ¶‚ğ—LŒø
+			//3Då†ç”Ÿã‚’æœ‰åŠ¹
 			pDS3DBuffer->SetMode(DS3DMODE_NORMAL, DS3D_IMMEDIATE);
 
-			//ƒ{ƒŠƒ…[ƒ€‚ğİ’è‚µÄ¶
+			//ãƒœãƒªãƒ¥ãƒ¼ãƒ ã‚’è¨­å®šã—å†ç”Ÿ
 			pDSBuffer[id][i]->SetVolume( GetDSVolume(volume) );
 			pDSBuffer[id][i]->Play(NULL, 0, NULL);
 			return 1;
@@ -357,13 +357,13 @@ int SoundControl::Play3DSound(int id, float x, float y, float z, int volume)
 	return 0;
 }
 
-//! @brief “Ç‚İ‚İÏ‚İ‚ÌƒTƒEƒ“ƒh”‚ğæ“¾
-//! @return ƒTƒEƒ“ƒh”
+//! @brief èª­ã¿è¾¼ã¿æ¸ˆã¿ã®ã‚µã‚¦ãƒ³ãƒ‰æ•°ã‚’å–å¾—
+//! @return ã‚µã‚¦ãƒ³ãƒ‰æ•°
 int SoundControl::GetTotalSounds()
 {
 	int cnt = 0;
 
-	//g—p’†‚Ì—v‘f‚ğ”‚¦‚é
+	//ä½¿ç”¨ä¸­ã®è¦ç´ ã‚’æ•°ãˆã‚‹
 	for(int i=0; i<MAX_LOADSOUND; i++){
 		if( pDSBuffer[i][0] != NULL ){ cnt += 1; }
 	}
@@ -371,8 +371,8 @@ int SoundControl::GetTotalSounds()
 	return cnt;
 }
 
-//! @brief ƒTƒEƒ“ƒh‚ğ‰ğ•ú
-//! @param id ”F¯”Ô†
+//! @brief ã‚µã‚¦ãƒ³ãƒ‰ã‚’è§£æ”¾
+//! @param id èªè­˜ç•ªå·
 void SoundControl::CleanupSound(int id)
 {
 	if( pDSound == NULL ){ return; }
@@ -382,31 +382,31 @@ void SoundControl::CleanupSound(int id)
 	DWORD status = 0;
 
 	for(int i=0; i<MAX_SOUNDLISTS; i++){
-		//Ä¶ó‹µ‚ğæ“¾
+		//å†ç”ŸçŠ¶æ³ã‚’å–å¾—
 		pDSBuffer[id][i]->GetStatus(&status);
 
-		//ƒTƒEƒ“ƒh‚ªÄ¶’†‚È‚ç‚Î’â~‚·‚é
+		//ã‚µã‚¦ãƒ³ãƒ‰ãŒå†ç”Ÿä¸­ãªã‚‰ã°åœæ­¢ã™ã‚‹
 		if( (status & DSBSTATUS_PLAYING) != 0x00 ){
 			pDSBuffer[id][i]->Stop();
 		}
 
-		//‘ÎÛ‚ÌƒZƒJƒ“ƒ_ƒŠƒoƒbƒtƒ@[‚ğ‰ğ•ú
+		//å¯¾è±¡ã®ã‚»ã‚«ãƒ³ãƒ€ãƒªãƒãƒƒãƒ•ã‚¡ãƒ¼ã‚’è§£æ”¾
 		if( pDSBuffer[id][i] != NULL ){ pDSBuffer[id][i]->Release(); }
 		pDSBuffer[id][i] = NULL;
 	}
 
 #ifdef ENABLE_DEBUGLOG
-	//ƒƒO‚Éo—Í
-	OutputLog.WriteLog(LOG_CLEANUP, "ƒTƒEƒ“ƒh", id);
+	//ãƒ­ã‚°ã«å‡ºåŠ›
+	OutputLog.WriteLog(LOG_CLEANUP, "ã‚µã‚¦ãƒ³ãƒ‰", id);
 #endif
 }
 
-//! @brief Waveƒtƒ@ƒCƒ‹‚Ìî•ñ‚ğ’²‚×‚é
-//! @param filename ƒtƒ@ƒCƒ‹–¼
-//! @param filesize ƒtƒ@ƒCƒ‹ƒTƒCƒY‚ğó‚¯æ‚éƒ|ƒCƒ“ƒ^
-//! @param fileoffset ƒf[ƒ^ƒIƒtƒZƒbƒg‚ğó‚¯æ‚éƒ|ƒCƒ“ƒ^
-//! @param pwfex WAVEFORMATEXŒ^‚ğó‚¯æ‚é“ñdƒ|ƒCƒ“ƒ^
-//! @return ¬Œ÷Ffalse@¸”sFtrue
+//! @brief Waveãƒ•ã‚¡ã‚¤ãƒ«ã®æƒ…å ±ã‚’èª¿ã¹ã‚‹
+//! @param filename ãƒ•ã‚¡ã‚¤ãƒ«å
+//! @param filesize ãƒ•ã‚¡ã‚¤ãƒ«ã‚µã‚¤ã‚ºã‚’å—ã‘å–ã‚‹ãƒã‚¤ãƒ³ã‚¿
+//! @param fileoffset ãƒ‡ãƒ¼ã‚¿ã‚ªãƒ•ã‚»ãƒƒãƒˆã‚’å—ã‘å–ã‚‹ãƒã‚¤ãƒ³ã‚¿
+//! @param pwfex WAVEFORMATEXå‹ã‚’å—ã‘å–ã‚‹äºŒé‡ãƒã‚¤ãƒ³ã‚¿
+//! @return æˆåŠŸï¼šfalseã€€å¤±æ•—ï¼štrue
 bool SoundControl::CheckSoundFile(char* filename, int *filesize, int *fileoffset, WAVEFORMATEX** pwfex)
 {
 	HMMIO hMmio = NULL;
@@ -417,11 +417,11 @@ bool SoundControl::CheckSoundFile(char* filename, int *filesize, int *fileoffset
 
 	hMmio = mmioOpen(filename, NULL, MMIO_ALLOCBUF | MMIO_READ);
 	if( hMmio == NULL ){
-		//ƒtƒ@ƒCƒ‹‚ª‚È‚¢
+		//ãƒ•ã‚¡ã‚¤ãƒ«ãŒãªã„
 		return true;
 	}
 
-	//WAVEƒtƒ@ƒCƒ‹‚©Šm”F
+	//WAVEãƒ•ã‚¡ã‚¤ãƒ«ã‹ç¢ºèª
 	errorflag = true;
 	if( mmioDescend( hMmio, &riffckInfo, NULL, 0 ) == MMSYSERR_NOERROR ){
 		if( (mmioFOURCC('R','I','F','F') == riffckInfo.ckid) && (mmioFOURCC('W','A','V','E') == riffckInfo.fccType) ){
@@ -430,10 +430,10 @@ bool SoundControl::CheckSoundFile(char* filename, int *filesize, int *fileoffset
 	}
 	if( errorflag == true ){
 		mmioClose(hMmio, MMIO_FHOPEN);
-		return true;	//WAVEƒtƒ@ƒCƒ‹‚Å‚È‚¢
+		return true;	//WAVEãƒ•ã‚¡ã‚¤ãƒ«ã§ãªã„
 	}
 
-	//ƒtƒH[ƒ}ƒbƒgî•ñæ“¾
+	//ãƒ•ã‚©ãƒ¼ãƒãƒƒãƒˆæƒ…å ±å–å¾—
 	*pwfex = NULL;
 	ckInfo.ckid = mmioFOURCC('f','m','t',' ');
 	if( mmioDescend(hMmio, &ckInfo, &riffckInfo, MMIO_FINDCHUNK) == MMSYSERR_NOERROR ){
@@ -451,19 +451,19 @@ bool SoundControl::CheckSoundFile(char* filename, int *filesize, int *fileoffset
 	}
 	if( *pwfex == NULL ){
 		mmioClose(hMmio, MMIO_FHOPEN);
-		return true;	//ƒtƒ@ƒCƒ‹ƒtƒH[ƒ}ƒbƒg‚ª‘Î‰‚µ‚Ä‚È‚¢
+		return true;	//ãƒ•ã‚¡ã‚¤ãƒ«ãƒ•ã‚©ãƒ¼ãƒãƒƒãƒˆãŒå¯¾å¿œã—ã¦ãªã„
 	}
 	if( mmioAscend(hMmio, &ckInfo, 0) != MMSYSERR_NOERROR ){
 		delete pwfex;
 		mmioClose(hMmio, MMIO_FHOPEN);
-		return true;	//ƒ`ƒƒƒ“ƒN§Œä¸”s
+		return true;	//ãƒãƒ£ãƒ³ã‚¯åˆ¶å¾¡å¤±æ•—
 	}
 
-	//ƒf[ƒ^—Ìˆæ‚ğ’²‚×‚é
+	//ãƒ‡ãƒ¼ã‚¿é ˜åŸŸã‚’èª¿ã¹ã‚‹
 	ckInfo.ckid = mmioFOURCC('d','a','t','a');
 	if( mmioDescend(hMmio, &ckInfo, &riffckInfo, MMIO_FINDCHUNK) != MMSYSERR_NOERROR ){
 		mmioClose(hMmio, MMIO_FHOPEN);
-		return true;	//ƒtƒ@ƒCƒ‹ƒtƒH[ƒ}ƒbƒg‚ª‘Î‰‚µ‚Ä‚È‚¢
+		return true;	//ãƒ•ã‚¡ã‚¤ãƒ«ãƒ•ã‚©ãƒ¼ãƒãƒƒãƒˆãŒå¯¾å¿œã—ã¦ãªã„
 	}
 
 	mmioClose(hMmio, MMIO_FHOPEN);
@@ -473,10 +473,10 @@ bool SoundControl::CheckSoundFile(char* filename, int *filesize, int *fileoffset
 	return false;
 }
 
-//! @brief SetVolume()—p@1/100 dB (ƒfƒVƒxƒ‹) ‚ğŒvZ
-//! @param volume ‰¹—Êi-50`100j
-//! @return 1/100 dB (ƒfƒVƒxƒ‹).
-//! @attention ˆø”‚É 156 ˆÈã‚ª“n‚³‚ê‚½ê‡‚Í–³‰¹‚É‚È‚è‚Ü‚·B
+//! @brief SetVolume()ç”¨ã€€1/100 dB (ãƒ‡ã‚·ãƒ™ãƒ«) ã‚’è¨ˆç®—
+//! @param volume éŸ³é‡ï¼ˆ-50ï½100ï¼‰
+//! @return 1/100 dB (ãƒ‡ã‚·ãƒ™ãƒ«).
+//! @attention å¼•æ•°ã« 156 ä»¥ä¸ŠãŒæ¸¡ã•ã‚ŒãŸå ´åˆã¯ç„¡éŸ³ã«ãªã‚Šã¾ã™ã€‚
 int SoundControl::GetDSVolume(int volume)
 {
 	if( volume >= 156 ){ return DSBVOLUME_MIN; }

@@ -1,5 +1,5 @@
-//! @file config.h
-//! @brief configƒNƒ‰ƒX‚ÌéŒ¾
+ï»¿//! @file config.h
+//! @brief configã‚¯ãƒ©ã‚¹ã®å®£è¨€
 
 //--------------------------------------------------------------------------------
 // 
@@ -32,15 +32,15 @@
 #ifndef CONFING_H
 #define CONFING_H
 
-#define TOTAL_ControlKey 18		//!< ‡Œv‘€ìƒL[”
-#define MAX_PLAYERNAME 21		//!< ƒvƒŒƒCƒ„[–¼‚ÌÅ‘å•¶š”
+#define TOTAL_ControlKey 18		//!< åˆè¨ˆæ“ä½œã‚­ãƒ¼æ•°
+#define MAX_PLAYERNAME 21		//!< ãƒ—ãƒ¬ã‚¤ãƒ¤ãƒ¼åã®æœ€å¤§æ–‡å­—æ•°
 
 #ifndef H_LAYERLEVEL
  #define H_LAYERLEVEL 1		//!< Select include file.
 #endif
 #include "main.h"
 
-//! GetKeycode()—p ’è”
+//! GetKeycode()ç”¨ å®šæ•°
 enum ControlKey {
 	KEY_TURNUP = 0,
 	KEY_TURNDOWN,
@@ -62,21 +62,21 @@ enum ControlKey {
 	KEY_Shot
 };
 
-//! @brief İ’èƒtƒ@ƒCƒ‹‚ğ“Ç‚İ‚ŞƒNƒ‰ƒX
-//! @details ƒtƒ@ƒCƒ‹‚ÌQÆ‚Æ’l‚ÌŠÇ—‚ğs‚¢‚Ü‚·B
-//! @details Ql‘—¿Fu‚İ‚©‚ñ” vhttp://mikan.the-ninja.jp/@Ë@‹Zp‘—¿@Ë@config.datƒtƒ@ƒCƒ‹‰ğÍ‘—¿
+//! @brief è¨­å®šãƒ•ã‚¡ã‚¤ãƒ«ã‚’èª­ã¿è¾¼ã‚€ã‚¯ãƒ©ã‚¹
+//! @details ãƒ•ã‚¡ã‚¤ãƒ«ã®å‚ç…§ã¨å€¤ã®ç®¡ç†ã‚’è¡Œã„ã¾ã™ã€‚
+//! @details å‚è€ƒè³‡æ–™ï¼šã€Œã¿ã‹ã‚“ç®±ã€http://mikan.the-ninja.jp/ã€€â‡’ã€€æŠ€è¡“è³‡æ–™ã€€â‡’ã€€config.datãƒ•ã‚¡ã‚¤ãƒ«è§£æè³‡æ–™
 class Config
 {
-	int Keycode[TOTAL_ControlKey];		//!< ƒIƒŠƒWƒiƒ‹ƒL[ƒR[ƒh
-	int MouseSensitivity;				//!< ƒ}ƒEƒXŠ´“x
-	bool FullscreenFlag;				//!< ƒtƒ‹ƒXƒNƒŠ[ƒ“—LŒø
-	bool SoundFlag;						//!< Œø‰Ê‰¹—LŒø
-	bool BloodFlag;						//!< oŒŒ—LŒø
-	int Brightness;						//!< ‰æ–Ê‚Ì–¾‚é‚³
-	bool InvertMouseFlag;				//!< ƒ}ƒEƒX”½“]
-	bool FrameskipFlag;					//!< ƒtƒŒ[ƒ€ƒXƒLƒbƒv
-	bool AnotherGunsightFlag;			//!< •Ê‚ÌÆ€‚ğg—p
-	char PlayerName[MAX_PLAYERNAME];	//!< ƒvƒŒƒCƒ„[–¼
+	int Keycode[TOTAL_ControlKey];		//!< ã‚ªãƒªã‚¸ãƒŠãƒ«ã‚­ãƒ¼ã‚³ãƒ¼ãƒ‰
+	int MouseSensitivity;				//!< ãƒã‚¦ã‚¹æ„Ÿåº¦
+	bool FullscreenFlag;				//!< ãƒ•ãƒ«ã‚¹ã‚¯ãƒªãƒ¼ãƒ³æœ‰åŠ¹
+	bool SoundFlag;						//!< åŠ¹æœéŸ³æœ‰åŠ¹
+	bool BloodFlag;						//!< å‡ºè¡€æœ‰åŠ¹
+	int Brightness;						//!< ç”»é¢ã®æ˜ã‚‹ã•
+	bool InvertMouseFlag;				//!< ãƒã‚¦ã‚¹åè»¢
+	bool FrameskipFlag;					//!< ãƒ•ãƒ¬ãƒ¼ãƒ ã‚¹ã‚­ãƒƒãƒ—
+	bool AnotherGunsightFlag;			//!< åˆ¥ã®ç…§æº–ã‚’ä½¿ç”¨
+	char PlayerName[MAX_PLAYERNAME];	//!< ãƒ—ãƒ¬ã‚¤ãƒ¤ãƒ¼å
 
 public:
 	Config();

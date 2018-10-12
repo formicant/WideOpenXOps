@@ -1,5 +1,5 @@
-//! @file parameter.h
-//! @brief ParameterInfoƒNƒ‰ƒX‚ÌéŒ¾
+ï»¿//! @file parameter.h
+//! @brief ParameterInfoã‚¯ãƒ©ã‚¹ã®å®£è¨€
 
 //--------------------------------------------------------------------------------
 // 
@@ -29,134 +29,134 @@
 // SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 //--------------------------------------------------------------------------------
 
-// lE•ŠíE¬•¨ İ’èƒf[ƒ^‚ÌŠm”Fì‹Æ
-// @Manda‚³‚ñ@i2014”N12Œj
+// äººãƒ»æ­¦å™¨ãƒ»å°ç‰© è¨­å®šãƒ‡ãƒ¼ã‚¿ã®ç¢ºèªä½œæ¥­
+// ã€€Mandaã•ã‚“ã€€ï¼ˆ2014å¹´12æœˆï¼‰
 
 #ifndef PARAMETER_H
 #define PARAMETER_H
 
-#define TOTAL_PARAMETERINFO_HUMAN 43			//!< l‚Ìİ’è”
-#define TOTAL_HUMANTEXTURE 30					//!< l‚ÌƒeƒNƒXƒ`ƒƒ‚Ì‡Œv–‡”
-#define TOTAL_PARAMETERINFO_WEAPON 23			//!< •Ší‚Ìİ’è”
-#define TOTAL_PARAMETERINFO_SMALLOBJECT 12	//!< ¬•¨‚Ìİ’è”
-#define TOTAL_PARAMETERINFO_BULLET 2		//!< e’eƒIƒuƒWƒFƒNƒg‚Ìİ’è”
-#define TOTAL_OFFICIALMISSION 58			//!< •W€ƒ~ƒbƒVƒ‡ƒ“‚Ì”
-#define TOTAL_PARAMETERINFO_AILEVEL 6		//!< AIƒŒƒxƒ‹‚Ìİ’è”
+#define TOTAL_PARAMETERINFO_HUMAN 43			//!< äººã®è¨­å®šæ•°
+#define TOTAL_HUMANTEXTURE 30					//!< äººã®ãƒ†ã‚¯ã‚¹ãƒãƒ£ã®åˆè¨ˆæšæ•°
+#define TOTAL_PARAMETERINFO_WEAPON 23			//!< æ­¦å™¨ã®è¨­å®šæ•°
+#define TOTAL_PARAMETERINFO_SMALLOBJECT 12	//!< å°ç‰©ã®è¨­å®šæ•°
+#define TOTAL_PARAMETERINFO_BULLET 2		//!< éŠƒå¼¾ã‚ªãƒ–ã‚¸ã‚§ã‚¯ãƒˆã®è¨­å®šæ•°
+#define TOTAL_OFFICIALMISSION 58			//!< æ¨™æº–ãƒŸãƒƒã‚·ãƒ§ãƒ³ã®æ•°
+#define TOTAL_PARAMETERINFO_AILEVEL 6		//!< AIãƒ¬ãƒ™ãƒ«ã®è¨­å®šæ•°
 
-#define ID_WEAPON_NONE 0		//!< •ŠíF‚È‚µ ‚Æ‚µ‚Äæ‚èˆµ‚¤•Ší”Ô†
-#define ID_WEAPON_GRENADE 13	//!< èÖ’e‚Æ‚µ‚Äæ‚èˆµ‚¤•Ší”Ô†
-#define ID_WEAPON_CASE 15		//!< ƒP[ƒX‚Æ‚µ‚Äæ‚èˆµ‚¤•Ší”Ô†
+#define ID_WEAPON_NONE 0		//!< æ­¦å™¨ï¼šãªã— ã¨ã—ã¦å–ã‚Šæ‰±ã†æ­¦å™¨ç•ªå·
+#define ID_WEAPON_GRENADE 13	//!< æ‰‹æ¦´å¼¾ã¨ã—ã¦å–ã‚Šæ‰±ã†æ­¦å™¨ç•ªå·
+#define ID_WEAPON_CASE 15		//!< ã‚±ãƒ¼ã‚¹ã¨ã—ã¦å–ã‚Šæ‰±ã†æ­¦å™¨ç•ªå·
 
-#define OFFICIALMISSION_BD1 "temp.bd1"		//!< •W€ƒ~ƒbƒVƒ‡ƒ“‚ÌBD1ƒtƒ@ƒCƒ‹–¼
+#define OFFICIALMISSION_BD1 "temp.bd1"		//!< æ¨™æº–ãƒŸãƒƒã‚·ãƒ§ãƒ³ã®BD1ãƒ•ã‚¡ã‚¤ãƒ«å
 
-#define SMALLOBJECT_SCALE 5.0f				//!< ¬•¨‚Ì•`‰æ”{—¦
+#define SMALLOBJECT_SCALE 5.0f				//!< å°ç‰©ã®æç”»å€ç‡
 
 #ifndef H_LAYERLEVEL
  #define H_LAYERLEVEL 1		//!< Select include file.
 #endif
 #include "main.h"
 
-//! lİ’è—p‚Ì\‘¢‘Ì
+//! äººè¨­å®šç”¨ã®æ§‹é€ ä½“
 struct HumanParameter{
-	int texture;	//!< ƒeƒNƒXƒ`ƒƒ”Ô†
-	int model;		//!< ƒ‚ƒfƒ‹”Ô†
-	int hp;			//!< ‘Ì—Í
-	int AIlevel;	//!< AIƒŒƒxƒ‹
-	int Weapon[TOTAL_HAVEWEAPON];	//!< •Ší
-	int type;		//!< í—Ş
+	int texture;	//!< ãƒ†ã‚¯ã‚¹ãƒãƒ£ç•ªå·
+	int model;		//!< ãƒ¢ãƒ‡ãƒ«ç•ªå·
+	int hp;			//!< ä½“åŠ›
+	int AIlevel;	//!< AIãƒ¬ãƒ™ãƒ«
+	int Weapon[TOTAL_HAVEWEAPON];	//!< æ­¦å™¨
+	int type;		//!< ç¨®é¡
 };
 
-//! •Šíİ’è—p‚Ì\‘¢‘Ì
+//! æ­¦å™¨è¨­å®šç”¨ã®æ§‹é€ ä½“
 struct WeaponParameter{
-	char *name;		//!< •Ší–¼
-	char *model;	//!< ƒ‚ƒfƒ‹ƒtƒ@ƒCƒ‹–¼
-	char *texture;	//!< ƒeƒNƒXƒ`ƒƒƒtƒ@ƒCƒ‹–¼
-	int attacks;	//!< UŒ‚—Í
-	int penetration;	//!< ŠÑ’Ê—Í
-	int blazings;	//!< ˜AËŠÔŠu
-	int speed;		//!< ’e‘¬
-	int nbsmax;		//!< ‘•’e”
-	int reloads;	//!< ƒŠƒ[ƒhŠÔ
-	int reaction;		//!< ”½“®Šp“x
-	int ErrorRangeMIN;	//!< ’e“¹Œë· Å¬
-	int ErrorRangeMAX;	//!< ’e“¹Œë· Å‘å
-	float mx;		//!< e‚ÌˆÊ’uFX
-	float my;		//!< e‚ÌˆÊ’uFY
-	float mz;		//!< e‚ÌˆÊ’uFZ
-	float flashx;	//!< ƒ}ƒYƒ‹ƒtƒ‰ƒbƒVƒ…‚ÌˆÊ’uFX
-	float flashy;	//!< ƒ}ƒYƒ‹ƒtƒ‰ƒbƒVƒ…‚ÌˆÊ’uFY
-	float flashz;	//!< ƒ}ƒYƒ‹ƒtƒ‰ƒbƒVƒ…‚ÌˆÊ’uFZ
-	float yakkyou_px;	//!< –òä°”ro ˆÊ’uFX
-	float yakkyou_py;	//!< –òä°”ro ˆÊ’uFY
-	float yakkyou_pz;	//!< –òä°”ro ˆÊ’uFZ
-	float yakkyou_sx;	//!< –òä°”ro ‰‘¬FX
-	float yakkyou_sy;	//!< –òä°”ro ‰‘¬FY
-	bool blazingmode;	//!< ˜AË
-	int scopemode;	//!< ƒXƒR[ƒvƒ‚[ƒh
-	float size;		//!< •`‰æ”{—¦
-	int soundid;	//!< ”­–C‰¹‚Ì”Ô†
-	int soundvolume;	//!< ”­–C‰¹‚Ì‰¹—Ê
-	bool silencer;	//!< ƒTƒCƒŒƒ“ƒT[‚Ì—L–³
-	int WeaponP;	//!< ‘•”õ•û–@
-	int ChangeWeapon;	//!< Ø‚è‘Ö‚¦‚é•Ší‘ÎÛ
-	int burst;			//!< ”­Ë’e”
+	char *name;		//!< æ­¦å™¨å
+	char *model;	//!< ãƒ¢ãƒ‡ãƒ«ãƒ•ã‚¡ã‚¤ãƒ«å
+	char *texture;	//!< ãƒ†ã‚¯ã‚¹ãƒãƒ£ãƒ•ã‚¡ã‚¤ãƒ«å
+	int attacks;	//!< æ”»æ’ƒåŠ›
+	int penetration;	//!< è²«é€šåŠ›
+	int blazings;	//!< é€£å°„é–“éš”
+	int speed;		//!< å¼¾é€Ÿ
+	int nbsmax;		//!< è£…å¼¾æ•°
+	int reloads;	//!< ãƒªãƒ­ãƒ¼ãƒ‰æ™‚é–“
+	int reaction;		//!< åå‹•è§’åº¦
+	int ErrorRangeMIN;	//!< å¼¾é“èª¤å·® æœ€å°
+	int ErrorRangeMAX;	//!< å¼¾é“èª¤å·® æœ€å¤§
+	float mx;		//!< éŠƒã®ä½ç½®ï¼šX
+	float my;		//!< éŠƒã®ä½ç½®ï¼šY
+	float mz;		//!< éŠƒã®ä½ç½®ï¼šZ
+	float flashx;	//!< ãƒã‚ºãƒ«ãƒ•ãƒ©ãƒƒã‚·ãƒ¥ã®ä½ç½®ï¼šX
+	float flashy;	//!< ãƒã‚ºãƒ«ãƒ•ãƒ©ãƒƒã‚·ãƒ¥ã®ä½ç½®ï¼šY
+	float flashz;	//!< ãƒã‚ºãƒ«ãƒ•ãƒ©ãƒƒã‚·ãƒ¥ã®ä½ç½®ï¼šZ
+	float yakkyou_px;	//!< è–¬è¢æ’å‡º ä½ç½®ï¼šX
+	float yakkyou_py;	//!< è–¬è¢æ’å‡º ä½ç½®ï¼šY
+	float yakkyou_pz;	//!< è–¬è¢æ’å‡º ä½ç½®ï¼šZ
+	float yakkyou_sx;	//!< è–¬è¢æ’å‡º åˆé€Ÿï¼šX
+	float yakkyou_sy;	//!< è–¬è¢æ’å‡º åˆé€Ÿï¼šY
+	bool blazingmode;	//!< é€£å°„
+	int scopemode;	//!< ã‚¹ã‚³ãƒ¼ãƒ—ãƒ¢ãƒ¼ãƒ‰
+	float size;		//!< æç”»å€ç‡
+	int soundid;	//!< ç™ºç ²éŸ³ã®ç•ªå·
+	int soundvolume;	//!< ç™ºç ²éŸ³ã®éŸ³é‡
+	bool silencer;	//!< ã‚µã‚¤ãƒ¬ãƒ³ã‚µãƒ¼ã®æœ‰ç„¡
+	int WeaponP;	//!< è£…å‚™æ–¹æ³•
+	int ChangeWeapon;	//!< åˆ‡ã‚Šæ›¿ãˆã‚‹æ­¦å™¨å¯¾è±¡
+	int burst;			//!< ç™ºå°„å¼¾æ•°
 };
 
-//! ¬•¨İ’è—p‚Ì\‘¢‘Ì
+//! å°ç‰©è¨­å®šç”¨ã®æ§‹é€ ä½“
 struct SmallObjectParameter{
-	char *model;	//!< ƒ‚ƒfƒ‹–¼
-	char *texture;	//!< ƒeƒNƒXƒ`ƒƒ–¼
-	int decide;		//!< “–‚½‚è”»’è‚Ì‘å‚«‚³
-	int hp;			//!< ‘Ï‹v—Í
-	int sound;		//!< –½’†‚ÌŒø‰Ê‰¹”Ô†
-	int jump;		//!< ”ò‚Ñ‹ï‡
+	char *model;	//!< ãƒ¢ãƒ‡ãƒ«å
+	char *texture;	//!< ãƒ†ã‚¯ã‚¹ãƒãƒ£å
+	int decide;		//!< å½“ãŸã‚Šåˆ¤å®šã®å¤§ãã•
+	int hp;			//!< è€ä¹…åŠ›
+	int sound;		//!< å‘½ä¸­æ™‚ã®åŠ¹æœéŸ³ç•ªå·
+	int jump;		//!< é£›ã³å…·åˆ
 };
 
-//! e’eƒIƒuƒWƒFƒNƒg—p‚Ì\‘¢‘Ì
+//! éŠƒå¼¾ã‚ªãƒ–ã‚¸ã‚§ã‚¯ãƒˆç”¨ã®æ§‹é€ ä½“
 struct BulletParameter{
-	char *model;	//!< ƒ‚ƒfƒ‹–¼
-	char *texture;	//!< ƒeƒNƒXƒ`ƒƒ–¼
-	float size;		//!< •`‰æ”{—¦
+	char *model;	//!< ãƒ¢ãƒ‡ãƒ«å
+	char *texture;	//!< ãƒ†ã‚¯ã‚¹ãƒãƒ£å
+	float size;		//!< æç”»å€ç‡
 };
 
-//! •W€ƒ~ƒbƒVƒ‡ƒ“İ’è—p‚Ì\‘¢‘Ì
+//! æ¨™æº–ãƒŸãƒƒã‚·ãƒ§ãƒ³è¨­å®šç”¨ã®æ§‹é€ ä½“
 struct OfficialMissionParameter{
-	char *name;				//!< ƒ~ƒbƒVƒ‡ƒ“¯•Ê–¼
-	char *fullname;			//!< ƒ~ƒbƒVƒ‡ƒ“³®–¼Ì
-	char *directory;		//!< ƒf[ƒ^ƒfƒBƒŒƒNƒgƒŠ
-	char *txt;				//!< ƒtƒ@ƒCƒ‹–¼i.pd1/.txtj
-	bool collision;			//!< ’Ç‰Á‚Ì“–‚½‚è”»’è‚ğ¦‚·ƒtƒ‰ƒO
-	bool screen;			//!< ‰æ–Ê‚ğˆÃ‚­‚·‚éƒtƒ‰ƒO
+	char *name;				//!< ãƒŸãƒƒã‚·ãƒ§ãƒ³è­˜åˆ¥å
+	char *fullname;			//!< ãƒŸãƒƒã‚·ãƒ§ãƒ³æ­£å¼åç§°
+	char *directory;		//!< ãƒ‡ãƒ¼ã‚¿ãƒ‡ã‚£ãƒ¬ã‚¯ãƒˆãƒª
+	char *txt;				//!< ãƒ•ã‚¡ã‚¤ãƒ«åï¼ˆ.pd1/.txtï¼‰
+	bool collision;			//!< è¿½åŠ ã®å½“ãŸã‚Šåˆ¤å®šã‚’ç¤ºã™ãƒ•ãƒ©ã‚°
+	bool screen;			//!< ç”»é¢ã‚’æš—ãã™ã‚‹ãƒ•ãƒ©ã‚°
 };
 
-//! AIƒŒƒxƒ‹‚É‚æ‚éİ’èi«”\’lj—p\‘¢‘Ì
+//! AIãƒ¬ãƒ™ãƒ«ã«ã‚ˆã‚‹è¨­å®šï¼ˆæ€§èƒ½å€¤ï¼‰ç”¨æ§‹é€ ä½“
 struct AIParameter{
-	int aiming;			//!< ƒGƒCƒ~ƒ“ƒO”\—Í
-	int attack;			//!< UŒ‚«
-	int search;			//!< ”­Œ©”\—Í
-	int limitserror;	//!< ‹–—eŒë·
+	int aiming;			//!< ã‚¨ã‚¤ãƒŸãƒ³ã‚°èƒ½åŠ›
+	int attack;			//!< æ”»æ’ƒæ€§
+	int search;			//!< ç™ºè¦‹èƒ½åŠ›
+	int limitserror;	//!< è¨±å®¹èª¤å·®
 };
 
-//! @brief İ’è‚³‚ê‚½’l‚ğŠÇ—‚·‚éƒNƒ‰ƒX
-//! @details —\‚ßŒÅ’è‚³‚ê‚½İ’è’l‚ğŠÇ—‚µ‚Ü‚·B
-//! @details ‹ï‘Ì“I‚É‚ÍAlE•ŠíE¬•¨‚©‚çA•W€ƒ~ƒbƒVƒ‡ƒ“‚ÉŠÖŒW‚·‚éİ’è’l‚È‚Ç‚Å‚·B
+//! @brief è¨­å®šã•ã‚ŒãŸå€¤ã‚’ç®¡ç†ã™ã‚‹ã‚¯ãƒ©ã‚¹
+//! @details äºˆã‚å›ºå®šã•ã‚ŒãŸè¨­å®šå€¤ã‚’ç®¡ç†ã—ã¾ã™ã€‚
+//! @details å…·ä½“çš„ã«ã¯ã€äººãƒ»æ­¦å™¨ãƒ»å°ç‰©ã‹ã‚‰ã€æ¨™æº–ãƒŸãƒƒã‚·ãƒ§ãƒ³ã«é–¢ä¿‚ã™ã‚‹è¨­å®šå€¤ãªã©ã§ã™ã€‚
 class ParameterInfo
 {
-	HumanParameter *Human;						//!< l‚Ìî•ñ‚ğŠi”[‚·‚éƒ|ƒCƒ“ƒ^
-	char *HumanTexturePath[TOTAL_HUMANTEXTURE];		//!< l‚ÌƒeƒNƒXƒ`ƒƒ‚ğŠi”[‚·‚éƒ|ƒCƒ“ƒ^
-	WeaponParameter *Weapon;						//!< •Ší‚Ìî•ñ‚ğŠi”[‚·‚éƒ|ƒCƒ“ƒ^
+	HumanParameter *Human;						//!< äººã®æƒ…å ±ã‚’æ ¼ç´ã™ã‚‹ãƒã‚¤ãƒ³ã‚¿
+	char *HumanTexturePath[TOTAL_HUMANTEXTURE];		//!< äººã®ãƒ†ã‚¯ã‚¹ãƒãƒ£ã‚’æ ¼ç´ã™ã‚‹ãƒã‚¤ãƒ³ã‚¿
+	WeaponParameter *Weapon;						//!< æ­¦å™¨ã®æƒ…å ±ã‚’æ ¼ç´ã™ã‚‹ãƒã‚¤ãƒ³ã‚¿
 #ifdef ENABLE_BUG_HUMANWEAPON
-	WeaponParameter *BugWeapon;						//!< ƒoƒO•Ší‚Ìî•ñ‚ğŠi”[‚·‚éƒ|ƒCƒ“ƒ^
+	WeaponParameter *BugWeapon;						//!< ãƒã‚°æ­¦å™¨ã®æƒ…å ±ã‚’æ ¼ç´ã™ã‚‹ãƒã‚¤ãƒ³ã‚¿
 #endif
-	SmallObjectParameter *SmallObject;			//!< ¬•¨‚Ìî•ñ‚ğŠi”[‚·‚éƒ|ƒCƒ“ƒ^
-	BulletParameter *Bullet;					//!< e’eƒIƒuƒWƒFƒNƒg‚Ìî•ñ‚ğŠi”[‚·‚éƒ|ƒCƒ“ƒ^
-	OfficialMissionParameter *MissionData;		//!< •W€ƒ~ƒbƒVƒ‡ƒ“‚Ìî•ñ‚ğŠi”[‚·‚éƒ|ƒCƒ“ƒ^
-	char *missionname[TOTAL_OFFICIALMISSION];				//!< •W€ƒ~ƒbƒVƒ‡ƒ“‚Ìƒ~ƒbƒVƒ‡ƒ“¯•Ê–¼
-	char *missionfullname[TOTAL_OFFICIALMISSION];			//!< •W€ƒ~ƒbƒVƒ‡ƒ“‚Ìƒ~ƒbƒVƒ‡ƒ“³®–¼Ì
-	char *missiondirectory[TOTAL_OFFICIALMISSION];			//!< •W€ƒ~ƒbƒVƒ‡ƒ“‚Ìƒf[ƒ^ƒfƒBƒŒƒNƒgƒŠ
-	char *missiontxt[TOTAL_OFFICIALMISSION];				//!< •W€ƒ~ƒbƒVƒ‡ƒ“‚Ìƒtƒ@ƒCƒ‹–¼i.pd1/.txtj
-	bool missioncollisionflag[TOTAL_OFFICIALMISSION];		//!< •W€ƒ~ƒbƒVƒ‡ƒ“‚Ì’Ç‰Á‚Ì“–‚½‚è”»’è‚ğ¦‚·ƒtƒ‰ƒO
-	AIParameter *AIlevel;						//!< AI‚Ì«”\’l
+	SmallObjectParameter *SmallObject;			//!< å°ç‰©ã®æƒ…å ±ã‚’æ ¼ç´ã™ã‚‹ãƒã‚¤ãƒ³ã‚¿
+	BulletParameter *Bullet;					//!< éŠƒå¼¾ã‚ªãƒ–ã‚¸ã‚§ã‚¯ãƒˆã®æƒ…å ±ã‚’æ ¼ç´ã™ã‚‹ãƒã‚¤ãƒ³ã‚¿
+	OfficialMissionParameter *MissionData;		//!< æ¨™æº–ãƒŸãƒƒã‚·ãƒ§ãƒ³ã®æƒ…å ±ã‚’æ ¼ç´ã™ã‚‹ãƒã‚¤ãƒ³ã‚¿
+	char *missionname[TOTAL_OFFICIALMISSION];				//!< æ¨™æº–ãƒŸãƒƒã‚·ãƒ§ãƒ³ã®ãƒŸãƒƒã‚·ãƒ§ãƒ³è­˜åˆ¥å
+	char *missionfullname[TOTAL_OFFICIALMISSION];			//!< æ¨™æº–ãƒŸãƒƒã‚·ãƒ§ãƒ³ã®ãƒŸãƒƒã‚·ãƒ§ãƒ³æ­£å¼åç§°
+	char *missiondirectory[TOTAL_OFFICIALMISSION];			//!< æ¨™æº–ãƒŸãƒƒã‚·ãƒ§ãƒ³ã®ãƒ‡ãƒ¼ã‚¿ãƒ‡ã‚£ãƒ¬ã‚¯ãƒˆãƒª
+	char *missiontxt[TOTAL_OFFICIALMISSION];				//!< æ¨™æº–ãƒŸãƒƒã‚·ãƒ§ãƒ³ã®ãƒ•ã‚¡ã‚¤ãƒ«åï¼ˆ.pd1/.txtï¼‰
+	bool missioncollisionflag[TOTAL_OFFICIALMISSION];		//!< æ¨™æº–ãƒŸãƒƒã‚·ãƒ§ãƒ³ã®è¿½åŠ ã®å½“ãŸã‚Šåˆ¤å®šã‚’ç¤ºã™ãƒ•ãƒ©ã‚°
+	AIParameter *AIlevel;						//!< AIã®æ€§èƒ½å€¤
 
 public:
 	ParameterInfo();

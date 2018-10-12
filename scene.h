@@ -1,5 +1,5 @@
-//! @file scene.h
-//! @brief Še‰æ–Ê‚ğŠÇ—‚·‚éƒNƒ‰ƒX‚ÌéŒ¾
+ï»¿//! @file scene.h
+//! @brief å„ç”»é¢ã‚’ç®¡ç†ã™ã‚‹ã‚¯ãƒ©ã‚¹ã®å®£è¨€
 
 //--------------------------------------------------------------------------------
 // 
@@ -33,18 +33,18 @@
 #define SCENE_H
 
 //#include "main.h"
-//	ƒwƒbƒ_[ƒtƒ@ƒCƒ‹’†‚Ì‰º‚ÅéŒ¾‚·‚éB
+//	ãƒ˜ãƒƒãƒ€ãƒ¼ãƒ•ã‚¡ã‚¤ãƒ«ä¸­ã®ä¸‹ã§å®£è¨€ã™ã‚‹ã€‚
 
-//! @brief ‰æ–ÊŠÇ—ƒNƒ‰ƒXiŠî’êƒNƒ‰ƒXj
-//! @details ƒQ[ƒ€‚Ì‰æ–Ê‚ğŠÇ—‚·‚éÅ‚àŠî’ê‚ÌƒNƒ‰ƒX‚Å‚·B
+//! @brief ç”»é¢ç®¡ç†ã‚¯ãƒ©ã‚¹ï¼ˆåŸºåº•ã‚¯ãƒ©ã‚¹ï¼‰
+//! @details ã‚²ãƒ¼ãƒ ã®ç”»é¢ã‚’ç®¡ç†ã™ã‚‹æœ€ã‚‚åŸºåº•ã®ã‚¯ãƒ©ã‚¹ã§ã™ã€‚
 class scene
 {
 protected:
-	class StateMachine *GameState;		//!< ƒQ[ƒ€‘S‘Ì‚Ìó‘Ô‘JˆÚƒNƒ‰ƒX
-	class WindowControl *WindowCtrl;	//!< ƒEƒBƒ“ƒhƒE§ŒäƒNƒ‰ƒX
-	class D3DGraphics *d3dg;			//!< •`‰æƒNƒ‰ƒX
-	class InputControl *inputCtrl;		//!< “ü—Íæ“¾ƒNƒ‰ƒX
-	unsigned int framecnt;				//!< ƒtƒŒ[ƒ€”‚ÌƒJƒEƒ“ƒg
+	class StateMachine *GameState;		//!< ã‚²ãƒ¼ãƒ å…¨ä½“ã®çŠ¶æ…‹é·ç§»ã‚¯ãƒ©ã‚¹
+	class WindowControl *WindowCtrl;	//!< ã‚¦ã‚£ãƒ³ãƒ‰ã‚¦åˆ¶å¾¡ã‚¯ãƒ©ã‚¹
+	class D3DGraphics *d3dg;			//!< æç”»ã‚¯ãƒ©ã‚¹
+	class InputControl *inputCtrl;		//!< å…¥åŠ›å–å¾—ã‚¯ãƒ©ã‚¹
+	unsigned int framecnt;				//!< ãƒ•ãƒ¬ãƒ¼ãƒ æ•°ã®ã‚«ã‚¦ãƒ³ãƒˆ
 
 public:
 	scene();
@@ -60,12 +60,12 @@ public:
 	float GetEffectAlphaLoop(unsigned int tframecnt, float MaxAlpha, float timingsec, bool reversal);
 };
 
-//! @brief 2D‰æ–ÊŠÇ—ƒNƒ‰ƒXiŠî’êƒNƒ‰ƒXj
-//! @details ƒQ[ƒ€‰æ–Ê‚Ì’†‚ÅA2D•`‰æ‚Ì‚İ‚ğs‚¤ƒV[ƒ“‚ğŠÇ—‚·‚éŠî’ê‚ÌƒNƒ‰ƒX‚Å‚·B
+//! @brief 2Dç”»é¢ç®¡ç†ã‚¯ãƒ©ã‚¹ï¼ˆåŸºåº•ã‚¯ãƒ©ã‚¹ï¼‰
+//! @details ã‚²ãƒ¼ãƒ ç”»é¢ã®ä¸­ã§ã€2Dæç”»ã®ã¿ã‚’è¡Œã†ã‚·ãƒ¼ãƒ³ã‚’ç®¡ç†ã™ã‚‹åŸºåº•ã®ã‚¯ãƒ©ã‚¹ã§ã™ã€‚
 class D2Dscene : public scene
 {
 protected:
-	int gametitle;				//!< ƒQ[ƒ€ƒ^ƒCƒgƒ‹‰æ‘œ
+	int gametitle;				//!< ã‚²ãƒ¼ãƒ ã‚¿ã‚¤ãƒˆãƒ«ç”»åƒ
 	virtual void Render2D();
 
 public:
@@ -77,17 +77,17 @@ public:
 	virtual void Destroy();
 };
 
-//! @brief 3D‰æ–ÊŠÇ—ƒNƒ‰ƒXiŠî’êƒNƒ‰ƒXj
-//! @details ƒQ[ƒ€‰æ–Ê‚Ì’†‚ÅA3D•`‰æ‚ğs‚¤ƒV[ƒ“‚ğŠÇ—‚·‚éŠî’ê‚ÌƒNƒ‰ƒX‚Å‚·B
+//! @brief 3Dç”»é¢ç®¡ç†ã‚¯ãƒ©ã‚¹ï¼ˆåŸºåº•ã‚¯ãƒ©ã‚¹ï¼‰
+//! @details ã‚²ãƒ¼ãƒ ç”»é¢ã®ä¸­ã§ã€3Dæç”»ã‚’è¡Œã†ã‚·ãƒ¼ãƒ³ã‚’ç®¡ç†ã™ã‚‹åŸºåº•ã®ã‚¯ãƒ©ã‚¹ã§ã™ã€‚
 class D3Dscene : public scene
 {
 protected:
-	class SoundManager *GameSound;		//!< ƒQ[ƒ€Œø‰Ê‰¹ŠÇ—ƒNƒ‰ƒX
-	float camera_x;			//!< ƒJƒƒ‰À•W
-	float camera_y;			//!< ƒJƒƒ‰À•W
-	float camera_z;			//!< ƒJƒƒ‰À•W
-	float camera_rx;		//!< ƒJƒƒ‰‰ñ“]Šp“x
-	float camera_ry;		//!< ƒJƒƒ‰‰ñ“]Šp“x
+	class SoundManager *GameSound;		//!< ã‚²ãƒ¼ãƒ åŠ¹æœéŸ³ç®¡ç†ã‚¯ãƒ©ã‚¹
+	float camera_x;			//!< ã‚«ãƒ¡ãƒ©åº§æ¨™
+	float camera_y;			//!< ã‚«ãƒ¡ãƒ©åº§æ¨™
+	float camera_z;			//!< ã‚«ãƒ¡ãƒ©åº§æ¨™
+	float camera_rx;		//!< ã‚«ãƒ¡ãƒ©å›è»¢è§’åº¦
+	float camera_ry;		//!< ã‚«ãƒ¡ãƒ©å›è»¢è§’åº¦
 	virtual void Render3D();
 	virtual void Render2D();
 

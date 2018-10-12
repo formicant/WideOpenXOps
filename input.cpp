@@ -1,5 +1,5 @@
-//! @file input.cpp
-//! @brief InputControlƒNƒ‰ƒX‚Ì’è‹`
+ï»¿//! @file input.cpp
+//! @brief InputControlã‚¯ãƒ©ã‚¹ã®å®šç¾©
 
 //--------------------------------------------------------------------------------
 // 
@@ -31,7 +31,7 @@
 
 #include "input.h"
 
-//! @brief ƒRƒ“ƒXƒgƒ‰ƒNƒ^
+//! @brief ã‚³ãƒ³ã‚¹ãƒˆãƒ©ã‚¯ã‚¿
 InputControl::InputControl()
 {
 #ifdef INPUT_DIRECTINPUT
@@ -42,13 +42,13 @@ InputControl::InputControl()
 	InitFlag = false;
 #endif
 
-	//ƒL[ƒ{[ƒhİ’è’l‰Šú‰»
+	//ã‚­ãƒ¼ãƒœãƒ¼ãƒ‰è¨­å®šå€¤åˆæœŸåŒ–
 	for(int i=0; i<256; i++){
 		keys[i] = 0;
 	}
 	memcpy(keys_lt, keys, sizeof(char)*256);
 
-	//ƒ}ƒEƒX‚Ìİ’è’l‰Šú‰»
+	//ãƒã‚¦ã‚¹ã®è¨­å®šå€¤åˆæœŸåŒ–
 	mx = 0;
 	my = 0;
 	mbl = false;
@@ -57,43 +57,43 @@ InputControl::InputControl()
 	mbr_lt = mbr;
 }
 
-//! @brief ƒfƒBƒXƒgƒ‰ƒNƒ^
+//! @brief ãƒ‡ã‚£ã‚¹ãƒˆãƒ©ã‚¯ã‚¿
 InputControl::~InputControl()
 {
 	DestroyInput();
 }
 
-//! @brief ‰Šú‰»
-//! @param WindowCtrl WindowControlƒNƒ‰ƒX‚Ìƒ|ƒCƒ“ƒ^
-//! @return ¬Œ÷F0@¸”sF1
+//! @brief åˆæœŸåŒ–
+//! @param WindowCtrl WindowControlã‚¯ãƒ©ã‚¹ã®ãƒã‚¤ãƒ³ã‚¿
+//! @return æˆåŠŸï¼š0ã€€å¤±æ•—ï¼š1
 int InputControl::InitInput(WindowControl *WindowCtrl)
 {
 #ifdef ENABLE_DEBUGLOG
-	//ƒƒO‚Éo—Í
+	//ãƒ­ã‚°ã«å‡ºåŠ›
  #ifdef INPUT_DIRECTINPUT
-	OutputLog.WriteLog(LOG_INIT, "“ü—Í", "DirectInput");
+	OutputLog.WriteLog(LOG_INIT, "å…¥åŠ›", "DirectInput");
  #else
-	OutputLog.WriteLog(LOG_INIT, "“ü—Í", "WinAPI");
+	OutputLog.WriteLog(LOG_INIT, "å…¥åŠ›", "WinAPI");
  #endif
 #endif
 
-	//ƒEƒBƒ“ƒhƒEƒnƒ“ƒhƒ‹‚ğİ’è
+	//ã‚¦ã‚£ãƒ³ãƒ‰ã‚¦ãƒãƒ³ãƒ‰ãƒ«ã‚’è¨­å®š
 	hWnd = WindowCtrl->GethWnd();
 
 #ifdef INPUT_DIRECTINPUT
-	//DirectInput‰Šú‰»
+	//DirectInputåˆæœŸåŒ–
 	if( FAILED( DirectInput8Create(GetModuleHandle(NULL), DIRECTINPUT_VERSION, IID_IDirectInput8, (void**)&pDI, NULL) ) ){
 		return 1;
 	}
 
-	//ƒL[ƒ{[ƒh‰Šú‰»
+	//ã‚­ãƒ¼ãƒœãƒ¼ãƒ‰åˆæœŸåŒ–
 	if( FAILED( pDI->CreateDevice(GUID_SysKeyboard, &pDIDevice, NULL) ) ){
 		return 1;
 	}
 	pDIDevice->SetDataFormat(&c_dfDIKeyboard);
 	pDIDevice->SetCooperativeLevel(hWnd, DISCL_FOREGROUND | DISCL_NONEXCLUSIVE | DISCL_NOWINKEY);
 
-	//ƒ}ƒEƒX‰Šú‰»
+	//ãƒã‚¦ã‚¹åˆæœŸåŒ–
 	if( FAILED( pDI->CreateDevice(GUID_SysMouse, &pMouse, NULL) ) ){
 		return 1;
 	}
@@ -102,7 +102,7 @@ int InputControl::InitInput(WindowControl *WindowCtrl)
 	pMouse->Acquire();
 #endif
 
-	//ƒJ[ƒ\ƒ‹‚ğ”ñ•\¦
+	//ã‚«ãƒ¼ã‚½ãƒ«ã‚’éè¡¨ç¤º
 	ShowCursor(false);
 
 #ifndef INPUT_DIRECTINPUT
@@ -110,15 +110,15 @@ int InputControl::InitInput(WindowControl *WindowCtrl)
 #endif
 
 #ifdef ENABLE_DEBUGLOG
-	//ƒƒO‚Éo—Í
+	//ãƒ­ã‚°ã«å‡ºåŠ›
 	OutputLog.WriteLog(LOG_COMPLETE, "", "");
 #endif
 
 	return 0;
 }
 
-//! @brief ‰ğ•ú
-//! @attention –{ŠÖ”‚Í©“®“I‚ÉŒÄ‚Ño‚³‚ê‚Ü‚·‚ªA–¾¦“I‚ÉŒÄ‚Ño‚·‚±‚Æ‚à‰Â”\‚Å‚·B
+//! @brief è§£æ”¾
+//! @attention æœ¬é–¢æ•°ã¯è‡ªå‹•çš„ã«å‘¼ã³å‡ºã•ã‚Œã¾ã™ãŒã€æ˜ç¤ºçš„ã«å‘¼ã³å‡ºã™ã“ã¨ã‚‚å¯èƒ½ã§ã™ã€‚
 void InputControl::DestroyInput()
 {
 #ifdef INPUT_DIRECTINPUT
@@ -128,21 +128,21 @@ void InputControl::DestroyInput()
 #endif
 
 #ifdef INPUT_DIRECTINPUT
-	//ƒL[ƒ{[ƒhƒfƒoƒCƒX‚ğŠJ•ú
+	//ã‚­ãƒ¼ãƒœãƒ¼ãƒ‰ãƒ‡ãƒã‚¤ã‚¹ã‚’é–‹æ”¾
 	if( pDIDevice != NULL ){
 		pDIDevice->Unacquire();
 		pDIDevice->Release();
 		pDIDevice = NULL;
 	}
 
-	//ƒ}ƒEƒXƒfƒoƒCƒX‚ğŠJ•ú
+	//ãƒã‚¦ã‚¹ãƒ‡ãƒã‚¤ã‚¹ã‚’é–‹æ”¾
 	if( pMouse != NULL ){
 		pMouse->Unacquire();
 		pMouse->Release();
 		pMouse = NULL;
 	}
 
-	//DirectInput‚ğŠJ•ú
+	//DirectInputã‚’é–‹æ”¾
 	if( pDI != NULL){
 		pDI->Release();
 		pDI = NULL;
@@ -152,55 +152,55 @@ void InputControl::DestroyInput()
 #endif
 
 #ifdef ENABLE_DEBUGLOG
-	//ƒƒO‚Éo—Í
+	//ãƒ­ã‚°ã«å‡ºåŠ›
  #ifdef INPUT_DIRECTINPUT
-	OutputLog.WriteLog(LOG_CLEANUP, "“ü—Í", "DirectInput");
+	OutputLog.WriteLog(LOG_CLEANUP, "å…¥åŠ›", "DirectInput");
  #else
-	OutputLog.WriteLog(LOG_CLEANUP, "“ü—Í", "WinAPI");
+	OutputLog.WriteLog(LOG_CLEANUP, "å…¥åŠ›", "WinAPI");
  #endif
 #endif
 }
 
-//! @brief “ü—ÍƒfƒoƒCƒX‚Ìó‘Ô‚ğXV
-//! @param mousemode ƒ}ƒEƒX‚ÌÀ•Wæ“¾@â‘Î’liÀ•WjFfalse@‘Š‘Î’liˆÚ“®—ÊjFtrue
+//! @brief å…¥åŠ›ãƒ‡ãƒã‚¤ã‚¹ã®çŠ¶æ…‹ã‚’æ›´æ–°
+//! @param mousemode ãƒã‚¦ã‚¹ã®åº§æ¨™å–å¾—ã€€çµ¶å¯¾å€¤ï¼ˆåº§æ¨™ï¼‰ï¼šfalseã€€ç›¸å¯¾å€¤ï¼ˆç§»å‹•é‡ï¼‰ï¼štrue
 void InputControl::GetInputState(bool mousemode)
 {
 #ifdef INPUT_DIRECTINPUT
-	//ƒL[ƒ{[ƒhƒfƒoƒCƒX‚ª³‚µ‚­g—p‚Å‚«‚ê‚Î
+	//ã‚­ãƒ¼ãƒœãƒ¼ãƒ‰ãƒ‡ãƒã‚¤ã‚¹ãŒæ­£ã—ãä½¿ç”¨ã§ãã‚Œã°
 	if( pDIDevice != NULL ){
 		HRESULT hr = pDIDevice->Acquire();
 		if( (hr==DI_OK) || (hr==S_FALSE) ){
-			//æ“¾’¼‘O‚ÌƒL[î•ñ‚ğA‘OƒtƒŒ[ƒ€î•ñ‚Æ‚µ‚Ä‹L˜^
+			//å–å¾—ç›´å‰ã®ã‚­ãƒ¼æƒ…å ±ã‚’ã€å‰ãƒ•ãƒ¬ãƒ¼ãƒ æƒ…å ±ã¨ã—ã¦è¨˜éŒ²
 			memcpy(keys_lt, keys, sizeof(char)*256);
 
-			//Œ»İ‚ÌƒL[ƒ{[ƒh“ü—Í‚ğæ“¾
+			//ç¾åœ¨ã®ã‚­ãƒ¼ãƒœãƒ¼ãƒ‰å…¥åŠ›ã‚’å–å¾—
 			pDIDevice->GetDeviceState(sizeof(keys), &keys);
 		}
 	}
 #else
-	//æ“¾’¼‘O‚ÌƒL[î•ñ‚ğA‘OƒtƒŒ[ƒ€î•ñ‚Æ‚µ‚Ä‹L˜^
+	//å–å¾—ç›´å‰ã®ã‚­ãƒ¼æƒ…å ±ã‚’ã€å‰ãƒ•ãƒ¬ãƒ¼ãƒ æƒ…å ±ã¨ã—ã¦è¨˜éŒ²
 	memcpy(keys_lt, keys, sizeof(char)*256);
 
-	//Œ»İ‚ÌƒL[ƒ{[ƒh“ü—Í‚ğæ“¾
+	//ç¾åœ¨ã®ã‚­ãƒ¼ãƒœãƒ¼ãƒ‰å…¥åŠ›ã‚’å–å¾—
 	GetKeyboardState((PBYTE)&keys);
 #endif
 
 	POINT point;
 
-	//ˆÊ’u‚ğƒXƒNƒŠ[ƒ“À•W‚Åæ“¾iWinAPIj
+	//ä½ç½®ã‚’ã‚¹ã‚¯ãƒªãƒ¼ãƒ³åº§æ¨™ã§å–å¾—ï¼ˆWinAPIï¼‰
 	GetCursorPos(&point);
 	ScreenToClient(hWnd, &point);
 
 #ifdef INPUT_DIRECTINPUT
-	//ƒ}ƒEƒXƒfƒoƒCƒX‚ª³‚µ‚­‰Šú‰»‚³‚ê‚Ä‚¢‚ê‚Î
+	//ãƒã‚¦ã‚¹ãƒ‡ãƒã‚¤ã‚¹ãŒæ­£ã—ãåˆæœŸåŒ–ã•ã‚Œã¦ã„ã‚Œã°
 	if( pMouse != NULL ){
-		//ƒ}ƒEƒXî•ñ‚ğæ“¾iDirectInputj
+		//ãƒã‚¦ã‚¹æƒ…å ±ã‚’å–å¾—ï¼ˆDirectInputï¼‰
 		DIMOUSESTATE2 dIMouseState={0};
 		if( FAILED(pMouse->GetDeviceState( sizeof(DIMOUSESTATE2), &dIMouseState ) ) ){
 			pMouse->Acquire();
 		}
 
-		//ƒ}ƒEƒXÀ•W‚ğo—Í
+		//ãƒã‚¦ã‚¹åº§æ¨™ã‚’å‡ºåŠ›
 		if( mousemode == false ){
 			mx = point.x;
 			my = point.y;
@@ -210,18 +210,18 @@ void InputControl::GetInputState(bool mousemode)
 			my = dIMouseState.lY;
 		}
 
-		//æ“¾’¼‘O‚Ìƒ{ƒ^ƒ“î•ñ‚ğA‘OƒtƒŒ[ƒ€î•ñ‚Æ‚µ‚Ä‹L˜^
+		//å–å¾—ç›´å‰ã®ãƒœã‚¿ãƒ³æƒ…å ±ã‚’ã€å‰ãƒ•ãƒ¬ãƒ¼ãƒ æƒ…å ±ã¨ã—ã¦è¨˜éŒ²
 		mbl_lt = mbl;
 		mbr_lt = mbr;
 
-		//ƒ}ƒEƒX‚Ìƒ{ƒ^ƒ“‚ğæ“¾
+		//ãƒã‚¦ã‚¹ã®ãƒœã‚¿ãƒ³ã‚’å–å¾—
 		if( dIMouseState.rgbButtons[0]&0x80 ){ mbl = true; }
 		else{ mbl = false; }
 		if( dIMouseState.rgbButtons[1]&0x80 ){ mbr = true; }
 		else{ mbr = false; }
 	}
 #else
-	//ƒ}ƒEƒXÀ•W‚ğo—Í
+	//ãƒã‚¦ã‚¹åº§æ¨™ã‚’å‡ºåŠ›
 	if( mousemode == false ){
 		mx = point.x;
 		my = point.y;
@@ -231,15 +231,15 @@ void InputControl::GetInputState(bool mousemode)
 		my = point.y - point_lt.y;
 	}
 
-	//ƒ}ƒEƒXÀ•W‚ğ‘OƒtƒŒ[ƒ€î•ñ‚Æ‚µ‚Ä‹L˜^
+	//ãƒã‚¦ã‚¹åº§æ¨™ã‚’å‰ãƒ•ãƒ¬ãƒ¼ãƒ æƒ…å ±ã¨ã—ã¦è¨˜éŒ²
 	point_lt = point;
 
 
-	//æ“¾’¼‘O‚Ìƒ{ƒ^ƒ“î•ñ‚ğA‘OƒtƒŒ[ƒ€î•ñ‚Æ‚µ‚Ä‹L˜^
+	//å–å¾—ç›´å‰ã®ãƒœã‚¿ãƒ³æƒ…å ±ã‚’ã€å‰ãƒ•ãƒ¬ãƒ¼ãƒ æƒ…å ±ã¨ã—ã¦è¨˜éŒ²
 	mbl_lt = mbl;
 	mbr_lt = mbr;
 
-	//ƒ}ƒEƒX‚Ìƒ{ƒ^ƒ“‚ğæ“¾
+	//ãƒã‚¦ã‚¹ã®ãƒœã‚¿ãƒ³ã‚’å–å¾—
 	if( GetKeyState(VK_LBUTTON) < 0 ){ mbl = true; }
 	else{ mbl = false; }
 	if( GetKeyState(VK_RBUTTON) < 0 ){ mbr = true; }
@@ -247,117 +247,117 @@ void InputControl::GetInputState(bool mousemode)
 #endif
 }
 
-//! @brief ƒ}ƒEƒX‚ğ’†S‚ÉˆÚ“®
+//! @brief ãƒã‚¦ã‚¹ã‚’ä¸­å¿ƒã«ç§»å‹•
 void InputControl::MoveMouseCenter()
 {
 	POINT point;
 
-	//ƒEƒBƒ“ƒhƒEÀ•W‚Ì’†‰›‚ğ‹‚ß‚é
+	//ã‚¦ã‚£ãƒ³ãƒ‰ã‚¦åº§æ¨™ã®ä¸­å¤®ã‚’æ±‚ã‚ã‚‹
 	point.x = SCREEN_WIDTH/2;
 	point.y = SCREEN_HEIGHT/2;
 
-	//‘O‰ñ‚ÌÀ•W‚ğ‘‚«Š·‚¦
+	//å‰å›ã®åº§æ¨™ã‚’æ›¸ãæ›ãˆ
 	point_lt = point;
 
-	//ƒXƒNƒŠ[ƒ“À•W‚É•ÏŠ·‚µAÀ•W•ÏX
+	//ã‚¹ã‚¯ãƒªãƒ¼ãƒ³åº§æ¨™ã«å¤‰æ›ã—ã€åº§æ¨™å¤‰æ›´
 	ClientToScreen(hWnd, &point);
 	SetCursorPos(point.x, point.y);
 }
 
-//! @brief ƒL[ƒ{[ƒh‚Ì“ü—Í‚ğƒ`ƒFƒbƒNiƒŠƒAƒ‹ƒ^ƒCƒ€j
-//! @return ‰Ÿ‚³‚ê‚Ä‚È‚¢Ffalse@‰Ÿ‚³‚ê‚Ä‚¢‚éFtrue
+//! @brief ã‚­ãƒ¼ãƒœãƒ¼ãƒ‰ã®å…¥åŠ›ã‚’ãƒã‚§ãƒƒã‚¯ï¼ˆãƒªã‚¢ãƒ«ã‚¿ã‚¤ãƒ ï¼‰
+//! @return æŠ¼ã•ã‚Œã¦ãªã„ï¼šfalseã€€æŠ¼ã•ã‚Œã¦ã„ã‚‹ï¼štrue
 bool InputControl::CheckKeyNow(int id)
 {
-	//Œ»İ‰Ÿ‚³‚ê‚Ä‚¢‚ê‚Î
+	//ç¾åœ¨æŠ¼ã•ã‚Œã¦ã„ã‚Œã°
 	if( keys[id]&0x80 ){ return true; }
 	return false;
 }
 
-//! @brief ƒL[ƒ{[ƒh‚Ì“ü—Í‚ğƒ`ƒFƒbƒNi‰Ÿ‚³‚ê‚½uŠÔj
-//! @return ‰Ÿ‚³‚ê‚½uŠÔ‚Å‚È‚¢Ffalse@‰Ÿ‚³‚ê‚½uŠÔ‚Å‚ ‚éFtrue
+//! @brief ã‚­ãƒ¼ãƒœãƒ¼ãƒ‰ã®å…¥åŠ›ã‚’ãƒã‚§ãƒƒã‚¯ï¼ˆæŠ¼ã•ã‚ŒãŸç¬é–“ï¼‰
+//! @return æŠ¼ã•ã‚ŒãŸç¬é–“ã§ãªã„ï¼šfalseã€€æŠ¼ã•ã‚ŒãŸç¬é–“ã§ã‚ã‚‹ï¼štrue
 bool InputControl::CheckKeyDown(int id)
 {
-	//‘O‰ñ‚Í‰Ÿ‚³‚ê‚Ä‚¨‚ç‚¸AŒ»İ‰Ÿ‚³‚ê‚Ä‚¢‚ê‚Î
+	//å‰å›ã¯æŠ¼ã•ã‚Œã¦ãŠã‚‰ãšã€ç¾åœ¨æŠ¼ã•ã‚Œã¦ã„ã‚Œã°
 	if( ((keys_lt[id]&0x80) == 0)&&(keys[id]&0x80) ){ return true; }
 	return false;
 }
 
-//! @brief ƒL[ƒ{[ƒh‚Ì“ü—Í‚ğƒ`ƒFƒbƒNi—£‚³‚ê‚½uŠÔj
-//! @return —£‚³‚ê‚½uŠÔ‚Å‚È‚¢Ffalse@—£‚³‚ê‚½uŠÔ‚Å‚ ‚éFtrue
+//! @brief ã‚­ãƒ¼ãƒœãƒ¼ãƒ‰ã®å…¥åŠ›ã‚’ãƒã‚§ãƒƒã‚¯ï¼ˆé›¢ã•ã‚ŒãŸç¬é–“ï¼‰
+//! @return é›¢ã•ã‚ŒãŸç¬é–“ã§ãªã„ï¼šfalseã€€é›¢ã•ã‚ŒãŸç¬é–“ã§ã‚ã‚‹ï¼štrue
 bool InputControl::CheckKeyUp(int id)
 {
-	//‘O‰ñ‚ğ‰Ÿ‚³‚ê‚Ä‚¨‚èAŒ»İ‰Ÿ‚³‚ê‚Ä‚¢‚È‚¯‚ê‚Î
+	//å‰å›ã‚’æŠ¼ã•ã‚Œã¦ãŠã‚Šã€ç¾åœ¨æŠ¼ã•ã‚Œã¦ã„ãªã‘ã‚Œã°
 	if( (keys_lt[id]&0x80)&&((keys[id]&0x80) == 0) ){ return true; }
 	return false;
 }
 
-//! @brief ƒ}ƒEƒX‚Ì“ü—Í‚ğƒ`ƒFƒbƒN
-//! @param x x²‚ğó‚¯æ‚é®”’lŒ^ƒ|ƒCƒ“ƒ^
-//! @param y y²‚ğó‚¯æ‚é®”’lŒ^ƒ|ƒCƒ“ƒ^
-//! @attention ’l‚Í’¼‘O‚ÉÀs‚µ‚½ GetInputState() ‚Ö‚Ìˆø”‚É‰e‹¿‚³‚ê‚éB
+//! @brief ãƒã‚¦ã‚¹ã®å…¥åŠ›ã‚’ãƒã‚§ãƒƒã‚¯
+//! @param x xè»¸ã‚’å—ã‘å–ã‚‹æ•´æ•°å€¤å‹ãƒã‚¤ãƒ³ã‚¿
+//! @param y yè»¸ã‚’å—ã‘å–ã‚‹æ•´æ•°å€¤å‹ãƒã‚¤ãƒ³ã‚¿
+//! @attention å€¤ã¯ç›´å‰ã«å®Ÿè¡Œã—ãŸ GetInputState() ã¸ã®å¼•æ•°ã«å½±éŸ¿ã•ã‚Œã‚‹ã€‚
 void InputControl::GetMouseMovement(int *x, int *y)
 {
-	//ƒ}ƒEƒXÀ•W‚ğ‘ã“ü
+	//ãƒã‚¦ã‚¹åº§æ¨™ã‚’ä»£å…¥
 	*x = mx;
 	*y = my;
 }
 
-//! @brief ƒ}ƒEƒXE¶ƒ{ƒ^ƒ“‚Ì“ü—Í‚ğƒ`ƒFƒbƒNiƒŠƒAƒ‹ƒ^ƒCƒ€j
-//! @return ‰Ÿ‚³‚ê‚Ä‚È‚¢Ffalse@‰Ÿ‚³‚ê‚Ä‚¢‚éFtrue
+//! @brief ãƒã‚¦ã‚¹ãƒ»å·¦ãƒœã‚¿ãƒ³ã®å…¥åŠ›ã‚’ãƒã‚§ãƒƒã‚¯ï¼ˆãƒªã‚¢ãƒ«ã‚¿ã‚¤ãƒ ï¼‰
+//! @return æŠ¼ã•ã‚Œã¦ãªã„ï¼šfalseã€€æŠ¼ã•ã‚Œã¦ã„ã‚‹ï¼štrue
 bool InputControl::CheckMouseButtonNowL()
 {
-	//Œ»İ‚Ìî•ñ‚ğ•Ô‚·
+	//ç¾åœ¨ã®æƒ…å ±ã‚’è¿”ã™
 	return mbl;
 }
 
-//! @brief ƒ}ƒEƒXE¶ƒ{ƒ^ƒ“‚Ì“ü—Í‚ğƒ`ƒFƒbƒNi‰Ÿ‚³‚ê‚½uŠÔj
-//! @return ‰Ÿ‚³‚ê‚½uŠÔ‚Å‚È‚¢Ffalse@‰Ÿ‚³‚ê‚½uŠÔ‚Å‚ ‚éFtrue
+//! @brief ãƒã‚¦ã‚¹ãƒ»å·¦ãƒœã‚¿ãƒ³ã®å…¥åŠ›ã‚’ãƒã‚§ãƒƒã‚¯ï¼ˆæŠ¼ã•ã‚ŒãŸç¬é–“ï¼‰
+//! @return æŠ¼ã•ã‚ŒãŸç¬é–“ã§ãªã„ï¼šfalseã€€æŠ¼ã•ã‚ŒãŸç¬é–“ã§ã‚ã‚‹ï¼štrue
 bool InputControl::CheckMouseButtonDownL()
 {
-	//‘O‰ñ‚Í‰Ÿ‚³‚ê‚Ä‚¨‚ç‚¸AŒ»İ‰Ÿ‚³‚ê‚Ä‚¢‚ê‚Î
+	//å‰å›ã¯æŠ¼ã•ã‚Œã¦ãŠã‚‰ãšã€ç¾åœ¨æŠ¼ã•ã‚Œã¦ã„ã‚Œã°
 	if( (mbl_lt == false)&&(mbl == true) ){ return true; }
 	return false;
 }
 
-//! @brief ƒ}ƒEƒXE¶ƒ{ƒ^ƒ“‚Ì“ü—Í‚ğƒ`ƒFƒbƒNi—£‚³‚ê‚½uŠÔj
-//! @return —£‚³‚ê‚½uŠÔ‚Å‚È‚¢Ffalse@—£‚³‚ê‚½uŠÔ‚Å‚ ‚éFtrue
+//! @brief ãƒã‚¦ã‚¹ãƒ»å·¦ãƒœã‚¿ãƒ³ã®å…¥åŠ›ã‚’ãƒã‚§ãƒƒã‚¯ï¼ˆé›¢ã•ã‚ŒãŸç¬é–“ï¼‰
+//! @return é›¢ã•ã‚ŒãŸç¬é–“ã§ãªã„ï¼šfalseã€€é›¢ã•ã‚ŒãŸç¬é–“ã§ã‚ã‚‹ï¼štrue
 bool InputControl::CheckMouseButtonUpL()
 {
-	//‘O‰ñ‚ğ‰Ÿ‚³‚ê‚Ä‚¨‚èAŒ»İ‰Ÿ‚³‚ê‚Ä‚¢‚È‚¯‚ê‚Î
+	//å‰å›ã‚’æŠ¼ã•ã‚Œã¦ãŠã‚Šã€ç¾åœ¨æŠ¼ã•ã‚Œã¦ã„ãªã‘ã‚Œã°
 	if( (mbl_lt == true)&&(mbl == false) ){ return true; }
 	return false;
 }
 
-//! @brief ƒ}ƒEƒXE‰Eƒ{ƒ^ƒ“‚Ì“ü—Í‚ğƒ`ƒFƒbƒNiƒŠƒAƒ‹ƒ^ƒCƒ€j
-//! @return ‰Ÿ‚³‚ê‚Ä‚È‚¢Ffalse@‰Ÿ‚³‚ê‚Ä‚¢‚éFtrue
+//! @brief ãƒã‚¦ã‚¹ãƒ»å³ãƒœã‚¿ãƒ³ã®å…¥åŠ›ã‚’ãƒã‚§ãƒƒã‚¯ï¼ˆãƒªã‚¢ãƒ«ã‚¿ã‚¤ãƒ ï¼‰
+//! @return æŠ¼ã•ã‚Œã¦ãªã„ï¼šfalseã€€æŠ¼ã•ã‚Œã¦ã„ã‚‹ï¼štrue
 bool InputControl::CheckMouseButtonNowR()
 {
-	//Œ»İ‚Ìî•ñ‚ğ•Ô‚·
+	//ç¾åœ¨ã®æƒ…å ±ã‚’è¿”ã™
 	return mbr;
 }
 
-//! @brief ƒ}ƒEƒXE‰Eƒ{ƒ^ƒ“‚Ì“ü—Í‚ğƒ`ƒFƒbƒNi‰Ÿ‚³‚ê‚½uŠÔj
-//! @return ‰Ÿ‚³‚ê‚½uŠÔ‚Å‚È‚¢Ffalse@‰Ÿ‚³‚ê‚½uŠÔ‚Å‚ ‚éFtrue
+//! @brief ãƒã‚¦ã‚¹ãƒ»å³ãƒœã‚¿ãƒ³ã®å…¥åŠ›ã‚’ãƒã‚§ãƒƒã‚¯ï¼ˆæŠ¼ã•ã‚ŒãŸç¬é–“ï¼‰
+//! @return æŠ¼ã•ã‚ŒãŸç¬é–“ã§ãªã„ï¼šfalseã€€æŠ¼ã•ã‚ŒãŸç¬é–“ã§ã‚ã‚‹ï¼štrue
 bool InputControl::CheckMouseButtonDownR()
 {
-	//‘O‰ñ‚Í‰Ÿ‚³‚ê‚Ä‚¨‚ç‚¸AŒ»İ‰Ÿ‚³‚ê‚Ä‚¢‚ê‚Î
+	//å‰å›ã¯æŠ¼ã•ã‚Œã¦ãŠã‚‰ãšã€ç¾åœ¨æŠ¼ã•ã‚Œã¦ã„ã‚Œã°
 	if( (mbr_lt == false)&&(mbr == true) ){ return true; }
 	return false;
 }
 
-//! @brief ƒ}ƒEƒXE‰Eƒ{ƒ^ƒ“‚Ì“ü—Í‚ğƒ`ƒFƒbƒNi—£‚³‚ê‚½uŠÔj
-//! @return —£‚³‚ê‚½uŠÔ‚Å‚È‚¢Ffalse@—£‚³‚ê‚½uŠÔ‚Å‚ ‚éFtrue
+//! @brief ãƒã‚¦ã‚¹ãƒ»å³ãƒœã‚¿ãƒ³ã®å…¥åŠ›ã‚’ãƒã‚§ãƒƒã‚¯ï¼ˆé›¢ã•ã‚ŒãŸç¬é–“ï¼‰
+//! @return é›¢ã•ã‚ŒãŸç¬é–“ã§ãªã„ï¼šfalseã€€é›¢ã•ã‚ŒãŸç¬é–“ã§ã‚ã‚‹ï¼štrue
 bool InputControl::CheckMouseButtonUpR()
 {
-	//‘O‰ñ‚ğ‰Ÿ‚³‚ê‚Ä‚¨‚èAŒ»İ‰Ÿ‚³‚ê‚Ä‚¢‚È‚¯‚ê‚Î
+	//å‰å›ã‚’æŠ¼ã•ã‚Œã¦ãŠã‚Šã€ç¾åœ¨æŠ¼ã•ã‚Œã¦ã„ãªã‘ã‚Œã°
 	if( (mbr_lt == true)&&(mbr == false) ){ return true; }
 	return false;
 }
 
-//! @brief ƒIƒŠƒWƒiƒ‹ƒL[ƒR[ƒh‚ğDirectInputƒL[ƒR[ƒh‚Ö•ÏŠ·
-//! @param code ƒIƒŠƒWƒiƒ‹ƒL[ƒR[ƒh
-//! @return 1ˆÈãFDirectInputƒL[ƒR[ƒh@-1ˆÈ‰ºF“Áê@0F¸”s
-//! @attention ˆÈ‰ºA“Áê‚È–ß‚è’l‚Ìê‡\<br>-1FMOUSE L@@-2FMOUSE R@@-3FDIK_LSHIFT / DIK_RSHIFT@@-4FDIK_LCONTROL / DIK_RCONTROL
+//! @brief ã‚ªãƒªã‚¸ãƒŠãƒ«ã‚­ãƒ¼ã‚³ãƒ¼ãƒ‰ã‚’DirectInputã‚­ãƒ¼ã‚³ãƒ¼ãƒ‰ã¸å¤‰æ›
+//! @param code ã‚ªãƒªã‚¸ãƒŠãƒ«ã‚­ãƒ¼ã‚³ãƒ¼ãƒ‰
+//! @return 1ä»¥ä¸Šï¼šDirectInputã‚­ãƒ¼ã‚³ãƒ¼ãƒ‰ã€€-1ä»¥ä¸‹ï¼šç‰¹æ®Šã€€0ï¼šå¤±æ•—
+//! @attention ä»¥ä¸‹ã€ç‰¹æ®Šãªæˆ»ã‚Šå€¤ã®å ´åˆâ€•<br>-1ï¼šMOUSE Lã€€ã€€-2ï¼šMOUSE Rã€€ã€€-3ï¼šDIK_LSHIFT / DIK_RSHIFTã€€ã€€-4ï¼šDIK_LCONTROL / DIK_RCONTROL
 int OriginalkeycodeToDinputdef(int code)
 {
 	int out = 0;
@@ -535,11 +535,11 @@ int OriginalkeycodeToDinputdef(int code)
 	return out;
 }
 
-//! @brief ¶‰EƒL[‚ÌƒL[ƒR[ƒhæ“¾
-//! @param id ShiftƒL[F0@CtrlƒL[F1
-//! @param *CodeL ¶‘¤ƒL[‚ÌƒL[ƒR[ƒh‚ğó‚¯æ‚éƒ|ƒCƒ“ƒ^
-//! @param *CodeR ‰E‘¤ƒL[‚ÌƒL[ƒR[ƒh‚ğó‚¯æ‚éƒ|ƒCƒ“ƒ^
-//! @return ¬Œ÷Ftrue@¸”sFfalse@
+//! @brief å·¦å³ã‚­ãƒ¼ã®ã‚­ãƒ¼ã‚³ãƒ¼ãƒ‰å–å¾—
+//! @param id Shiftã‚­ãƒ¼ï¼š0ã€€Ctrlã‚­ãƒ¼ï¼š1
+//! @param *CodeL å·¦å´ã‚­ãƒ¼ã®ã‚­ãƒ¼ã‚³ãƒ¼ãƒ‰ã‚’å—ã‘å–ã‚‹ãƒã‚¤ãƒ³ã‚¿
+//! @param *CodeR å³å´ã‚­ãƒ¼ã®ã‚­ãƒ¼ã‚³ãƒ¼ãƒ‰ã‚’å—ã‘å–ã‚‹ãƒã‚¤ãƒ³ã‚¿
+//! @return æˆåŠŸï¼štrueã€€å¤±æ•—ï¼šfalseã€€
 bool GetDoubleKeyCode(int id, int *CodeL, int *CodeR)
 {
 #ifdef INPUT_DIRECTINPUT
@@ -554,18 +554,18 @@ bool GetDoubleKeyCode(int id, int *CodeL, int *CodeR)
 		return true;
 	}
 #else
-	//–¢g—pˆø”‘Îô
+	//æœªä½¿ç”¨å¼•æ•°å¯¾ç­–
 	UNREFERENCED_PARAMETER(id);
 #endif
 
-	//ƒGƒ‰[
+	//ã‚¨ãƒ©ãƒ¼
 	*CodeL = 0x00;
 	*CodeR = 0x00;
 	return false;
 }
 
-//! @brief EscƒL[‚ÌƒL[ƒR[ƒhæ“¾
-//! @return ƒL[ƒR[ƒh
+//! @brief Escã‚­ãƒ¼ã®ã‚­ãƒ¼ã‚³ãƒ¼ãƒ‰å–å¾—
+//! @return ã‚­ãƒ¼ã‚³ãƒ¼ãƒ‰
 int GetEscKeycode()
 {
 #ifdef INPUT_DIRECTINPUT
@@ -575,8 +575,8 @@ int GetEscKeycode()
 #endif
 }
 
-//! @brief HomeƒL[‚ÌƒL[ƒR[ƒhæ“¾
-//! @return ƒL[ƒR[ƒh
+//! @brief Homeã‚­ãƒ¼ã®ã‚­ãƒ¼ã‚³ãƒ¼ãƒ‰å–å¾—
+//! @return ã‚­ãƒ¼ã‚³ãƒ¼ãƒ‰
 int GetHomeKeycode()
 {
 #ifdef INPUT_DIRECTINPUT
@@ -586,9 +586,9 @@ int GetHomeKeycode()
 #endif
 }
 
-//! @brief ƒtƒ@ƒ“ƒNƒVƒ‡ƒ“ƒL[iF1`F12j‚ÌƒL[ƒR[ƒh‚ğæ“¾
-//! @param key ”Ô†i1`12j
-//! @return ƒL[ƒR[ƒh
+//! @brief ãƒ•ã‚¡ãƒ³ã‚¯ã‚·ãƒ§ãƒ³ã‚­ãƒ¼ï¼ˆF1ï½F12ï¼‰ã®ã‚­ãƒ¼ã‚³ãƒ¼ãƒ‰ã‚’å–å¾—
+//! @param key ç•ªå·ï¼ˆ1ï½12ï¼‰
+//! @return ã‚­ãƒ¼ã‚³ãƒ¼ãƒ‰
 int GetFunctionKeycode(int key)
 {
 	int out = 0;

@@ -1,5 +1,5 @@
-//! @file event.h
-//! @brief EventControlƒNƒ‰ƒX‚ÌéŒ¾
+ï»¿//! @file event.h
+//! @brief EventControlã‚¯ãƒ©ã‚¹ã®å®£è¨€
 
 //--------------------------------------------------------------------------------
 // 
@@ -32,23 +32,23 @@
 #ifndef EVENT_H
 #define EVENT_H
 
-#define TOTAL_EVENTFRAMESTEP 6			//!< 1ƒtƒŒ[ƒ€’†‚É1ƒ‰ƒCƒ“‚ ‚½‚èÀs‚·‚éƒXƒeƒbƒv”
-#define DISTANCE_CHECKPOINT 25.0f		//!< u“’…‘Ò‚¿vuƒP[ƒX‘Ò‚¿v‚Ì”»’è‹——£
+#define TOTAL_EVENTFRAMESTEP 6			//!< 1ãƒ•ãƒ¬ãƒ¼ãƒ ä¸­ã«1ãƒ©ã‚¤ãƒ³ã‚ãŸã‚Šå®Ÿè¡Œã™ã‚‹ã‚¹ãƒ†ãƒƒãƒ—æ•°
+#define DISTANCE_CHECKPOINT 25.0f		//!< ã€Œåˆ°ç€å¾…ã¡ã€ã€Œã‚±ãƒ¼ã‚¹å¾…ã¡ã€ã®åˆ¤å®šè·é›¢
 
 #ifndef H_LAYERLEVEL
  #define H_LAYERLEVEL 3		//!< Select include file.
 #endif
 #include "main.h"
 
-//! @brief ƒCƒxƒ“ƒg‚ğˆ—‚·‚éƒNƒ‰ƒX
-//! @details ƒ~ƒbƒVƒ‡ƒ“‚ÌƒCƒxƒ“ƒgƒ|ƒCƒ“ƒg‚ğˆ—‚µ‚Ü‚·B
-//! @details ‚±‚ÌƒNƒ‰ƒX‚Í1‚Â‚ÌƒCƒxƒ“ƒgˆ—i—¬‚êj‚Éê”O‚µ‚Ü‚·B•¡”‚ÌƒCƒxƒ“ƒg‚ğ•À—ñ‚Éˆ—‚³‚¹‚éê‡‚ÍA‚±‚ÌƒNƒ‰ƒX‚ÌƒIƒuƒWƒFƒNƒg‚ğ•¡”ŒÄ‚Ño‚·•K—v‚ª‚ ‚è‚Ü‚·Bi—á‚¦‚Î3‚Â“¯‚Éˆ—‚³‚¹‚éê‡A‚±‚ÌƒNƒ‰ƒX‚ÌƒIƒuƒWƒFƒNƒg‚ğ3‚Âì¬‚µ‚Ä‚­‚¾‚³‚¢Bj
+//! @brief ã‚¤ãƒ™ãƒ³ãƒˆã‚’å‡¦ç†ã™ã‚‹ã‚¯ãƒ©ã‚¹
+//! @details ãƒŸãƒƒã‚·ãƒ§ãƒ³ã®ã‚¤ãƒ™ãƒ³ãƒˆãƒã‚¤ãƒ³ãƒˆã‚’å‡¦ç†ã—ã¾ã™ã€‚
+//! @details ã“ã®ã‚¯ãƒ©ã‚¹ã¯1ã¤ã®ã‚¤ãƒ™ãƒ³ãƒˆå‡¦ç†ï¼ˆæµã‚Œï¼‰ã«å°‚å¿µã—ã¾ã™ã€‚è¤‡æ•°ã®ã‚¤ãƒ™ãƒ³ãƒˆã‚’ä¸¦åˆ—ã«å‡¦ç†ã•ã›ã‚‹å ´åˆã¯ã€ã“ã®ã‚¯ãƒ©ã‚¹ã®ã‚ªãƒ–ã‚¸ã‚§ã‚¯ãƒˆã‚’è¤‡æ•°å‘¼ã³å‡ºã™å¿…è¦ãŒã‚ã‚Šã¾ã™ã€‚ï¼ˆä¾‹ãˆã°3ã¤åŒæ™‚ã«å‡¦ç†ã•ã›ã‚‹å ´åˆã€ã“ã®ã‚¯ãƒ©ã‚¹ã®ã‚ªãƒ–ã‚¸ã‚§ã‚¯ãƒˆã‚’3ã¤ä½œæˆã—ã¦ãã ã•ã„ã€‚ï¼‰
 class EventControl
 {
-	class PointDataInterface *Point;		//!< PointDataInterfaceƒNƒ‰ƒX‚Ìƒ|ƒCƒ“ƒ^
-	class ObjectManager *ObjMgr;			//!< ObjectManagerƒNƒ‰ƒX‚Ìƒ|ƒCƒ“ƒ^
-	signed char nextp4;				//!< Ÿ‚Éˆ—‚·‚éP4F”F¯”Ô†
-	int waitcnt;					//!< ŠÔ‘Ò‚¿—pƒJƒEƒ“ƒg
+	class PointDataInterface *Point;		//!< PointDataInterfaceã‚¯ãƒ©ã‚¹ã®ãƒã‚¤ãƒ³ã‚¿
+	class ObjectManager *ObjMgr;			//!< ObjectManagerã‚¯ãƒ©ã‚¹ã®ãƒã‚¤ãƒ³ã‚¿
+	signed char nextp4;				//!< æ¬¡ã«å‡¦ç†ã™ã‚‹P4ï¼šèªè­˜ç•ªå·
+	int waitcnt;					//!< æ™‚é–“å¾…ã¡ç”¨ã‚«ã‚¦ãƒ³ãƒˆ
 
 	bool CheckHaveCase(human *in_human);
 

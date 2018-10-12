@@ -1,5 +1,5 @@
-//! @file event.cpp
-//! @brief EventControlƒNƒ‰ƒX‚Ì’è‹`
+ï»¿//! @file event.cpp
+//! @brief EventControlã‚¯ãƒ©ã‚¹ã®å®šç¾©
 
 //--------------------------------------------------------------------------------
 // 
@@ -31,7 +31,7 @@
 
 #include "event.h"
 
-//! @brief ƒRƒ“ƒXƒgƒ‰ƒNƒ^
+//! @brief ã‚³ãƒ³ã‚¹ãƒˆãƒ©ã‚¯ã‚¿
 EventControl::EventControl(PointDataInterface *in_Point, ObjectManager *in_ObjMgr)
 {
 	Point = in_Point;
@@ -40,52 +40,52 @@ EventControl::EventControl(PointDataInterface *in_Point, ObjectManager *in_ObjMg
 	waitcnt = 0;
 }
 
-//! @brief ƒfƒBƒXƒgƒ‰ƒNƒ^
+//! @brief ãƒ‡ã‚£ã‚¹ãƒˆãƒ©ã‚¯ã‚¿
 EventControl::~EventControl()
 {}
 
-//! @brief ‘ÎÛƒNƒ‰ƒX‚ğİ’è
-//! @param in_Point ƒ|ƒCƒ“ƒgƒf[ƒ^ŠÇ—ƒNƒ‰ƒX
-//! @param in_ObjMgr ƒIƒuƒWƒFƒNƒgŠÇ—ƒNƒ‰ƒX
-//! @attention ‚±‚ÌŠÖ”‚Åİ’è‚ğs‚í‚È‚¢‚ÆAƒNƒ‰ƒX©‘Ì‚ª³‚µ‚­‹@”\‚µ‚Ü‚¹‚ñB
+//! @brief å¯¾è±¡ã‚¯ãƒ©ã‚¹ã‚’è¨­å®š
+//! @param in_Point ãƒã‚¤ãƒ³ãƒˆãƒ‡ãƒ¼ã‚¿ç®¡ç†ã‚¯ãƒ©ã‚¹
+//! @param in_ObjMgr ã‚ªãƒ–ã‚¸ã‚§ã‚¯ãƒˆç®¡ç†ã‚¯ãƒ©ã‚¹
+//! @attention ã“ã®é–¢æ•°ã§è¨­å®šã‚’è¡Œã‚ãªã„ã¨ã€ã‚¯ãƒ©ã‚¹è‡ªä½“ãŒæ­£ã—ãæ©Ÿèƒ½ã—ã¾ã›ã‚“ã€‚
 void EventControl::SetClass(PointDataInterface *in_Point, ObjectManager *in_ObjMgr)
 {
 	Point = in_Point;
 	ObjMgr = in_ObjMgr;
 }
 
-//! @brief ƒŠƒZƒbƒg
-//! @param EntryP4 ƒCƒxƒ“ƒgˆ—‚ğŠJn‚·‚é”F¯”Ô†@i-100A-110A-120@‚È‚Çj
+//! @brief ãƒªã‚»ãƒƒãƒˆ
+//! @param EntryP4 ã‚¤ãƒ™ãƒ³ãƒˆå‡¦ç†ã‚’é–‹å§‹ã™ã‚‹èªè­˜ç•ªå·ã€€ï¼ˆ-100ã€-110ã€-120ã€€ãªã©ï¼‰
 void EventControl::Reset(signed char EntryP4)
 {
 	nextp4 = EntryP4;
 	waitcnt = 0;
 }
 
-//! @brief Ÿ‚Éˆ—‚·‚é”F¯”Ô†
-//! @return P4F”F¯”Ô†
+//! @brief æ¬¡ã«å‡¦ç†ã™ã‚‹èªè­˜ç•ªå·
+//! @return P4ï¼šèªè­˜ç•ªå·
 signed char EventControl::GetNextP4()
 {
 	return nextp4;
 }
 
-//! @brief ‘ÎÛ‚Ìl•¨‚ªƒP[ƒX‚ğ‚Á‚Ä‚¢‚é‚©ƒ`ƒFƒbƒN
-//! @param in_human ’²‚×‚é‘ÎÛ‚Ìhuman‚Ìƒ|ƒCƒ“ƒ^
-//! @return ‚Á‚Ä‚¢‚éFtrue@‚Á‚Ä‚¢‚È‚¢Ffalse
+//! @brief å¯¾è±¡ã®äººç‰©ãŒã‚±ãƒ¼ã‚¹ã‚’æŒã£ã¦ã„ã‚‹ã‹ãƒã‚§ãƒƒã‚¯
+//! @param in_human èª¿ã¹ã‚‹å¯¾è±¡ã®humanã®ãƒã‚¤ãƒ³ã‚¿
+//! @return æŒã£ã¦ã„ã‚‹ï¼štrueã€€æŒã£ã¦ã„ãªã„ï¼šfalse
 bool EventControl::CheckHaveCase(human *in_human)
 {
 	int selectweapon;
 	weapon *out_weapon[TOTAL_HAVEWEAPON];
 	int weaponid;
 
-	//Š—L‚·‚é•ŠíƒIƒuƒWƒFƒNƒg‚ğ‘S‚Äæ“¾
+	//æ‰€æœ‰ã™ã‚‹æ­¦å™¨ã‚ªãƒ–ã‚¸ã‚§ã‚¯ãƒˆã‚’å…¨ã¦å–å¾—
 	in_human->GetWeapon(&selectweapon, out_weapon);
 
-	//‘S‚Ä’²‚×‚é
+	//å…¨ã¦èª¿ã¹ã‚‹
 	for(int i=0; i<TOTAL_HAVEWEAPON; i++){
 		if( out_weapon[i] != NULL ){
 
-			//•Ší‚Ìí—Ş”Ô†‚ğæ“¾‚µA‚»‚ê‚ªƒP[ƒX‚©‚Ç‚¤‚©B
+			//æ­¦å™¨ã®ç¨®é¡ç•ªå·ã‚’å–å¾—ã—ã€ãã‚ŒãŒã‚±ãƒ¼ã‚¹ã‹ã©ã†ã‹ã€‚
 			out_weapon[i]->GetParamData(&weaponid, NULL, NULL);
 			if( weaponid == ID_WEAPON_CASE ){
 				return true;
@@ -95,14 +95,14 @@ bool EventControl::CheckHaveCase(human *in_human)
 	return false;
 }
 
-//! @brief ˆ—‚ğÀs
-//! @param endcnt I—¹ƒJƒEƒ“ƒg‚Ìƒ|ƒCƒ“ƒ^
-//! @param complete ƒ~ƒbƒVƒ‡ƒ“¬Œ÷ƒtƒ‰ƒO‚Ìƒ|ƒCƒ“ƒ^
-//! @param MessageID ƒCƒxƒ“ƒgƒƒbƒZ[ƒW”Ô†‚Ìƒ|ƒCƒ“ƒ^
-//! @param SetMessageID ƒCƒxƒ“ƒgƒƒbƒZ[ƒW“Ç‚İo‚µƒtƒ‰ƒO
-//! @return Às‚µ‚½ƒXƒeƒbƒv”
-//! @attention “n‚³‚ê‚½ˆø”‚É•ÏX‚ª‚È‚¢ê‡A“n‚³‚ê‚½ˆø”‚Ìƒf[ƒ^‚Í‘€ì‚³‚ê‚Ü‚¹‚ñB
-//! @attention SetMessageID ‚ÍAƒƒbƒZ[ƒWƒCƒxƒ“ƒg‚ªÀs‚³‚ê‚½ê‡‚É true ‚É‚È‚è‚Ü‚·B<b>‘O‰ñ‚©‚ç•ÏX‚³‚ê‚½‚Æ‚ÍŒÀ‚è‚Ü‚¹‚ñB</b>
+//! @brief å‡¦ç†ã‚’å®Ÿè¡Œ
+//! @param endcnt çµ‚äº†ã‚«ã‚¦ãƒ³ãƒˆã®ãƒã‚¤ãƒ³ã‚¿
+//! @param complete ãƒŸãƒƒã‚·ãƒ§ãƒ³æˆåŠŸãƒ•ãƒ©ã‚°ã®ãƒã‚¤ãƒ³ã‚¿
+//! @param MessageID ã‚¤ãƒ™ãƒ³ãƒˆãƒ¡ãƒƒã‚»ãƒ¼ã‚¸ç•ªå·ã®ãƒã‚¤ãƒ³ã‚¿
+//! @param SetMessageID ã‚¤ãƒ™ãƒ³ãƒˆãƒ¡ãƒƒã‚»ãƒ¼ã‚¸èª­ã¿å‡ºã—ãƒ•ãƒ©ã‚°
+//! @return å®Ÿè¡Œã—ãŸã‚¹ãƒ†ãƒƒãƒ—æ•°
+//! @attention æ¸¡ã•ã‚ŒãŸå¼•æ•°ã«å¤‰æ›´ãŒãªã„å ´åˆã€æ¸¡ã•ã‚ŒãŸå¼•æ•°ã®ãƒ‡ãƒ¼ã‚¿ã¯æ“ä½œã•ã‚Œã¾ã›ã‚“ã€‚
+//! @attention SetMessageID ã¯ã€ãƒ¡ãƒƒã‚»ãƒ¼ã‚¸ã‚¤ãƒ™ãƒ³ãƒˆãŒå®Ÿè¡Œã•ã‚ŒãŸå ´åˆã« true ã«ãªã‚Šã¾ã™ã€‚<b>å‰å›ã‹ã‚‰å¤‰æ›´ã•ã‚ŒãŸã¨ã¯é™ã‚Šã¾ã›ã‚“ã€‚</b>
 int EventControl::Execution(int *endcnt, bool *complete, int *MessageID, bool *SetMessageID)
 {
 	pointdata data, pathdata;
@@ -116,10 +116,10 @@ int EventControl::Execution(int *endcnt, bool *complete, int *MessageID, bool *S
 	for(int i=0; i<TOTAL_EVENTFRAMESTEP; i++){
 		cnt = i;
 
-		//Ÿ‚Ìƒ|ƒCƒ“ƒg‚ğ’T‚·
+		//æ¬¡ã®ãƒã‚¤ãƒ³ãƒˆã‚’æ¢ã™
 		if( Point->SearchPointdata(&data, 0x08, 0, 0, 0, nextp4, 0) == 0 ){ return cnt; }
 
-		//–³Œø‚È”Ô†‚È‚çˆ—‚µ‚È‚¢
+		//ç„¡åŠ¹ãªç•ªå·ãªã‚‰å‡¦ç†ã—ãªã„
 		if( (data.p1 < 10)||(19 < data.p1) ){
 #ifdef ENABLE_CHECKOPENXOPSEVENT
 			if( data.p1 != 29 ){ return cnt; }
@@ -129,24 +129,24 @@ int EventControl::Execution(int *endcnt, bool *complete, int *MessageID, bool *S
 		}
 
 		switch(data.p1){
-			case 10:	//”C–±’B¬
+			case 10:	//ä»»å‹™é”æˆ
 				*endcnt += 1;
 				*complete = true;
 				return cnt;
 
-			case 11:	//”C–±¸”s
+			case 11:	//ä»»å‹™å¤±æ•—
 				*endcnt += 1;
 				*complete = false;
 				return cnt;
 
-			case 12:	//€–S‘Ò‚¿
+			case 12:	//æ­»äº¡å¾…ã¡
 				thuman = ObjMgr->SearchHuman(data.p2);
 				if( thuman == NULL ){ return cnt; }
 				if( thuman->GetDeadFlag() == false ){ return cnt; }
 				nextp4 = data.p3;
 				break;
 
-			case 13:	//“’…‘Ò‚¿
+			case 13:	//åˆ°ç€å¾…ã¡
 				thuman = ObjMgr->SearchHuman(data.p2);
 				if( thuman == NULL ){ return cnt; }
 				thuman->GetPosData(&hx, &hy, &hz, NULL);
@@ -157,9 +157,9 @@ int EventControl::Execution(int *endcnt, bool *complete, int *MessageID, bool *S
 				nextp4 = data.p3;
 				break;
 
-			case 14:	//•à‚«‚É•ÏX
+			case 14:	//æ­©ãã«å¤‰æ›´
 				if( Point->SearchPointdata(&pid, 0x08, 0, 0, 0, data.p2, 0) > 0 ){
-					//‘ÎÛ‚ªAIƒpƒX‚È‚ç‚ÎA‹­§“I‚Éƒpƒ‰ƒ[ƒ^‚ğ‘‚«Š·‚¦‚é
+					//å¯¾è±¡ãŒAIãƒ‘ã‚¹ãªã‚‰ã°ã€å¼·åˆ¶çš„ã«ãƒ‘ãƒ©ãƒ¡ãƒ¼ã‚¿ã‚’æ›¸ãæ›ãˆã‚‹
 					Point->Getdata(&pathdata, pid);
 					if( (pathdata.p1 == 3)||(pathdata.p1 == 8) ){
 						pathdata.p2 = 0;
@@ -169,7 +169,7 @@ int EventControl::Execution(int *endcnt, bool *complete, int *MessageID, bool *S
 				nextp4 = data.p3;
 				break;
 
-			case 15:	//¬•¨”j‰ó‘Ò‚¿
+			case 15:	//å°ç‰©ç ´å£Šå¾…ã¡
 				tsmallobject = ObjMgr->SearchSmallobject(data.p2);
 				if( tsmallobject != NULL ){
 					if( tsmallobject->GetEnableFlag() == true ){ return cnt; }
@@ -177,7 +177,7 @@ int EventControl::Execution(int *endcnt, bool *complete, int *MessageID, bool *S
 				nextp4 = data.p3;
 				break;
 
-			case 16:	//ƒP[ƒX‘Ò‚¿
+			case 16:	//ã‚±ãƒ¼ã‚¹å¾…ã¡
 				thuman = ObjMgr->SearchHuman(data.p2);
 				if( thuman == NULL ){ return cnt; }
 				thuman->GetPosData(&hx, &hy, &hz, NULL);
@@ -189,7 +189,7 @@ int EventControl::Execution(int *endcnt, bool *complete, int *MessageID, bool *S
 				nextp4 = data.p3;
 				break;
 
-			case 17:	//ŠÔ‘Ò‚¿
+			case 17:	//æ™‚é–“å¾…ã¡
 				if( (int)GAMEFPS * ((unsigned char)data.p2) > waitcnt ){
 					waitcnt += 1;
 					return cnt;
@@ -198,7 +198,7 @@ int EventControl::Execution(int *endcnt, bool *complete, int *MessageID, bool *S
 				nextp4 = data.p3;
 				break;
 
-			case 18:	//ƒƒbƒZ[ƒW
+			case 18:	//ãƒ¡ãƒƒã‚»ãƒ¼ã‚¸
 				if( (0 <= data.p2)&&(data.p2 < MAX_POINTMESSAGES) ){
 					*MessageID = data.p2;
 				}
@@ -207,7 +207,7 @@ int EventControl::Execution(int *endcnt, bool *complete, int *MessageID, bool *S
 				break;
 				//return cnt;
 
-			case 19:	//ƒ`[ƒ€•ÏX
+			case 19:	//ãƒãƒ¼ãƒ å¤‰æ›´
 				thuman = ObjMgr->SearchHuman(data.p2);
 				if( thuman == NULL ){ return cnt; }
 				thuman->SetTeamID(0);
@@ -215,15 +215,15 @@ int EventControl::Execution(int *endcnt, bool *complete, int *MessageID, bool *S
 				break;
 
 #ifdef ENABLE_CHECKOPENXOPSEVENT
-			case 29:	//OpenXOPS”»’è
+			case 29:	//OpenXOPSåˆ¤å®š
 				if( data.p2 != 0 ){ return cnt; }
 				nextp4 = data.p3;
 				break;
 #endif
 
-			//V‚½‚ÈƒCƒxƒ“ƒgƒ|ƒCƒ“ƒg‚ğ’Ç‰Á‚·‚éê‡A‚±‚±‚É‘‚­B
-			//@¦ í—Ş”Ô†‚Ì‹£‡ Œµ‹Ö
-			//@¦ –{switch•¶’¼‘O‚É‚ ‚éAğŒ”»’èi”ÍˆÍƒ`ƒFƒbƒNj‚à‘‚«Š·‚¦‚é‚±‚ÆB
+			//æ–°ãŸãªã‚¤ãƒ™ãƒ³ãƒˆãƒã‚¤ãƒ³ãƒˆã‚’è¿½åŠ ã™ã‚‹å ´åˆã€ã“ã“ã«æ›¸ãã€‚
+			//ã€€â€» ç¨®é¡ç•ªå·ã®ç«¶åˆ å³ç¦
+			//ã€€â€» æœ¬switchæ–‡ç›´å‰ã«ã‚ã‚‹ã€æ¡ä»¶åˆ¤å®šï¼ˆç¯„å›²ãƒã‚§ãƒƒã‚¯ï¼‰ã‚‚æ›¸ãæ›ãˆã‚‹ã“ã¨ã€‚
 		}
 	}
 	return cnt;

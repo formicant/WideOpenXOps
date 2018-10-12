@@ -1,5 +1,5 @@
-//! @file resource.h
-//! @brief ResourceManagerƒNƒ‰ƒX‚ÌéŒ¾
+ï»¿//! @file resource.h
+//! @brief ResourceManagerã‚¯ãƒ©ã‚¹ã®å®£è¨€
 
 //--------------------------------------------------------------------------------
 // 
@@ -32,56 +32,56 @@
 #ifndef RESOURCE_H
 #define RESOURCE_H
 
-#define TOTAL_UPMODE 6			//!< ã”¼g‚Ì‡Œvƒ‚ƒfƒ‹
-#define TOTAL_ARMMODE 3			//!< ˜r‚Ì‡Œvƒ‚ƒfƒ‹
-#define TOTAL_WALKMODE 8		//!< ‘«i•à‚«j‚Ì‡Œvƒ‚ƒfƒ‹
-#define TOTAL_RUNMODE 12			//!< ‘«i‘–‚èj‚Ì‡Œvƒ‚ƒfƒ‹
+#define TOTAL_UPMODE 6			//!< ä¸ŠåŠèº«ã®åˆè¨ˆãƒ¢ãƒ‡ãƒ«
+#define TOTAL_ARMMODE 3			//!< è…•ã®åˆè¨ˆãƒ¢ãƒ‡ãƒ«
+#define TOTAL_WALKMODE 8		//!< è¶³ï¼ˆæ­©ãï¼‰ã®åˆè¨ˆãƒ¢ãƒ‡ãƒ«
+#define TOTAL_RUNMODE 12			//!< è¶³ï¼ˆèµ°ã‚Šï¼‰ã®åˆè¨ˆãƒ¢ãƒ‡ãƒ«
 
-#define MAX_LOADHUMANTEXTURE 10		//!< l‚ÌƒeƒNƒXƒ`ƒƒ‚ğ“Ç‚İ‚ŞÅ‘å–‡”
+#define MAX_LOADHUMANTEXTURE 10		//!< äººã®ãƒ†ã‚¯ã‚¹ãƒãƒ£ã‚’èª­ã¿è¾¼ã‚€æœ€å¤§æšæ•°
 
 #ifndef H_LAYERLEVEL
  #define H_LAYERLEVEL 2		//!< Select include file.
 #endif
 #include "main.h"
 
-//! @brief ƒŠƒ\[ƒXŠÇ—ƒNƒ‰ƒX
-//! @details å‚Ég—p‚³‚ê‚éƒ‚ƒfƒ‹‚âƒeƒNƒXƒ`ƒƒ‚¨‚æ‚ÑƒTƒEƒ“ƒh‚ğŠÇ—‚µ‚Ü‚·B@iˆê•”‚ğœ‚­j
+//! @brief ãƒªã‚½ãƒ¼ã‚¹ç®¡ç†ã‚¯ãƒ©ã‚¹
+//! @details ä¸»ã«ä½¿ç”¨ã•ã‚Œã‚‹ãƒ¢ãƒ‡ãƒ«ã‚„ãƒ†ã‚¯ã‚¹ãƒãƒ£ãŠã‚ˆã³ã‚µã‚¦ãƒ³ãƒ‰ã‚’ç®¡ç†ã—ã¾ã™ã€‚ã€€ï¼ˆä¸€éƒ¨ã‚’é™¤ãï¼‰
 class ResourceManager
 {
-	class ParameterInfo *ParamInfo;			//!< ŠÇ—‚·‚éİ’è’lî•ñƒNƒ‰ƒX
-	class D3DGraphics *d3dg;					//!< ŠÇ—‚·‚é•`‰æƒNƒ‰ƒX
-	class SoundControl *SoundCtrl;				//!< ŠÇ—‚·‚éƒTƒEƒ“ƒhƒNƒ‰ƒX
+	class ParameterInfo *ParamInfo;			//!< ç®¡ç†ã™ã‚‹è¨­å®šå€¤æƒ…å ±ã‚¯ãƒ©ã‚¹
+	class D3DGraphics *d3dg;					//!< ç®¡ç†ã™ã‚‹æç”»ã‚¯ãƒ©ã‚¹
+	class SoundControl *SoundCtrl;				//!< ç®¡ç†ã™ã‚‹ã‚µã‚¦ãƒ³ãƒ‰ã‚¯ãƒ©ã‚¹
 
-	int human_upmodel[TOTAL_UPMODE];			//!< ã”¼g‚Ìƒ‚ƒfƒ‹
-	int human_armmodel[TOTAL_ARMMODE];			//!< ˜r‚Ìƒ‚ƒfƒ‹
-	int human_legmodel;							//!< ‘«iÃ~ó‘Ôj‚Ìƒ‚ƒfƒ‹
-	int human_walkmodel[TOTAL_WALKMODE];		//!< ‘«i•à‚«j‚Ìƒ‚ƒfƒ‹
-	int human_runmodel[TOTAL_RUNMODE];			//!< ‘«i‘–‚èj‚Ìƒ‚ƒfƒ‹
-	int human_texture_Param[MAX_LOADHUMANTEXTURE];		//!< l‚ÌƒeƒNƒXƒ`ƒƒ‚Ì‘Î‰”Ô†
-	int human_texture_d3dg[MAX_LOADHUMANTEXTURE];		//!< l‚ÌƒeƒNƒXƒ`ƒƒ‚Ì”F¯”Ô†
-	int weapon_model[TOTAL_PARAMETERINFO_WEAPON];		//!< •Ší‚Ìƒ‚ƒfƒ‹”F¯”Ô†
-	int weapon_texture[TOTAL_PARAMETERINFO_WEAPON];	//!< •Ší‚ÌƒeƒNƒXƒ`ƒƒ”F¯”Ô†
-	int weapon_sound[TOTAL_PARAMETERINFO_WEAPON];		//!< •Ší‚ÌƒTƒEƒ“ƒh”F¯”Ô†
-	int weapon_reloadsound;								//!< •Ší‚ÌƒŠƒ[ƒhƒTƒEƒ“ƒh”F¯”Ô†
-	int smallobject_model[TOTAL_PARAMETERINFO_SMALLOBJECT+1];		//!< ¬•¨‚Ìƒ‚ƒfƒ‹”F¯”Ô†
-	int smallobject_texture[TOTAL_PARAMETERINFO_SMALLOBJECT+1];		//!< ¬•¨‚ÌƒeƒNƒXƒ`ƒƒ”F¯”Ô†
-	int smallobject_sound[TOTAL_PARAMETERINFO_SMALLOBJECT+1];		//!< ¬•¨‚ÌƒTƒEƒ“ƒh”F¯”Ô†
-	int bullet_model[TOTAL_PARAMETERINFO_BULLET];		//!< ’e‚Ìƒ‚ƒfƒ‹
-	int bullet_texture[TOTAL_PARAMETERINFO_BULLET];		//!< ’e‚ÌƒeƒNƒXƒ`ƒƒ
+	int human_upmodel[TOTAL_UPMODE];			//!< ä¸ŠåŠèº«ã®ãƒ¢ãƒ‡ãƒ«
+	int human_armmodel[TOTAL_ARMMODE];			//!< è…•ã®ãƒ¢ãƒ‡ãƒ«
+	int human_legmodel;							//!< è¶³ï¼ˆé™æ­¢çŠ¶æ…‹ï¼‰ã®ãƒ¢ãƒ‡ãƒ«
+	int human_walkmodel[TOTAL_WALKMODE];		//!< è¶³ï¼ˆæ­©ãï¼‰ã®ãƒ¢ãƒ‡ãƒ«
+	int human_runmodel[TOTAL_RUNMODE];			//!< è¶³ï¼ˆèµ°ã‚Šï¼‰ã®ãƒ¢ãƒ‡ãƒ«
+	int human_texture_Param[MAX_LOADHUMANTEXTURE];		//!< äººã®ãƒ†ã‚¯ã‚¹ãƒãƒ£ã®å¯¾å¿œç•ªå·
+	int human_texture_d3dg[MAX_LOADHUMANTEXTURE];		//!< äººã®ãƒ†ã‚¯ã‚¹ãƒãƒ£ã®èªè­˜ç•ªå·
+	int weapon_model[TOTAL_PARAMETERINFO_WEAPON];		//!< æ­¦å™¨ã®ãƒ¢ãƒ‡ãƒ«èªè­˜ç•ªå·
+	int weapon_texture[TOTAL_PARAMETERINFO_WEAPON];	//!< æ­¦å™¨ã®ãƒ†ã‚¯ã‚¹ãƒãƒ£èªè­˜ç•ªå·
+	int weapon_sound[TOTAL_PARAMETERINFO_WEAPON];		//!< æ­¦å™¨ã®ã‚µã‚¦ãƒ³ãƒ‰èªè­˜ç•ªå·
+	int weapon_reloadsound;								//!< æ­¦å™¨ã®ãƒªãƒ­ãƒ¼ãƒ‰ã‚µã‚¦ãƒ³ãƒ‰èªè­˜ç•ªå·
+	int smallobject_model[TOTAL_PARAMETERINFO_SMALLOBJECT+1];		//!< å°ç‰©ã®ãƒ¢ãƒ‡ãƒ«èªè­˜ç•ªå·
+	int smallobject_texture[TOTAL_PARAMETERINFO_SMALLOBJECT+1];		//!< å°ç‰©ã®ãƒ†ã‚¯ã‚¹ãƒãƒ£èªè­˜ç•ªå·
+	int smallobject_sound[TOTAL_PARAMETERINFO_SMALLOBJECT+1];		//!< å°ç‰©ã®ã‚µã‚¦ãƒ³ãƒ‰èªè­˜ç•ªå·
+	int bullet_model[TOTAL_PARAMETERINFO_BULLET];		//!< å¼¾ã®ãƒ¢ãƒ‡ãƒ«
+	int bullet_texture[TOTAL_PARAMETERINFO_BULLET];		//!< å¼¾ã®ãƒ†ã‚¯ã‚¹ãƒãƒ£
 
-	int scopetexture;		//!< ƒXƒR[ƒv‚ÌƒeƒNƒXƒ`ƒƒ
-	int skymodel;			//!< ‹ó”wŒi‚Ìƒ‚ƒfƒ‹
-	int skytexture;			//!< ‹ó”wŒi‚ÌƒeƒNƒXƒ`ƒƒ
-	int bullet_hitsoundA;		//!< ’e‚ÌƒqƒbƒgƒTƒEƒ“ƒhiAj
-	int bullet_hitsoundB;		//!< ’e‚ÌƒqƒbƒgƒTƒEƒ“ƒhiBj
-	int bullet_humanhitsound;	//!< ’e‚ÌƒqƒbƒgƒTƒEƒ“ƒhilj
-	int bullet_passingsound;	//!< ’e‚Ì’Ê‰ßƒTƒEƒ“ƒh
-	int grenade_bang;		//!< èÖ’e‚Ì”š”­‰¹
-	int grenade_cco;		//!< èÖ’e‚ÌƒoƒEƒ“ƒh‰¹
-	int effecttexture_blood;	//!< ƒGƒtƒFƒNƒg—pEŒŒƒeƒNƒXƒ`ƒƒ
-	int effecttexture_mflash;	//!< ƒGƒtƒFƒNƒg—pEƒtƒ‰ƒbƒVƒ…ƒeƒNƒXƒ`ƒƒ
-	int effecttexture_smoke;	//!< ƒGƒtƒFƒNƒg—pE‰ŒƒeƒNƒXƒ`ƒƒ
-	int effecttexture_yakkyou;	//!< ƒGƒtƒFƒNƒg—pE–òä°ƒeƒNƒXƒ`ƒƒ
+	int scopetexture;		//!< ã‚¹ã‚³ãƒ¼ãƒ—ã®ãƒ†ã‚¯ã‚¹ãƒãƒ£
+	int skymodel;			//!< ç©ºèƒŒæ™¯ã®ãƒ¢ãƒ‡ãƒ«
+	int skytexture;			//!< ç©ºèƒŒæ™¯ã®ãƒ†ã‚¯ã‚¹ãƒãƒ£
+	int bullet_hitsoundA;		//!< å¼¾ã®ãƒ’ãƒƒãƒˆã‚µã‚¦ãƒ³ãƒ‰ï¼ˆAï¼‰
+	int bullet_hitsoundB;		//!< å¼¾ã®ãƒ’ãƒƒãƒˆã‚µã‚¦ãƒ³ãƒ‰ï¼ˆBï¼‰
+	int bullet_humanhitsound;	//!< å¼¾ã®ãƒ’ãƒƒãƒˆã‚µã‚¦ãƒ³ãƒ‰ï¼ˆäººï¼‰
+	int bullet_passingsound;	//!< å¼¾ã®é€šéã‚µã‚¦ãƒ³ãƒ‰
+	int grenade_bang;		//!< æ‰‹æ¦´å¼¾ã®çˆ†ç™ºéŸ³
+	int grenade_cco;		//!< æ‰‹æ¦´å¼¾ã®ãƒã‚¦ãƒ³ãƒ‰éŸ³
+	int effecttexture_blood;	//!< ã‚¨ãƒ•ã‚§ã‚¯ãƒˆç”¨ãƒ»è¡€ãƒ†ã‚¯ã‚¹ãƒãƒ£
+	int effecttexture_mflash;	//!< ã‚¨ãƒ•ã‚§ã‚¯ãƒˆç”¨ãƒ»ãƒ•ãƒ©ãƒƒã‚·ãƒ¥ãƒ†ã‚¯ã‚¹ãƒãƒ£
+	int effecttexture_smoke;	//!< ã‚¨ãƒ•ã‚§ã‚¯ãƒˆç”¨ãƒ»ç…™ãƒ†ã‚¯ã‚¹ãƒãƒ£
+	int effecttexture_yakkyou;	//!< ã‚¨ãƒ•ã‚§ã‚¯ãƒˆç”¨ãƒ»è–¬è¢ãƒ†ã‚¯ã‚¹ãƒãƒ£
 
 public:
 	ResourceManager();

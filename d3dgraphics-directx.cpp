@@ -1,5 +1,5 @@
-//! @file d3dgraphics-directx.cpp
-//! @brief D3DGraphicsƒNƒ‰ƒX‚Ì’è‹`iDirectX”Åj
+ï»¿//! @file d3dgraphics-directx.cpp
+//! @brief D3DGraphicsã‚¯ãƒ©ã‚¹ã®å®šç¾©ï¼ˆDirectXç‰ˆï¼‰
 
 //--------------------------------------------------------------------------------
 // 
@@ -33,7 +33,7 @@
 
 #ifndef ENABLE_GRAPHICS_OPENGL
 
-//! @brief ƒRƒ“ƒXƒgƒ‰ƒNƒ^
+//! @brief ã‚³ãƒ³ã‚¹ãƒˆãƒ©ã‚¯ã‚¿
 D3DGraphics::D3DGraphics()
 {
 	pD3D = NULL;
@@ -63,38 +63,38 @@ D3DGraphics::D3DGraphics()
 #endif
 }
 
-//! @brief ƒfƒBƒXƒgƒ‰ƒNƒ^
+//! @brief ãƒ‡ã‚£ã‚¹ãƒˆãƒ©ã‚¯ã‚¿
 D3DGraphics::~D3DGraphics()
 {
 	DestroyD3D();
 }
 
-//! @brief ƒtƒ‹ƒXƒNƒŠ[ƒ“ƒtƒ‰ƒOİ’è
-//! @param fullscreen ƒtƒ‹ƒXƒNƒŠ[ƒ“ƒtƒ‰ƒO
-//! @attention “¯ƒtƒ‰ƒO‚ÍA‰Šú‰»‚Ì InitD3D() ŠÖ”‚Å‚àİ’è‚Å‚«‚Ü‚·B
+//! @brief ãƒ•ãƒ«ã‚¹ã‚¯ãƒªãƒ¼ãƒ³ãƒ•ãƒ©ã‚°è¨­å®š
+//! @param fullscreen ãƒ•ãƒ«ã‚¹ã‚¯ãƒªãƒ¼ãƒ³ãƒ•ãƒ©ã‚°
+//! @attention åŒãƒ•ãƒ©ã‚°ã¯ã€åˆæœŸåŒ–æ™‚ã® InitD3D() é–¢æ•°ã§ã‚‚è¨­å®šã§ãã¾ã™ã€‚
 void D3DGraphics::SetFullScreenFlag(bool fullscreen)
 {
 	fullscreenflag = fullscreen;
 }
 
-//! @brief ƒtƒ‹ƒXƒNƒŠ[ƒ“ƒtƒ‰ƒOæ“¾
-//! @return ƒtƒ‹ƒXƒNƒŠ[ƒ“ƒtƒ‰ƒO
+//! @brief ãƒ•ãƒ«ã‚¹ã‚¯ãƒªãƒ¼ãƒ³ãƒ•ãƒ©ã‚°å–å¾—
+//! @return ãƒ•ãƒ«ã‚¹ã‚¯ãƒªãƒ¼ãƒ³ãƒ•ãƒ©ã‚°
 bool D3DGraphics::GetFullScreenFlag()
 {
 	return fullscreenflag;
 }
 
-//! @brief ‰Šú‰»@n
-//! iDirectX 9j
-//! @param WindowCtrl WindowControlƒNƒ‰ƒX‚Ìƒ|ƒCƒ“ƒ^
-//! @param TextureFontFilename g—p‚·‚éƒeƒNƒXƒ`ƒƒƒtƒHƒ“ƒg‚Ìƒtƒ@ƒCƒ‹–¼
-//! @param fullscreen falseFƒEƒBƒ“ƒhƒE•\¦@trueFƒtƒ‹ƒXƒNƒŠ[ƒ“—p•\¦
-//! @return ¬Œ÷F0@¸”sF1
+//! @brief åˆæœŸåŒ–@n
+//! ï¼ˆDirectX 9ï¼‰
+//! @param WindowCtrl WindowControlã‚¯ãƒ©ã‚¹ã®ãƒã‚¤ãƒ³ã‚¿
+//! @param TextureFontFilename ä½¿ç”¨ã™ã‚‹ãƒ†ã‚¯ã‚¹ãƒãƒ£ãƒ•ã‚©ãƒ³ãƒˆã®ãƒ•ã‚¡ã‚¤ãƒ«å
+//! @param fullscreen falseï¼šã‚¦ã‚£ãƒ³ãƒ‰ã‚¦è¡¨ç¤ºã€€trueï¼šãƒ•ãƒ«ã‚¹ã‚¯ãƒªãƒ¼ãƒ³ç”¨è¡¨ç¤º
+//! @return æˆåŠŸï¼š0ã€€å¤±æ•—ï¼š1
 int D3DGraphics::InitD3D(WindowControl *WindowCtrl, char *TextureFontFilename, bool fullscreen)
 {
 #ifdef ENABLE_DEBUGLOG
-	//ƒƒO‚Éo—Í
-	OutputLog.WriteLog(LOG_INIT, "ƒOƒ‰ƒtƒBƒbƒN", "DirectX");
+	//ãƒ­ã‚°ã«å‡ºåŠ›
+	OutputLog.WriteLog(LOG_INIT, "ã‚°ãƒ©ãƒ•ã‚£ãƒƒã‚¯", "DirectX");
 #endif
 
 	D3DPRESENT_PARAMETERS d3dpp;
@@ -104,13 +104,13 @@ int D3DGraphics::InitD3D(WindowControl *WindowCtrl, char *TextureFontFilename, b
 
 	fullscreenflag = fullscreen;
 
-	//D3D9‚Ìì¬
+	//D3D9ã®ä½œæˆ
 	pD3D = Direct3DCreate9(D3D_SDK_VERSION);
 	if( pD3D == NULL ){
 		return 1;
 	}
 
-	//D3DƒfƒoƒCƒX‚Ìì¬
+	//D3Dãƒ‡ãƒã‚¤ã‚¹ã®ä½œæˆ
 	ZeroMemory(&d3dpp, sizeof(d3dpp));
 	if( fullscreenflag == false ){
 		d3dpp.Windowed = TRUE;
@@ -143,32 +143,32 @@ int D3DGraphics::InitD3D(WindowControl *WindowCtrl, char *TextureFontFilename, b
 	}
 
 #ifdef ENABLE_DEBUGLOG
-	//ƒƒO‚Éo—Í
+	//ãƒ­ã‚°ã«å‡ºåŠ›
 	OutputLog.WriteLog(LOG_COMPLETE, "", "");
 #endif
 
-	//ƒeƒNƒXƒ`ƒƒƒtƒHƒ“ƒg—p‰æ‘œ‚Ìƒtƒ@ƒCƒ‹–¼‚ğİ’è
+	//ãƒ†ã‚¯ã‚¹ãƒãƒ£ãƒ•ã‚©ãƒ³ãƒˆç”¨ç”»åƒã®ãƒ•ã‚¡ã‚¤ãƒ«åã‚’è¨­å®š
 	strcpy(TextureFontFname, TextureFontFilename);
 
-	//•`‰æŠÖŒW‚ÌÚ×‚Èİ’è
+	//æç”»é–¢ä¿‚ã®è©³ç´°ãªè¨­å®š
 	if( InitSubset() != 0){
 		return 1;
 	}
 	
 
-	//ƒAƒXƒyƒNƒg”ä‚ğİ’è
+	//ã‚¢ã‚¹ãƒšã‚¯ãƒˆæ¯”ã‚’è¨­å®š
 	aspect = (float)rec.right / (float)rec.bottom;
 
-	//ƒ}ƒEƒXƒJ[ƒ\ƒ‹‚ğÁ‚·
+	//ãƒã‚¦ã‚¹ã‚«ãƒ¼ã‚½ãƒ«ã‚’æ¶ˆã™
 	//ShowCursor(FALSE);
 
 
-	//HUD@Œ»İ‚Á‚Ä‚¢‚é•Ší‚ğ•`‰æ‚·‚éÀ•W
+	//HUDã€€ç¾åœ¨æŒã£ã¦ã„ã‚‹æ­¦å™¨ã‚’æç”»ã™ã‚‹åº§æ¨™
 	HUD_myweapon_x[0] = SCREEN_WIDTH - 140.0f;
 	HUD_myweapon_y[0] = SCREEN_HEIGHT - 40.0f;
 	HUD_myweapon_z[0] = 0.86f;
 
-	//HUD@—\”õ‚Ì•Ší‚ğ•`‰æ‚·‚éÀ•W
+	//HUDã€€äºˆå‚™ã®æ­¦å™¨ã‚’æç”»ã™ã‚‹åº§æ¨™
 	HUD_myweapon_x[1] = SCREEN_WIDTH - 72.0f;
 	HUD_myweapon_y[1] = SCREEN_HEIGHT - 25.0f;
 	HUD_myweapon_z[1] = 0.93f;
@@ -184,28 +184,28 @@ int D3DGraphics::InitD3D(WindowControl *WindowCtrl, char *TextureFontFilename, b
 	return 0;
 }
 
-//! @brief ƒŠƒZƒbƒg@n
-//! iƒEƒBƒ“ƒhƒEÅ¬‰»‚©‚ç‚Ì•œ‹A@‚È‚Çj
-//! @param WindowCtrl WindowControlƒNƒ‰ƒX‚Ìƒ|ƒCƒ“ƒ^
-//! @return ¬Œ÷F0@‘Ò‚¿F1@¸”sF2
+//! @brief ãƒªã‚»ãƒƒãƒˆ@n
+//! ï¼ˆã‚¦ã‚£ãƒ³ãƒ‰ã‚¦æœ€å°åŒ–ã‹ã‚‰ã®å¾©å¸°ã€€ãªã©ï¼‰
+//! @param WindowCtrl WindowControlã‚¯ãƒ©ã‚¹ã®ãƒã‚¤ãƒ³ã‚¿
+//! @return æˆåŠŸï¼š0ã€€å¾…ã¡ï¼š1ã€€å¤±æ•—ï¼š2
 int D3DGraphics::ResetD3D(WindowControl *WindowCtrl)
 {
-	//ƒtƒH[ƒJƒX‚ğ¸‚Á‚Ä‚¢‚é‚È‚ç‘Ò‚½‚¹‚é
+	//ãƒ•ã‚©ãƒ¼ã‚«ã‚¹ã‚’å¤±ã£ã¦ã„ã‚‹ãªã‚‰å¾…ãŸã›ã‚‹
 	if( pd3dDevice->TestCooperativeLevel() == D3DERR_DEVICELOST ){
 		return 1;
 	}
 
 #ifdef ENABLE_DEBUGLOG
-	//ƒƒO‚Éo—Í
-	OutputLog.WriteLog(LOG_CHECK, "ƒOƒ‰ƒtƒBƒbƒN", "DirectXƒfƒoƒCƒXÁ¸");
+	//ãƒ­ã‚°ã«å‡ºåŠ›
+	OutputLog.WriteLog(LOG_CHECK, "ã‚°ãƒ©ãƒ•ã‚£ãƒƒã‚¯", "DirectXãƒ‡ãƒã‚¤ã‚¹æ¶ˆå¤±");
 #endif
 
-	//ƒŠƒ\[ƒX‰ğ•ú
+	//ãƒªã‚½ãƒ¼ã‚¹è§£æ”¾
 	CleanupD3Dresource();
 
 #ifdef ENABLE_DEBUGLOG
-	//ƒƒO‚Éo—Í
-	OutputLog.WriteLog(LOG_INIT, "ƒOƒ‰ƒtƒBƒbƒN", "DirectXiƒŠƒZƒbƒgj");
+	//ãƒ­ã‚°ã«å‡ºåŠ›
+	OutputLog.WriteLog(LOG_INIT, "ã‚°ãƒ©ãƒ•ã‚£ãƒƒã‚¯", "DirectXï¼ˆãƒªã‚»ãƒƒãƒˆï¼‰");
 #endif
 
 	D3DPRESENT_PARAMETERS d3dpp;
@@ -213,7 +213,7 @@ int D3DGraphics::ResetD3D(WindowControl *WindowCtrl)
 
 	GetClientRect(WindowCtrl->GethWnd(), &rec);
 
-	//D3DƒfƒoƒCƒX‚Ìì¬
+	//D3Dãƒ‡ãƒã‚¤ã‚¹ã®ä½œæˆ
 	ZeroMemory(&d3dpp, sizeof(d3dpp));
 	if( fullscreenflag == false ){
 		d3dpp.Windowed = TRUE;
@@ -243,7 +243,7 @@ int D3DGraphics::ResetD3D(WindowControl *WindowCtrl)
 		return 2;
 	}
 
-	//•`‰æŠÖŒW‚ÌÚ×‚Èİ’è
+	//æç”»é–¢ä¿‚ã®è©³ç´°ãªè¨­å®š
 	if( InitSubset() != 0){
 		return 2;
 	}
@@ -255,20 +255,20 @@ int D3DGraphics::ResetD3D(WindowControl *WindowCtrl)
 #endif
 
 #ifdef ENABLE_DEBUGLOG
-	//ƒƒO‚Éo—Í
+	//ãƒ­ã‚°ã«å‡ºåŠ›
 	OutputLog.WriteLog(LOG_COMPLETE, "", "");
 #endif
 
 	return 0;
 }
 
-//! @brief ‰ğ•ú
-//! @attention –{ŠÖ”‚Í©“®“I‚ÉŒÄ‚Ño‚³‚ê‚Ü‚·‚ªA–¾¦“I‚ÉŒÄ‚Ño‚·‚±‚Æ‚à‰Â”\‚Å‚·B
+//! @brief è§£æ”¾
+//! @attention æœ¬é–¢æ•°ã¯è‡ªå‹•çš„ã«å‘¼ã³å‡ºã•ã‚Œã¾ã™ãŒã€æ˜ç¤ºçš„ã«å‘¼ã³å‡ºã™ã“ã¨ã‚‚å¯èƒ½ã§ã™ã€‚
 void D3DGraphics::DestroyD3D()
 {
 	if( (pd3dDevice == NULL)&&(pD3D == NULL) ){ return; }
 
-	//ƒŠƒ\[ƒX‰ğ•ú
+	//ãƒªã‚½ãƒ¼ã‚¹è§£æ”¾
 	CleanupD3Dresource();
 
 	if( pd3dDevice != NULL ){
@@ -281,21 +281,21 @@ void D3DGraphics::DestroyD3D()
 	}
 
 #ifdef ENABLE_DEBUGLOG
-	//ƒƒO‚Éo—Í
-	OutputLog.WriteLog(LOG_CLEANUP, "ƒOƒ‰ƒtƒBƒbƒN", "DirectX");
+	//ãƒ­ã‚°ã«å‡ºåŠ›
+	OutputLog.WriteLog(LOG_CLEANUP, "ã‚°ãƒ©ãƒ•ã‚£ãƒƒã‚¯", "DirectX");
 #endif
 }
 
-//! @brief •`‰æŠÖŒW‚Ì×•”İ’è
-//! @attention ‰Šú‰»‚É1“x‚¾‚¯Às‚µ‚Ä‚­‚¾‚³‚¢B
+//! @brief æç”»é–¢ä¿‚ã®ç´°éƒ¨è¨­å®š
+//! @attention åˆæœŸåŒ–æ™‚ã«1åº¦ã ã‘å®Ÿè¡Œã—ã¦ãã ã•ã„ã€‚
 int D3DGraphics::InitSubset()
 {
-	//ƒ‰ƒCƒg
+	//ãƒ©ã‚¤ãƒˆ
 	//pd3dDevice->SetRenderState(D3DRS_AMBIENT, D3DCOLOR_ARGB(0,255,255,255) );
 	pd3dDevice->LightEnable(0, FALSE);
 	pd3dDevice->SetRenderState(D3DRS_LIGHTING, FALSE);
 
-	//ƒtƒHƒO
+	//ãƒ•ã‚©ã‚°
 	float fog_st = 100;
 	float fog_end = 800;
 	pd3dDevice->SetRenderState(D3DRS_FOGENABLE, TRUE);
@@ -305,56 +305,56 @@ int D3DGraphics::InitSubset()
 	pd3dDevice->SetRenderState(D3DRS_FOGSTART, *(DWORD*)(&fog_st));
 	pd3dDevice->SetRenderState(D3DRS_FOGEND,   *(DWORD*)(&fog_end));
 
-	// ƒeƒNƒXƒ`ƒƒƒtƒBƒ‹ƒ^‚ğg‚¤
+	// ãƒ†ã‚¯ã‚¹ãƒãƒ£ãƒ•ã‚£ãƒ«ã‚¿ã‚’ä½¿ã†
 	pd3dDevice->SetSamplerState(0, D3DSAMP_MINFILTER, D3DTEXF_LINEAR);
 	pd3dDevice->SetSamplerState(0, D3DSAMP_MAGFILTER, D3DTEXF_LINEAR);
 	pd3dDevice->SetSamplerState(0, D3DSAMP_MIPFILTER, D3DTEXF_LINEAR);
 
-	//ƒ~ƒbƒvƒ}ƒbƒv‚ÌÚ×ƒŒƒxƒ‹ (LOD) ƒoƒCƒAƒX‚ğw’è‚·‚éB
+	//ãƒŸãƒƒãƒ—ãƒãƒƒãƒ—ã®è©³ç´°ãƒ¬ãƒ™ãƒ« (LOD) ãƒã‚¤ã‚¢ã‚¹ã‚’æŒ‡å®šã™ã‚‹ã€‚
 	float LODBias = -0.2f;
 	pd3dDevice->SetSamplerState(0, D3DSAMP_MIPMAPLODBIAS, *((LPDWORD)(&LODBias)) );
 
-	//ƒAƒ‹ƒtƒ@EƒuƒŒƒ“ƒfƒBƒ“ƒO‚ğs‚¤
+	//ã‚¢ãƒ«ãƒ•ã‚¡ãƒ»ãƒ–ãƒ¬ãƒ³ãƒ‡ã‚£ãƒ³ã‚°ã‚’è¡Œã†
 	pd3dDevice->SetRenderState(D3DRS_ALPHABLENDENABLE, TRUE);
 
-	//“§‰ßˆ—‚ğs‚¤
+	//é€éå‡¦ç†ã‚’è¡Œã†
 	pd3dDevice->SetRenderState(D3DRS_SRCBLEND, D3DBLEND_SRCALPHA);
 	pd3dDevice->SetRenderState(D3DRS_DESTBLEND, D3DBLEND_INVSRCALPHA);
 
-	//ƒAƒ‹ƒtƒ@ƒeƒXƒg‚É‘Î‰‚µ‚Ä‚¢‚é‚©ƒ`ƒFƒbƒN
+	//ã‚¢ãƒ«ãƒ•ã‚¡ãƒ†ã‚¹ãƒˆã«å¯¾å¿œã—ã¦ã„ã‚‹ã‹ãƒã‚§ãƒƒã‚¯
 	D3DCAPS9 Caps;
 	pd3dDevice->GetDeviceCaps(&Caps);
 	if( Caps.AlphaCmpCaps & D3DPCMPCAPS_GREATEREQUAL ){
-		//ƒAƒ‹ƒtƒ@ƒeƒXƒgİ’è
-		//@Š®‘S‚É“§–¾‚ÈƒsƒNƒZƒ‹‚Í•`‰æ‚µ‚È‚¢
+		//ã‚¢ãƒ«ãƒ•ã‚¡ãƒ†ã‚¹ãƒˆè¨­å®š
+		//ã€€å®Œå…¨ã«é€æ˜ãªãƒ”ã‚¯ã‚»ãƒ«ã¯æç”»ã—ãªã„
 		pd3dDevice->SetRenderState(D3DRS_ALPHAREF, (DWORD)0x00000001);
 		pd3dDevice->SetRenderState(D3DRS_ALPHATESTENABLE, TRUE); 
 		pd3dDevice->SetRenderState(D3DRS_ALPHAFUNC, D3DCMP_GREATEREQUAL);
 	}
 
-	//[“xƒoƒbƒtƒ@”äŠrŠÖ”
+	//æ·±åº¦ãƒãƒƒãƒ•ã‚¡æ¯”è¼ƒé–¢æ•°
 	pd3dDevice->SetRenderState(D3DRS_ZWRITEENABLE, TRUE);
 	pd3dDevice->SetRenderState(D3DRS_ZFUNC, D3DCMP_LESS);
 
-	//ƒ|ƒŠƒSƒ“‚Ì— E•\
+	//ãƒãƒªã‚´ãƒ³ã®è£ãƒ»è¡¨
 	pd3dDevice->SetRenderState(D3DRS_CULLMODE, D3DCULL_CCW);
 
 
-	//ƒeƒLƒXƒgƒXƒvƒ‰ƒCƒg‰Šú‰»
+	//ãƒ†ã‚­ã‚¹ãƒˆã‚¹ãƒ—ãƒ©ã‚¤ãƒˆåˆæœŸåŒ–
 	if( FAILED( D3DXCreateSprite( pd3dDevice, &ptextsprite ) ) ){
 		return 1;
 	}
-	//ƒtƒHƒ“ƒg–¼F‚l‚r ƒSƒVƒbƒN@ƒTƒCƒYF18
+	//ãƒ•ã‚©ãƒ³ãƒˆåï¼šï¼­ï¼³ ã‚´ã‚·ãƒƒã‚¯ã€€ã‚µã‚¤ã‚ºï¼š18
 	HRESULT hr = D3DXCreateFont( pd3dDevice, -18, 0, FW_NORMAL, 1, FALSE, SHIFTJIS_CHARSET, OUT_DEFAULT_PRECIS,
-								DEFAULT_QUALITY, DEFAULT_PITCH | FF_DONTCARE, "‚l‚r ƒSƒVƒbƒN", &pxmsfont);
+								DEFAULT_QUALITY, DEFAULT_PITCH | FF_DONTCARE, "ï¼­ï¼³ ã‚´ã‚·ãƒƒã‚¯", &pxmsfont);
 	if( FAILED(hr) ){ return 1; }
 
-	//ƒeƒNƒXƒ`ƒƒƒtƒHƒ“ƒg—p‰æ‘œ‚ğæ“¾
+	//ãƒ†ã‚¯ã‚¹ãƒãƒ£ãƒ•ã‚©ãƒ³ãƒˆç”¨ç”»åƒã‚’å–å¾—
 	TextureFont = LoadTexture(TextureFontFname, true, false);
 	return 0;
 }
 
-//! @brief ƒfƒoƒCƒX‚ÌƒŠƒ\[ƒX‚ğ‰ğ•ú
+//! @brief ãƒ‡ãƒã‚¤ã‚¹ã®ãƒªã‚½ãƒ¼ã‚¹ã‚’è§£æ”¾
 void D3DGraphics::CleanupD3Dresource()
 {
 	if( TextureFont != -1 ){
@@ -388,19 +388,19 @@ void D3DGraphics::CleanupD3Dresource()
 	}
 }
 
-//! @brief ƒ‚ƒfƒ‹ƒtƒ@ƒCƒ‹‚ğ“Ç‚İ‚Şi.xj
-//! @param filename ƒtƒ@ƒCƒ‹–¼
-//! @return ¬Œ÷Fƒ‚ƒfƒ‹”F¯”Ô†i0ˆÈãj@¸”sF-1
+//! @brief ãƒ¢ãƒ‡ãƒ«ãƒ•ã‚¡ã‚¤ãƒ«ã‚’èª­ã¿è¾¼ã‚€ï¼ˆ.xï¼‰
+//! @param filename ãƒ•ã‚¡ã‚¤ãƒ«å
+//! @return æˆåŠŸï¼šãƒ¢ãƒ‡ãƒ«èªè­˜ç•ªå·ï¼ˆ0ä»¥ä¸Šï¼‰ã€€å¤±æ•—ï¼š-1
 int D3DGraphics::LoadModel(char* filename)
 {
 #ifdef ENABLE_DEBUGLOG
-	//ƒƒO‚Éo—Í
-	OutputLog.WriteLog(LOG_LOAD, "ƒ‚ƒfƒ‹", filename);
+	//ãƒ­ã‚°ã«å‡ºåŠ›
+	OutputLog.WriteLog(LOG_LOAD, "ãƒ¢ãƒ‡ãƒ«", filename);
 #endif
 
 	int id = -1;
 
-	//‹ó‚¢‚Ä‚¢‚é—v‘f‚ğ’T‚·
+	//ç©ºã„ã¦ã„ã‚‹è¦ç´ ã‚’æ¢ã™
 	for(int i=0; i<MAX_MODEL; i++){
 		if( pmesh[i] == NULL ){
 			id = i;
@@ -410,40 +410,40 @@ int D3DGraphics::LoadModel(char* filename)
 	if( id == -1 ){ return -1; }
 
 #ifdef ENABLE_PATH_DELIMITER_SLASH
-	//ƒpƒX‹æØ‚è•¶š‚ğ•ÏŠ·
+	//ãƒ‘ã‚¹åŒºåˆ‡ã‚Šæ–‡å­—ã‚’å¤‰æ›
 	filename = ChangePathDelimiter(filename);
 #endif
 
-	//.xƒtƒ@ƒCƒ‹‚ğƒoƒbƒtƒ@[‚É“Ç‚İ‚Ş
+	//.xãƒ•ã‚¡ã‚¤ãƒ«ã‚’ãƒãƒƒãƒ•ã‚¡ãƒ¼ã«èª­ã¿è¾¼ã‚€
 	if( FAILED( D3DXLoadMeshFromX( filename, D3DXMESH_SYSTEMMEM, pd3dDevice, NULL, 
 				NULL, NULL, &nummaterials[id], &pmesh[id] ) ) ) {
 		return -1;
 	}
 
 #ifdef ENABLE_DEBUGLOG
-	//ƒƒO‚Éo—Í
+	//ãƒ­ã‚°ã«å‡ºåŠ›
 	OutputLog.WriteLog(LOG_COMPLETE, "", id);
 #endif
 	return id;
 }
 
-//! @brief ƒ‚ƒfƒ‹ƒtƒ@ƒCƒ‹‚Ì’†ŠÔƒf[ƒ^‚ğì¬iƒ‚[ƒtƒBƒ“ƒOj
-//! @param idA ƒ‚ƒfƒ‹A‚Ì”F¯”Ô†
-//! @param idB ƒ‚ƒfƒ‹B‚Ì”F¯”Ô†
-//! @return ¬Œ÷FV‚µ‚¢ƒ‚ƒfƒ‹”F¯”Ô†i0ˆÈãj@¸”sF-1
-//! @attention ƒ‚ƒfƒ‹A‚Æƒ‚ƒfƒ‹B‚ÍA’¸“_”Eƒ|ƒŠƒSƒ“”EƒCƒ“ƒfƒbƒNƒX‚ª“¯‚¶‚Å‚ ‚é•K—v‚ª‚ ‚è‚Ü‚·B
-//! @attention ‚»‚ê‚¼‚ê‚Ìƒ‚ƒfƒ‹ƒf[ƒ^‚ª³‚µ‚­‚È‚¢‚© ’¸“_”‚ªˆÙ‚È‚éê‡AÀs‚É¸”s‚µ‚Ü‚·B
+//! @brief ãƒ¢ãƒ‡ãƒ«ãƒ•ã‚¡ã‚¤ãƒ«ã®ä¸­é–“ãƒ‡ãƒ¼ã‚¿ã‚’ä½œæˆï¼ˆãƒ¢ãƒ¼ãƒ•ã‚£ãƒ³ã‚°ï¼‰
+//! @param idA ãƒ¢ãƒ‡ãƒ«Aã®èªè­˜ç•ªå·
+//! @param idB ãƒ¢ãƒ‡ãƒ«Bã®èªè­˜ç•ªå·
+//! @return æˆåŠŸï¼šæ–°ã—ã„ãƒ¢ãƒ‡ãƒ«èªè­˜ç•ªå·ï¼ˆ0ä»¥ä¸Šï¼‰ã€€å¤±æ•—ï¼š-1
+//! @attention ãƒ¢ãƒ‡ãƒ«Aã¨ãƒ¢ãƒ‡ãƒ«Bã¯ã€é ‚ç‚¹æ•°ãƒ»ãƒãƒªã‚´ãƒ³æ•°ãƒ»ã‚¤ãƒ³ãƒ‡ãƒƒã‚¯ã‚¹ãŒåŒã˜ã§ã‚ã‚‹å¿…è¦ãŒã‚ã‚Šã¾ã™ã€‚
+//! @attention ãã‚Œãã‚Œã®ãƒ¢ãƒ‡ãƒ«ãƒ‡ãƒ¼ã‚¿ãŒæ­£ã—ããªã„ã‹ é ‚ç‚¹æ•°ãŒç•°ãªã‚‹å ´åˆã€å®Ÿè¡Œã«å¤±æ•—ã—ã¾ã™ã€‚
 int D3DGraphics::MorphingModel(int idA, int idB)
 {
 #ifdef ENABLE_DEBUGLOG
 	char str[128];
-	sprintf(str, "’†ŠÔƒf[ƒ^ì¬@@IDF%d and %d", idA, idB);
+	sprintf(str, "ä¸­é–“ãƒ‡ãƒ¼ã‚¿ä½œæˆã€€ã€€IDï¼š%d and %d", idA, idB);
 
-	//ƒƒO‚Éo—Í
-	OutputLog.WriteLog(LOG_LOAD, "ƒ‚ƒfƒ‹", str);
+	//ãƒ­ã‚°ã«å‡ºåŠ›
+	OutputLog.WriteLog(LOG_LOAD, "ãƒ¢ãƒ‡ãƒ«", str);
 #endif
 
-	//ƒf[ƒ^‚ª³‚µ‚¢‚©’²‚×‚é
+	//ãƒ‡ãƒ¼ã‚¿ãŒæ­£ã—ã„ã‹èª¿ã¹ã‚‹
 	if( (idA < 0)||((MAX_MODEL -1) < idA) ){ return -1; }
 	if( pmesh[idA] == NULL ){ return -1; }
 	if( (idB < 0)||((MAX_MODEL -1) < idB) ){ return -1; }
@@ -455,7 +455,7 @@ int D3DGraphics::MorphingModel(int idA, int idB)
 	D3DXVECTOR3 *pVerticesA, *pVerticesB, *pVerticesN;
 	int FVFsize;
 
-	//‹ó‚¢‚Ä‚¢‚é—v‘f‚ğ’T‚·
+	//ç©ºã„ã¦ã„ã‚‹è¦ç´ ã‚’æ¢ã™
 	for(int i=0; i<MAX_MODEL; i++){
 		if( pmesh[i] == NULL ){
 			idN = i;
@@ -464,36 +464,36 @@ int D3DGraphics::MorphingModel(int idA, int idB)
 	}
 	if( idN == -1 ){ return -1; }
 
-	//’¸“_”‚ğæ“¾
+	//é ‚ç‚¹æ•°ã‚’å–å¾—
 	numvA = pmesh[idA]->GetNumVertices();
 	numvB = pmesh[idB]->GetNumVertices();
 
-	//’¸“_”‚ª“¯‚¶‚©‚Ç‚¤‚©’²‚×‚é
+	//é ‚ç‚¹æ•°ãŒåŒã˜ã‹ã©ã†ã‹èª¿ã¹ã‚‹
 	if( numvA != numvB ){ return -1; }
 
-	//’¸“_ƒf[ƒ^‚ğƒRƒs[iÀ¿“I‚É—ÌˆæŠm•Û—p‚Ìƒ_ƒ~[j
+	//é ‚ç‚¹ãƒ‡ãƒ¼ã‚¿ã‚’ã‚³ãƒ”ãƒ¼ï¼ˆå®Ÿè³ªçš„ã«é ˜åŸŸç¢ºä¿ç”¨ã®ãƒ€ãƒŸãƒ¼ï¼‰
 	if( pmesh[idA]->CloneMeshFVF(pmesh[idA]->GetOptions(), pmesh[idA]->GetFVF(), pd3dDevice, &pmesh[idN]) != D3D_OK ){
 		return -1;
 	}
 
-	//ƒ}ƒeƒŠƒAƒ‹î•ñ‚ğƒRƒs[
+	//ãƒãƒ†ãƒªã‚¢ãƒ«æƒ…å ±ã‚’ã‚³ãƒ”ãƒ¼
 	nummaterials[idN] = nummaterials[idA];
 
-	//ƒoƒbƒtƒ@[‚ğæ“¾
+	//ãƒãƒƒãƒ•ã‚¡ãƒ¼ã‚’å–å¾—
 	pmesh[idA]->GetVertexBuffer(&pvbA);
 	pmesh[idB]->GetVertexBuffer(&pvbB);
 	pmesh[idN]->GetVertexBuffer(&pvbN);
 
-	//1’¸“_‚ ‚½‚è‚ÌƒoƒCƒg”æ“¾
+	//1é ‚ç‚¹ã‚ãŸã‚Šã®ãƒã‚¤ãƒˆæ•°å–å¾—
 	FVFsize = D3DXGetFVFVertexSize(pmesh[idN]->GetFVF());
 
-	//Še’¸“_‚ğ“Ç‚İo‚µŒvZ
+	//å„é ‚ç‚¹ã‚’èª­ã¿å‡ºã—è¨ˆç®—
 	for(int i=0; i<numvA; i++){
 		pvbA->Lock(i*FVFsize, sizeof(D3DXVECTOR3), (void**)&pVerticesA, D3DLOCK_READONLY);
 		pvbB->Lock(i*FVFsize, sizeof(D3DXVECTOR3), (void**)&pVerticesB, D3DLOCK_READONLY);
 		pvbN->Lock(i*FVFsize, sizeof(D3DXVECTOR3), (void**)&pVerticesN, 0);
 
-		//•½‹Ï‰»
+		//å¹³å‡åŒ–
 		pVerticesN->x = (pVerticesA->x + pVerticesB->x)/2;
 		pVerticesN->y = (pVerticesA->y + pVerticesB->y)/2;
 		pVerticesN->z = (pVerticesA->z + pVerticesB->z)/2;
@@ -504,19 +504,19 @@ int D3DGraphics::MorphingModel(int idA, int idB)
 	}
 
 #ifdef ENABLE_DEBUGLOG
-	//ƒƒO‚Éo—Í
+	//ãƒ­ã‚°ã«å‡ºåŠ›
 	OutputLog.WriteLog(LOG_COMPLETE, "", idN);
 #endif
 	return idN;
 }
 
-//! @brief “Ç‚İ‚İÏ‚İ‚Ìƒ‚ƒfƒ‹”‚ğæ“¾
-//! @return ƒ‚ƒfƒ‹”
+//! @brief èª­ã¿è¾¼ã¿æ¸ˆã¿ã®ãƒ¢ãƒ‡ãƒ«æ•°ã‚’å–å¾—
+//! @return ãƒ¢ãƒ‡ãƒ«æ•°
 int D3DGraphics::GetTotalModels()
 {
 	int cnt = 0;
 
-	//g—p’†‚Ì—v‘f‚ğ”‚¦‚é
+	//ä½¿ç”¨ä¸­ã®è¦ç´ ã‚’æ•°ãˆã‚‹
 	for(int i=0; i<MAX_MODEL; i++){
 		if( pmesh[i] != NULL ){ cnt += 1; }
 	}
@@ -524,8 +524,8 @@ int D3DGraphics::GetTotalModels()
 	return cnt;
 }
 
-//! @brief ƒ‚ƒfƒ‹ƒtƒ@ƒCƒ‹‚ğ‰ğ•ú
-//! @param id ƒ‚ƒfƒ‹”F¯”Ô†
+//! @brief ãƒ¢ãƒ‡ãƒ«ãƒ•ã‚¡ã‚¤ãƒ«ã‚’è§£æ”¾
+//! @param id ãƒ¢ãƒ‡ãƒ«èªè­˜ç•ªå·
 void D3DGraphics::CleanupModel(int id)
 {
 	if( (id < 0)||((MAX_MODEL -1) < id) ){ return; }
@@ -534,17 +534,17 @@ void D3DGraphics::CleanupModel(int id)
 		pmesh[id] = NULL;
 
 #ifdef ENABLE_DEBUGLOG
-		//ƒƒO‚Éo—Í
-		OutputLog.WriteLog(LOG_CLEANUP, "ƒ‚ƒfƒ‹", id);
+		//ãƒ­ã‚°ã«å‡ºåŠ›
+		OutputLog.WriteLog(LOG_CLEANUP, "ãƒ¢ãƒ‡ãƒ«", id);
 #endif
 	}
 }
 
-//! @brief ƒeƒNƒXƒ`ƒƒ‚ğ“Ç‚İ‚Ş
-//! @param filename ƒtƒ@ƒCƒ‹–¼
-//! @param texturefont ƒeƒNƒXƒ`ƒƒƒtƒHƒ“ƒgƒtƒ‰ƒO
-//! @param BlackTransparent •‚ğ“§‰ß‚·‚é
-//! @return ¬Œ÷FƒeƒNƒXƒ`ƒƒ”F¯”Ô†i0ˆÈãj@¸”sF-1
+//! @brief ãƒ†ã‚¯ã‚¹ãƒãƒ£ã‚’èª­ã¿è¾¼ã‚€
+//! @param filename ãƒ•ã‚¡ã‚¤ãƒ«å
+//! @param texturefont ãƒ†ã‚¯ã‚¹ãƒãƒ£ãƒ•ã‚©ãƒ³ãƒˆãƒ•ãƒ©ã‚°
+//! @param BlackTransparent é»’ã‚’é€éã™ã‚‹
+//! @return æˆåŠŸï¼šãƒ†ã‚¯ã‚¹ãƒãƒ£èªè­˜ç•ªå·ï¼ˆ0ä»¥ä¸Šï¼‰ã€€å¤±æ•—ï¼š-1
 int D3DGraphics::LoadTexture(char* filename, bool texturefont, bool BlackTransparent)
 {
 	int id = -1;
@@ -552,11 +552,11 @@ int D3DGraphics::LoadTexture(char* filename, bool texturefont, bool BlackTranspa
 	int MipLevels;
 
 #ifdef ENABLE_DEBUGLOG
-	//ƒƒO‚Éo—Í
-	OutputLog.WriteLog(LOG_LOAD, "ƒeƒNƒXƒ`ƒƒ", filename);
+	//ãƒ­ã‚°ã«å‡ºåŠ›
+	OutputLog.WriteLog(LOG_LOAD, "ãƒ†ã‚¯ã‚¹ãƒãƒ£", filename);
 #endif
 
-	//‹ó‚¢‚Ä‚¢‚é”F¯”Ô†‚ğ’T‚·
+	//ç©ºã„ã¦ã„ã‚‹èªè­˜ç•ªå·ã‚’æ¢ã™
 	for(int i=0; i<MAX_TEXTURE; i++){
 		if( ptextures[i] == NULL ){
 			id = i;
@@ -566,14 +566,14 @@ int D3DGraphics::LoadTexture(char* filename, bool texturefont, bool BlackTranspa
 	if( id == -1 ){ return -1; }
 
 #ifdef ENABLE_PATH_DELIMITER_SLASH
-	//ƒpƒX‹æØ‚è•¶š‚ğ•ÏŠ·
+	//ãƒ‘ã‚¹åŒºåˆ‡ã‚Šæ–‡å­—ã‚’å¤‰æ›
 	filename = ChangePathDelimiter(filename);
 #endif
 
-	//ƒtƒ@ƒCƒ‹î•ñ‚ğæ“¾
+	//ãƒ•ã‚¡ã‚¤ãƒ«æƒ…å ±ã‚’å–å¾—
 	if( D3DXGetImageInfoFromFile(filename, &info) != D3D_OK ){ return -1; }
 
-	//ƒ~ƒbƒvƒ}ƒbƒvƒŒƒxƒ‹‚ğİ’è
+	//ãƒŸãƒƒãƒ—ãƒãƒƒãƒ—ãƒ¬ãƒ™ãƒ«ã‚’è¨­å®š
 	if( texturefont == true ){
 		MipLevels = 1;
 	}
@@ -581,7 +581,7 @@ int D3DGraphics::LoadTexture(char* filename, bool texturefont, bool BlackTranspa
 		MipLevels = 4;//D3DX_DEFAULT;
 	}
 
-	//ƒeƒNƒXƒ`ƒƒ‚ğ“Ç‚İ‚Ş
+	//ãƒ†ã‚¯ã‚¹ãƒãƒ£ã‚’èª­ã¿è¾¼ã‚€
 	if( BlackTransparent == false ){
 		if( FAILED( D3DXCreateTextureFromFileEx(pd3dDevice, filename, info.Width, info.Height, MipLevels, 0, D3DFMT_UNKNOWN, D3DPOOL_MANAGED, D3DX_DEFAULT, D3DX_DEFAULT, 0x00000000, NULL, NULL, &ptextures[id]) ) ) {
 			return -1;
@@ -594,16 +594,16 @@ int D3DGraphics::LoadTexture(char* filename, bool texturefont, bool BlackTranspa
 	}
 
 #ifdef ENABLE_DEBUGLOG
-	//ƒƒO‚Éo—Í
+	//ãƒ­ã‚°ã«å‡ºåŠ›
 	OutputLog.WriteLog(LOG_COMPLETE, "", id);
 #endif
 	return id;
 }
 
 #ifdef ENABLE_DEBUGCONSOLE
-//! @brief ƒfƒoƒbƒN—pƒtƒHƒ“ƒg‚ğ“Ç‚İ‚Ş
-//! @return ¬Œ÷Ftrue@¸”sFfalse
-//! @attention ‚±‚ÌŠÖ”‚ğŒÄ‚Ño‚·‘O‚ÉAInitDebugFontData()ŠÖ”‚ğÀs‚µ‚Ä‚­‚¾‚³‚¢B
+//! @brief ãƒ‡ãƒãƒƒã‚¯ç”¨ãƒ•ã‚©ãƒ³ãƒˆã‚’èª­ã¿è¾¼ã‚€
+//! @return æˆåŠŸï¼štrueã€€å¤±æ•—ï¼šfalse
+//! @attention ã“ã®é–¢æ•°ã‚’å‘¼ã³å‡ºã™å‰ã«ã€InitDebugFontData()é–¢æ•°ã‚’å®Ÿè¡Œã—ã¦ãã ã•ã„ã€‚
 bool D3DGraphics::LoadDebugFontTexture()
 {
 	int charwidth = 8;
@@ -616,14 +616,14 @@ bool D3DGraphics::LoadDebugFontTexture()
 	int id = -1;
 
 #ifdef ENABLE_DEBUGLOG
-	//ƒƒO‚Éo—Í
-	OutputLog.WriteLog(LOG_LOAD, "ƒeƒNƒXƒ`ƒƒ", "DebugFontTexture");
+	//ãƒ­ã‚°ã«å‡ºåŠ›
+	OutputLog.WriteLog(LOG_LOAD, "ãƒ†ã‚¯ã‚¹ãƒãƒ£", "DebugFontTexture");
 #endif
 
-	//Šù‚É“Ç‚İ‚Ü‚ê‚Ä‚¢‚é‚È‚ç¸”s
+	//æ—¢ã«èª­ã¿è¾¼ã¾ã‚Œã¦ã„ã‚‹ãªã‚‰å¤±æ•—
 	if( TextureDebugFont != -1 ){ return false; }
 
-	//‹ó‚¢‚Ä‚¢‚é”F¯”Ô†‚ğ’T‚·
+	//ç©ºã„ã¦ã„ã‚‹èªè­˜ç•ªå·ã‚’æ¢ã™
 	for(int i=0; i<MAX_TEXTURE; i++){
 		if( ptextures[i] == NULL ){
 			id = i;
@@ -632,10 +632,10 @@ bool D3DGraphics::LoadDebugFontTexture()
 	}
 	if( id == -1 ){ return false; }
 
-	//.bmp“WŠJ—p—Ìˆæì¬
+	//.bmpå±•é–‹ç”¨é ˜åŸŸä½œæˆ
 	unsigned char *bmpdata = new unsigned char [bufsize];
 
-	//.bmpƒwƒbƒ_[ì¬
+	//.bmpãƒ˜ãƒƒãƒ€ãƒ¼ä½œæˆ
 	for(int i=0; i<headersize; i++){ bmpdata[i] = 0x00; }
 	bmpdata[0x00] = 'B';
 	bmpdata[0x01] = 'M';
@@ -657,14 +657,14 @@ bool D3DGraphics::LoadDebugFontTexture()
 
 	datacnt = headersize;
 
-	//6s•ª‚Ìƒf[ƒ^‚ğì¬
+	//6è¡Œåˆ†ã®ãƒ‡ãƒ¼ã‚¿ã‚’ä½œæˆ
 	for(int cnt_y=5; cnt_y>=0; cnt_y--){
 		for(int line_y=(charheight-1); line_y>=0; line_y--){
 			for(int cnt_x=0; cnt_x<16; cnt_x++){
 				for(int line_x=(charwidth-1); line_x>=0; line_x--){
 					unsigned char mask;
 
-					//ƒrƒbƒg”»’è—pƒ}ƒXƒNì¬
+					//ãƒ“ãƒƒãƒˆåˆ¤å®šç”¨ãƒã‚¹ã‚¯ä½œæˆ
 					switch(line_x){
 						case 0: mask = 0x01; break;
 						case 1: mask = 0x02; break;
@@ -674,10 +674,10 @@ bool D3DGraphics::LoadDebugFontTexture()
 						case 5: mask = 0x20; break;
 						case 6: mask = 0x40; break;
 						case 7: mask = 0x80; break;
-						default: mask = 0x00;		//–ÀãƒGƒ‰[
+						default: mask = 0x00;		//äº‹å®Ÿä¸Šã‚¨ãƒ©ãƒ¼
 					}
 
-					//ŠY“–ƒrƒbƒg‚ª1‚È‚ç”’A0‚È‚ç•B
+					//è©²å½“ãƒ“ãƒƒãƒˆãŒ1ãªã‚‰ç™½ã€0ãªã‚‰é»’ã€‚
 					if( (DebugFontData[cnt_y*16 + cnt_x][line_y] & mask) != 0 ){
 						bmpdata[datacnt + 0] = 255;
 						bmpdata[datacnt + 1] = 255;
@@ -695,7 +695,7 @@ bool D3DGraphics::LoadDebugFontTexture()
 		}
 	}
 
-	//§ŒäƒR[ƒh‚ª“ü‚Á‚Ä‚¢‚éã‚Ì2s 32•¶š•ª‚ÍA‹ó—“‚É‚·‚éB
+	//åˆ¶å¾¡ã‚³ãƒ¼ãƒ‰ãŒå…¥ã£ã¦ã„ã‚‹ä¸Šã®2è¡Œ 32æ–‡å­—åˆ†ã¯ã€ç©ºæ¬„ã«ã™ã‚‹ã€‚
 	for(int cnt_y=0; cnt_y<2; cnt_y++){
 		for(int line_y=(charheight-1); line_y>=0; line_y--){
 			for(int cnt_x=0; cnt_x<16; cnt_x++){
@@ -710,70 +710,70 @@ bool D3DGraphics::LoadDebugFontTexture()
 		}
 	}
 
-	//.bmpƒeƒNƒXƒ`ƒƒ‚Æ‚µ‚Ä“Ç‚İ‚Ş
+	//.bmpãƒ†ã‚¯ã‚¹ãƒãƒ£ã¨ã—ã¦èª­ã¿è¾¼ã‚€
 	if( FAILED( D3DXCreateTextureFromFileInMemoryEx(pd3dDevice, bmpdata, bufsize, width, height, 1, 0, D3DFMT_A1R5G5B5, D3DPOOL_MANAGED, D3DX_DEFAULT, D3DX_DEFAULT, D3DCOLOR_ARGB(255, 0, 0, 0), NULL, NULL, &ptextures[id]) ) ) {
 		TextureDebugFont = -1;
 		return false;
 	}
 
 	/*
-	//.bmp‚Æ‚µ‚Ä•Û‘¶‚µ‚Ä‚İ‚é
+	//.bmpã¨ã—ã¦ä¿å­˜ã—ã¦ã¿ã‚‹
 	FILE *fp;
 	fp = fopen("debugfont-test.bmp", "wb");
 	fwrite(bmpdata, sizeof(unsigned char), bufsize, fp);
 	fclose(fp);
 	*/
 
-	//.bmp“WŠJ—p—Ìˆæ‰ğ•ú
+	//.bmpå±•é–‹ç”¨é ˜åŸŸè§£æ”¾
 	delete bmpdata;
 
 #ifdef ENABLE_DEBUGLOG
-	//ƒƒO‚Éo—Í
+	//ãƒ­ã‚°ã«å‡ºåŠ›
 	OutputLog.WriteLog(LOG_COMPLETE, "", id);
 #endif
 
-	//ƒeƒNƒXƒ`ƒƒIDİ’è
+	//ãƒ†ã‚¯ã‚¹ãƒãƒ£IDè¨­å®š
 	TextureDebugFont = id;
 	return true;
 }
 #endif
 
-//! @brief ƒeƒNƒXƒ`ƒƒ‚ÌƒTƒCƒY‚ğæ“¾
-//! @param id ƒeƒNƒXƒ`ƒƒ”F¯”Ô†
-//! @param width •‚ğó‚¯æ‚éƒ|ƒCƒ“ƒ^
-//! @param height ‚‚³‚ğó‚¯æ‚éƒ|ƒCƒ“ƒ^
-//! @return ¬Œ÷F0@¸”sF1
-//! @attention ƒT[ƒtƒFƒCƒX‚ÌƒTƒCƒY‚ğæ“¾‚µ‚Ü‚·BGPU‚Éƒ[ƒh‚³‚ê‚½ƒTƒCƒY‚Å‚ ‚èAƒeƒNƒXƒ`ƒƒiŒ»•¨j‚ÆˆÙ‚È‚éê‡‚ª‚ ‚è‚Ü‚·B
+//! @brief ãƒ†ã‚¯ã‚¹ãƒãƒ£ã®ã‚µã‚¤ã‚ºã‚’å–å¾—
+//! @param id ãƒ†ã‚¯ã‚¹ãƒãƒ£èªè­˜ç•ªå·
+//! @param width å¹…ã‚’å—ã‘å–ã‚‹ãƒã‚¤ãƒ³ã‚¿
+//! @param height é«˜ã•ã‚’å—ã‘å–ã‚‹ãƒã‚¤ãƒ³ã‚¿
+//! @return æˆåŠŸï¼š0ã€€å¤±æ•—ï¼š1
+//! @attention ã‚µãƒ¼ãƒ•ã‚§ã‚¤ã‚¹ã®ã‚µã‚¤ã‚ºã‚’å–å¾—ã—ã¾ã™ã€‚GPUã«ãƒ­ãƒ¼ãƒ‰ã•ã‚ŒãŸã‚µã‚¤ã‚ºã§ã‚ã‚Šã€ãƒ†ã‚¯ã‚¹ãƒãƒ£ï¼ˆç¾ç‰©ï¼‰ã¨ç•°ãªã‚‹å ´åˆãŒã‚ã‚Šã¾ã™ã€‚
 int D3DGraphics::GetTextureSize(int id, int *width, int *height)
 {
-	//–³Œø‚È”F¯”Ô†‚ªw’è‚³‚ê‚Ä‚¢‚½‚çAˆ—‚¹‚¸•Ô‚·B
+	//ç„¡åŠ¹ãªèªè­˜ç•ªå·ãŒæŒ‡å®šã•ã‚Œã¦ã„ãŸã‚‰ã€å‡¦ç†ã›ãšè¿”ã™ã€‚
 	if( id == -1 ){ return 1; }
 	if( ptextures[id] == NULL ){ return 1; }
 
 	IDirect3DSurface9 *surface;
 	D3DSURFACE_DESC desc;
 
-	//ƒT[ƒtƒFƒCƒX‚ğæ“¾
+	//ã‚µãƒ¼ãƒ•ã‚§ã‚¤ã‚¹ã‚’å–å¾—
 	ptextures[id]->GetSurfaceLevel(0, &surface);
 
-	//•‚Æ‚‚³‚ğæ“¾
+	//å¹…ã¨é«˜ã•ã‚’å–å¾—
 	surface->GetDesc(&desc);
 	*width = desc.Width;
 	*height = desc.Height;
 
-	//ƒT[ƒtƒFƒCƒX‚ğŠJ•ú
+	//ã‚µãƒ¼ãƒ•ã‚§ã‚¤ã‚¹ã‚’é–‹æ”¾
 	surface->Release();
 
 	return 0;
 }
 
-//! @brief “Ç‚İ‚İÏ‚İ‚ÌƒeƒNƒXƒ`ƒƒ”‚ğæ“¾
-//! @return ƒeƒNƒXƒ`ƒƒ”
+//! @brief èª­ã¿è¾¼ã¿æ¸ˆã¿ã®ãƒ†ã‚¯ã‚¹ãƒãƒ£æ•°ã‚’å–å¾—
+//! @return ãƒ†ã‚¯ã‚¹ãƒãƒ£æ•°
 int D3DGraphics::GetTotalTextures()
 {
 	int cnt = 0;
 
-	//g—p’†‚Ì—v‘f‚ğ”‚¦‚é
+	//ä½¿ç”¨ä¸­ã®è¦ç´ ã‚’æ•°ãˆã‚‹
 	for(int i=0; i<MAX_TEXTURE; i++){
 		if( ptextures[i] != NULL ){ cnt += 1; }
 	}
@@ -781,8 +781,8 @@ int D3DGraphics::GetTotalTextures()
 	return cnt;
 }
 
-//! @brief ƒeƒNƒXƒ`ƒƒ‚ğ‰ğ•ú
-//! @param id ƒeƒNƒXƒ`ƒƒ”F¯”Ô†
+//! @brief ãƒ†ã‚¯ã‚¹ãƒãƒ£ã‚’è§£æ”¾
+//! @param id ãƒ†ã‚¯ã‚¹ãƒãƒ£èªè­˜ç•ªå·
 void D3DGraphics::CleanupTexture(int id)
 {
 	if( (id < 0)||((MAX_TEXTURE -1) < id) ){ return; }
@@ -791,30 +791,30 @@ void D3DGraphics::CleanupTexture(int id)
 		ptextures[id] = NULL;
 
 #ifdef ENABLE_DEBUGLOG
-		//ƒƒO‚Éo—Í
-		OutputLog.WriteLog(LOG_CLEANUP, "ƒeƒNƒXƒ`ƒƒ", id);
+		//ãƒ­ã‚°ã«å‡ºåŠ›
+		OutputLog.WriteLog(LOG_CLEANUP, "ãƒ†ã‚¯ã‚¹ãƒãƒ£", id);
 #endif
 	}
 }
 
-//! @brief ‘S‚Ä‚Ì•`‰æˆ—‚ğŠJn
-//! @return ¬Œ÷F0@¸”sF1
-//! @attention •`‰æˆ—‚ÌÅ‰‚ÉŒÄ‚Ño‚·•K—v‚ª‚ ‚è‚Ü‚·B
+//! @brief å…¨ã¦ã®æç”»å‡¦ç†ã‚’é–‹å§‹
+//! @return æˆåŠŸï¼š0ã€€å¤±æ•—ï¼š1
+//! @attention æç”»å‡¦ç†ã®æœ€åˆã«å‘¼ã³å‡ºã™å¿…è¦ãŒã‚ã‚Šã¾ã™ã€‚
 int D3DGraphics::StartRender()
 {
 	if( StartRenderFlag == true ){ return 1; }
 
-	//—Ìˆæ‚ğ‰Šú‰»
+	//é ˜åŸŸã‚’åˆæœŸåŒ–
 	pd3dDevice->Clear(0, NULL, D3DCLEAR_TARGET | D3DCLEAR_ZBUFFER, D3DCOLOR_XRGB(0,0,0), 1.0f, 0);
 
 	if( SUCCEEDED( pd3dDevice->BeginScene() ) ){
-		//Zƒoƒbƒtƒ@‰Šú‰»
+		//Zãƒãƒƒãƒ•ã‚¡åˆæœŸåŒ–
 		pd3dDevice->SetRenderState(D3DRS_ZENABLE, D3DZB_TRUE);
 
-		//À•Wƒ[ƒ’n“_‚Éƒ[ƒ‹ƒh•ÏŠ·s—ñ
+		//åº§æ¨™ã‚¼ãƒ­åœ°ç‚¹ã«ãƒ¯ãƒ¼ãƒ«ãƒ‰å¤‰æ›è¡Œåˆ—
 		ResetWorldTransform();
 
-		//•`‰æ’†‚Ìƒtƒ‰ƒO‚ğ—§‚Ä‚é
+		//æç”»ä¸­ã®ãƒ•ãƒ©ã‚°ã‚’ç«‹ã¦ã‚‹
 		StartRenderFlag = true;
 		return 0;
 	}
@@ -822,19 +822,19 @@ int D3DGraphics::StartRender()
 	return 1;
 }
 
-//! @brief ‘S‚Ä‚Ì•`‰æˆ—‚ğI—¹
-//! @return ¬Œ÷Ffalse@¸”sFtrue
-//! @attention •`‰æˆ—‚ÌÅŒã‚ÉŒÄ‚Ño‚·•K—v‚ª‚ ‚è‚Ü‚·B
+//! @brief å…¨ã¦ã®æç”»å‡¦ç†ã‚’çµ‚äº†
+//! @return æˆåŠŸï¼šfalseã€€å¤±æ•—ï¼štrue
+//! @attention æç”»å‡¦ç†ã®æœ€å¾Œã«å‘¼ã³å‡ºã™å¿…è¦ãŒã‚ã‚Šã¾ã™ã€‚
 bool D3DGraphics::EndRender()
 {
-	//•`‰æ’†‚È‚çI—¹
+	//æç”»ä¸­ãªã‚‰çµ‚äº†
 	if( StartRenderFlag == true ){
 		pd3dDevice->EndScene();
 	}
 
 	HRESULT hr = pd3dDevice->Present(NULL, NULL, NULL, NULL);
 
-	//ƒtƒ‰ƒO‚ğ false ‚É
+	//ãƒ•ãƒ©ã‚°ã‚’ false ã«
 	StartRenderFlag = false;
 
 	if( hr == D3DERR_DEVICELOST ){
@@ -843,16 +843,16 @@ bool D3DGraphics::EndRender()
 	return false;
 }
 
-//! @brief Zƒoƒbƒtƒ@‚ğƒŠƒZƒbƒg
+//! @brief Zãƒãƒƒãƒ•ã‚¡ã‚’ãƒªã‚»ãƒƒãƒˆ
 void D3DGraphics::ResetZbuffer()
 {
-	//Zƒoƒbƒtƒ@‚ğˆê“x–³Œø‚É‚µA‰Šú‰»ŒãAÄ“x—LŒø‚É
+	//Zãƒãƒƒãƒ•ã‚¡ã‚’ä¸€åº¦ç„¡åŠ¹ã«ã—ã€åˆæœŸåŒ–å¾Œã€å†åº¦æœ‰åŠ¹ã«
 	pd3dDevice->SetRenderState(D3DRS_ZENABLE, D3DZB_FALSE);
 	pd3dDevice->Clear(0, NULL, D3DCLEAR_ZBUFFER, D3DCOLOR_XRGB(0,0,0), 1.0f, 0);
 	pd3dDevice->SetRenderState(D3DRS_ZENABLE, D3DZB_TRUE);
 }
 
-//! @brief ƒ[ƒ‹ƒh‹óŠÔ‚ğŒ´“_i0,0,0j‚É–ß‚·@‚È‚Ç
+//! @brief ãƒ¯ãƒ¼ãƒ«ãƒ‰ç©ºé–“ã‚’åŸç‚¹ï¼ˆ0,0,0ï¼‰ã«æˆ»ã™ã€€ãªã©
 void D3DGraphics::ResetWorldTransform()
 {
 	D3DXMATRIX matWorld;
@@ -860,109 +860,109 @@ void D3DGraphics::ResetWorldTransform()
 	pd3dDevice->SetTransform(D3DTS_WORLD, &matWorld);
 }
 
-//! @brief ƒ[ƒ‹ƒh‹óŠÔ‚ÌÀ•WEŠp“xEŠg‘å—¦‚ğİ’è
-//! @param x XÀ•W
-//! @param y YÀ•W
-//! @param z ZÀ•W
-//! @param rx ‰¡²Šp“x
-//! @param ry c²Šp“x
-//! @param size Šg‘å—¦
+//! @brief ãƒ¯ãƒ¼ãƒ«ãƒ‰ç©ºé–“ã®åº§æ¨™ãƒ»è§’åº¦ãƒ»æ‹¡å¤§ç‡ã‚’è¨­å®š
+//! @param x Xåº§æ¨™
+//! @param y Yåº§æ¨™
+//! @param z Zåº§æ¨™
+//! @param rx æ¨ªè»¸è§’åº¦
+//! @param ry ç¸¦è»¸è§’åº¦
+//! @param size æ‹¡å¤§ç‡
 void D3DGraphics::SetWorldTransform(float x, float y, float z, float rx, float ry, float size)
 {
 	SetWorldTransform(x, y, z, rx, ry, 0.0f, size);
 }
 
-//! @brief ƒ[ƒ‹ƒh‹óŠÔ‚ÌÀ•WEŠp“xEŠg‘å—¦‚ğİ’è
-//! @param x XÀ•W
-//! @param y YÀ•W
-//! @param z ZÀ•W
-//! @param rx ‰¡²Šp“x
-//! @param ry1 c²Šp“x
-//! @param ry2 c²Šp“x
-//! @param size Šg‘å—¦
+//! @brief ãƒ¯ãƒ¼ãƒ«ãƒ‰ç©ºé–“ã®åº§æ¨™ãƒ»è§’åº¦ãƒ»æ‹¡å¤§ç‡ã‚’è¨­å®š
+//! @param x Xåº§æ¨™
+//! @param y Yåº§æ¨™
+//! @param z Zåº§æ¨™
+//! @param rx æ¨ªè»¸è§’åº¦
+//! @param ry1 ç¸¦è»¸è§’åº¦
+//! @param ry2 ç¸¦è»¸è§’åº¦
+//! @param size æ‹¡å¤§ç‡
 void D3DGraphics::SetWorldTransform(float x, float y, float z, float rx, float ry1, float ry2, float size)
 {
 	D3DXMATRIX matWorld;
 	D3DXMATRIX matWorld1, matWorld2, matWorld3, matWorld4, matWorld5;
 
-	//s—ñ‚ğì¬
+	//è¡Œåˆ—ã‚’ä½œæˆ
 	D3DXMatrixTranslation(&matWorld1, x, y, z);
 	D3DXMatrixRotationY(&matWorld2, rx);
 	D3DXMatrixRotationX(&matWorld3, ry1);
 	D3DXMatrixRotationZ(&matWorld4, ry2);
 	D3DXMatrixScaling(&matWorld5, size, size, size);
 
-	//ŒvZ
+	//è¨ˆç®—
 	matWorld = matWorld5 * matWorld4 * matWorld3 * matWorld2 * matWorld1;
 
-	//“K—p
+	//é©ç”¨
 	pd3dDevice->SetTransform( D3DTS_WORLD, &matWorld );
 }
 
-//! @brief ƒ[ƒ‹ƒh‹óŠÔ‚ÌÀ•WEŠp“xEŠg‘å—¦‚ğİ’èiƒGƒtƒFƒNƒg—pj
-//! @param x XÀ•W
-//! @param y YÀ•W
-//! @param z ZÀ•W
-//! @param rx ‰¡²Šp“x
-//! @param ry c²Šp“x
-//! @param rt ‰ñ“]Šp“x
-//! @param size Šg‘å—¦
+//! @brief ãƒ¯ãƒ¼ãƒ«ãƒ‰ç©ºé–“ã®åº§æ¨™ãƒ»è§’åº¦ãƒ»æ‹¡å¤§ç‡ã‚’è¨­å®šï¼ˆã‚¨ãƒ•ã‚§ã‚¯ãƒˆç”¨ï¼‰
+//! @param x Xåº§æ¨™
+//! @param y Yåº§æ¨™
+//! @param z Zåº§æ¨™
+//! @param rx æ¨ªè»¸è§’åº¦
+//! @param ry ç¸¦è»¸è§’åº¦
+//! @param rt å›è»¢è§’åº¦
+//! @param size æ‹¡å¤§ç‡
 void D3DGraphics::SetWorldTransformEffect(float x, float y, float z, float rx, float ry, float rt, float size)
 {
 	D3DXMATRIX matWorld;
 	D3DXMATRIX matWorld1, matWorld2, matWorld3, matWorld4, matWorld5;
 
-	//s—ñ‚ğì¬
+	//è¡Œåˆ—ã‚’ä½œæˆ
 	D3DXMatrixTranslation(&matWorld1, x, y, z);
 	D3DXMatrixRotationY(&matWorld2, rx);
 	D3DXMatrixRotationZ(&matWorld3, ry);
 	D3DXMatrixRotationX(&matWorld4, rt);
 	D3DXMatrixScaling(&matWorld5, size, size, size);
 
-	//ŒvZ
+	//è¨ˆç®—
 	matWorld = matWorld5 * matWorld4 * matWorld3 * matWorld2 * matWorld1;
 
-	//“K—p
+	//é©ç”¨
 	pd3dDevice->SetTransform( D3DTS_WORLD, &matWorld );
 }
 
-//! @brief ƒ[ƒ‹ƒh‹óŠÔ‚ğl‚ª•Ší‚ğ‚ÂêŠ‚Éİ’è
-//! @param x XÀ•W
-//! @param y YÀ•W
-//! @param z ZÀ•W
-//! @param mx èŒ³‚ğŒ´“_‚É‚µ‚½ ƒ‚ƒfƒ‹‚ÌXÀ•W
-//! @param my èŒ³‚ğŒ´“_‚É‚µ‚½ ƒ‚ƒfƒ‹‚ÌYÀ•W
-//! @param mz èŒ³‚ğŒ´“_‚É‚µ‚½ ƒ‚ƒfƒ‹‚ÌZÀ•W
-//! @param rx ‰¡²Šp“x
-//! @param ry c²Šp“x
-//! @param size Šg‘å—¦
+//! @brief ãƒ¯ãƒ¼ãƒ«ãƒ‰ç©ºé–“ã‚’äººãŒæ­¦å™¨ã‚’æŒã¤å ´æ‰€ã«è¨­å®š
+//! @param x Xåº§æ¨™
+//! @param y Yåº§æ¨™
+//! @param z Zåº§æ¨™
+//! @param mx æ‰‹å…ƒã‚’åŸç‚¹ã«ã—ãŸ ãƒ¢ãƒ‡ãƒ«ã®Xåº§æ¨™
+//! @param my æ‰‹å…ƒã‚’åŸç‚¹ã«ã—ãŸ ãƒ¢ãƒ‡ãƒ«ã®Yåº§æ¨™
+//! @param mz æ‰‹å…ƒã‚’åŸç‚¹ã«ã—ãŸ ãƒ¢ãƒ‡ãƒ«ã®Zåº§æ¨™
+//! @param rx æ¨ªè»¸è§’åº¦
+//! @param ry ç¸¦è»¸è§’åº¦
+//! @param size æ‹¡å¤§ç‡
 void D3DGraphics::SetWorldTransformHumanWeapon(float x, float y, float z, float mx, float my, float mz, float rx, float ry, float size)
 {
 	D3DXMATRIX matWorld;
 	D3DXMATRIX matWorld1, matWorld2, matWorld3, matWorld4, matWorld5;
 
-	//s—ñ‚ğì¬
+	//è¡Œåˆ—ã‚’ä½œæˆ
 	D3DXMatrixTranslation(&matWorld1, x, y, z);
 	D3DXMatrixRotationY(&matWorld2, rx);
 	D3DXMatrixRotationX(&matWorld3, ry);
 	D3DXMatrixTranslation(&matWorld4, mx, my, mz);
 	D3DXMatrixScaling(&matWorld5, size, size, size);
 
-	//ŒvZ
+	//è¨ˆç®—
 	matWorld = matWorld5 * matWorld4 * matWorld3 * matWorld2 * matWorld1;
 
-	//“K—p
+	//é©ç”¨
 	pd3dDevice->SetTransform( D3DTS_WORLD, &matWorld );
 }
 
-//! @brief ƒ[ƒ‹ƒh‹óŠÔ‚ğŠ‚µ‚Ä‚¢‚é•Ší‚ğ•`‰æ‚·‚éêŠ‚Éİ’è
-//! @param rotation •Ší‚ğ‰ñ“]‚³‚¹‚é
-//! @param camera_rx ƒJƒƒ‰‚Ì‰¡²Šp“x
-//! @param camera_ry ƒJƒƒ‰‚Ìc²Šp“x
-//! @param rx •Ší‚Ì‚Ìc²Šp“x
-//! @param size •`‰æƒTƒCƒY
-//! @note rotationEE@trueFŒ»İ‚Á‚Ä‚¢‚é•Ší‚Å‚·B@falseF—\”õ‚Ì•Ší‚Å‚·Birx ‚Í–³‹‚³‚ê‚Ü‚·j
-//! @todo ˆÊ’u‚âƒTƒCƒY‚Ì”÷’²®
+//! @brief ãƒ¯ãƒ¼ãƒ«ãƒ‰ç©ºé–“ã‚’æ‰€æŒã—ã¦ã„ã‚‹æ­¦å™¨ã‚’æç”»ã™ã‚‹å ´æ‰€ã«è¨­å®š
+//! @param rotation æ­¦å™¨ã‚’å›è»¢ã•ã›ã‚‹
+//! @param camera_rx ã‚«ãƒ¡ãƒ©ã®æ¨ªè»¸è§’åº¦
+//! @param camera_ry ã‚«ãƒ¡ãƒ©ã®ç¸¦è»¸è§’åº¦
+//! @param rx æ­¦å™¨ã®ã®ç¸¦è»¸è§’åº¦
+//! @param size æç”»ã‚µã‚¤ã‚º
+//! @note rotationãƒ»ãƒ»ã€€trueï¼šç¾åœ¨æŒã£ã¦ã„ã‚‹æ­¦å™¨ã§ã™ã€‚ã€€falseï¼šäºˆå‚™ã®æ­¦å™¨ã§ã™ã€‚ï¼ˆrx ã¯ç„¡è¦–ã•ã‚Œã¾ã™ï¼‰
+//! @todo ä½ç½®ã‚„ã‚µã‚¤ã‚ºã®å¾®èª¿æ•´
 void D3DGraphics::SetWorldTransformPlayerWeapon(bool rotation, float camera_rx, float camera_ry, float rx, float size)
 {
 	D3DXMATRIX matWorld;
@@ -981,21 +981,21 @@ void D3DGraphics::SetWorldTransformPlayerWeapon(bool rotation, float camera_rx, 
 
 	pd3dDevice->GetViewport(&pViewport);
 
-	//ƒJƒƒ‰À•W
+	//ã‚«ãƒ¡ãƒ©åº§æ¨™
 	pd3dDevice->GetTransform(D3DTS_VIEW, &matWorldV);
 
-	//ƒJƒƒ‰İ’èiË‰e•ÏŠ·s—ñjviewangle
+	//ã‚«ãƒ¡ãƒ©è¨­å®šï¼ˆå°„å½±å¤‰æ›è¡Œåˆ—ï¼‰viewangle
 	pd3dDevice->GetTransform(D3DTS_PROJECTION, &matProj);
 
 	D3DXMatrixIdentity(&matWorld);
 
-	//ƒXƒNƒŠ[ƒ“‹óŠÔ‚©‚çƒIƒuƒWƒFƒNƒg‹óŠÔ‚ÉƒxƒNƒgƒ‹‚ğË‰e
+	//ã‚¹ã‚¯ãƒªãƒ¼ãƒ³ç©ºé–“ã‹ã‚‰ã‚ªãƒ–ã‚¸ã‚§ã‚¯ãƒˆç©ºé–“ã«ãƒ™ã‚¯ãƒˆãƒ«ã‚’å°„å½±
 	D3DXVec3Unproject(&p1, &p1, &pViewport, &matProj, &matWorldV, &matWorld);
 
 	//size = size * 0.3f;
 	size = size * (0.0004f*SCREEN_HEIGHT*SCREEN_HEIGHT - 0.92f*SCREEN_HEIGHT + 650.0f) / 1000.f;
 
-	//s—ñŒvZ
+	//è¡Œåˆ—è¨ˆç®—
 	D3DXMatrixTranslation(&matWorld1, p1.x, p1.y, p1.z);
 	D3DXMatrixRotationY(&matWorld2, camera_rx *-1);
 	D3DXMatrixRotationZ(&matWorld3, camera_ry);
@@ -1009,14 +1009,14 @@ void D3DGraphics::SetWorldTransformPlayerWeapon(bool rotation, float camera_rx, 
 
 	matWorld = matWorld6 * matWorld5 * matWorld3 * matWorld2 * matWorld1;
 
-	//“K—p
+	//é©ç”¨
 	pd3dDevice->SetTransform( D3DTS_WORLD, &matWorld );
 }
 
-//! @brief ƒ[ƒ‹ƒh‹óŠÔ‚ÌÀ•W‚ğæ“¾
-//! @param *x x²‚ğó‚¯æ‚éƒ|ƒCƒ“ƒ^
-//! @param *y y²‚ğó‚¯æ‚éƒ|ƒCƒ“ƒ^
-//! @param *z z²‚ğó‚¯æ‚éƒ|ƒCƒ“ƒ^
+//! @brief ãƒ¯ãƒ¼ãƒ«ãƒ‰ç©ºé–“ã®åº§æ¨™ã‚’å–å¾—
+//! @param *x xè»¸ã‚’å—ã‘å–ã‚‹ãƒã‚¤ãƒ³ã‚¿
+//! @param *y yè»¸ã‚’å—ã‘å–ã‚‹ãƒã‚¤ãƒ³ã‚¿
+//! @param *z zè»¸ã‚’å—ã‘å–ã‚‹ãƒã‚¤ãƒ³ã‚¿
 void D3DGraphics::GetWorldTransformPos(float *x, float *y, float *z)
 {
 	D3DXMATRIX matWorld;
@@ -1026,13 +1026,13 @@ void D3DGraphics::GetWorldTransformPos(float *x, float *y, float *z)
 	*z = matWorld._43;
 }
 
-//! @brief ƒtƒHƒO‚ğİ’è
-//! @param skynumber ‹ó‚Ì”Ô†
+//! @brief ãƒ•ã‚©ã‚°ã‚’è¨­å®š
+//! @param skynumber ç©ºã®ç•ªå·
 void D3DGraphics::SetFog(int skynumber)
 {
 	D3DCOLOR skycolor;
 
-	//‹ó‚Ì”Ô†‚É‚æ‚èF‚ğŒˆ’è
+	//ç©ºã®ç•ªå·ã«ã‚ˆã‚Šè‰²ã‚’æ±ºå®š
 	switch(skynumber){
 		case 1: skycolor = D3DCOLOR_RGBA(64, 64+16, 64, 0); break;
 		case 2: skycolor = D3DCOLOR_RGBA(16, 16, 16, 0); break;
@@ -1042,28 +1042,28 @@ void D3DGraphics::SetFog(int skynumber)
 		default: skycolor = D3DCOLOR_RGBA(0, 0, 0, 0); break;
 	}
 
-	//ƒtƒHƒO‚ğİ’è
+	//ãƒ•ã‚©ã‚°ã‚’è¨­å®š
 	pd3dDevice->SetRenderState(D3DRS_FOGCOLOR, skycolor);
 }
 
-//! @brief ƒJƒƒ‰i‹“_j‚ğİ’è
-//! @param camera_x ƒJƒƒ‰‚ÌXÀ•W
-//! @param camera_y ƒJƒƒ‰‚ÌYÀ•W
-//! @param camera_z ƒJƒƒ‰‚ÌZÀ•W
-//! @param camera_rx ƒJƒƒ‰‚Ì‰¡²Šp“x
-//! @param camera_ry ƒJƒƒ‰‚Ìc²Šp“x
-//! @param viewangle ‹–ìŠp
+//! @brief ã‚«ãƒ¡ãƒ©ï¼ˆè¦–ç‚¹ï¼‰ã‚’è¨­å®š
+//! @param camera_x ã‚«ãƒ¡ãƒ©ã®Xåº§æ¨™
+//! @param camera_y ã‚«ãƒ¡ãƒ©ã®Yåº§æ¨™
+//! @param camera_z ã‚«ãƒ¡ãƒ©ã®Zåº§æ¨™
+//! @param camera_rx ã‚«ãƒ¡ãƒ©ã®æ¨ªè»¸è§’åº¦
+//! @param camera_ry ã‚«ãƒ¡ãƒ©ã®ç¸¦è»¸è§’åº¦
+//! @param viewangle è¦–é‡è§’
 void D3DGraphics::SetCamera(float camera_x, float camera_y, float camera_z, float camera_rx, float camera_ry, float viewangle)
 {
 	float vUpVecF;
 	D3DXMATRIX matWorld;
 	D3DXMATRIXA16 matView;
 
-	//camera_ry‚ğ -PI`PI ‚ÌŠÔ‚É³‹K‰»
+	//camera_ryã‚’ -PIï½PI ã®é–“ã«æ­£è¦åŒ–
 	for(; camera_ry>D3DX_PI; camera_ry -= D3DX_PI*2){}
 	for(; camera_ry<D3DX_PI*-1; camera_ry += D3DX_PI*2){}
 
-	//ƒJƒƒ‰‚ÌŒü‚«‚ğŒˆ’è
+	//ã‚«ãƒ¡ãƒ©ã®å‘ãã‚’æ±ºå®š
 	if( fabs(camera_ry) < D3DX_PI/2 ){
 		vUpVecF = 1.0f;
 	}
@@ -1074,25 +1074,25 @@ void D3DGraphics::SetCamera(float camera_x, float camera_y, float camera_z, floa
 	D3DXMatrixIdentity(&matWorld);
 	pd3dDevice->SetTransform(D3DTS_WORLD, &matWorld);
 
-	//ƒJƒƒ‰À•W
+	//ã‚«ãƒ¡ãƒ©åº§æ¨™
 	D3DXVECTOR3 vEyePt( camera_x, camera_y, camera_z );
 	D3DXVECTOR3 vLookatPt( cos(camera_rx)*cos(camera_ry) + camera_x, sin(camera_ry) + camera_y, sin(camera_rx)*cos(camera_ry) + camera_z );
 	D3DXVECTOR3 vUpVec( 0.0f, vUpVecF, 0.0f );
 	D3DXMatrixLookAtLH( &matView, &vEyePt, &vLookatPt, &vUpVec );
 	pd3dDevice->SetTransform( D3DTS_VIEW, &matView );
 
-	//ƒJƒƒ‰İ’èiË‰e•ÏŠ·s—ñjviewangle
+	//ã‚«ãƒ¡ãƒ©è¨­å®šï¼ˆå°„å½±å¤‰æ›è¡Œåˆ—ï¼‰viewangle
 	D3DXMATRIXA16 matProj;
 	D3DXMatrixPerspectiveFovLH( &matProj, viewangle, aspect, CLIPPINGPLANE_NEAR, CLIPPINGPLANE_FAR);
 	pd3dDevice->SetTransform(D3DTS_PROJECTION, &matProj);
 }
 
-//! @brief ƒ}ƒbƒvƒf[ƒ^‚ğæ‚è‚Ş
-//! @param in_blockdata ƒuƒƒbƒNƒf[ƒ^
-//! @param directory ƒuƒƒbƒNƒf[ƒ^‚ª‘¶İ‚·‚éƒfƒBƒŒƒNƒgƒŠ
+//! @brief ãƒãƒƒãƒ—ãƒ‡ãƒ¼ã‚¿ã‚’å–ã‚Šè¾¼ã‚€
+//! @param in_blockdata ãƒ–ãƒ­ãƒƒã‚¯ãƒ‡ãƒ¼ã‚¿
+//! @param directory ãƒ–ãƒ­ãƒƒã‚¯ãƒ‡ãƒ¼ã‚¿ãŒå­˜åœ¨ã™ã‚‹ãƒ‡ã‚£ãƒ¬ã‚¯ãƒˆãƒª
 void D3DGraphics::LoadMapdata(BlockDataInterface* in_blockdata, char *directory)
 {
-	//ƒuƒƒbƒNƒf[ƒ^‚ªw’è‚³‚ê‚Ä‚¢‚È‚¯‚ê‚ÎAˆ—‚µ‚È‚¢B
+	//ãƒ–ãƒ­ãƒƒã‚¯ãƒ‡ãƒ¼ã‚¿ãŒæŒ‡å®šã•ã‚Œã¦ã„ãªã‘ã‚Œã°ã€å‡¦ç†ã—ãªã„ã€‚
 	if( in_blockdata == NULL ){ return; }
 
 	char fname[MAX_PATH];
@@ -1102,19 +1102,19 @@ void D3DGraphics::LoadMapdata(BlockDataInterface* in_blockdata, char *directory)
 	int vID[4];
 	int uvID[4];
 
-	//ƒNƒ‰ƒX‚ğİ’è
+	//ã‚¯ãƒ©ã‚¹ã‚’è¨­å®š
 	blockdata = in_blockdata;
 
-	//ƒeƒNƒXƒ`ƒƒ“Ç‚İ‚İ
+	//ãƒ†ã‚¯ã‚¹ãƒãƒ£èª­ã¿è¾¼ã¿
 	for(int i=0; i<TOTAL_BLOCKTEXTURE; i++){
-		//ƒeƒNƒXƒ`ƒƒ–¼‚ğæ“¾
+		//ãƒ†ã‚¯ã‚¹ãƒãƒ£åã‚’å–å¾—
 		blockdata->GetTexture(fname, i);
 
-		if( strcmp(fname, "") == 0 ){	//w’è‚³‚ê‚Ä‚¢‚È‚¯‚ê‚ÎAˆ—‚µ‚È‚¢
+		if( strcmp(fname, "") == 0 ){	//æŒ‡å®šã•ã‚Œã¦ã„ãªã‘ã‚Œã°ã€å‡¦ç†ã—ãªã„
 			mapTextureID[i] = -1;
 		}
 		else{
-			//uƒfƒBƒŒƒNƒgƒŠ{ƒtƒ@ƒCƒ‹–¼v‚ğ¶¬‚µA“Ç‚İ‚Ş
+			//ã€Œãƒ‡ã‚£ãƒ¬ã‚¯ãƒˆãƒªï¼‹ãƒ•ã‚¡ã‚¤ãƒ«åã€ã‚’ç”Ÿæˆã—ã€èª­ã¿è¾¼ã‚€
 			strcpy(fnamefull, directory);
 			strcat(fnamefull, fname);
 			mapTextureID[i] = LoadTexture(fnamefull, false, false);
@@ -1122,31 +1122,31 @@ void D3DGraphics::LoadMapdata(BlockDataInterface* in_blockdata, char *directory)
 	}
 
 #ifdef ENABLE_DEBUGLOG
-	//ƒƒO‚Éo—Í
-	OutputLog.WriteLog(LOG_LOAD, "ƒ}ƒbƒv", "i’¸“_ƒf[ƒ^j");
+	//ãƒ­ã‚°ã«å‡ºåŠ›
+	OutputLog.WriteLog(LOG_LOAD, "ãƒãƒƒãƒ—", "ï¼ˆé ‚ç‚¹ãƒ‡ãƒ¼ã‚¿ï¼‰");
 #endif
 
 #ifdef BLOCKDATA_GPUMEMORY
 	VERTEXTXTA* pVertices;
 
-	//ƒuƒƒbƒN”‚ğæ“¾
+	//ãƒ–ãƒ­ãƒƒã‚¯æ•°ã‚’å–å¾—
 	bs = blockdata->GetTotaldatas();
 
-	//ƒuƒƒbƒN”•ª‚Ìƒoƒbƒtƒ@[‚ğì¬
+	//ãƒ–ãƒ­ãƒƒã‚¯æ•°åˆ†ã®ãƒãƒƒãƒ•ã‚¡ãƒ¼ã‚’ä½œæˆ
 	pd3dDevice->CreateVertexBuffer(bs*6*4*sizeof(VERTEXTXTA), 0, D3DFVF_XYZ|D3DFVF_DIFFUSE|D3DFVF_TEX1, D3DPOOL_DEFAULT, &g_pVB, NULL);
 
 	for(int i=0; i<bs; i++){
-		//ƒf[ƒ^‚ğæ“¾
+		//ãƒ‡ãƒ¼ã‚¿ã‚’å–å¾—
 		blockdata->Getdata(&data, i);
 
 		for(int j=0; j<6; j++){
-			//–Ê‚Ì’¸“_ƒf[ƒ^‚ÌŠÖ˜A•t‚¯‚ğæ“¾
+			//é¢ã®é ‚ç‚¹ãƒ‡ãƒ¼ã‚¿ã®é–¢é€£ä»˜ã‘ã‚’å–å¾—
 			blockdataface(j, &vID[0], &uvID[0]);
 
-			//GPU‚ğƒƒbƒNi1–Ê•ªj
+			//GPUã‚’ãƒ­ãƒƒã‚¯ï¼ˆ1é¢åˆ†ï¼‰
 			g_pVB->Lock((i*6+j)*4*sizeof(VERTEXTXTA), 4*sizeof(VERTEXTXTA), (void**)&pVertices, 0);
 
-			//’¸“_À•WEUVÀ•WEF‚ğİ’è
+			//é ‚ç‚¹åº§æ¨™ãƒ»UVåº§æ¨™ãƒ»è‰²ã‚’è¨­å®š
 			pVertices[0].position = D3DXVECTOR3( data.x[ vID[1] ], data.y[ vID[1] ], data.z[ vID[1] ] );
 			pVertices[0].tu       = data.material[j].u[ uvID[1] ];
 			pVertices[0].tv       = data.material[j].v[ uvID[1] ];
@@ -1163,23 +1163,23 @@ void D3DGraphics::LoadMapdata(BlockDataInterface* in_blockdata, char *directory)
 				pVertices[k].color = D3DCOLOR_COLORVALUE(data.material[j].shadow, data.material[j].shadow, data.material[j].shadow, 1.0f);
 			}
 
-			//GPU‚ÌƒƒbƒN‚ğ‰ğœ
+			//GPUã®ãƒ­ãƒƒã‚¯ã‚’è§£é™¤
 			g_pVB->Unlock();
 		}
 	}
 #else
-	//ƒuƒƒbƒN”‚ğæ“¾
+	//ãƒ–ãƒ­ãƒƒã‚¯æ•°ã‚’å–å¾—
 	bs = blockdata->GetTotaldatas();
 
 	for(int i=0; i<bs; i++){
-		//ƒf[ƒ^‚ğæ“¾
+		//ãƒ‡ãƒ¼ã‚¿ã‚’å–å¾—
 		blockdata->Getdata(&data, i);
 
 		for(int j=0; j<6; j++){
-			//–Ê‚Ì’¸“_ƒf[ƒ^‚ÌŠÖ˜A•t‚¯‚ğæ“¾
+			//é¢ã®é ‚ç‚¹ãƒ‡ãƒ¼ã‚¿ã®é–¢é€£ä»˜ã‘ã‚’å–å¾—
 			blockdataface(j, vID, uvID);
 
-			//’¸“_À•WEUVÀ•WEF‚ğİ’è
+			//é ‚ç‚¹åº§æ¨™ãƒ»UVåº§æ¨™ãƒ»è‰²ã‚’è¨­å®š
 			g_pVertices[i][j][0].position = D3DXVECTOR3( data.x[ vID[1] ], data.y[ vID[1] ], data.z[ vID[1] ] );
 			g_pVertices[i][j][0].tu       = data.material[j].u[ uvID[1] ];
 			g_pVertices[i][j][0].tv       = data.material[j].v[ uvID[1] ];
@@ -1200,23 +1200,23 @@ void D3DGraphics::LoadMapdata(BlockDataInterface* in_blockdata, char *directory)
 #endif
 
 #ifdef ENABLE_DEBUGLOG
-	//ƒƒO‚Éo—Í
+	//ãƒ­ã‚°ã«å‡ºåŠ›
 	OutputLog.WriteLog(LOG_COMPLETE, "", "");
 #endif
 }
 
-//! @brief ƒ}ƒbƒvƒf[ƒ^‚ğ•`‰æ
-//! @param wireframe ƒƒCƒ„[ƒtƒŒ[ƒ€•\¦
+//! @brief ãƒãƒƒãƒ—ãƒ‡ãƒ¼ã‚¿ã‚’æç”»
+//! @param wireframe ãƒ¯ã‚¤ãƒ¤ãƒ¼ãƒ•ãƒ¬ãƒ¼ãƒ è¡¨ç¤º
 void D3DGraphics::RenderMapdata(bool wireframe)
 {
-	//ƒuƒƒbƒNƒf[ƒ^‚ª“Ç‚İ‚Ü‚ê‚Ä‚¢‚È‚¯‚ê‚ÎAˆ—‚µ‚È‚¢B
+	//ãƒ–ãƒ­ãƒƒã‚¯ãƒ‡ãƒ¼ã‚¿ãŒèª­ã¿è¾¼ã¾ã‚Œã¦ã„ãªã‘ã‚Œã°ã€å‡¦ç†ã—ãªã„ã€‚
 	if( blockdata == NULL ){ return; }
 
 	struct blockdata data;
 	int textureID;
 
 	if( wireframe == true ){
-		//ƒƒCƒ„[ƒtƒŒ[ƒ€•\¦
+		//ãƒ¯ã‚¤ãƒ¤ãƒ¼ãƒ•ãƒ¬ãƒ¼ãƒ è¡¨ç¤º
 		for(int i=0; i<bs; i++){
 			blockdata->Getdata(&data, i);
 			Renderline(data.x[0], data.y[0], data.z[0], data.x[1], data.y[1], data.z[1], GetColorCode(0.0f,1.0f,0.0f,1.0f));
@@ -1235,16 +1235,16 @@ void D3DGraphics::RenderMapdata(bool wireframe)
 		return;
 	}
 
-	//[“xƒoƒbƒtƒ@”äŠrŠÖ”‚ğİ’è
+	//æ·±åº¦ãƒãƒƒãƒ•ã‚¡æ¯”è¼ƒé–¢æ•°ã‚’è¨­å®š
 	//pd3dDevice->SetRenderState(D3DRS_ZFUNC, D3DCMP_LESS);
 
 
 #ifdef BLOCKDATA_GPUMEMORY
-	//ƒf[ƒ^İ’è
+	//ãƒ‡ãƒ¼ã‚¿è¨­å®š
 	pd3dDevice->SetStreamSource(0, g_pVB, 0, sizeof(VERTEXTXTA));
 
 	for(textureID=0; textureID<TOTAL_BLOCKTEXTURE; textureID++){
-		//ƒeƒNƒXƒ`ƒƒ‚ª³í‚É“Ç‚İ‚ß‚Ä‚¢‚È‚¯‚ê‚Îİ’è
+		//ãƒ†ã‚¯ã‚¹ãƒãƒ£ãŒæ­£å¸¸ã«èª­ã¿è¾¼ã‚ã¦ã„ãªã‘ã‚Œã°è¨­å®š
 		if( mapTextureID[textureID] == -1 ){
 			pd3dDevice->SetFVF(D3DFVF_XYZ|D3DFVF_DIFFUSE);
 			pd3dDevice->SetTexture(0, NULL);
@@ -1259,26 +1259,26 @@ void D3DGraphics::RenderMapdata(bool wireframe)
 		}
 
 		for(int i=0; i<bs; i++){
-			//ƒf[ƒ^æ“¾
+			//ãƒ‡ãƒ¼ã‚¿å–å¾—
 			blockdata->Getdata(&data, i);
 
 			for(int j=0; j<6; j++){
-				//ƒeƒNƒXƒ`ƒƒ”F¯”Ô†‚ğæ“¾
+				//ãƒ†ã‚¯ã‚¹ãƒãƒ£èªè­˜ç•ªå·ã‚’å–å¾—
 				int ID = data.material[j].textureID;
 
 				if( textureID == ID ){
-					//–Ê‚ğ•`‰æ
+					//é¢ã‚’æç”»
 					pd3dDevice->DrawPrimitive(D3DPT_TRIANGLESTRIP, (i*6+j)*4, 2);
 				}
 			}
 		}
 	}
 #else
-	//ƒf[ƒ^‚ğİ’è
+	//ãƒ‡ãƒ¼ã‚¿ã‚’è¨­å®š
 	pd3dDevice->SetFVF(D3DFVF_XYZ|D3DFVF_DIFFUSE|D3DFVF_TEX1);
 
 	for(textureID=0; textureID<TOTAL_BLOCKTEXTURE; textureID++){
-		//ƒeƒNƒXƒ`ƒƒ‚ª³í‚É“Ç‚İ‚ß‚Ä‚¢‚È‚¯‚ê‚Îİ’è
+		//ãƒ†ã‚¯ã‚¹ãƒãƒ£ãŒæ­£å¸¸ã«èª­ã¿è¾¼ã‚ã¦ã„ãªã‘ã‚Œã°è¨­å®š
 		if( mapTextureID[textureID] == -1 ){
 			pd3dDevice->SetFVF(D3DFVF_XYZ|D3DFVF_DIFFUSE);
 			pd3dDevice->SetTexture(0, NULL);
@@ -1293,15 +1293,15 @@ void D3DGraphics::RenderMapdata(bool wireframe)
 		}
 
 		for(int i=0; i<bs; i++){
-			//ƒf[ƒ^æ“¾
+			//ãƒ‡ãƒ¼ã‚¿å–å¾—
 			blockdata->Getdata(&data, i);
 
 			for(int j=0; j<6; j++){
-				//ƒeƒNƒXƒ`ƒƒ”F¯”Ô†‚ğæ“¾
+				//ãƒ†ã‚¯ã‚¹ãƒãƒ£èªè­˜ç•ªå·ã‚’å–å¾—
 				int ID = data.material[j].textureID;
 
 				if( textureID == ID ){
-					//–Ê‚ğ•`‰æ
+					//é¢ã‚’æç”»
 					pd3dDevice->DrawPrimitiveUP(D3DPT_TRIANGLESTRIP, 2, g_pVertices[i][j], sizeof(VERTEXTXTA));
 				}
 			}
@@ -1309,20 +1309,20 @@ void D3DGraphics::RenderMapdata(bool wireframe)
 	}
 #endif
 
-	//[“xƒoƒbƒtƒ@”äŠrŠÖ”‚ğŒ³‚É–ß‚·
+	//æ·±åº¦ãƒãƒƒãƒ•ã‚¡æ¯”è¼ƒé–¢æ•°ã‚’å…ƒã«æˆ»ã™
 	//pd3dDevice->SetRenderState(D3DRS_ZFUNC, D3DCMP_LESSEQUAL);
 }
 
-//! @brief ƒ}ƒbƒvƒeƒNƒXƒ`ƒƒ‚ğæ“¾
-//! @param id ƒeƒNƒXƒ`ƒƒ”Ô†
-//! @return ƒeƒNƒXƒ`ƒƒ”F¯”Ô†i¸”sF-1j
+//! @brief ãƒãƒƒãƒ—ãƒ†ã‚¯ã‚¹ãƒãƒ£ã‚’å–å¾—
+//! @param id ãƒ†ã‚¯ã‚¹ãƒãƒ£ç•ªå·
+//! @return ãƒ†ã‚¯ã‚¹ãƒãƒ£èªè­˜ç•ªå·ï¼ˆå¤±æ•—ï¼š-1ï¼‰
 int D3DGraphics::GetMapTextureID(int id)
 {
 	if( (id < 0)||((TOTAL_BLOCKTEXTURE -1) < id ) ){ return -1; }
 	return mapTextureID[id];
 }
 
-//! @brief ƒ}ƒbƒvƒf[ƒ^‚ğ‰ğ•ú
+//! @brief ãƒãƒƒãƒ—ãƒ‡ãƒ¼ã‚¿ã‚’è§£æ”¾
 void D3DGraphics::CleanupMapdata()
 {
 #ifdef BLOCKDATA_GPUMEMORY
@@ -1330,13 +1330,13 @@ void D3DGraphics::CleanupMapdata()
 #endif
 	if( (bs == 0)&&(blockdata == NULL) ){ return; }
 
-	//ƒeƒNƒXƒ`ƒƒ‚ğŠJ•ú
+	//ãƒ†ã‚¯ã‚¹ãƒãƒ£ã‚’é–‹æ”¾
 	for(int i=0; i<TOTAL_BLOCKTEXTURE; i++){
 		CleanupTexture(mapTextureID[i]);
 	}
 
 #ifdef BLOCKDATA_GPUMEMORY
-	//’¸“_ƒf[ƒ^‰ğ•ú
+	//é ‚ç‚¹ãƒ‡ãƒ¼ã‚¿è§£æ”¾
 	if( g_pVB != NULL ){
 		g_pVB->Release();
 		g_pVB = NULL;
@@ -1347,22 +1347,22 @@ void D3DGraphics::CleanupMapdata()
 	blockdata = NULL;
 
 #ifdef ENABLE_DEBUGLOG
-	//ƒƒO‚Éo—Í
-	OutputLog.WriteLog(LOG_CLEANUP, "ƒ}ƒbƒv", "i’¸“_ƒf[ƒ^j");
+	//ãƒ­ã‚°ã«å‡ºåŠ›
+	OutputLog.WriteLog(LOG_CLEANUP, "ãƒãƒƒãƒ—", "ï¼ˆé ‚ç‚¹ãƒ‡ãƒ¼ã‚¿ï¼‰");
 #endif
 }
 
-//! @brief ƒ‚ƒfƒ‹ƒtƒ@ƒCƒ‹‚ğ•`‰æ
-//! @param id_model ƒ‚ƒfƒ‹”F¯”Ô†
-//! @param id_texture ƒeƒNƒXƒ`ƒƒ”F¯”Ô†
-//! @param darkflag ƒ‚ƒfƒ‹‚ğˆÃ‚­‚·‚é
+//! @brief ãƒ¢ãƒ‡ãƒ«ãƒ•ã‚¡ã‚¤ãƒ«ã‚’æç”»
+//! @param id_model ãƒ¢ãƒ‡ãƒ«èªè­˜ç•ªå·
+//! @param id_texture ãƒ†ã‚¯ã‚¹ãƒãƒ£èªè­˜ç•ªå·
+//! @param darkflag ãƒ¢ãƒ‡ãƒ«ã‚’æš—ãã™ã‚‹
 void D3DGraphics::RenderModel(int id_model, int id_texture, bool darkflag)
 {
-	//–³Œø‚Èˆø”‚ªİ’è‚³‚ê‚Ä‚¢‚ê‚Î¸”s
+	//ç„¡åŠ¹ãªå¼•æ•°ãŒè¨­å®šã•ã‚Œã¦ã„ã‚Œã°å¤±æ•—
 	if( id_model == -1 ){ return; }
 	//if( id_texture == -1 ){ return; }
 
-	//w’è‚µ‚½ƒ‚ƒfƒ‹‚ª‰Šú‰»‚³‚ê‚Ä‚¢‚È‚¯‚ê‚Î¸”s
+	//æŒ‡å®šã—ãŸãƒ¢ãƒ‡ãƒ«ãŒåˆæœŸåŒ–ã•ã‚Œã¦ã„ãªã‘ã‚Œã°å¤±æ•—
 	if( pmesh[id_model] == NULL) return;
 
 	float Brightness;
@@ -1374,16 +1374,16 @@ void D3DGraphics::RenderModel(int id_model, int id_texture, bool darkflag)
 		Brightness = 0.8f;
 	}
 
-	//ƒ‰ƒCƒeƒBƒ“ƒO—LŒø‰»
+	//ãƒ©ã‚¤ãƒ†ã‚£ãƒ³ã‚°æœ‰åŠ¹åŒ–
 	pd3dDevice->SetRenderState(D3DRS_LIGHTING, TRUE);
 
-	//F‡‚¢İ’è
+	//è‰²åˆã„è¨­å®š
 	D3DMATERIAL9 mtrl;
 	ZeroMemory(&mtrl, sizeof(mtrl));
 	mtrl.Emissive = D3DXCOLOR(Brightness, Brightness, Brightness, 1.0f);
 	pd3dDevice->SetMaterial(&mtrl);
 
-	//ƒeƒNƒXƒ`ƒƒİ’è
+	//ãƒ†ã‚¯ã‚¹ãƒãƒ£è¨­å®š
 	if( id_texture == -1 ){
 		pd3dDevice->SetTexture(0, NULL);
 	}
@@ -1394,26 +1394,26 @@ void D3DGraphics::RenderModel(int id_model, int id_texture, bool darkflag)
 		pd3dDevice->SetTexture( 0, ptextures[id_texture] );
 	}
 
-	//•`‰æ
+	//æç”»
 	for(int i=0; i<(signed)nummaterials[id_model]; i=i+1){
 		pmesh[id_model]->DrawSubset(i);
 	}
 
-	//ƒ‰ƒCƒeƒBƒ“ƒO–³Œø‰»
+	//ãƒ©ã‚¤ãƒ†ã‚£ãƒ³ã‚°ç„¡åŠ¹åŒ–
 	pd3dDevice->SetRenderState(D3DRS_LIGHTING, FALSE);
 }
 
-//! @brief ”Â‚ğ•`‰æ
-//! @param id_texture ƒeƒNƒXƒ`ƒƒ”F¯”Ô†
-//! @param alpha “§–¾“x@i0.0`1.0@0.0FŠ®‘S“§–¾j
+//! @brief æ¿ã‚’æç”»
+//! @param id_texture ãƒ†ã‚¯ã‚¹ãƒãƒ£èªè­˜ç•ªå·
+//! @param alpha é€æ˜åº¦ã€€ï¼ˆ0.0ï½1.0ã€€0.0ï¼šå®Œå…¨é€æ˜ï¼‰
 void D3DGraphics::RenderBoard(int id_texture, float alpha)
 {
-	//ƒeƒNƒXƒ`ƒƒ‚ªİ’è‚³‚ê‚Ä‚¢‚È‚¯‚ê‚ÎAˆ—‚µ‚È‚¢B
+	//ãƒ†ã‚¯ã‚¹ãƒãƒ£ãŒè¨­å®šã•ã‚Œã¦ã„ãªã‘ã‚Œã°ã€å‡¦ç†ã—ãªã„ã€‚
 	if( id_texture == -1 ){ return; }
 
 	VERTEXTXTA BoardVertices[4];
 
-	//’¸“_À•WEUVÀ•WEF/“§–¾“x‚ğİ’è
+	//é ‚ç‚¹åº§æ¨™ãƒ»UVåº§æ¨™ãƒ»è‰²/é€æ˜åº¦ã‚’è¨­å®š
 	BoardVertices[0].position = D3DXVECTOR3(0.0f, 0.5f, -0.5f);
 	BoardVertices[0].tu       = 1.0f;
 	BoardVertices[0].tv       = 0.0f;
@@ -1430,36 +1430,36 @@ void D3DGraphics::RenderBoard(int id_texture, float alpha)
 		BoardVertices[i].color = D3DCOLOR_COLORVALUE(1.0f, 1.0f, 1.0f, alpha);
 	}
 
-	//ƒAƒ‹ƒtƒ@ƒuƒŒƒ“ƒh‚ğİ’è
+	//ã‚¢ãƒ«ãƒ•ã‚¡ãƒ–ãƒ¬ãƒ³ãƒ‰ã‚’è¨­å®š
 	pd3dDevice->SetTextureStageState(0, D3DTSS_ALPHAOP, D3DTOP_MODULATE);
 	pd3dDevice->SetTextureStageState(0, D3DTSS_ALPHAARG1, D3DTA_TEXTURE);
 	pd3dDevice->SetTextureStageState(0, D3DTSS_ALPHAARG2, D3DTA_DIFFUSE);
 
-	//ƒeƒNƒXƒ`ƒƒ‚Æƒf[ƒ^Œ`®‚ğİ’è‚µ•`‰æ
+	//ãƒ†ã‚¯ã‚¹ãƒãƒ£ã¨ãƒ‡ãƒ¼ã‚¿å½¢å¼ã‚’è¨­å®šã—æç”»
 	pd3dDevice->SetTexture(0, ptextures[id_texture]);
 	pd3dDevice->SetFVF(D3DFVF_XYZ|D3DFVF_DIFFUSE|D3DFVF_TEX1);
 	pd3dDevice->DrawPrimitiveUP(D3DPT_TRIANGLESTRIP, 2, BoardVertices, sizeof(VERTEXTXTA));
 
-	//ƒAƒ‹ƒtƒ@ƒuƒŒƒ“ƒh‚ğŒ³‚É–ß‚·
+	//ã‚¢ãƒ«ãƒ•ã‚¡ãƒ–ãƒ¬ãƒ³ãƒ‰ã‚’å…ƒã«æˆ»ã™
 	pd3dDevice->SetTextureStageState(0, D3DTSS_ALPHAOP, D3DTOP_SELECTARG1);
 	pd3dDevice->SetTextureStageState(0, D3DTSS_ALPHAARG1, D3DTA_TEXTURE);
 }
 
-//! @brief ‰æ–Ê‚Ì–¾‚é‚³‚ğİ’è
-//! @param Width •
-//! @param Height ‚‚³
-//! @param Brightness ‰æ–Ê‚Ì–¾‚é‚³@i0 ‚Å•s•ÏA1 ˆÈã‚Å–¾‚é‚³‚Ì“x‡‚¢j
+//! @brief ç”»é¢ã®æ˜ã‚‹ã•ã‚’è¨­å®š
+//! @param Width å¹…
+//! @param Height é«˜ã•
+//! @param Brightness ç”»é¢ã®æ˜ã‚‹ã•ã€€ï¼ˆ0 ã§ä¸å¤‰ã€1 ä»¥ä¸Šã§æ˜ã‚‹ã•ã®åº¦åˆã„ï¼‰
 void D3DGraphics::ScreenBrightness(int Width, int Height, int Brightness)
 {
-	//–¾‚é‚³•s•Ï‚È‚çˆ—‚µ‚È‚¢iŒy—Ê‰»j
+	//æ˜ã‚‹ã•ä¸å¤‰ãªã‚‰å‡¦ç†ã—ãªã„ï¼ˆè»½é‡åŒ–ï¼‰
 	if( Brightness == 0 ){ return; }
 
-	//“§–¾“x‚ğİ’è‚µA•`‰æ
+	//é€æ˜åº¦ã‚’è¨­å®šã—ã€æç”»
 	float alpha = 0.02f * Brightness;
 	Draw2DBox(0, 0, Width, Height, D3DCOLOR_COLORVALUE(1.0f,1.0f,1.0f,alpha));
 }
 
-//! @brief yƒfƒoƒbƒN—pz’†Sü•\¦
+//! @brief ã€ãƒ‡ãƒãƒƒã‚¯ç”¨ã€‘ä¸­å¿ƒç·šè¡¨ç¤º
 void D3DGraphics::RenderCenterline()
 {
 	ResetWorldTransform();
@@ -1468,7 +1468,7 @@ void D3DGraphics::RenderCenterline()
 	Renderline(0.0f, 0.0f, 100.0f, 0.0f, 0.0f, -100.0f, GetColorCode(0.0f,0.0f,1.0f,1.0f));
 }
 
-//! @brief yƒfƒoƒbƒN—pzü•\¦
+//! @brief ã€ãƒ‡ãƒãƒƒã‚¯ç”¨ã€‘ç·šè¡¨ç¤º
 void D3DGraphics::Renderline(float x1, float y1, float z1, float x2, float y2, float z2, int color)
 {
 	VERTEXTXTA mv[2];
@@ -1486,105 +1486,105 @@ void D3DGraphics::Renderline(float x1, float y1, float z1, float x2, float y2, f
 	pd3dDevice->DrawPrimitiveUP(D3DPT_LINELIST, 1, mv, sizeof(VERTEXTXTA));
 }
 
-//! @brief 2D ƒVƒXƒeƒ€ƒtƒHƒ“ƒg‚É‚æ‚éƒeƒLƒXƒg•\¦‚ğŠJn
-//! @attention DirectX‚Ì ID3DXSprite ‚ğ‰Šú‰»‚µ‚Ä‚¢‚Ü‚·B
+//! @brief 2D ã‚·ã‚¹ãƒ†ãƒ ãƒ•ã‚©ãƒ³ãƒˆã«ã‚ˆã‚‹ãƒ†ã‚­ã‚¹ãƒˆè¡¨ç¤ºã‚’é–‹å§‹
+//! @attention DirectXã® ID3DXSprite ã‚’åˆæœŸåŒ–ã—ã¦ã„ã¾ã™ã€‚
 void D3DGraphics::Start2DMSFontTextRender()
 {
 	ptextsprite->Begin(D3DXSPRITE_ALPHABLEND);
 }
 
-//! @brief •¶š‚ğ•\¦iƒVƒXƒeƒ€ƒtƒHƒ“ƒgg—pj
-//! @param x xÀ•W
-//! @param y yÀ•W
-//! @param str •¶š—ñ@i‰üsƒR[ƒhF‰Âj
-//! @param color F
-//! @warning <b>•\¦‚Í”ñí‚É’á‘¬‚Å‚·B</b>‰æ–Ê“à‚Å‰½“x‚àŒÄ‚Ño‚·‚ÆƒpƒtƒH[ƒ}ƒ“ƒX‚É‰e‹¿‚µ‚Ü‚·B
-//! @warning u‰üsƒR[ƒh‚ğŠˆ—p‚µˆê“x‚É•\¦‚·‚évu“ú–{Œê‚ª•K—v‚È‚¢•¶š‚ÍƒeƒNƒXƒ`ƒƒƒtƒHƒ“ƒg‚ğŠˆ—p‚·‚év‚È‚Ç‚Ì‘Î‰‚ğu‚¶‚Ä‚­‚¾‚³‚¢B
-//! @attention DirectX‚Ì ID3DXSprite ‚ğg—p‚µAƒVƒXƒeƒ€ƒtƒHƒ“ƒg‚Å•\¦‚µ‚Ä‚¢‚Ü‚·B
-//! @attention ƒtƒHƒ“ƒg‚Ìí—Ş‚âƒTƒCƒY‚ÍŒÅ’è‚Å‚·B@•¶š‚ğ“ñd‚Éd‚Ë‚Ä—§‘ÌŠ´‚ğo‚³‚È‚¢‚ÆŒ©‚É‚­‚­‚È‚è‚Ü‚·B
+//! @brief æ–‡å­—ã‚’è¡¨ç¤ºï¼ˆã‚·ã‚¹ãƒ†ãƒ ãƒ•ã‚©ãƒ³ãƒˆä½¿ç”¨ï¼‰
+//! @param x xåº§æ¨™
+//! @param y yåº§æ¨™
+//! @param str æ–‡å­—åˆ—ã€€ï¼ˆæ”¹è¡Œã‚³ãƒ¼ãƒ‰ï¼šå¯ï¼‰
+//! @param color è‰²
+//! @warning <b>è¡¨ç¤ºã¯éå¸¸ã«ä½é€Ÿã§ã™ã€‚</b>ç”»é¢å†…ã§ä½•åº¦ã‚‚å‘¼ã³å‡ºã™ã¨ãƒ‘ãƒ•ã‚©ãƒ¼ãƒãƒ³ã‚¹ã«å½±éŸ¿ã—ã¾ã™ã€‚
+//! @warning ã€Œæ”¹è¡Œã‚³ãƒ¼ãƒ‰ã‚’æ´»ç”¨ã—ä¸€åº¦ã«è¡¨ç¤ºã™ã‚‹ã€ã€Œæ—¥æœ¬èªãŒå¿…è¦ãªã„æ–‡å­—ã¯ãƒ†ã‚¯ã‚¹ãƒãƒ£ãƒ•ã‚©ãƒ³ãƒˆã‚’æ´»ç”¨ã™ã‚‹ã€ãªã©ã®å¯¾å¿œã‚’è¬›ã˜ã¦ãã ã•ã„ã€‚
+//! @attention DirectXã® ID3DXSprite ã‚’ä½¿ç”¨ã—ã€ã‚·ã‚¹ãƒ†ãƒ ãƒ•ã‚©ãƒ³ãƒˆã§è¡¨ç¤ºã—ã¦ã„ã¾ã™ã€‚
+//! @attention ãƒ•ã‚©ãƒ³ãƒˆã®ç¨®é¡ã‚„ã‚µã‚¤ã‚ºã¯å›ºå®šã§ã™ã€‚ã€€æ–‡å­—ã‚’äºŒé‡ã«é‡ã­ã¦ç«‹ä½“æ„Ÿã‚’å‡ºã•ãªã„ã¨è¦‹ã«ãããªã‚Šã¾ã™ã€‚
 void D3DGraphics::Draw2DMSFontText(int x, int y, char *str, int color)
 {
 	//if( ptextsprite == NULL ){ return; }
 
-	//ƒeƒLƒXƒgƒXƒvƒ‰ƒCƒg‰Šú‰»
+	//ãƒ†ã‚­ã‚¹ãƒˆã‚¹ãƒ—ãƒ©ã‚¤ãƒˆåˆæœŸåŒ–
 	Start2DMSFontTextRender();
 
-	//Šî€À•W‚ğİ’è
+	//åŸºæº–åº§æ¨™ã‚’è¨­å®š
 	D3DXMATRIX matWorld;
 	D3DXMatrixIdentity(&matWorld);
 	ptextsprite->SetTransform(&matWorld);
 
-	//•¶š‚ğ•\¦
+	//æ–‡å­—ã‚’è¡¨ç¤º
 	RECT rc = {x, y, 0, 0};
 	pxmsfont->DrawText(ptextsprite, str, -1, &rc, DT_NOCLIP, color);
 
-	//ƒeƒLƒXƒgƒXƒvƒ‰ƒCƒg‰ğ•ú
+	//ãƒ†ã‚­ã‚¹ãƒˆã‚¹ãƒ—ãƒ©ã‚¤ãƒˆè§£æ”¾
 	End2DMSFontTextRender();
 }
 
-//! @brief •¶š‚ğ’†‰›‘µ‚¦‚Å•\¦iƒVƒXƒeƒ€ƒtƒHƒ“ƒgg—pj
-//! @param x xÀ•W
-//! @param y yÀ•W
-//! @param w ‰¡‚Ì‘å‚«‚³
-//! @param h c‚Ì‘å‚«‚³
-//! @param str •¶š—ñ@i‰üsƒR[ƒhF‰Âj
-//! @param color F
-//! @warning <b>•\¦‚Í”ñí‚É’á‘¬‚Å‚·B</b>‰æ–Ê“à‚Å‰½“x‚àŒÄ‚Ño‚·‚ÆƒpƒtƒH[ƒ}ƒ“ƒX‚É‰e‹¿‚µ‚Ü‚·B
-//! @warning u‰üsƒR[ƒh‚ğŠˆ—p‚µˆê“x‚É•\¦‚·‚évu“ú–{Œê‚ª•K—v‚È‚¢•¶š‚ÍƒeƒNƒXƒ`ƒƒƒtƒHƒ“ƒg‚ğŠˆ—p‚·‚év‚È‚Ç‚Ì‘Î‰‚ğu‚¶‚Ä‚­‚¾‚³‚¢B
-//! @attention DirectX‚Ì ID3DXSprite ‚ğg—p‚µAƒVƒXƒeƒ€ƒtƒHƒ“ƒg‚Å•\¦‚µ‚Ä‚¢‚Ü‚·B
-//! @attention ƒtƒHƒ“ƒg‚Ìí—Ş‚âƒTƒCƒY‚ÍŒÅ’è‚Å‚·B@•¶š‚ğ“ñd‚Éd‚Ë‚Ä—§‘ÌŠ´‚ğo‚³‚È‚¢‚ÆŒ©‚É‚­‚­‚È‚è‚Ü‚·B
+//! @brief æ–‡å­—ã‚’ä¸­å¤®æƒãˆã§è¡¨ç¤ºï¼ˆã‚·ã‚¹ãƒ†ãƒ ãƒ•ã‚©ãƒ³ãƒˆä½¿ç”¨ï¼‰
+//! @param x xåº§æ¨™
+//! @param y yåº§æ¨™
+//! @param w æ¨ªã®å¤§ãã•
+//! @param h ç¸¦ã®å¤§ãã•
+//! @param str æ–‡å­—åˆ—ã€€ï¼ˆæ”¹è¡Œã‚³ãƒ¼ãƒ‰ï¼šå¯ï¼‰
+//! @param color è‰²
+//! @warning <b>è¡¨ç¤ºã¯éå¸¸ã«ä½é€Ÿã§ã™ã€‚</b>ç”»é¢å†…ã§ä½•åº¦ã‚‚å‘¼ã³å‡ºã™ã¨ãƒ‘ãƒ•ã‚©ãƒ¼ãƒãƒ³ã‚¹ã«å½±éŸ¿ã—ã¾ã™ã€‚
+//! @warning ã€Œæ”¹è¡Œã‚³ãƒ¼ãƒ‰ã‚’æ´»ç”¨ã—ä¸€åº¦ã«è¡¨ç¤ºã™ã‚‹ã€ã€Œæ—¥æœ¬èªãŒå¿…è¦ãªã„æ–‡å­—ã¯ãƒ†ã‚¯ã‚¹ãƒãƒ£ãƒ•ã‚©ãƒ³ãƒˆã‚’æ´»ç”¨ã™ã‚‹ã€ãªã©ã®å¯¾å¿œã‚’è¬›ã˜ã¦ãã ã•ã„ã€‚
+//! @attention DirectXã® ID3DXSprite ã‚’ä½¿ç”¨ã—ã€ã‚·ã‚¹ãƒ†ãƒ ãƒ•ã‚©ãƒ³ãƒˆã§è¡¨ç¤ºã—ã¦ã„ã¾ã™ã€‚
+//! @attention ãƒ•ã‚©ãƒ³ãƒˆã®ç¨®é¡ã‚„ã‚µã‚¤ã‚ºã¯å›ºå®šã§ã™ã€‚ã€€æ–‡å­—ã‚’äºŒé‡ã«é‡ã­ã¦ç«‹ä½“æ„Ÿã‚’å‡ºã•ãªã„ã¨è¦‹ã«ãããªã‚Šã¾ã™ã€‚
 void D3DGraphics::Draw2DMSFontTextCenter(int x, int y, int w, int h, char *str, int color)
 {
 	//if( ptextsprite == NULL ){ return; }
 
-	//ƒeƒLƒXƒgƒXƒvƒ‰ƒCƒg‰Šú‰»
+	//ãƒ†ã‚­ã‚¹ãƒˆã‚¹ãƒ—ãƒ©ã‚¤ãƒˆåˆæœŸåŒ–
 	Start2DMSFontTextRender();
 
-	//Šî€À•W‚ğİ’è
+	//åŸºæº–åº§æ¨™ã‚’è¨­å®š
 	D3DXMATRIX matWorld;
 	D3DXMatrixIdentity(&matWorld);
 	ptextsprite->SetTransform(&matWorld);
 
-	//•¶š‚ğ•\¦
+	//æ–‡å­—ã‚’è¡¨ç¤º
 	RECT rc = {x, y, x+w, y+h};
 	pxmsfont->DrawText(ptextsprite, str, -1, &rc, DT_CENTER, color);
 
-	//ƒeƒLƒXƒgƒXƒvƒ‰ƒCƒg‰ğ•ú
+	//ãƒ†ã‚­ã‚¹ãƒˆã‚¹ãƒ—ãƒ©ã‚¤ãƒˆè§£æ”¾
 	End2DMSFontTextRender();
 }
 
-//! @brief 2D ƒVƒXƒeƒ€ƒtƒHƒ“ƒg‚É‚æ‚éƒeƒLƒXƒg•\¦‚ğI—¹
-//! @attention DirectX‚Ì ID3DXSprite ‚ğ‰ğ•ú‚µ‚Ä‚¢‚Ü‚·B
+//! @brief 2D ã‚·ã‚¹ãƒ†ãƒ ãƒ•ã‚©ãƒ³ãƒˆã«ã‚ˆã‚‹ãƒ†ã‚­ã‚¹ãƒˆè¡¨ç¤ºã‚’çµ‚äº†
+//! @attention DirectXã® ID3DXSprite ã‚’è§£æ”¾ã—ã¦ã„ã¾ã™ã€‚
 void D3DGraphics::End2DMSFontTextRender()
 {
 	ptextsprite->End();
 }
 
-//! @brief 2D•`‰æ—pİ’è
+//! @brief 2Dæç”»ç”¨è¨­å®š
 void D3DGraphics::Start2DRender()
 {
 	pd3dDevice->SetTextureStageState(0, D3DTSS_ALPHAOP, D3DTOP_MODULATE);
 	pd3dDevice->SetTextureStageState(0, D3DTSS_ALPHAARG1, D3DTA_TEXTURE);
 	pd3dDevice->SetTextureStageState(0, D3DTSS_ALPHAARG2, D3DTA_DIFFUSE);
 
-	//[“xƒoƒbƒtƒ@”äŠrŠÖ”‚ğİ’è
+	//æ·±åº¦ãƒãƒƒãƒ•ã‚¡æ¯”è¼ƒé–¢æ•°ã‚’è¨­å®š
 	pd3dDevice->SetRenderState(D3DRS_ZFUNC, D3DCMP_ALWAYS);
 }
 
-//! @brief •¶š‚ğ•\¦iƒeƒNƒXƒ`ƒƒƒtƒHƒ“ƒgg—pj
-//! @param x xÀ•W
-//! @param y yÀ•W
-//! @param str •¶š—ñ@i‰üsƒR[ƒhF<b>•s‰Â</b>j
-//! @param color F
-//! @param fontwidth ˆê•¶š‚Ì•
-//! @param fontheight ˆê•¶š‚Ì‚‚³
-//! @attention •¶š‚ğ“ñd‚Éd‚Ë‚Ä—§‘ÌŠ´‚ğo‚³‚È‚¢‚ÆŒ©‚É‚­‚­‚È‚è‚Ü‚·B
+//! @brief æ–‡å­—ã‚’è¡¨ç¤ºï¼ˆãƒ†ã‚¯ã‚¹ãƒãƒ£ãƒ•ã‚©ãƒ³ãƒˆä½¿ç”¨ï¼‰
+//! @param x xåº§æ¨™
+//! @param y yåº§æ¨™
+//! @param str æ–‡å­—åˆ—ã€€ï¼ˆæ”¹è¡Œã‚³ãƒ¼ãƒ‰ï¼š<b>ä¸å¯</b>ï¼‰
+//! @param color è‰²
+//! @param fontwidth ä¸€æ–‡å­—ã®å¹…
+//! @param fontheight ä¸€æ–‡å­—ã®é«˜ã•
+//! @attention æ–‡å­—ã‚’äºŒé‡ã«é‡ã­ã¦ç«‹ä½“æ„Ÿã‚’å‡ºã•ãªã„ã¨è¦‹ã«ãããªã‚Šã¾ã™ã€‚
 void D3DGraphics::Draw2DTextureFontText(int x, int y, char *str, int color, int fontwidth, int fontheight)
 {
-	//ƒeƒNƒXƒ`ƒƒƒtƒHƒ“ƒg‚Ìæ“¾‚É¸”s‚µ‚Ä‚¢‚ê‚ÎAˆ—‚µ‚È‚¢
+	//ãƒ†ã‚¯ã‚¹ãƒãƒ£ãƒ•ã‚©ãƒ³ãƒˆã®å–å¾—ã«å¤±æ•—ã—ã¦ã„ã‚Œã°ã€å‡¦ç†ã—ãªã„
 	if( TextureFont == -1 ){ return; }
 
-	//2D•`‰æ—pİ’è‚ğ“K—p
+	//2Dæç”»ç”¨è¨­å®šã‚’é©ç”¨
 	Start2DRender();
 
 	int w;
@@ -1592,28 +1592,28 @@ void D3DGraphics::Draw2DTextureFontText(int x, int y, char *str, int color, int 
 	float t_u, t_v;
 	TLVERTX pBoxVertices[4];
 
-	//1•¶š‚ÌUVÀ•W‚ğŒvZ
+	//1æ–‡å­—ã®UVåº§æ¨™ã‚’è¨ˆç®—
 	font_u = 1.0f / 16;
 	font_v = 1.0f / 16;
 
-	//ƒ[ƒ‹ƒhÀ•W‚ğŒ´“_‚É–ß‚·
+	//ãƒ¯ãƒ¼ãƒ«ãƒ‰åº§æ¨™ã‚’åŸç‚¹ã«æˆ»ã™
 	ResetWorldTransform();
 
-	//ƒeƒNƒXƒ`ƒƒ‚ğƒtƒHƒ“ƒgƒeƒNƒXƒ`ƒƒ‚Éİ’è
+	//ãƒ†ã‚¯ã‚¹ãƒãƒ£ã‚’ãƒ•ã‚©ãƒ³ãƒˆãƒ†ã‚¯ã‚¹ãƒãƒ£ã«è¨­å®š
 	pd3dDevice->SetTexture( 0, ptextures[TextureFont] );
 
-	//ƒf[ƒ^Œ`®‚ğİ’è
+	//ãƒ‡ãƒ¼ã‚¿å½¢å¼ã‚’è¨­å®š
 	pd3dDevice->SetFVF(D3DFVF_XYZRHW | D3DFVF_DIFFUSE | D3DFVF_TEX1);
 
-	// —^‚¦‚ç‚ê‚½•¶š”•ªƒ‹[ƒv
+	// ä¸ãˆã‚‰ã‚ŒãŸæ–‡å­—æ•°åˆ†ãƒ«ãƒ¼ãƒ—
 	for(int i=0; i<(int)strlen(str); i++){
-		//UVÀ•W‚ğŒvZ
+		//UVåº§æ¨™ã‚’è¨ˆç®—
 		w = str[i];
 		if( w < 0 ){ w += 256; }
 		t_u = (w % 16) * font_u;
 		t_v = (w / 16) * font_v;
 
-		//’¸“_À•WEUVÀ•WEF‚ğİ’è
+		//é ‚ç‚¹åº§æ¨™ãƒ»UVåº§æ¨™ãƒ»è‰²ã‚’è¨­å®š
 		pBoxVertices[0].x = (float)x + i*fontwidth;
 		pBoxVertices[0].y = (float)y;
 		pBoxVertices[0].tu = t_u;
@@ -1636,34 +1636,34 @@ void D3DGraphics::Draw2DTextureFontText(int x, int y, char *str, int color, int 
 			pBoxVertices[j].color = color;
 		}
 
-		//•\¦
+		//è¡¨ç¤º
 		pd3dDevice->DrawPrimitiveUP(D3DPT_TRIANGLESTRIP, 2, pBoxVertices, sizeof(TLVERTX));
 	}
 
-	//2D•`‰æ—pİ’è‚ğ‰ğœ
+	//2Dæç”»ç”¨è¨­å®šã‚’è§£é™¤
 	End2DRender();
 }
 
 #ifdef ENABLE_DEBUGCONSOLE
-//! @brief •¶š‚ğ•\¦iƒfƒoƒbƒN—pƒtƒHƒ“ƒgg—pj
-//! @param x xÀ•W
-//! @param y yÀ•W
-//! @param str •¶š—ñ@i‰üsƒR[ƒhF<b>•s‰Â</b>j
-//! @param color F
-//! @attention ˆê•¶š‚Ì•‚¨‚æ‚Ñ‚‚³‚Í 8x16 ŒÅ’è‚Å‚·B
-//! @attention •¶š‚ğ“ñd‚Éd‚Ë‚Ä—§‘ÌŠ´‚ğo‚³‚È‚¢‚ÆŒ©‚É‚­‚­‚È‚è‚Ü‚·B
+//! @brief æ–‡å­—ã‚’è¡¨ç¤ºï¼ˆãƒ‡ãƒãƒƒã‚¯ç”¨ãƒ•ã‚©ãƒ³ãƒˆä½¿ç”¨ï¼‰
+//! @param x xåº§æ¨™
+//! @param y yåº§æ¨™
+//! @param str æ–‡å­—åˆ—ã€€ï¼ˆæ”¹è¡Œã‚³ãƒ¼ãƒ‰ï¼š<b>ä¸å¯</b>ï¼‰
+//! @param color è‰²
+//! @attention ä¸€æ–‡å­—ã®å¹…ãŠã‚ˆã³é«˜ã•ã¯ 8x16 å›ºå®šã§ã™ã€‚
+//! @attention æ–‡å­—ã‚’äºŒé‡ã«é‡ã­ã¦ç«‹ä½“æ„Ÿã‚’å‡ºã•ãªã„ã¨è¦‹ã«ãããªã‚Šã¾ã™ã€‚
 void D3DGraphics::Draw2DTextureDebugFontText(int x, int y, char *str, int color)
 {
 	int fontwidth = 8;
 	int fontheight = 16;
 
-	//ƒeƒNƒXƒ`ƒƒƒtƒHƒ“ƒg‚Ìæ“¾‚É¸”s‚µ‚Ä‚¢‚ê‚ÎAˆ—‚µ‚È‚¢
+	//ãƒ†ã‚¯ã‚¹ãƒãƒ£ãƒ•ã‚©ãƒ³ãƒˆã®å–å¾—ã«å¤±æ•—ã—ã¦ã„ã‚Œã°ã€å‡¦ç†ã—ãªã„
 	if( TextureDebugFont == -1 ){ return; }
 
-	//2D•`‰æ—pİ’è‚ğ“K—p
+	//2Dæç”»ç”¨è¨­å®šã‚’é©ç”¨
 	Start2DRender();
 
-	// ƒeƒNƒXƒ`ƒƒƒtƒBƒ‹ƒ^–³Œø‰»
+	// ãƒ†ã‚¯ã‚¹ãƒãƒ£ãƒ•ã‚£ãƒ«ã‚¿ç„¡åŠ¹åŒ–
 	pd3dDevice->SetSamplerState(0, D3DSAMP_MAGFILTER, D3DTEXF_POINT);
 	pd3dDevice->SetSamplerState(0, D3DSAMP_MINFILTER, D3DTEXF_POINT);
 	pd3dDevice->SetSamplerState(0, D3DSAMP_MIPFILTER, D3DTEXF_POINT);
@@ -1673,28 +1673,28 @@ void D3DGraphics::Draw2DTextureDebugFontText(int x, int y, char *str, int color)
 	float t_u, t_v;
 	TLVERTX pBoxVertices[4];
 
-	//1•¶š‚ÌUVÀ•W‚ğŒvZ
+	//1æ–‡å­—ã®UVåº§æ¨™ã‚’è¨ˆç®—
 	font_u = 1.0f / 16;
 	font_v = 1.0f / 8;
 
-	//ƒ[ƒ‹ƒhÀ•W‚ğŒ´“_‚É–ß‚·
+	//ãƒ¯ãƒ¼ãƒ«ãƒ‰åº§æ¨™ã‚’åŸç‚¹ã«æˆ»ã™
 	ResetWorldTransform();
 
-	//ƒeƒNƒXƒ`ƒƒ‚ğƒtƒHƒ“ƒgƒeƒNƒXƒ`ƒƒ‚Éİ’è
+	//ãƒ†ã‚¯ã‚¹ãƒãƒ£ã‚’ãƒ•ã‚©ãƒ³ãƒˆãƒ†ã‚¯ã‚¹ãƒãƒ£ã«è¨­å®š
 	pd3dDevice->SetTexture( 0, ptextures[TextureDebugFont] );
 
-	//ƒf[ƒ^Œ`®‚ğİ’è
+	//ãƒ‡ãƒ¼ã‚¿å½¢å¼ã‚’è¨­å®š
 	pd3dDevice->SetFVF(D3DFVF_XYZRHW | D3DFVF_DIFFUSE | D3DFVF_TEX1);
 
-	// —^‚¦‚ç‚ê‚½•¶š”•ªƒ‹[ƒv
+	// ä¸ãˆã‚‰ã‚ŒãŸæ–‡å­—æ•°åˆ†ãƒ«ãƒ¼ãƒ—
 	for(int i=0; i<(int)strlen(str); i++){
-		//UVÀ•W‚ğŒvZ
+		//UVåº§æ¨™ã‚’è¨ˆç®—
 		w = str[i];
 		if( w < 0 ){ w = ' '; }
 		t_u = (w % 16) * font_u;
 		t_v = (w / 16) * font_v;
 
-		//’¸“_À•WEUVÀ•WEF‚ğİ’è
+		//é ‚ç‚¹åº§æ¨™ãƒ»UVåº§æ¨™ãƒ»è‰²ã‚’è¨­å®š
 		pBoxVertices[0].x = (float)x + i*fontwidth;
 		pBoxVertices[0].y = (float)y;
 		pBoxVertices[0].tu = t_u;
@@ -1717,37 +1717,37 @@ void D3DGraphics::Draw2DTextureDebugFontText(int x, int y, char *str, int color)
 			pBoxVertices[j].color = color;
 		}
 
-		//•\¦
+		//è¡¨ç¤º
 		pd3dDevice->DrawPrimitiveUP(D3DPT_TRIANGLESTRIP, 2, pBoxVertices, sizeof(TLVERTX));
 	}
 
-	//ƒeƒNƒXƒ`ƒƒƒtƒBƒ‹ƒ^—LŒø‰»
+	//ãƒ†ã‚¯ã‚¹ãƒãƒ£ãƒ•ã‚£ãƒ«ã‚¿æœ‰åŠ¹åŒ–
 	pd3dDevice->SetSamplerState(0, D3DSAMP_MINFILTER, D3DTEXF_LINEAR);
 	pd3dDevice->SetSamplerState(0, D3DSAMP_MAGFILTER, D3DTEXF_LINEAR);
 	pd3dDevice->SetSamplerState(0, D3DSAMP_MIPFILTER, D3DTEXF_LINEAR);
 
-	//2D•`‰æ—pİ’è‚ğ‰ğœ
+	//2Dæç”»ç”¨è¨­å®šã‚’è§£é™¤
 	End2DRender();
 }
 #endif
 
-//! @brief ü‚ğ•`‰æ
-//! @param x1 n“_‚Ì xÀ•W
-//! @param y1 n“_‚Ì yÀ•W
-//! @param x2 I“_‚Ì xÀ•W
-//! @param y2 I“_‚Ì yÀ•W
-//! @param color F
+//! @brief ç·šã‚’æç”»
+//! @param x1 å§‹ç‚¹ã® xåº§æ¨™
+//! @param y1 å§‹ç‚¹ã® yåº§æ¨™
+//! @param x2 çµ‚ç‚¹ã® xåº§æ¨™
+//! @param y2 çµ‚ç‚¹ã® yåº§æ¨™
+//! @param color è‰²
 void D3DGraphics::Draw2DLine(int x1, int y1, int x2, int y2, int color)
 {
 	TLVERTX pLineVertices[2];
 
-	//2D•`‰æ—pİ’è‚ğ“K—p
+	//2Dæç”»ç”¨è¨­å®šã‚’é©ç”¨
 	Start2DRender();
 
-	//ƒ[ƒ‹ƒhÀ•W‚ğŒ´“_‚É–ß‚·
+	//ãƒ¯ãƒ¼ãƒ«ãƒ‰åº§æ¨™ã‚’åŸç‚¹ã«æˆ»ã™
 	ResetWorldTransform();
 
-	//’¸“_À•W‚ÆF‚È‚Ç‚ğİ’è
+	//é ‚ç‚¹åº§æ¨™ã¨è‰²ãªã©ã‚’è¨­å®š
 	pLineVertices[0].x = (float)x1;
 	pLineVertices[0].y = (float)y1;
 	pLineVertices[1].x = (float)x2;
@@ -1762,30 +1762,30 @@ void D3DGraphics::Draw2DLine(int x1, int y1, int x2, int y2, int color)
 
 	pd3dDevice->SetTexture(0, NULL);
 
-	//ƒf[ƒ^Œ`®‚ğİ’è‚µA•`‰æB
+	//ãƒ‡ãƒ¼ã‚¿å½¢å¼ã‚’è¨­å®šã—ã€æç”»ã€‚
 	pd3dDevice->SetFVF(D3DFVF_XYZRHW | D3DFVF_DIFFUSE | D3DFVF_TEX1);
 	pd3dDevice->DrawPrimitiveUP(D3DPT_LINELIST, 1, pLineVertices, sizeof(TLVERTX));
 
-	//2D•`‰æ—pİ’è‚ğ‰ğœ
+	//2Dæç”»ç”¨è¨­å®šã‚’è§£é™¤
 	End2DRender();
 }
 
-//! @brief ‰~i16ŠpŒ`j‚ğ•`‰æ
-//! @param x ’†S‚Ì xÀ•W
-//! @param y ’†S‚Ì yÀ•W
-//! @param r ”¼Œa
-//! @param color F
+//! @brief å††ï¼ˆ16è§’å½¢ï¼‰ã‚’æç”»
+//! @param x ä¸­å¿ƒã® xåº§æ¨™
+//! @param y ä¸­å¿ƒã® yåº§æ¨™
+//! @param r åŠå¾„
+//! @param color è‰²
 void D3DGraphics::Draw2DCycle(int x, int y, int r, int color)
 {
 	TLVERTX pLineVertices[16+1];
 
-	//2D•`‰æ—pİ’è‚ğ“K—p
+	//2Dæç”»ç”¨è¨­å®šã‚’é©ç”¨
 	Start2DRender();
 
-	//ƒ[ƒ‹ƒhÀ•W‚ğŒ´“_‚É–ß‚·
+	//ãƒ¯ãƒ¼ãƒ«ãƒ‰åº§æ¨™ã‚’åŸç‚¹ã«æˆ»ã™
 	ResetWorldTransform();
 
-	//’¸“_À•W‚ÆF‚È‚Ç‚ğİ’è
+	//é ‚ç‚¹åº§æ¨™ã¨è‰²ãªã©ã‚’è¨­å®š
 	for(int i=0; i<16+1; i++){
 		pLineVertices[i].x = (float)x + cos(DegreeToRadian((360.0f/16.0f)) * i) * r;
 		pLineVertices[i].y = (float)y + sin(DegreeToRadian((360.0f/16.0f)) * i) * r;
@@ -1799,31 +1799,31 @@ void D3DGraphics::Draw2DCycle(int x, int y, int r, int color)
 
 	pd3dDevice->SetTexture(0, NULL);
 
-	//ƒf[ƒ^Œ`®‚ğİ’è‚µA•`‰æB
+	//ãƒ‡ãƒ¼ã‚¿å½¢å¼ã‚’è¨­å®šã—ã€æç”»ã€‚
 	pd3dDevice->SetFVF(D3DFVF_XYZRHW | D3DFVF_DIFFUSE | D3DFVF_TEX1);
 	pd3dDevice->DrawPrimitiveUP(D3DPT_LINESTRIP, 16, pLineVertices, sizeof(TLVERTX));
 
-	//2D•`‰æ—pİ’è‚ğ‰ğœ
+	//2Dæç”»ç”¨è¨­å®šã‚’è§£é™¤
 	End2DRender();
 }
 
-//! @brief lŠpŒ`‚ğ•`‰æ
-//! @param x1 ¶ã‚Ì xÀ•W
-//! @param y1 ¶ã‚Ì yÀ•W
-//! @param x2 ‰E‰º‚Ì xÀ•W
-//! @param y2 ‰E‰º‚Ì yÀ•W
-//! @param color F
+//! @brief å››è§’å½¢ã‚’æç”»
+//! @param x1 å·¦ä¸Šã® xåº§æ¨™
+//! @param y1 å·¦ä¸Šã® yåº§æ¨™
+//! @param x2 å³ä¸‹ã® xåº§æ¨™
+//! @param y2 å³ä¸‹ã® yåº§æ¨™
+//! @param color è‰²
 void D3DGraphics::Draw2DBox(int x1, int y1, int x2, int y2, int color)
 {
 	TLVERTX pBoxVertices[4];
 
-	//2D•`‰æ—pİ’è‚ğ“K—p
+	//2Dæç”»ç”¨è¨­å®šã‚’é©ç”¨
 	Start2DRender();
 
-	//ƒ[ƒ‹ƒhÀ•W‚ğŒ´“_‚É–ß‚·
+	//ãƒ¯ãƒ¼ãƒ«ãƒ‰åº§æ¨™ã‚’åŸç‚¹ã«æˆ»ã™
 	ResetWorldTransform();
 
-	//’¸“_À•W‚ÆF‚È‚Ç‚ğİ’è
+	//é ‚ç‚¹åº§æ¨™ã¨è‰²ãªã©ã‚’è¨­å®š
 	pBoxVertices[0].x = (float)x1;
 	pBoxVertices[0].y = (float)y1;
 	pBoxVertices[1].x = (float)x2;
@@ -1842,35 +1842,35 @@ void D3DGraphics::Draw2DBox(int x1, int y1, int x2, int y2, int color)
 
 	pd3dDevice->SetTexture(0, NULL);
 
-	//ƒf[ƒ^Œ`®‚ğİ’è‚µA•`‰æB
+	//ãƒ‡ãƒ¼ã‚¿å½¢å¼ã‚’è¨­å®šã—ã€æç”»ã€‚
 	pd3dDevice->SetFVF(D3DFVF_XYZRHW | D3DFVF_DIFFUSE | D3DFVF_TEX1);
 	pd3dDevice->DrawPrimitiveUP(D3DPT_TRIANGLESTRIP, 2, pBoxVertices, sizeof(TLVERTX));
 
-	//2D•`‰æ—pİ’è‚ğ‰ğœ
+	//2Dæç”»ç”¨è¨­å®šã‚’è§£é™¤
 	End2DRender();
 }
 
-//! @brief ‰æ‘œ‚ğ•`‰æ
-//! @param x xÀ•W
-//! @param y yÀ•W
-//! @param id ƒeƒNƒXƒ`ƒƒ”F¯”Ô†
-//! @param width •
-//! @param height ‚‚³
-//! @param alpha “§–¾“xi0.0`1.0j
+//! @brief ç”»åƒã‚’æç”»
+//! @param x xåº§æ¨™
+//! @param y yåº§æ¨™
+//! @param id ãƒ†ã‚¯ã‚¹ãƒãƒ£èªè­˜ç•ªå·
+//! @param width å¹…
+//! @param height é«˜ã•
+//! @param alpha é€æ˜åº¦ï¼ˆ0.0ï½1.0ï¼‰
 void D3DGraphics::Draw2DTexture(int x, int y, int id, int width, int height, float alpha)
 {
-	//–³Œø‚ÈƒeƒNƒXƒ`ƒƒ”Ô†‚ğw’è‚³‚ê‚Ä‚¢‚ê‚Îˆ—‚µ‚È‚¢
+	//ç„¡åŠ¹ãªãƒ†ã‚¯ã‚¹ãƒãƒ£ç•ªå·ã‚’æŒ‡å®šã•ã‚Œã¦ã„ã‚Œã°å‡¦ç†ã—ãªã„
 	if( id == -1 ){ return; }
 
 	TLVERTX pBoxVertices[4];
 
-	//2D•`‰æ—pİ’è‚ğ“K—p
+	//2Dæç”»ç”¨è¨­å®šã‚’é©ç”¨
 	Start2DRender();
 
-	//ƒ[ƒ‹ƒhÀ•W‚ğŒ´“_‚É–ß‚·
+	//ãƒ¯ãƒ¼ãƒ«ãƒ‰åº§æ¨™ã‚’åŸç‚¹ã«æˆ»ã™
 	ResetWorldTransform();
 
-	//’¸“_À•WEUVÀ•WEF‚ğİ’è
+	//é ‚ç‚¹åº§æ¨™ãƒ»UVåº§æ¨™ãƒ»è‰²ã‚’è¨­å®š
 	pBoxVertices[0].x = (float)x;
 	pBoxVertices[0].y = (float)y;
 	pBoxVertices[0].tu = 0.0f;
@@ -1893,40 +1893,40 @@ void D3DGraphics::Draw2DTexture(int x, int y, int id, int width, int height, flo
 		pBoxVertices[i].color = D3DCOLOR_COLORVALUE(1.0f,1.0f,1.0f,alpha);
 	}
 
-	//ƒeƒNƒXƒ`ƒƒ‚Æƒf[ƒ^Œ`®‚ğİ’è‚µA•`‰æ
+	//ãƒ†ã‚¯ã‚¹ãƒãƒ£ã¨ãƒ‡ãƒ¼ã‚¿å½¢å¼ã‚’è¨­å®šã—ã€æç”»
 	pd3dDevice->SetTexture( 0, ptextures[id] );
 	pd3dDevice->SetFVF(D3DFVF_XYZRHW | D3DFVF_DIFFUSE | D3DFVF_TEX1);
 	pd3dDevice->DrawPrimitiveUP(D3DPT_TRIANGLESTRIP, 2, pBoxVertices, sizeof(TLVERTX));
 
-	//2D•`‰æ—pİ’è‚ğ‰ğœ
+	//2Dæç”»ç”¨è¨­å®šã‚’è§£é™¤
 	End2DRender();
 }
 
-//! @brief 2D•`‰æ—pİ’è‚ğ‰ğœ
+//! @brief 2Dæç”»ç”¨è¨­å®šã‚’è§£é™¤
 void D3DGraphics::End2DRender()
 {
 	pd3dDevice->SetTextureStageState(0, D3DTSS_ALPHAOP, D3DTOP_SELECTARG1);
 	pd3dDevice->SetTextureStageState(0, D3DTSS_ALPHAARG1, D3DTA_TEXTURE);
 
-	//[“xƒoƒbƒtƒ@”äŠrŠÖ”‚ğŒ³‚É–ß‚·
+	//æ·±åº¦ãƒãƒƒãƒ•ã‚¡æ¯”è¼ƒé–¢æ•°ã‚’å…ƒã«æˆ»ã™
 	pd3dDevice->SetRenderState(D3DRS_ZFUNC, D3DCMP_LESSEQUAL);
 }
 
-//! @brief ‰æ–Ê‚ÌƒXƒNƒŠ[ƒ“ƒVƒ‡ƒbƒg‚ğ•Û‘¶
-//! @param filename ƒtƒ@ƒCƒ‹–¼
-//! @return ¬Œ÷Ftrue@¸”sFfalse
+//! @brief ç”»é¢ã®ã‚¹ã‚¯ãƒªãƒ¼ãƒ³ã‚·ãƒ§ãƒƒãƒˆã‚’ä¿å­˜
+//! @param filename ãƒ•ã‚¡ã‚¤ãƒ«å
+//! @return æˆåŠŸï¼štrueã€€å¤±æ•—ï¼šfalse
 bool D3DGraphics::SaveScreenShot(char* filename)
 {
 	LPDIRECT3DSURFACE9 pSurface = NULL;
 	HRESULT hr;
 
-	//ƒT[ƒtƒF[ƒX‚ğì¬‚µA‰æ–Ê‚ğæ“¾
+	//ã‚µãƒ¼ãƒ•ã‚§ãƒ¼ã‚¹ã‚’ä½œæˆã—ã€ç”»é¢ã‚’å–å¾—
 	pd3dDevice->GetBackBuffer(0, 0, D3DBACKBUFFER_TYPE_MONO, &pSurface);
 
-	//ƒT[ƒtƒFƒCƒX‚ğ‰æ‘œ‚Éo—Í
+	//ã‚µãƒ¼ãƒ•ã‚§ã‚¤ã‚¹ã‚’ç”»åƒã«å‡ºåŠ›
 	hr = D3DXSaveSurfaceToFile(filename, D3DXIFF_BMP, pSurface, NULL, NULL);
 
-	//‰ğ•ú
+	//è§£æ”¾
 	pSurface->Release();
 
 	if( hr == D3D_OK ){
@@ -1935,12 +1935,12 @@ bool D3DGraphics::SaveScreenShot(char* filename)
 	return false;
 }
 
-//! @brief ƒJƒ‰[ƒR[ƒh‚ğæ“¾
-//! @param red Ôi0.0f`1.0fj
-//! @param green —Îi0.0f`1.0fj
-//! @param blue Âi0.0f`1.0fj
-//! @param alpha “§–¾“xi0.0f`1.0fj
-//! @return ƒJƒ‰[ƒR[ƒh
+//! @brief ã‚«ãƒ©ãƒ¼ã‚³ãƒ¼ãƒ‰ã‚’å–å¾—
+//! @param red èµ¤ï¼ˆ0.0fï½1.0fï¼‰
+//! @param green ç·‘ï¼ˆ0.0fï½1.0fï¼‰
+//! @param blue é’ï¼ˆ0.0fï½1.0fï¼‰
+//! @param alpha é€æ˜åº¦ï¼ˆ0.0fï½1.0fï¼‰
+//! @return ã‚«ãƒ©ãƒ¼ã‚³ãƒ¼ãƒ‰
 int D3DGraphics::GetColorCode(float red, float green, float blue, float alpha)
 {
 	return D3DCOLOR_COLORVALUE(red, green, blue, alpha);

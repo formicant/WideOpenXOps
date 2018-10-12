@@ -1,5 +1,5 @@
-//! @file statemachine.cpp
-//! @brief StateMachineƒNƒ‰ƒX‚Ì’è‹`
+ï»¿//! @file statemachine.cpp
+//! @brief StateMachineã‚¯ãƒ©ã‚¹ã®å®šç¾©
 
 //--------------------------------------------------------------------------------
 // 
@@ -31,7 +31,7 @@
 
 #include "statemachine.h"
 
-//! @brief ƒRƒ“ƒXƒgƒ‰ƒNƒ^
+//! @brief ã‚³ãƒ³ã‚¹ãƒˆãƒ©ã‚¯ã‚¿
 StateMachine::StateMachine()
 {
 	NowState = STATE_CREATE_OPENING;
@@ -39,11 +39,11 @@ StateMachine::StateMachine()
 	f12 = false;
 }
 
-//! @brief ƒfƒBƒXƒgƒ‰ƒNƒ^
+//! @brief ãƒ‡ã‚£ã‚¹ãƒˆãƒ©ã‚¯ã‚¿
 StateMachine::~StateMachine()
 {}
 
-//! @brief Ÿ‚Ìó‘Ô‚ÖˆÚs
+//! @brief æ¬¡ã®çŠ¶æ…‹ã¸ç§»è¡Œ
 void StateMachine::NextState()
 {
 	switch(NowState){
@@ -134,22 +134,22 @@ void StateMachine::NextState()
 	}
 
 #ifdef ENABLE_DEBUGLOG
-	//ƒƒO‚Éo—Í
+	//ãƒ­ã‚°ã«å‡ºåŠ›
 	switch(NowState){
 		case STATE_CREATE_OPENING:
-			OutputLog.WriteLog(LOG_CHECK, "‰æ–Ê‘JˆÚ", "ƒI[ƒvƒjƒ“ƒO");
+			OutputLog.WriteLog(LOG_CHECK, "ç”»é¢é·ç§»", "ã‚ªãƒ¼ãƒ—ãƒ‹ãƒ³ã‚°");
 			break;
 		case STATE_CREATE_MENU:
-			OutputLog.WriteLog(LOG_CHECK, "‰æ–Ê‘JˆÚ", "ƒƒjƒ…[");
+			OutputLog.WriteLog(LOG_CHECK, "ç”»é¢é·ç§»", "ãƒ¡ãƒ‹ãƒ¥ãƒ¼");
 			break;
 		case STATE_CREATE_BRIEFING:
-			OutputLog.WriteLog(LOG_CHECK, "‰æ–Ê‘JˆÚ", "ƒuƒŠ[ƒtƒBƒ“ƒO");
+			OutputLog.WriteLog(LOG_CHECK, "ç”»é¢é·ç§»", "ãƒ–ãƒªãƒ¼ãƒ•ã‚£ãƒ³ã‚°");
 			break;
 		case STATE_CREATE_MAINGAME:
-			OutputLog.WriteLog(LOG_CHECK, "‰æ–Ê‘JˆÚ", "ƒ~ƒbƒVƒ‡ƒ“");
+			OutputLog.WriteLog(LOG_CHECK, "ç”»é¢é·ç§»", "ãƒŸãƒƒã‚·ãƒ§ãƒ³");
 			break;
 		case STATE_CREATE_RESULT:
-			OutputLog.WriteLog(LOG_CHECK, "‰æ–Ê‘JˆÚ", "ƒŠƒUƒ‹ƒg");
+			OutputLog.WriteLog(LOG_CHECK, "ç”»é¢é·ç§»", "ãƒªã‚¶ãƒ«ãƒˆ");
 			break;
 		default:
 			;//
@@ -157,7 +157,7 @@ void StateMachine::NextState()
 #endif
 }
 
-//! @brief ƒ}ƒEƒXƒNƒŠƒbƒN ‚ğó‚¯‚½
+//! @brief ãƒã‚¦ã‚¹ã‚¯ãƒªãƒƒã‚¯ ã‚’å—ã‘ãŸ
 void StateMachine::PushMouseButton()
 {
 	back = false;
@@ -165,7 +165,7 @@ void StateMachine::PushMouseButton()
 	NextState();
 }
 
-//! @brief BackSpace ƒL[‚ğó‚¯‚½
+//! @brief BackSpace ã‚­ãƒ¼ã‚’å—ã‘ãŸ
 void StateMachine::PushBackSpaceKey()
 {
 	back = true;
@@ -173,7 +173,7 @@ void StateMachine::PushBackSpaceKey()
 	NextState();
 }
 
-//! @brief F12 ƒL[‚ğó‚¯‚½
+//! @brief F12 ã‚­ãƒ¼ã‚’å—ã‘ãŸ
 void StateMachine::PushF12Key()
 {
 	back = false;
@@ -181,7 +181,7 @@ void StateMachine::PushF12Key()
 	NextState();
 }
 
-//! @brief Œ»İ‚Ìó‘Ô‚ğ•Ô‚·
+//! @brief ç¾åœ¨ã®çŠ¶æ…‹ã‚’è¿”ã™
 int StateMachine::GetState()
 {
 	return NowState;

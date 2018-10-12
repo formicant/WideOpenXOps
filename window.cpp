@@ -1,5 +1,5 @@
-//! @file window.cpp
-//! @brief ƒƒCƒ“ƒEƒBƒ“ƒhƒE‚Ìì¬E§Œä
+ï»¿//! @file window.cpp
+//! @brief ãƒ¡ã‚¤ãƒ³ã‚¦ã‚£ãƒ³ãƒ‰ã‚¦ã®ä½œæˆãƒ»åˆ¶å¾¡
 
 //--------------------------------------------------------------------------------
 // 
@@ -31,38 +31,36 @@
 
 #include "window.h"
 
-//! @brief ƒRƒ“ƒXƒgƒ‰ƒNƒ^
+//! @brief ã‚³ãƒ³ã‚¹ãƒˆãƒ©ã‚¯ã‚¿
 WindowControl::WindowControl()
 {
 	hInstance = 0;
 	nCmdShow = 0;
 	hWnd = NULL;
-
-	timeBeginPeriod(1);		//timeEndPeriod‚Æ‘Î
 }
 
-//! @brief ƒfƒBƒXƒgƒ‰ƒNƒ^
+//! @brief ãƒ‡ã‚£ã‚¹ãƒˆãƒ©ã‚¯ã‚¿
 WindowControl::~WindowControl()
 {
-	timeEndPeriod(1);		//timeBeginPeriod‚Æ‘Î
+	//
 }
 
-//! @brief ƒAƒvƒŠƒP[ƒVƒ‡ƒ“‚Ìî•ñ‚ğİ’è
-//! @param in_hInstance ƒCƒ“ƒXƒ^ƒ“ƒX ƒnƒ“ƒhƒ‹
-//! @param in_nCmdShow ƒEƒBƒ“ƒhƒE‚Ì•\¦ó‘Ô
+//! @brief ã‚¢ãƒ—ãƒªã‚±ãƒ¼ã‚·ãƒ§ãƒ³ã®æƒ…å ±ã‚’è¨­å®š
+//! @param in_hInstance ã‚¤ãƒ³ã‚¹ã‚¿ãƒ³ã‚¹ ãƒãƒ³ãƒ‰ãƒ«
+//! @param in_nCmdShow ã‚¦ã‚£ãƒ³ãƒ‰ã‚¦ã®è¡¨ç¤ºçŠ¶æ…‹
 void WindowControl::SetParam(HINSTANCE in_hInstance, int in_nCmdShow)
 {
 	hInstance = in_hInstance;
 	nCmdShow = in_nCmdShow;
 }
 
-//! @brief ƒƒCƒ“ƒEƒBƒ“ƒhƒEì¬
-//! @param title ƒEƒBƒ“ƒhƒEƒ^ƒCƒgƒ‹
-//! @param width ƒEƒBƒ“ƒhƒE‚Ì•
-//! @param height ƒEƒBƒ“ƒhƒE‚Ì‚‚³
-//! @param fullscreen falseFƒEƒBƒ“ƒhƒE•\¦@trueFƒtƒ‹ƒXƒNƒŠ[ƒ“—p•\¦
-//! @return ¬Œ÷Ftrue@¸”sFfalse
-//! @warning æ‚ÉSetParam()ŠÖ”‚Åİ’è‚µ‚Ä‚¨‚­•K—v‚ª‚ ‚è‚Ü‚·B
+//! @brief ãƒ¡ã‚¤ãƒ³ã‚¦ã‚£ãƒ³ãƒ‰ã‚¦ä½œæˆ
+//! @param title ã‚¦ã‚£ãƒ³ãƒ‰ã‚¦ã‚¿ã‚¤ãƒˆãƒ«
+//! @param width ã‚¦ã‚£ãƒ³ãƒ‰ã‚¦ã®å¹…
+//! @param height ã‚¦ã‚£ãƒ³ãƒ‰ã‚¦ã®é«˜ã•
+//! @param fullscreen falseï¼šã‚¦ã‚£ãƒ³ãƒ‰ã‚¦è¡¨ç¤ºã€€trueï¼šãƒ•ãƒ«ã‚¹ã‚¯ãƒªãƒ¼ãƒ³ç”¨è¡¨ç¤º
+//! @return æˆåŠŸï¼štrueã€€å¤±æ•—ï¼šfalse
+//! @warning å…ˆã«SetParam()é–¢æ•°ã§è¨­å®šã—ã¦ãŠãå¿…è¦ãŒã‚ã‚Šã¾ã™ã€‚
 bool WindowControl::InitWindow(char* title, int width, int height, bool fullscreen)
 {
 	WNDCLASS wc;
@@ -70,7 +68,7 @@ bool WindowControl::InitWindow(char* title, int width, int height, bool fullscre
 	RECT Rect;
 	DWORD dwStyle;
 
-	//ƒEƒBƒ“ƒhƒEƒNƒ‰ƒX‚Ì“o˜^
+	//ã‚¦ã‚£ãƒ³ãƒ‰ã‚¦ã‚¯ãƒ©ã‚¹ã®ç™»éŒ²
 	wc.style		= CS_HREDRAW | CS_VREDRAW;
 	wc.lpfnWndProc	= WindowProc;
 	wc.cbClsExtra	= 0;
@@ -92,7 +90,7 @@ bool WindowControl::InitWindow(char* title, int width, int height, bool fullscre
 		dwStyle = WS_POPUP;
 	}
 
-	//ƒEƒBƒ“ƒhƒEƒTƒCƒY‚ğŒvZ
+	//ã‚¦ã‚£ãƒ³ãƒ‰ã‚¦ã‚µã‚¤ã‚ºã‚’è¨ˆç®—
 	Rect.left = 0;
 	Rect.top = 0;
 	Rect.right = width;
@@ -101,12 +99,12 @@ bool WindowControl::InitWindow(char* title, int width, int height, bool fullscre
 	width = Rect.right - Rect.left;
 	height = Rect.bottom - Rect.top;
 
-	//•\¦ˆÊ’u
+	//è¡¨ç¤ºä½ç½®
 	x = 0;
 	y = 0;
 
 	/*
-	//ƒEƒBƒ“ƒhƒEƒ‚[ƒh‚È‚çAƒEƒBƒ“ƒhƒE‚ğ‰æ–Ê‚Ì’†S‚É”z’u‚·‚é
+	//ã‚¦ã‚£ãƒ³ãƒ‰ã‚¦ãƒ¢ãƒ¼ãƒ‰ãªã‚‰ã€ã‚¦ã‚£ãƒ³ãƒ‰ã‚¦ã‚’ç”»é¢ã®ä¸­å¿ƒã«é…ç½®ã™ã‚‹
 	if( fullscreen == false ){
 		SystemParametersInfo(SPI_GETWORKAREA, 0, &Rect, 0);
 		x = (Rect.right - width)/2;
@@ -114,19 +112,19 @@ bool WindowControl::InitWindow(char* title, int width, int height, bool fullscre
 	}
 	*/
 
-	//ƒEƒBƒ“ƒhƒEì¬
+	//ã‚¦ã‚£ãƒ³ãƒ‰ã‚¦ä½œæˆ
 	hWnd = CreateWindow( "MainWindow", title, dwStyle, x, y, width, height, NULL, NULL, hInstance, NULL );
 	if( hWnd == NULL ){
 		return false;
 	}
 
-	//•\¦
+	//è¡¨ç¤º
 	ShowWindow( hWnd, nCmdShow );
 
 	return true;
 }
 
-//! @brief ƒƒCƒ“ƒEƒBƒ“ƒhƒE‚ÌƒEƒBƒ“ƒhƒEƒvƒƒV[ƒWƒƒ
+//! @brief ãƒ¡ã‚¤ãƒ³ã‚¦ã‚£ãƒ³ãƒ‰ã‚¦ã®ã‚¦ã‚£ãƒ³ãƒ‰ã‚¦ãƒ—ãƒ­ã‚·ãƒ¼ã‚¸ãƒ£
 LRESULT WINAPI WindowControl::WindowProc(HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam)
 {
 	switch( msg ){
@@ -137,9 +135,9 @@ LRESULT WINAPI WindowControl::WindowProc(HWND hWnd, UINT msg, WPARAM wParam, LPA
 	return DefWindowProc(hWnd, msg, wParam, lParam);
 }
 
-//! @brief ƒEƒBƒ“ƒhƒE‚Ì•\¦ƒ‚[ƒhØ‚è‘Ö‚¦
-//! @param fullscreen falseFƒEƒBƒ“ƒhƒE•\¦@trueFƒtƒ‹ƒXƒNƒŠ[ƒ“—p•\¦
-//! @return ¬Œ÷Ftrue@¸”sFfalse
+//! @brief ã‚¦ã‚£ãƒ³ãƒ‰ã‚¦ã®è¡¨ç¤ºãƒ¢ãƒ¼ãƒ‰åˆ‡ã‚Šæ›¿ãˆ
+//! @param fullscreen falseï¼šã‚¦ã‚£ãƒ³ãƒ‰ã‚¦è¡¨ç¤ºã€€trueï¼šãƒ•ãƒ«ã‚¹ã‚¯ãƒªãƒ¼ãƒ³ç”¨è¡¨ç¤º
+//! @return æˆåŠŸï¼štrueã€€å¤±æ•—ï¼šfalse
 bool WindowControl::ChangeWindowMode(bool fullscreen)
 {
 	if( hWnd == NULL ){ return false; }
@@ -148,11 +146,11 @@ bool WindowControl::ChangeWindowMode(bool fullscreen)
 	RECT Rect;
 	int width, height;
 
-	//ƒEƒBƒ“ƒhƒEƒTƒCƒY‚ğæ“¾
+	//ã‚¦ã‚£ãƒ³ãƒ‰ã‚¦ã‚µã‚¤ã‚ºã‚’å–å¾—
 	GetClientRect(hWnd, &Rect);
 
 	if( fullscreen == false ){
-		ChangeDisplaySettings(NULL, 0);		//ƒfƒBƒXƒvƒŒƒC‰ğ‘œ“x‚ğ–ß‚·
+		ChangeDisplaySettings(NULL, 0);		//ãƒ‡ã‚£ã‚¹ãƒ—ãƒ¬ã‚¤è§£åƒåº¦ã‚’æˆ»ã™
 
 		dwStyle = WS_OVERLAPPED | WS_SYSMENU | WS_CAPTION | WS_MINIMIZEBOX;
 	}
@@ -160,35 +158,35 @@ bool WindowControl::ChangeWindowMode(bool fullscreen)
 		dwStyle = WS_POPUP;
 	}
 
-	//ƒEƒBƒ“ƒhƒEƒTƒCƒY‚ğŒvZ
+	//ã‚¦ã‚£ãƒ³ãƒ‰ã‚¦ã‚µã‚¤ã‚ºã‚’è¨ˆç®—
 	AdjustWindowRect(&Rect, dwStyle, FALSE);
 	width = Rect.right - Rect.left;
 	height = Rect.bottom - Rect.top;
 
-	//”½‰f
+	//åæ˜ 
 	SetWindowLong(hWnd, GWL_STYLE, dwStyle);
 	SetWindowPos(hWnd, NULL, 0, 0, width, height, SWP_NOZORDER | SWP_FRAMECHANGED | SWP_SHOWWINDOW);
 
 	return true;
 }
 
-//! @brief ƒEƒBƒ“ƒhƒEƒnƒ“ƒhƒ‹‚ğæ“¾
-//! @return ƒEƒBƒ“ƒhƒEƒnƒ“ƒhƒ‹
+//! @brief ã‚¦ã‚£ãƒ³ãƒ‰ã‚¦ãƒãƒ³ãƒ‰ãƒ«ã‚’å–å¾—
+//! @return ã‚¦ã‚£ãƒ³ãƒ‰ã‚¦ãƒãƒ³ãƒ‰ãƒ«
 HWND WindowControl::GethWnd()
 {
 	return hWnd;
 }
 
-//! @brief ƒEƒBƒ“ƒhƒEƒƒbƒZ[ƒW‚ğˆ—iƒƒCƒ“ƒ‹[ƒv”»’èj
-//! @return ƒAƒCƒhƒ‹ó‘ÔF0@ƒQ[ƒ€‚ÌƒƒCƒ“ˆ—ÀsF1@ƒEƒBƒ“ƒhƒE‚ª•Â‚¶‚½F-1
-//! @attention –{ŠÖ”‚©‚çu1v‚ª•Ô‚³‚ê‚½ê‡‚ÉŒÀ‚èAƒQ[ƒ€‚ÌƒƒCƒ“ˆ—‚ğÀs‚µ‚Ä‚­‚¾‚³‚¢B
-//! @attention –{ŠÖ”‚©‚çu-1v‚ª•Ô‚³‚ê‚½ê‡AŠeƒŠƒ\[ƒX‚âƒCƒ“ƒ^[ƒtƒF[ƒX‚ğ‰ğ•ú‚µAƒQ[ƒ€‚ğI—¹‚µ‚Ä‚­‚¾‚³‚¢B
+//! @brief ã‚¦ã‚£ãƒ³ãƒ‰ã‚¦ãƒ¡ãƒƒã‚»ãƒ¼ã‚¸ã‚’å‡¦ç†ï¼ˆãƒ¡ã‚¤ãƒ³ãƒ«ãƒ¼ãƒ—åˆ¤å®šï¼‰
+//! @return ã‚¢ã‚¤ãƒ‰ãƒ«çŠ¶æ…‹ï¼š0ã€€ã‚²ãƒ¼ãƒ ã®ãƒ¡ã‚¤ãƒ³å‡¦ç†å®Ÿè¡Œï¼š1ã€€ã‚¦ã‚£ãƒ³ãƒ‰ã‚¦ãŒé–‰ã˜ãŸï¼š-1
+//! @attention æœ¬é–¢æ•°ã‹ã‚‰ã€Œ1ã€ãŒè¿”ã•ã‚ŒãŸå ´åˆã«é™ã‚Šã€ã‚²ãƒ¼ãƒ ã®ãƒ¡ã‚¤ãƒ³å‡¦ç†ã‚’å®Ÿè¡Œã—ã¦ãã ã•ã„ã€‚
+//! @attention æœ¬é–¢æ•°ã‹ã‚‰ã€Œ-1ã€ãŒè¿”ã•ã‚ŒãŸå ´åˆã€å„ãƒªã‚½ãƒ¼ã‚¹ã‚„ã‚¤ãƒ³ã‚¿ãƒ¼ãƒ•ã‚§ãƒ¼ã‚¹ã‚’è§£æ”¾ã—ã€ã‚²ãƒ¼ãƒ ã‚’çµ‚äº†ã—ã¦ãã ã•ã„ã€‚
 int WindowControl::CheckMainLoop()
 {
 	MSG msg = {0};
 
 	if( PeekMessage( &msg, NULL, 0U, 0U, PM_REMOVE ) ){
-		//ƒEƒBƒ“ƒhƒEƒƒbƒZ[ƒW‚ª—ˆ‚Ä‚¢‚é
+		//ã‚¦ã‚£ãƒ³ãƒ‰ã‚¦ãƒ¡ãƒƒã‚»ãƒ¼ã‚¸ãŒæ¥ã¦ã„ã‚‹
 
 		TranslateMessage( &msg );
 		DispatchMessage( &msg );
@@ -199,43 +197,43 @@ int WindowControl::CheckMainLoop()
 		return 0;
 	}
 	else if( GetActiveWindow() == hWnd ){
-		//ƒQ[ƒ€‚ÌƒtƒŒ[ƒ€ˆ—
+		//ã‚²ãƒ¼ãƒ ã®ãƒ•ãƒ¬ãƒ¼ãƒ å‡¦ç†
 		return 1;
 	}
 	//else{
-		//ƒEƒBƒ“ƒhƒEƒƒbƒZ[ƒW‚ª—ˆ‚é‚Ü‚Å‘Ò‚Â
+		//ã‚¦ã‚£ãƒ³ãƒ‰ã‚¦ãƒ¡ãƒƒã‚»ãƒ¼ã‚¸ãŒæ¥ã‚‹ã¾ã§å¾…ã¤
 		WaitMessage();
 		return 0;
 	//}
 }
 
-//! @brief ƒGƒ‰[ƒƒbƒZ[ƒW•\¦
-//! @param *str ƒƒbƒZ[ƒW
+//! @brief ã‚¨ãƒ©ãƒ¼ãƒ¡ãƒƒã‚»ãƒ¼ã‚¸è¡¨ç¤º
+//! @param *str ãƒ¡ãƒƒã‚»ãƒ¼ã‚¸
 void WindowControl::ErrorInfo(char *str)
 {
 	MessageBox(hWnd, str, "error", MB_OK);
 }
 
-//! @brief ƒEƒBƒ“ƒhƒE‚ğ•Â‚¶‚é‚æ‚¤‚É—v‹
+//! @brief ã‚¦ã‚£ãƒ³ãƒ‰ã‚¦ã‚’é–‰ã˜ã‚‹ã‚ˆã†ã«è¦æ±‚
 void WindowControl::CloseWindow()
 {
 	PostMessage(hWnd, WM_CLOSE, 0L, 0L);
 }
 
 #ifdef ENABLE_DEBUGLOG
-//! @brief ƒfƒoƒbƒN—pƒƒO‚Éƒ†[ƒU[ŠÂ‹«‚ğo—Í
-//! @note Œ»“_‚Å‚ÍOSî•ñ‚Ì‚İ
+//! @brief ãƒ‡ãƒãƒƒã‚¯ç”¨ãƒ­ã‚°ã«ãƒ¦ãƒ¼ã‚¶ãƒ¼ç’°å¢ƒã‚’å‡ºåŠ›
+//! @note ç¾æ™‚ç‚¹ã§ã¯OSæƒ…å ±ã®ã¿
 void GetOperatingEnvironment()
 {
 	char str[128];
 	char str2[128];
 
-	//OS‚Ìƒo[ƒWƒ‡ƒ“æ“¾
+	//OSã®ãƒãƒ¼ã‚¸ãƒ§ãƒ³å–å¾—
 	OSVERSIONINFO OSver;
 	OSver.dwOSVersionInfoSize = sizeof(OSVERSIONINFO); 
 	GetVersionEx(&OSver);
 
-	//OSƒrƒbƒg”æ“¾
+	//OSãƒ“ãƒƒãƒˆæ•°å–å¾—
 	SYSTEM_INFO SystemInfo = {0};
 	GetNativeSystemInfo(&SystemInfo);
 	switch(SystemInfo.wProcessorArchitecture){
@@ -245,15 +243,15 @@ void GetOperatingEnvironment()
 		default: strcpy(str2, "unknown bit");
 	}
 
-	//ƒƒO‚Éo—Í
-	sprintf(str, "OSFWindows Version %d.%d.%d (%s)", OSver.dwMajorVersion, OSver.dwMinorVersion, OSver.dwBuildNumber, str2);
-	OutputLog.WriteLog(LOG_CHECK, "ŠÂ‹«", str);
+	//ãƒ­ã‚°ã«å‡ºåŠ›
+	sprintf(str, "OSï¼šWindows Version %d.%d.%d (%s)", OSver.dwMajorVersion, OSver.dwMinorVersion, OSver.dwBuildNumber, str2);
+	OutputLog.WriteLog(LOG_CHECK, "ç’°å¢ƒ", str);
 }
 #endif
 
-//! @brief fpsiFrames Per SecondFƒtƒŒ[ƒ€ƒŒ[ƒgjŒvZ
-//! @param getcnt fps‚ğæ“¾‚·‚éüŠúiƒtƒŒ[ƒ€’PˆÊj
-//! @return fps”
+//! @brief fpsï¼ˆFrames Per Secondï¼šãƒ•ãƒ¬ãƒ¼ãƒ ãƒ¬ãƒ¼ãƒˆï¼‰è¨ˆç®—
+//! @param getcnt fpsã‚’å–å¾—ã™ã‚‹å‘¨æœŸï¼ˆãƒ•ãƒ¬ãƒ¼ãƒ å˜ä½ï¼‰
+//! @return fpsæ•°
 float GetFps(int getcnt)
 {
 	static unsigned int ptimeg = 0;
@@ -276,9 +274,8 @@ float GetFps(int getcnt)
 	return pfps;
 }
 
-//! @brief fpsiFrames Per SecondFƒtƒŒ[ƒ€ƒŒ[ƒgj’²®
-//! @return ’²®‚ğÀ{Ftrue@@’²®‚ğÀ{‚¹‚¸Ffalse
-//! @attention WindowControlƒNƒ‰ƒX‚ğ‰Šú‰»‚µ‚È‚¢‚ÆAƒ^ƒCƒ}[‚Ì¸“x‚ªo‚Ü‚¹‚ñB
+//! @brief fpsï¼ˆFrames Per Secondï¼šãƒ•ãƒ¬ãƒ¼ãƒ ãƒ¬ãƒ¼ãƒˆï¼‰èª¿æ•´
+//! @return èª¿æ•´ã‚’å®Ÿæ–½ï¼štrueã€€ã€€èª¿æ•´ã‚’å®Ÿæ–½ã›ãšï¼šfalse
 bool ControlFps()
 {
 	static unsigned int ptimec = 0;
@@ -288,10 +285,7 @@ bool ControlFps()
 	nowtime = GetTimeMS();
 	waittime = GAMEFRAMEMS - (nowtime - ptimec);
 	if( (0 < waittime)&&(waittime <= GAMEFRAMEMS) ){
-		//timeBeginPeriod(1);
 		Sleep(waittime);
-		//timeEndPeriod(1);
-		
 		ptimec = GetTimeMS();
 		return true;
 	}
@@ -300,22 +294,21 @@ bool ControlFps()
 	return false;
 }
 
-//! @brief ƒ~ƒŠ•b’PˆÊ‚ğ•Ô‚·
-//! @return ƒ~ƒŠ•b
-//! @attention WindowControlƒNƒ‰ƒX‚ğ‰Šú‰»‚µ‚È‚¢‚ÆAƒ^ƒCƒ}[‚Ì¸“x‚ªo‚Ü‚¹‚ñB
+//! @brief ãƒŸãƒªç§’å˜ä½ã‚’è¿”ã™
+//! @return ãƒŸãƒªç§’
 unsigned int GetTimeMS()
 {
 	unsigned int time;
 
-	//timeBeginPeriod(1);
+	timeBeginPeriod(1);
 	time = timeGetTime();
-	//timeEndPeriod(1);
+	timeEndPeriod(1);
 
 	return time;
 }
 
-//! @brief “ú‚É‚æ‚é•¶š—ñ‚ğæ“¾
-//! @param str •¶š—ñ‚ğó‚¯æ‚éƒ|ƒCƒ“ƒ^
+//! @brief æ—¥æ™‚ã«ã‚ˆã‚‹æ–‡å­—åˆ—ã‚’å–å¾—
+//! @param str æ–‡å­—åˆ—ã‚’å—ã‘å–ã‚‹ãƒã‚¤ãƒ³ã‚¿
 void GetTimeName(char *str)
 {
 	time_t timer;
@@ -327,22 +320,22 @@ void GetTimeName(char *str)
 	sprintf(str, "%04d%02d%02d%02d%02d%02d", local->tm_year + 1900, local->tm_mon + 1, local->tm_mday, local->tm_hour, local->tm_min, local->tm_sec);
 }
 
-//! @brief —”‚ğ‰Šú‰»
+//! @brief ä¹±æ•°ã‚’åˆæœŸåŒ–
 void InitRand()
 {
 	srand(GetTimeMS());
 }
 
-//! @brief ƒ‰ƒ“ƒ_ƒ€‚È®”’l‚ğ•Ô‚·
-//! @param num ”ÍˆÍ
-//! @return 0`num-1
+//! @brief ãƒ©ãƒ³ãƒ€ãƒ ãªæ•´æ•°å€¤ã‚’è¿”ã™
+//! @param num ç¯„å›²
+//! @return 0ï½num-1
 int GetRand(int num)
 {
 	return rand()%num;
 
 	//return rand() / (RAND_MAX/num);
 
-	//–{‰ÆXOPS‚ÌƒAƒ‹ƒSƒŠƒYƒ€H
+	//æœ¬å®¶XOPSã®ã‚¢ãƒ«ã‚´ãƒªã‚ºãƒ ï¼Ÿ
 	//static int memory = GetTimeMS();
 	//int x;
 	//memory = memory * 214013 + 2745024;
@@ -352,10 +345,10 @@ int GetRand(int num)
 }
 
 #ifdef ENABLE_PATH_DELIMITER_SLASH
-//! @brief ƒpƒX‹æØ‚è•¶š‚ğ•ÏŠ·
-//! @param *str ƒtƒ@ƒCƒ‹ƒpƒX‚Ìƒ|ƒCƒ“ƒ^
-//! @return V‚µ‚¢ƒtƒ@ƒCƒ‹ƒpƒX‚Ìƒ|ƒCƒ“ƒ^
-//! @note '\'‚ğ'/'‚Ö’u‚«Š·‚¦‚Ü‚·B
+//! @brief ãƒ‘ã‚¹åŒºåˆ‡ã‚Šæ–‡å­—ã‚’å¤‰æ›
+//! @param *str ãƒ•ã‚¡ã‚¤ãƒ«ãƒ‘ã‚¹ã®ãƒã‚¤ãƒ³ã‚¿
+//! @return æ–°ã—ã„ãƒ•ã‚¡ã‚¤ãƒ«ãƒ‘ã‚¹ã®ãƒã‚¤ãƒ³ã‚¿
+//! @note '\'ã‚’'/'ã¸ç½®ãæ›ãˆã¾ã™ã€‚
 char* ChangePathDelimiter(char *str)
 {
 	static char newstr[MAX_PATH];

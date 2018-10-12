@@ -1,5 +1,5 @@
-//! @file collision.h
-//! @brief CollisionƒNƒ‰ƒX‚ÌéŒ¾
+ï»¿//! @file collision.h
+//! @brief Collisionã‚¯ãƒ©ã‚¹ã®å®£è¨€
 
 //--------------------------------------------------------------------------------
 // 
@@ -32,7 +32,7 @@
 #ifndef COLLISION_H
 #define COLLISION_H
 
-#define COLLISION_ADDSIZE 0.1f			//!< “–‚½‚è”»’è”ÍˆÍ‚Ì‰ÁZ—Ê
+#define COLLISION_ADDSIZE 0.1f			//!< å½“ãŸã‚Šåˆ¤å®šç¯„å›²ã®åŠ ç®—é‡
 
 #ifndef H_LAYERLEVEL
  #define H_LAYERLEVEL 2		//!< Select include file.
@@ -41,30 +41,30 @@
 
 #include <float.h>
 
-//! “–‚½‚è”»’è—pƒuƒƒbƒNƒf[ƒ^\‘¢‘Ì
+//! å½“ãŸã‚Šåˆ¤å®šç”¨ãƒ–ãƒ­ãƒƒã‚¯ãƒ‡ãƒ¼ã‚¿æ§‹é€ ä½“
 struct Coll_Blockdata{
-	float x[8];					//!< ƒuƒƒbƒN XÀ•W
-	float y[8];					//!< ƒuƒƒbƒN YÀ•W
-	float z[8];					//!< ƒuƒƒbƒN ZÀ•W
-	float polygon_center_x[6];	//!< ƒuƒƒbƒN‚Ì–Ê‚Ì’†S XÀ•W
-	float polygon_center_y[6];	//!< ƒuƒƒbƒN‚Ì–Ê‚Ì’†S YÀ•W
-	float polygon_center_z[6];	//!< ƒuƒƒbƒN‚Ì–Ê‚Ì’†S ZÀ•W
-	float min_x;				//!< ƒuƒƒbƒN XÀ•W‚ÌÅ¬’l
-	float min_y;				//!< ƒuƒƒbƒN YÀ•W‚ÌÅ¬’l
-	float min_z;				//!< ƒuƒƒbƒN ZÀ•W‚ÌÅ¬’l
-	float max_x;				//!< ƒuƒƒbƒN XÀ•W‚ÌÅ‘å’l
-	float max_y;				//!< ƒuƒƒbƒN YÀ•W‚ÌÅ‘å’l
-	float max_z;				//!< ƒuƒƒbƒN ZÀ•W‚ÌÅ‘å’l
-	bool BoardBlock;			//!< ƒuƒƒbƒN ‚ªŒú‚³0‚Å”Âó‚É‚È‚Á‚Ä‚¢‚é‚©
-	int worldgroup;				//!< ‹óŠÔ•ªŠ„‚ÌƒOƒ‹[ƒv
+	float x[8];					//!< ãƒ–ãƒ­ãƒƒã‚¯ Xåº§æ¨™
+	float y[8];					//!< ãƒ–ãƒ­ãƒƒã‚¯ Yåº§æ¨™
+	float z[8];					//!< ãƒ–ãƒ­ãƒƒã‚¯ Zåº§æ¨™
+	float polygon_center_x[6];	//!< ãƒ–ãƒ­ãƒƒã‚¯ã®é¢ã®ä¸­å¿ƒ Xåº§æ¨™
+	float polygon_center_y[6];	//!< ãƒ–ãƒ­ãƒƒã‚¯ã®é¢ã®ä¸­å¿ƒ Yåº§æ¨™
+	float polygon_center_z[6];	//!< ãƒ–ãƒ­ãƒƒã‚¯ã®é¢ã®ä¸­å¿ƒ Zåº§æ¨™
+	float min_x;				//!< ãƒ–ãƒ­ãƒƒã‚¯ Xåº§æ¨™ã®æœ€å°å€¤
+	float min_y;				//!< ãƒ–ãƒ­ãƒƒã‚¯ Yåº§æ¨™ã®æœ€å°å€¤
+	float min_z;				//!< ãƒ–ãƒ­ãƒƒã‚¯ Zåº§æ¨™ã®æœ€å°å€¤
+	float max_x;				//!< ãƒ–ãƒ­ãƒƒã‚¯ Xåº§æ¨™ã®æœ€å¤§å€¤
+	float max_y;				//!< ãƒ–ãƒ­ãƒƒã‚¯ Yåº§æ¨™ã®æœ€å¤§å€¤
+	float max_z;				//!< ãƒ–ãƒ­ãƒƒã‚¯ Zåº§æ¨™ã®æœ€å¤§å€¤
+	bool BoardBlock;			//!< ãƒ–ãƒ­ãƒƒã‚¯ ãŒåšã•0ã§æ¿çŠ¶ã«ãªã£ã¦ã„ã‚‹ã‹
+	int worldgroup;				//!< ç©ºé–“åˆ†å‰²ã®ã‚°ãƒ«ãƒ¼ãƒ—
 };
 
-//! @brief “–‚½‚è”»’è‚ğs‚¤ƒNƒ‰ƒX
-//! @details ƒ}ƒbƒv‚Æ‚µ‚Äg—p‚³‚ê‚éƒuƒƒbƒNƒf[ƒ^‚Ö‚Ì“–‚½‚è”»’èiÕ“ËŒŸoj‚ğs‚¢‚Ü‚·B
+//! @brief å½“ãŸã‚Šåˆ¤å®šã‚’è¡Œã†ã‚¯ãƒ©ã‚¹
+//! @details ãƒãƒƒãƒ—ã¨ã—ã¦ä½¿ç”¨ã•ã‚Œã‚‹ãƒ–ãƒ­ãƒƒã‚¯ãƒ‡ãƒ¼ã‚¿ã¸ã®å½“ãŸã‚Šåˆ¤å®šï¼ˆè¡çªæ¤œå‡ºï¼‰ã‚’è¡Œã„ã¾ã™ã€‚
 class Collision
 {
-	class BlockDataInterface* blockdata;		//!< “Ç‚İ‚ñ‚¾ƒuƒƒbƒNƒf[ƒ^‚ªŠi”[‚³‚ê‚½ƒNƒ‰ƒX‚Ö‚Ìƒ|ƒCƒ“ƒ^
-	Coll_Blockdata *cbdata;						//!< ƒuƒƒbƒNƒf[ƒ^
+	class BlockDataInterface* blockdata;		//!< èª­ã¿è¾¼ã‚“ã ãƒ–ãƒ­ãƒƒã‚¯ãƒ‡ãƒ¼ã‚¿ãŒæ ¼ç´ã•ã‚ŒãŸã‚¯ãƒ©ã‚¹ã¸ã®ãƒã‚¤ãƒ³ã‚¿
+	Coll_Blockdata *cbdata;						//!< ãƒ–ãƒ­ãƒƒã‚¯ãƒ‡ãƒ¼ã‚¿
 
 	bool CheckIntersectTri(int blockid, int face, float RayPos_x, float RayPos_y, float RayPos_z, float RayDir_x, float RayDir_y, float RayDir_z, float *out_Dist);
 

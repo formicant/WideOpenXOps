@@ -1,5 +1,5 @@
-//! @file input.h
-//! @brief InputControlƒNƒ‰ƒX‚ÌéŒ¾
+ï»¿//! @file input.h
+//! @brief InputControlã‚¯ãƒ©ã‚¹ã®å®£è¨€
 
 //--------------------------------------------------------------------------------
 // 
@@ -39,37 +39,37 @@
 
 #include <windows.h>
 
-//#define INPUT_DIRECTINPUT	//!< @brief “ü—Í‚ğæ“¾‚·‚éƒCƒ“ƒ^[ƒtƒF[ƒX‚Ì‘I‘ğ @details ’è”éŒ¾—LŒøFDirectInput@’è”éŒ¾–³ŒøiƒRƒƒ“ƒg‰»jFWinAPI
+//#define INPUT_DIRECTINPUT	//!< @brief å…¥åŠ›ã‚’å–å¾—ã™ã‚‹ã‚¤ãƒ³ã‚¿ãƒ¼ãƒ•ã‚§ãƒ¼ã‚¹ã®é¸æŠ @details å®šæ•°å®£è¨€æœ‰åŠ¹ï¼šDirectInputã€€å®šæ•°å®£è¨€ç„¡åŠ¹ï¼ˆã‚³ãƒ¡ãƒ³ãƒˆåŒ–ï¼‰ï¼šWinAPI
 
 #ifdef INPUT_DIRECTINPUT
- #define DIRECTINPUT_VERSION 0x0800	//!< ŒxuDIRECTINPUT_VERSION undefined. Defaulting to version 0x0800v‚ğ–h~
+ #define DIRECTINPUT_VERSION 0x0800	//!< è­¦å‘Šã€ŒDIRECTINPUT_VERSION undefined. Defaulting to version 0x0800ã€ã‚’é˜²æ­¢
  #include <dinput.h>
 
  #pragma comment(lib, "dinput8.lib")
  #pragma comment(lib, "dxguid.lib")
 #endif
 
-//! @brief “ü—ÍƒfƒoƒCƒX‚ğŠÇ—‚·‚éƒNƒ‰ƒX
-//! @details ƒ}ƒEƒX‚âƒL[ƒ{[ƒh‚È‚Ç‚Ì“ü—ÍƒfƒoƒCƒX‚ğŠÇ—‚µ‚Ä‚¢‚Ü‚·B
+//! @brief å…¥åŠ›ãƒ‡ãƒã‚¤ã‚¹ã‚’ç®¡ç†ã™ã‚‹ã‚¯ãƒ©ã‚¹
+//! @details ãƒã‚¦ã‚¹ã‚„ã‚­ãƒ¼ãƒœãƒ¼ãƒ‰ãªã©ã®å…¥åŠ›ãƒ‡ãƒã‚¤ã‚¹ã‚’ç®¡ç†ã—ã¦ã„ã¾ã™ã€‚
 class InputControl
 {
-	HWND hWnd;				//!< ƒEƒBƒ“ƒhƒEƒnƒ“ƒhƒ‹
+	HWND hWnd;				//!< ã‚¦ã‚£ãƒ³ãƒ‰ã‚¦ãƒãƒ³ãƒ‰ãƒ«
 #ifdef INPUT_DIRECTINPUT
-	LPDIRECTINPUT8 pDI;					//!< DIRECTINPUT8‚Ìƒ|ƒCƒ“ƒ^
-	LPDIRECTINPUTDEVICE8 pDIDevice;		//!< DIRECTINPUTDEVICE8‚Ìƒ|ƒCƒ“ƒ^EƒL[ƒ{[ƒh—p
-	LPDIRECTINPUTDEVICE8 pMouse;		//!< DIRECTINPUTDEVICE8‚Ìƒ|ƒCƒ“ƒ^Eƒ}ƒEƒX—p
+	LPDIRECTINPUT8 pDI;					//!< DIRECTINPUT8ã®ãƒã‚¤ãƒ³ã‚¿
+	LPDIRECTINPUTDEVICE8 pDIDevice;		//!< DIRECTINPUTDEVICE8ã®ãƒã‚¤ãƒ³ã‚¿ãƒ»ã‚­ãƒ¼ãƒœãƒ¼ãƒ‰ç”¨
+	LPDIRECTINPUTDEVICE8 pMouse;		//!< DIRECTINPUTDEVICE8ã®ãƒã‚¤ãƒ³ã‚¿ãƒ»ãƒã‚¦ã‚¹ç”¨
 #else
-	bool InitFlag;		//!< ‰Šú‰»ƒtƒ‰ƒO
+	bool InitFlag;		//!< åˆæœŸåŒ–ãƒ•ãƒ©ã‚°
 #endif
-	char keys[256];			//!< ƒL[î•ñ‚ğŠi”[‚·‚é”z—ñ
-	char keys_lt[256];		//!< i‘O‰ñ‚ÌjƒL[î•ñ‚ğŠi”[‚·‚é”z—ñ
-	int mx;				//!< ƒ}ƒEƒX‚ÌXÀ•W
-	int my;				//!< ƒ}ƒEƒX‚ÌYÀ•W
-	POINT point_lt;		//!< i‘O‰ñ‚Ìjƒ}ƒEƒXÀ•W
-	bool mbl;			//!< ƒ}ƒEƒX‚Ì¶ƒ{ƒ^ƒ“
-	bool mbr;			//!< ƒ}ƒEƒX‚Ì‰Eƒ{ƒ^ƒ“
-	bool mbl_lt;		//!< i‘O‰ñ‚Ìjƒ}ƒEƒX‚Ì¶ƒ{ƒ^ƒ“
-	bool mbr_lt;		//!< i‘O‰ñ‚Ìjƒ}ƒEƒX‚Ì‰Eƒ{ƒ^ƒ“
+	char keys[256];			//!< ã‚­ãƒ¼æƒ…å ±ã‚’æ ¼ç´ã™ã‚‹é…åˆ—
+	char keys_lt[256];		//!< ï¼ˆå‰å›ã®ï¼‰ã‚­ãƒ¼æƒ…å ±ã‚’æ ¼ç´ã™ã‚‹é…åˆ—
+	int mx;				//!< ãƒã‚¦ã‚¹ã®Xåº§æ¨™
+	int my;				//!< ãƒã‚¦ã‚¹ã®Yåº§æ¨™
+	POINT point_lt;		//!< ï¼ˆå‰å›ã®ï¼‰ãƒã‚¦ã‚¹åº§æ¨™
+	bool mbl;			//!< ãƒã‚¦ã‚¹ã®å·¦ãƒœã‚¿ãƒ³
+	bool mbr;			//!< ãƒã‚¦ã‚¹ã®å³ãƒœã‚¿ãƒ³
+	bool mbl_lt;		//!< ï¼ˆå‰å›ã®ï¼‰ãƒã‚¦ã‚¹ã®å·¦ãƒœã‚¿ãƒ³
+	bool mbr_lt;		//!< ï¼ˆå‰å›ã®ï¼‰ãƒã‚¦ã‚¹ã®å³ãƒœã‚¿ãƒ³
 
 public:
 	InputControl();

@@ -1,5 +1,5 @@
-//! @file d3dgraphics-opengl.cpp
-//! @brief D3DGraphicsƒNƒ‰ƒX‚Ì’è‹`iOpenGL”Åj
+ï»¿//! @file d3dgraphics-opengl.cpp
+//! @brief D3DGraphicsã‚¯ãƒ©ã‚¹ã®å®šç¾©ï¼ˆOpenGLç‰ˆï¼‰
 
 //--------------------------------------------------------------------------------
 // 
@@ -47,7 +47,7 @@
 
 #ifdef ENABLE_GRAPHICS_OPENGL
 
-//! @brief ƒRƒ“ƒXƒgƒ‰ƒNƒ^
+//! @brief ã‚³ãƒ³ã‚¹ãƒˆãƒ©ã‚¯ã‚¿
 D3DGraphics::D3DGraphics()
 {
 	hGLRC = NULL;
@@ -81,38 +81,38 @@ D3DGraphics::D3DGraphics()
 #endif
 }
 
-//! @brief ƒfƒBƒXƒgƒ‰ƒNƒ^
+//! @brief ãƒ‡ã‚£ã‚¹ãƒˆãƒ©ã‚¯ã‚¿
 D3DGraphics::~D3DGraphics()
 {
 	DestroyD3D();
 }
 
-//! @brief ƒtƒ‹ƒXƒNƒŠ[ƒ“ƒtƒ‰ƒOİ’è
-//! @param fullscreen ƒtƒ‹ƒXƒNƒŠ[ƒ“ƒtƒ‰ƒO
-//! @attention “¯ƒtƒ‰ƒO‚ÍA‰Šú‰»‚Ì InitD3D() ŠÖ”‚Å‚àİ’è‚Å‚«‚Ü‚·B
+//! @brief ãƒ•ãƒ«ã‚¹ã‚¯ãƒªãƒ¼ãƒ³ãƒ•ãƒ©ã‚°è¨­å®š
+//! @param fullscreen ãƒ•ãƒ«ã‚¹ã‚¯ãƒªãƒ¼ãƒ³ãƒ•ãƒ©ã‚°
+//! @attention åŒãƒ•ãƒ©ã‚°ã¯ã€åˆæœŸåŒ–æ™‚ã® InitD3D() é–¢æ•°ã§ã‚‚è¨­å®šã§ãã¾ã™ã€‚
 void D3DGraphics::SetFullScreenFlag(bool fullscreen)
 {
 	fullscreenflag = fullscreen;
 }
 
-//! @brief ƒtƒ‹ƒXƒNƒŠ[ƒ“ƒtƒ‰ƒOæ“¾
-//! @return ƒtƒ‹ƒXƒNƒŠ[ƒ“ƒtƒ‰ƒO
+//! @brief ãƒ•ãƒ«ã‚¹ã‚¯ãƒªãƒ¼ãƒ³ãƒ•ãƒ©ã‚°å–å¾—
+//! @return ãƒ•ãƒ«ã‚¹ã‚¯ãƒªãƒ¼ãƒ³ãƒ•ãƒ©ã‚°
 bool D3DGraphics::GetFullScreenFlag()
 {
 	return fullscreenflag;
 }
 
-//! @brief ‰Šú‰»@n
-//! iOpenGL 1.1j
-//! @param WindowCtrl WindowControlƒNƒ‰ƒX‚Ìƒ|ƒCƒ“ƒ^
-//! @param TextureFontFilename g—p‚·‚éƒeƒNƒXƒ`ƒƒƒtƒHƒ“ƒg‚Ìƒtƒ@ƒCƒ‹–¼
-//! @param fullscreen falseFƒEƒBƒ“ƒhƒE•\¦@trueFƒtƒ‹ƒXƒNƒŠ[ƒ“—p•\¦
-//! @return ¬Œ÷F0@¸”sF1
+//! @brief åˆæœŸåŒ–@n
+//! ï¼ˆOpenGL 1.1ï¼‰
+//! @param WindowCtrl WindowControlã‚¯ãƒ©ã‚¹ã®ãƒã‚¤ãƒ³ã‚¿
+//! @param TextureFontFilename ä½¿ç”¨ã™ã‚‹ãƒ†ã‚¯ã‚¹ãƒãƒ£ãƒ•ã‚©ãƒ³ãƒˆã®ãƒ•ã‚¡ã‚¤ãƒ«å
+//! @param fullscreen falseï¼šã‚¦ã‚£ãƒ³ãƒ‰ã‚¦è¡¨ç¤ºã€€trueï¼šãƒ•ãƒ«ã‚¹ã‚¯ãƒªãƒ¼ãƒ³ç”¨è¡¨ç¤º
+//! @return æˆåŠŸï¼š0ã€€å¤±æ•—ï¼š1
 int D3DGraphics::InitD3D(WindowControl *WindowCtrl, char *TextureFontFilename, bool fullscreen)
 {
 #ifdef ENABLE_DEBUGLOG
-	//ƒƒO‚Éo—Í
-	OutputLog.WriteLog(LOG_INIT, "ƒOƒ‰ƒtƒBƒbƒN", "OpenGL");
+	//ãƒ­ã‚°ã«å‡ºåŠ›
+	OutputLog.WriteLog(LOG_INIT, "ã‚°ãƒ©ãƒ•ã‚£ãƒƒã‚¯", "OpenGL");
 #endif
 
 	hWnd = WindowCtrl->GethWnd();
@@ -124,7 +124,7 @@ int D3DGraphics::InitD3D(WindowControl *WindowCtrl, char *TextureFontFilename, b
 
 	fullscreenflag = fullscreen;
 
-	//ƒtƒ‹ƒXƒNƒŠ[ƒ“‰»
+	//ãƒ•ãƒ«ã‚¹ã‚¯ãƒªãƒ¼ãƒ³åŒ–
 	if( fullscreen == true ){
 		DEVMODE devmode;
 		ZeroMemory(&devmode, sizeof(devmode));
@@ -145,7 +145,7 @@ int D3DGraphics::InitD3D(WindowControl *WindowCtrl, char *TextureFontFilename, b
 	int pfdID;
 	BOOL bResult;
 
-	//ƒsƒNƒZƒ‹ƒtƒH[ƒ}ƒbƒg
+	//ãƒ”ã‚¯ã‚»ãƒ«ãƒ•ã‚©ãƒ¼ãƒãƒƒãƒˆ
 	static PIXELFORMATDESCRIPTOR pfd = {
 		sizeof (PIXELFORMATDESCRIPTOR),
 		1,
@@ -166,46 +166,46 @@ int D3DGraphics::InitD3D(WindowControl *WindowCtrl, char *TextureFontFilename, b
 		0
 	};
 
-	//ƒfƒoƒCƒXƒRƒ“ƒeƒLƒXƒgæ“¾
+	//ãƒ‡ãƒã‚¤ã‚¹ã‚³ãƒ³ãƒ†ã‚­ã‚¹ãƒˆå–å¾—
 	hDC = GetDC(hWnd);
 
-	//ƒsƒNƒZƒ‹ƒtƒH[ƒ}ƒbƒg‚ğæ“¾
+	//ãƒ”ã‚¯ã‚»ãƒ«ãƒ•ã‚©ãƒ¼ãƒãƒƒãƒˆã‚’å–å¾—
 	pfdID = ChoosePixelFormat(hDC, &pfd);	
 	if( pfdID == 0 ){ return 1; }
 
-	//ƒsƒNƒZƒ‹ƒtƒH[ƒ}ƒbƒg‚ğw’è
+	//ãƒ”ã‚¯ã‚»ãƒ«ãƒ•ã‚©ãƒ¼ãƒãƒƒãƒˆã‚’æŒ‡å®š
 	bResult = SetPixelFormat(hDC, pfdID, &pfd);
 	if( bResult == FALSE ){ return 1; }
 
-	//ƒRƒ“ƒeƒLƒXƒg‚ğw’è
+	//ã‚³ãƒ³ãƒ†ã‚­ã‚¹ãƒˆã‚’æŒ‡å®š
 	hGLRC = wglCreateContext(hDC);
 	if( hGLRC == NULL ){ return 1; }
 
-	//ƒfƒoƒCƒXƒRƒ“ƒeƒLƒXƒg‰ğ•ú
+	//ãƒ‡ãƒã‚¤ã‚¹ã‚³ãƒ³ãƒ†ã‚­ã‚¹ãƒˆè§£æ”¾
 	ReleaseDC(hWnd, hDC);
 
-	//ƒVƒXƒeƒ€ƒtƒHƒ“ƒg—pˆÓ
-	//ƒtƒHƒ“ƒg–¼F‚l‚r ƒSƒVƒbƒN@ƒTƒCƒYF18
-	SystemFont = CreateFont(18, 0, 0, 0, FW_NORMAL, FALSE, FALSE, FALSE, SHIFTJIS_CHARSET, OUT_DEFAULT_PRECIS, CLIP_DEFAULT_PRECIS, DEFAULT_QUALITY, FIXED_PITCH | FF_MODERN, "‚l‚r ƒSƒVƒbƒN");
+	//ã‚·ã‚¹ãƒ†ãƒ ãƒ•ã‚©ãƒ³ãƒˆç”¨æ„
+	//ãƒ•ã‚©ãƒ³ãƒˆåï¼šï¼­ï¼³ ã‚´ã‚·ãƒƒã‚¯ã€€ã‚µã‚¤ã‚ºï¼š18
+	SystemFont = CreateFont(18, 0, 0, 0, FW_NORMAL, FALSE, FALSE, FALSE, SHIFTJIS_CHARSET, OUT_DEFAULT_PRECIS, CLIP_DEFAULT_PRECIS, DEFAULT_QUALITY, FIXED_PITCH | FF_MODERN, "ï¼­ï¼³ ã‚´ã‚·ãƒƒã‚¯");
 
 #ifdef ENABLE_DEBUGLOG
-	//ƒƒO‚Éo—Í
+	//ãƒ­ã‚°ã«å‡ºåŠ›
 	OutputLog.WriteLog(LOG_COMPLETE, "", "");
 #endif
 
-	//ƒeƒNƒXƒ`ƒƒƒtƒHƒ“ƒg—p‰æ‘œ‚Ìƒtƒ@ƒCƒ‹–¼‚ğİ’è
+	//ãƒ†ã‚¯ã‚¹ãƒãƒ£ãƒ•ã‚©ãƒ³ãƒˆç”¨ç”»åƒã®ãƒ•ã‚¡ã‚¤ãƒ«åã‚’è¨­å®š
 	strcpy(TextureFontFname, TextureFontFilename);
 
-	//ƒeƒNƒXƒ`ƒƒƒtƒHƒ“ƒg—p‰æ‘œ‚ğæ“¾
+	//ãƒ†ã‚¯ã‚¹ãƒãƒ£ãƒ•ã‚©ãƒ³ãƒˆç”¨ç”»åƒã‚’å–å¾—
 	TextureFont = LoadTexture(TextureFontFname, true, false);
 
 
-	//HUD@Œ»İ‚Á‚Ä‚¢‚é•Ší‚ğ•`‰æ‚·‚éÀ•W
+	//HUDã€€ç¾åœ¨æŒã£ã¦ã„ã‚‹æ­¦å™¨ã‚’æç”»ã™ã‚‹åº§æ¨™
 	HUD_myweapon_x[0] = SCREEN_WIDTH - 140.0f;
 	HUD_myweapon_y[0] = SCREEN_HEIGHT - 40.0f;
 	HUD_myweapon_z[0] = 0.86f;
 
-	//HUD@—\”õ‚Ì•Ší‚ğ•`‰æ‚·‚éÀ•W
+	//HUDã€€äºˆå‚™ã®æ­¦å™¨ã‚’æç”»ã™ã‚‹åº§æ¨™
 	HUD_myweapon_x[1] = SCREEN_WIDTH - 72.0f;
 	HUD_myweapon_y[1] = SCREEN_HEIGHT - 25.0f;
 	HUD_myweapon_z[1] = 0.93f;
@@ -219,25 +219,25 @@ int D3DGraphics::InitD3D(WindowControl *WindowCtrl, char *TextureFontFilename, b
 #endif
 
 
-	//libjpeg‰Šú‰»
+	//libjpegåˆæœŸåŒ–
 	cinfo.err = jpeg_std_error(&jerr);
 	jpeg_create_decompress(&cinfo);
 
 	return 0;
 }
 
-//! @brief ƒŠƒZƒbƒg@n
-//! iƒEƒBƒ“ƒhƒEÅ¬‰»‚©‚ç‚Ì•œ‹A@‚È‚Çj
-//! @param WindowCtrl WindowControlƒNƒ‰ƒX‚Ìƒ|ƒCƒ“ƒ^
-//! @return ¬Œ÷F0@‘Ò‚¿F1@¸”sF2
+//! @brief ãƒªã‚»ãƒƒãƒˆ@n
+//! ï¼ˆã‚¦ã‚£ãƒ³ãƒ‰ã‚¦æœ€å°åŒ–ã‹ã‚‰ã®å¾©å¸°ã€€ãªã©ï¼‰
+//! @param WindowCtrl WindowControlã‚¯ãƒ©ã‚¹ã®ãƒã‚¤ãƒ³ã‚¿
+//! @return æˆåŠŸï¼š0ã€€å¾…ã¡ï¼š1ã€€å¤±æ•—ï¼š2
 int D3DGraphics::ResetD3D(WindowControl *WindowCtrl)
 {
 #ifdef ENABLE_DEBUGLOG
-	//ƒƒO‚Éo—Í
-	OutputLog.WriteLog(LOG_INIT, "ƒOƒ‰ƒtƒBƒbƒN", "OpenGLiƒŠƒZƒbƒgj");
+	//ãƒ­ã‚°ã«å‡ºåŠ›
+	OutputLog.WriteLog(LOG_INIT, "ã‚°ãƒ©ãƒ•ã‚£ãƒƒã‚¯", "OpenGLï¼ˆãƒªã‚»ãƒƒãƒˆï¼‰");
 #endif
 
-	//ƒŠƒ\[ƒX‰ğ•ú
+	//ãƒªã‚½ãƒ¼ã‚¹è§£æ”¾
 	CleanupD3Dresource();
 
 	if( hGLRC != NULL ){
@@ -246,12 +246,12 @@ int D3DGraphics::ResetD3D(WindowControl *WindowCtrl)
 	}
 
 
-	//  ‰ğ•úˆ—‚±‚±‚Ü‚Å
-	//@‚±‚±‚©‚ç‰Šú‰»ˆ—
+	//  è§£æ”¾å‡¦ç†ã“ã“ã¾ã§
+	//ã€€ã“ã“ã‹ã‚‰åˆæœŸåŒ–å‡¦ç†
 
 	hWnd = WindowCtrl->GethWnd();
 
-	//ƒtƒ‹ƒXƒNƒŠ[ƒ“‰»
+	//ãƒ•ãƒ«ã‚¹ã‚¯ãƒªãƒ¼ãƒ³åŒ–
 	if( fullscreenflag == true ){
 		DEVMODE devmode;
 		ZeroMemory(&devmode, sizeof(devmode));
@@ -272,7 +272,7 @@ int D3DGraphics::ResetD3D(WindowControl *WindowCtrl)
 	int pfdID;
 	BOOL bResult;
 
-	//ƒsƒNƒZƒ‹ƒtƒH[ƒ}ƒbƒg
+	//ãƒ”ã‚¯ã‚»ãƒ«ãƒ•ã‚©ãƒ¼ãƒãƒƒãƒˆ
 	static PIXELFORMATDESCRIPTOR pfd = {
 		sizeof (PIXELFORMATDESCRIPTOR),
 		1,
@@ -293,34 +293,34 @@ int D3DGraphics::ResetD3D(WindowControl *WindowCtrl)
 		0
 	};
 
-	//ƒfƒoƒCƒXƒRƒ“ƒeƒLƒXƒgæ“¾
+	//ãƒ‡ãƒã‚¤ã‚¹ã‚³ãƒ³ãƒ†ã‚­ã‚¹ãƒˆå–å¾—
 	hDC = GetDC(hWnd);
 
-	//ƒsƒNƒZƒ‹ƒtƒH[ƒ}ƒbƒg‚ğæ“¾
+	//ãƒ”ã‚¯ã‚»ãƒ«ãƒ•ã‚©ãƒ¼ãƒãƒƒãƒˆã‚’å–å¾—
 	pfdID = ChoosePixelFormat(hDC, &pfd);	
 	if( pfdID == 0 ){ return 1; }
 
-	//ƒsƒNƒZƒ‹ƒtƒH[ƒ}ƒbƒg‚ğw’è
+	//ãƒ”ã‚¯ã‚»ãƒ«ãƒ•ã‚©ãƒ¼ãƒãƒƒãƒˆã‚’æŒ‡å®š
 	bResult = SetPixelFormat(hDC, pfdID, &pfd);
 	if( bResult == FALSE ){ return 1; }
 
-	//ƒRƒ“ƒeƒLƒXƒg‚ğw’è
+	//ã‚³ãƒ³ãƒ†ã‚­ã‚¹ãƒˆã‚’æŒ‡å®š
 	hGLRC = wglCreateContext(hDC);
 	if( hGLRC == NULL ){ return 1; }
 
-	//ƒfƒoƒCƒXƒRƒ“ƒeƒLƒXƒg‰ğ•ú
+	//ãƒ‡ãƒã‚¤ã‚¹ã‚³ãƒ³ãƒ†ã‚­ã‚¹ãƒˆè§£æ”¾
 	ReleaseDC(hWnd, hDC);
 
-	//ƒVƒXƒeƒ€ƒtƒHƒ“ƒg—pˆÓ
-	//ƒtƒHƒ“ƒg–¼F‚l‚r ƒSƒVƒbƒN@ƒTƒCƒYF18
-	SystemFont = CreateFont(18, 0, 0, 0, FW_NORMAL, FALSE, FALSE, FALSE, SHIFTJIS_CHARSET, OUT_DEFAULT_PRECIS, CLIP_DEFAULT_PRECIS, DEFAULT_QUALITY, FIXED_PITCH | FF_MODERN, "‚l‚r ƒSƒVƒbƒN");
+	//ã‚·ã‚¹ãƒ†ãƒ ãƒ•ã‚©ãƒ³ãƒˆç”¨æ„
+	//ãƒ•ã‚©ãƒ³ãƒˆåï¼šï¼­ï¼³ ã‚´ã‚·ãƒƒã‚¯ã€€ã‚µã‚¤ã‚ºï¼š18
+	SystemFont = CreateFont(18, 0, 0, 0, FW_NORMAL, FALSE, FALSE, FALSE, SHIFTJIS_CHARSET, OUT_DEFAULT_PRECIS, CLIP_DEFAULT_PRECIS, DEFAULT_QUALITY, FIXED_PITCH | FF_MODERN, "ï¼­ï¼³ ã‚´ã‚·ãƒƒã‚¯");
 
 #ifdef ENABLE_DEBUGLOG
-	//ƒƒO‚Éo—Í
+	//ãƒ­ã‚°ã«å‡ºåŠ›
 	OutputLog.WriteLog(LOG_COMPLETE, "", "");
 #endif
 
-	//ƒeƒNƒXƒ`ƒƒƒtƒHƒ“ƒg—p‰æ‘œ‚ğæ“¾
+	//ãƒ†ã‚¯ã‚¹ãƒãƒ£ãƒ•ã‚©ãƒ³ãƒˆç”¨ç”»åƒã‚’å–å¾—
 	TextureFont = LoadTexture(TextureFontFname, true, false);
 
 #ifdef ENABLE_DEBUGCONSOLE
@@ -332,8 +332,8 @@ int D3DGraphics::ResetD3D(WindowControl *WindowCtrl)
 	return 0;
 }
 
-//! @brief ‰ğ•ú
-//! @attention –{ŠÖ”‚Í©“®“I‚ÉŒÄ‚Ño‚³‚ê‚Ü‚·‚ªA–¾¦“I‚ÉŒÄ‚Ño‚·‚±‚Æ‚à‰Â”\‚Å‚·B
+//! @brief è§£æ”¾
+//! @attention æœ¬é–¢æ•°ã¯è‡ªå‹•çš„ã«å‘¼ã³å‡ºã•ã‚Œã¾ã™ãŒã€æ˜ç¤ºçš„ã«å‘¼ã³å‡ºã™ã“ã¨ã‚‚å¯èƒ½ã§ã™ã€‚
 void D3DGraphics::DestroyD3D()
 {
 	if( hGLRC == NULL ){ return; }
@@ -346,15 +346,15 @@ void D3DGraphics::DestroyD3D()
 	}
 
 #ifdef ENABLE_DEBUGLOG
-	//ƒƒO‚Éo—Í
-	OutputLog.WriteLog(LOG_CLEANUP, "ƒOƒ‰ƒtƒBƒbƒN", "OpenGL");
+	//ãƒ­ã‚°ã«å‡ºåŠ›
+	OutputLog.WriteLog(LOG_CLEANUP, "ã‚°ãƒ©ãƒ•ã‚£ãƒƒã‚¯", "OpenGL");
 #endif
 
-	//libjpeg‰ğ•ú
+	//libjpegè§£æ”¾
 	jpeg_destroy_decompress(&cinfo);
 }
 
-//! @brief ƒfƒoƒCƒX‚ÌƒŠƒ\[ƒX‚ğ‰ğ•ú
+//! @brief ãƒ‡ãƒã‚¤ã‚¹ã®ãƒªã‚½ãƒ¼ã‚¹ã‚’è§£æ”¾
 void D3DGraphics::CleanupD3Dresource()
 {
 	if( TextureFont != -1 ){
@@ -390,14 +390,14 @@ void D3DGraphics::CleanupD3Dresource()
 	}
 }
 
-//! @brief ƒ‚ƒfƒ‹ƒtƒ@ƒCƒ‹‚ğ“Ç‚İ‚Şi.xj
-//! @param filename ƒtƒ@ƒCƒ‹–¼
-//! @return ¬Œ÷Fƒ‚ƒfƒ‹”F¯”Ô†i0ˆÈãj@¸”sF-1
+//! @brief ãƒ¢ãƒ‡ãƒ«ãƒ•ã‚¡ã‚¤ãƒ«ã‚’èª­ã¿è¾¼ã‚€ï¼ˆ.xï¼‰
+//! @param filename ãƒ•ã‚¡ã‚¤ãƒ«å
+//! @return æˆåŠŸï¼šãƒ¢ãƒ‡ãƒ«èªè­˜ç•ªå·ï¼ˆ0ä»¥ä¸Šï¼‰ã€€å¤±æ•—ï¼š-1
 int D3DGraphics::LoadModel(char* filename)
 {
 #ifdef ENABLE_DEBUGLOG
-	//ƒƒO‚Éo—Í
-	OutputLog.WriteLog(LOG_LOAD, "ƒ‚ƒfƒ‹", filename);
+	//ãƒ­ã‚°ã«å‡ºåŠ›
+	OutputLog.WriteLog(LOG_LOAD, "ãƒ¢ãƒ‡ãƒ«", filename);
 #endif
 
 	int id = -1;
@@ -413,9 +413,9 @@ int D3DGraphics::LoadModel(char* filename)
 	MODELVDATA *old_vertex;
 	int *old_index;
 
-	char stroks[] = " ;,";		//‹æØ‚é•¶š—ñ
+	char stroks[] = " ;,";		//åŒºåˆ‡ã‚‹æ–‡å­—åˆ—
 
-	//‹ó‚¢‚Ä‚¢‚é”F¯”Ô†‚ğ’T‚·
+	//ç©ºã„ã¦ã„ã‚‹èªè­˜ç•ªå·ã‚’æ¢ã™
 	for(int i=0; i<MAX_MODEL; i++){
 		if( pmodel[i].useflag == false ){
 			id = i;
@@ -424,18 +424,18 @@ int D3DGraphics::LoadModel(char* filename)
 	}
 	if( id == -1 ){ return -1; }
 
-	//ƒtƒ@ƒCƒ‹‚ğ“Ç‚İ‚Ş
+	//ãƒ•ã‚¡ã‚¤ãƒ«ã‚’èª­ã¿è¾¼ã‚€
 	fp = fopen(filename, "r");
 	if( fp == NULL ){
-		return -1;		//ƒtƒ@ƒCƒ‹‚ª“Ç‚ß‚È‚¢
+		return -1;		//ãƒ•ã‚¡ã‚¤ãƒ«ãŒèª­ã‚ãªã„
 	}
 
-	//ƒ}ƒWƒbƒNƒR[ƒhæ“¾
+	//ãƒã‚¸ãƒƒã‚¯ã‚³ãƒ¼ãƒ‰å–å¾—
 	fgets(buf, 256, fp);
 	buf[ strlen("xof 0302txt") ] = '\0';
 	if( strcmp(buf, "xof 0302txt") != 0 ){
 		fclose( fp );
-		return -1;		//Xƒtƒ@ƒCƒ‹‚Å‚È‚¢
+		return -1;		//Xãƒ•ã‚¡ã‚¤ãƒ«ã§ãªã„
 	}
 
 	while( fgets(buf, 256, fp) != NULL ){
@@ -447,11 +447,11 @@ int D3DGraphics::LoadModel(char* filename)
 			in_vertexs = atoi(buf);
 
 			if( vertexs == 0 ){
-				//1‚Â–Ú‚ÌƒƒbƒVƒ…ƒf[ƒ^‚È‚ç‚ÎA—Ìˆæ‚ğì¬‚·‚é‚¾‚¯B
+				//1ã¤ç›®ã®ãƒ¡ãƒƒã‚·ãƒ¥ãƒ‡ãƒ¼ã‚¿ãªã‚‰ã°ã€é ˜åŸŸã‚’ä½œæˆã™ã‚‹ã ã‘ã€‚
 				vertex = new MODELVDATA [in_vertexs];
 			}
 			else{
-				//2‚Â–Ú‚ÌˆÈ~‚È‚çA—Ìˆæ‚ğŠm•Û‚µ’¼‚µ‚ÄƒRƒs[‚µAŒÃ‚¢—Ìˆæ‚ÍíœB
+				//2ã¤ç›®ã®ä»¥é™ãªã‚‰ã€é ˜åŸŸã‚’ç¢ºä¿ã—ç›´ã—ã¦ã‚³ãƒ”ãƒ¼ã—ã€å¤ã„é ˜åŸŸã¯å‰Šé™¤ã€‚
 				old_vertex = vertex;
 				vertex = new MODELVDATA [vertexs+in_vertexs];
 				memcpy(vertex, old_vertex, sizeof(MODELVDATA)*vertexs);
@@ -471,11 +471,11 @@ int D3DGraphics::LoadModel(char* filename)
 			in_polygons = atoi(buf);
 
 			if( polygons == 0 ){
-				//1‚Â–Ú‚ÌƒCƒ“ƒfƒbƒNƒXƒf[ƒ^‚È‚ç‚ÎA—Ìˆæ‚ğì¬‚·‚é‚¾‚¯B
+				//1ã¤ç›®ã®ã‚¤ãƒ³ãƒ‡ãƒƒã‚¯ã‚¹ãƒ‡ãƒ¼ã‚¿ãªã‚‰ã°ã€é ˜åŸŸã‚’ä½œæˆã™ã‚‹ã ã‘ã€‚
 				index = new int [in_polygons*5];
 			}
 			else{
-				//2‚Â–Ú‚ÌˆÈ~‚È‚çA—Ìˆæ‚ğŠm•Û‚µ’¼‚µ‚ÄƒRƒs[‚µAŒÃ‚¢—Ìˆæ‚ÍíœB
+				//2ã¤ç›®ã®ä»¥é™ãªã‚‰ã€é ˜åŸŸã‚’ç¢ºä¿ã—ç›´ã—ã¦ã‚³ãƒ”ãƒ¼ã—ã€å¤ã„é ˜åŸŸã¯å‰Šé™¤ã€‚
 				old_index = index;
 				index = new int [(polygons+in_polygons)*5];
 				memcpy(index, old_index, sizeof(int)*polygons*5);
@@ -513,7 +513,7 @@ int D3DGraphics::LoadModel(char* filename)
 		}
 	}
 
-	//ƒtƒ@ƒCƒ‹ƒnƒ“ƒhƒ‹‚ğ‰ğ•ú
+	//ãƒ•ã‚¡ã‚¤ãƒ«ãƒãƒ³ãƒ‰ãƒ«ã‚’è§£æ”¾
 	fclose( fp );
 
 	float *VertexAry = new float [polygons*6*3];
@@ -525,7 +525,7 @@ int D3DGraphics::LoadModel(char* filename)
 
 	for(int i=0; i<polygons; i++){
 		if( index[i*5] == 3 ){
-			//OŠpŒ`
+			//ä¸‰è§’å½¢
 			vid = index[i*5+1];
 			VertexAry[0 + cnt*3] = vertex[vid].x;
 			VertexAry[1 + cnt*3] = vertex[vid].y;
@@ -568,7 +568,7 @@ int D3DGraphics::LoadModel(char* filename)
 			cnt += 6;
 		}
 		else{
-			//lŠpŒ`
+			//å››è§’å½¢
 			vid = index[i*5+1];
 			VertexAry[0 + cnt*3] = vertex[vid].x;
 			VertexAry[1 + cnt*3] = vertex[vid].y;
@@ -613,7 +613,7 @@ int D3DGraphics::LoadModel(char* filename)
 		}
 	}
 
-	//Fî•ñ”z—ñ‚ğ—pˆÓ
+	//è‰²æƒ…å ±é…åˆ—ã‚’ç”¨æ„
 	ColorAry[0] = 1.0f;
 	ColorAry[1] = 1.0f;
 	ColorAry[2] = 1.0f;
@@ -640,29 +640,29 @@ int D3DGraphics::LoadModel(char* filename)
 	pmodel[id].TexCoordAry = TexCoordAry;
 
 #ifdef ENABLE_DEBUGLOG
-	//ƒƒO‚Éo—Í
+	//ãƒ­ã‚°ã«å‡ºåŠ›
 	OutputLog.WriteLog(LOG_COMPLETE, "", id);
 #endif
 	return id;
 }
 
-//! @brief ƒ‚ƒfƒ‹ƒtƒ@ƒCƒ‹‚Ì’†ŠÔƒf[ƒ^‚ğì¬iƒ‚[ƒtƒBƒ“ƒOj
-//! @param idA ƒ‚ƒfƒ‹A‚Ì”F¯”Ô†
-//! @param idB ƒ‚ƒfƒ‹B‚Ì”F¯”Ô†
-//! @return ¬Œ÷FV‚µ‚¢ƒ‚ƒfƒ‹”F¯”Ô†i0ˆÈãj@¸”sF-1
-//! @attention ƒ‚ƒfƒ‹A‚Æƒ‚ƒfƒ‹B‚ÍA’¸“_”Eƒ|ƒŠƒSƒ“”EƒCƒ“ƒfƒbƒNƒX‚ª“¯‚¶‚Å‚ ‚é•K—v‚ª‚ ‚è‚Ü‚·B
-//! @attention ‚»‚ê‚¼‚ê‚Ìƒ‚ƒfƒ‹ƒf[ƒ^‚ª³‚µ‚­‚È‚¢‚© ’¸“_”‚ªˆÙ‚È‚éê‡AÀs‚É¸”s‚µ‚Ü‚·B
+//! @brief ãƒ¢ãƒ‡ãƒ«ãƒ•ã‚¡ã‚¤ãƒ«ã®ä¸­é–“ãƒ‡ãƒ¼ã‚¿ã‚’ä½œæˆï¼ˆãƒ¢ãƒ¼ãƒ•ã‚£ãƒ³ã‚°ï¼‰
+//! @param idA ãƒ¢ãƒ‡ãƒ«Aã®èªè­˜ç•ªå·
+//! @param idB ãƒ¢ãƒ‡ãƒ«Bã®èªè­˜ç•ªå·
+//! @return æˆåŠŸï¼šæ–°ã—ã„ãƒ¢ãƒ‡ãƒ«èªè­˜ç•ªå·ï¼ˆ0ä»¥ä¸Šï¼‰ã€€å¤±æ•—ï¼š-1
+//! @attention ãƒ¢ãƒ‡ãƒ«Aã¨ãƒ¢ãƒ‡ãƒ«Bã¯ã€é ‚ç‚¹æ•°ãƒ»ãƒãƒªã‚´ãƒ³æ•°ãƒ»ã‚¤ãƒ³ãƒ‡ãƒƒã‚¯ã‚¹ãŒåŒã˜ã§ã‚ã‚‹å¿…è¦ãŒã‚ã‚Šã¾ã™ã€‚
+//! @attention ãã‚Œãã‚Œã®ãƒ¢ãƒ‡ãƒ«ãƒ‡ãƒ¼ã‚¿ãŒæ­£ã—ããªã„ã‹ é ‚ç‚¹æ•°ãŒç•°ãªã‚‹å ´åˆã€å®Ÿè¡Œã«å¤±æ•—ã—ã¾ã™ã€‚
 int D3DGraphics::MorphingModel(int idA, int idB)
 {
 #ifdef ENABLE_DEBUGLOG
 	char str[128];
-	sprintf(str, "’†ŠÔƒf[ƒ^ì¬@@IDF%d and %d", idA, idB);
+	sprintf(str, "ä¸­é–“ãƒ‡ãƒ¼ã‚¿ä½œæˆã€€ã€€IDï¼š%d and %d", idA, idB);
 
-	//ƒƒO‚Éo—Í
-	OutputLog.WriteLog(LOG_LOAD, "ƒ‚ƒfƒ‹", str);
+	//ãƒ­ã‚°ã«å‡ºåŠ›
+	OutputLog.WriteLog(LOG_LOAD, "ãƒ¢ãƒ‡ãƒ«", str);
 #endif
 
-	//ƒf[ƒ^‚ª³‚µ‚¢‚©’²‚×‚é
+	//ãƒ‡ãƒ¼ã‚¿ãŒæ­£ã—ã„ã‹èª¿ã¹ã‚‹
 	if( (idA < 0)||((MAX_MODEL -1) < idA) ){ return -1; }
 	if( pmodel[idA].useflag == false ){ return -1; }
 	if( (idB < 0)||((MAX_MODEL -1) < idB) ){ return -1; }
@@ -671,7 +671,7 @@ int D3DGraphics::MorphingModel(int idA, int idB)
 	int idN = -1;
 	int numpA, numpB;
 
-	//‹ó‚¢‚Ä‚¢‚é”F¯”Ô†‚ğ’T‚·
+	//ç©ºã„ã¦ã„ã‚‹èªè­˜ç•ªå·ã‚’æ¢ã™
 	for(int i=0; i<MAX_MODEL; i++){
 		if( pmodel[i].useflag == false ){
 			idN = i;
@@ -680,11 +680,11 @@ int D3DGraphics::MorphingModel(int idA, int idB)
 	}
 	if( idN == -1 ){ return -1; }
 
-	//ƒ|ƒŠƒSƒ“”‚ğæ“¾
+	//ãƒãƒªã‚´ãƒ³æ•°ã‚’å–å¾—
 	numpA = pmodel[idA].polygons;
 	numpB = pmodel[idB].polygons;
 
-	//ƒ|ƒŠƒSƒ“”‚ª“¯‚¶‚©‚Ç‚¤‚©’²‚×‚é
+	//ãƒãƒªã‚´ãƒ³æ•°ãŒåŒã˜ã‹ã©ã†ã‹èª¿ã¹ã‚‹
 	if( numpA != numpB ){ return -1; }
 
 	float *VertexAry = new float [numpA*6*3];
@@ -692,14 +692,14 @@ int D3DGraphics::MorphingModel(int idA, int idB)
 	float *ColorGrayAry = new float [numpA*6*4];
 	float *TexCoordAry = new float [numpA*6*2];
 
-	//Še’¸“_‚ğ“Ç‚İo‚µŒvZ
+	//å„é ‚ç‚¹ã‚’èª­ã¿å‡ºã—è¨ˆç®—
 	for(int i=0; i<numpA*6; i++){
 		VertexAry[i*3 + 0] = (pmodel[idA].VertexAry[i*3 + 0] + pmodel[idB].VertexAry[i*3 + 0])/2;
 		VertexAry[i*3 + 1] = (pmodel[idA].VertexAry[i*3 + 1] + pmodel[idB].VertexAry[i*3 + 1])/2;
 		VertexAry[i*3 + 2] = (pmodel[idA].VertexAry[i*3 + 2] + pmodel[idB].VertexAry[i*3 + 2])/2;
 	}
 
-	//ƒ}ƒeƒŠƒAƒ‹î•ñ‚ğƒRƒs[
+	//ãƒãƒ†ãƒªã‚¢ãƒ«æƒ…å ±ã‚’ã‚³ãƒ”ãƒ¼
 	for(int i=0; i<numpA*6; i++){
 		ColorAry[i*4 + 0] = pmodel[idA].ColorAry[i*4 + 0];
 		ColorAry[i*4 + 1] = pmodel[idA].ColorAry[i*4 + 1];
@@ -721,14 +721,14 @@ int D3DGraphics::MorphingModel(int idA, int idB)
 	pmodel[idN].TexCoordAry = TexCoordAry;
 
 #ifdef ENABLE_DEBUGLOG
-	//ƒƒO‚Éo—Í
+	//ãƒ­ã‚°ã«å‡ºåŠ›
 	OutputLog.WriteLog(LOG_COMPLETE, "", idN);
 #endif
 	return idN;
 }
 
-//! @brief ƒ‚ƒfƒ‹ƒtƒ@ƒCƒ‹‚ğ‰ğ•ú
-//! @param id ƒ‚ƒfƒ‹”F¯”Ô†
+//! @brief ãƒ¢ãƒ‡ãƒ«ãƒ•ã‚¡ã‚¤ãƒ«ã‚’è§£æ”¾
+//! @param id ãƒ¢ãƒ‡ãƒ«èªè­˜ç•ªå·
 void D3DGraphics::CleanupModel(int id)
 {
 	if( (id < 0)||((MAX_MODEL -1) < id) ){ return; }
@@ -741,18 +741,18 @@ void D3DGraphics::CleanupModel(int id)
 	pmodel[id].useflag = false;
 
 #ifdef ENABLE_DEBUGLOG
-	//ƒƒO‚Éo—Í
-	OutputLog.WriteLog(LOG_CLEANUP, "ƒ‚ƒfƒ‹", id);
+	//ãƒ­ã‚°ã«å‡ºåŠ›
+	OutputLog.WriteLog(LOG_CLEANUP, "ãƒ¢ãƒ‡ãƒ«", id);
 #endif
 }
 
-//! @brief “Ç‚İ‚İÏ‚İ‚Ìƒ‚ƒfƒ‹”‚ğæ“¾
-//! @return ƒ‚ƒfƒ‹”
+//! @brief èª­ã¿è¾¼ã¿æ¸ˆã¿ã®ãƒ¢ãƒ‡ãƒ«æ•°ã‚’å–å¾—
+//! @return ãƒ¢ãƒ‡ãƒ«æ•°
 int D3DGraphics::GetTotalModels()
 {
 	int cnt = 0;
 
-	//g—p’†‚Ì—v‘f‚ğ”‚¦‚é
+	//ä½¿ç”¨ä¸­ã®è¦ç´ ã‚’æ•°ãˆã‚‹
 	for(int i=0; i<MAX_MODEL; i++){
 		if( pmodel[i].useflag == true ){ cnt += 1; }
 	}
@@ -760,21 +760,21 @@ int D3DGraphics::GetTotalModels()
 	return cnt;
 }
 
-//! @brief ƒeƒNƒXƒ`ƒƒƒtƒH[ƒ}ƒbƒg‚ğŠg’£q‚Å”»’è
-//! @param filename ƒtƒ@ƒCƒ‹–¼
-//! @param nowformat Œ»İ‚Ì”»•Ê’l
-//! @return V‚½‚È”»•Ê’l
+//! @brief ãƒ†ã‚¯ã‚¹ãƒãƒ£ãƒ•ã‚©ãƒ¼ãƒãƒƒãƒˆã‚’æ‹¡å¼µå­ã§åˆ¤å®š
+//! @param filename ãƒ•ã‚¡ã‚¤ãƒ«å
+//! @param nowformat ç¾åœ¨ã®åˆ¤åˆ¥å€¤
+//! @return æ–°ãŸãªåˆ¤åˆ¥å€¤
 int D3DGraphics::CheckFileExtension(char* filename, int nowformat)
 {
 	char filename2[MAX_PATH];
 
-	//ƒtƒ@ƒCƒ‹–¼‚ğ¬•¶š‚Ö•ÏŠ·iŠg’£q”»’è—pj
+	//ãƒ•ã‚¡ã‚¤ãƒ«åã‚’å°æ–‡å­—ã¸å¤‰æ›ï¼ˆæ‹¡å¼µå­åˆ¤å®šç”¨ï¼‰
 	for(int i=0; i<(int)strlen(filename); i++){
 		filename2[i] = (char)tolower(filename[i]);
 	}
 	filename2[ strlen(filename) ] = '\0';
 
-	//Šg’£q‚Åƒtƒ@ƒCƒ‹ƒtƒH[ƒ}ƒbƒg‚ğ”»’è
+	//æ‹¡å¼µå­ã§ãƒ•ã‚¡ã‚¤ãƒ«ãƒ•ã‚©ãƒ¼ãƒãƒƒãƒˆã‚’åˆ¤å®š
 	for(int i=strlen(filename2)-1; i>0; i--){
 		if( filename2[i] == '.' ){
 			if( strcmp(&(filename2[i]), ".bmp") == 0 ){
@@ -801,25 +801,25 @@ int D3DGraphics::CheckFileExtension(char* filename, int nowformat)
 	return nowformat;
 }
 
-//! @brief ƒeƒNƒXƒ`ƒƒƒtƒH[ƒ}ƒbƒg‚ğƒtƒ@ƒCƒ‹ƒwƒbƒ_[‚Å”»’è
-//! @param filename ƒtƒ@ƒCƒ‹–¼
-//! @param nowformat Œ»İ‚Ì”»•Ê’l
-//! @return V‚½‚È”»•Ê’l
+//! @brief ãƒ†ã‚¯ã‚¹ãƒãƒ£ãƒ•ã‚©ãƒ¼ãƒãƒƒãƒˆã‚’ãƒ•ã‚¡ã‚¤ãƒ«ãƒ˜ãƒƒãƒ€ãƒ¼ã§åˆ¤å®š
+//! @param filename ãƒ•ã‚¡ã‚¤ãƒ«å
+//! @param nowformat ç¾åœ¨ã®åˆ¤åˆ¥å€¤
+//! @return æ–°ãŸãªåˆ¤åˆ¥å€¤
 int D3DGraphics::CheckFileTypeFlag(char* filename, int nowformat)
 {
 	FILE *fp;
 	unsigned char header[4];
 
-	//ƒtƒ@ƒCƒ‹‚ğ“Ç‚İ‚Ş
+	//ãƒ•ã‚¡ã‚¤ãƒ«ã‚’èª­ã¿è¾¼ã‚€
 	fp = fopen(filename, "rb");
 	if( fp == NULL ){
-		return false;		//ƒtƒ@ƒCƒ‹‚ª“Ç‚ß‚È‚¢
+		return false;		//ãƒ•ã‚¡ã‚¤ãƒ«ãŒèª­ã‚ãªã„
 	}
 
-	//ƒwƒbƒ_[‚ğ“Ç‚Ş
+	//ãƒ˜ãƒƒãƒ€ãƒ¼ã‚’èª­ã‚€
 	fread(header, 1, 4, fp);
 
-	//ƒtƒ@ƒCƒ‹ƒnƒ“ƒhƒ‹‚ğ‰ğ•ú
+	//ãƒ•ã‚¡ã‚¤ãƒ«ãƒãƒ³ãƒ‰ãƒ«ã‚’è§£æ”¾
 	fclose( fp );
 
 	if( (header[0x00] == 'B')&&(header[0x01] == 'M') ){															//.bmp
@@ -831,32 +831,32 @@ int D3DGraphics::CheckFileTypeFlag(char* filename, int nowformat)
 	if( (header[0x00] == 0xFF)&&(header[0x01] == 0xD8) ){														//.jpg
 		return 3;
 	}
-	if( (header[0x00] == 0x89)&&(header[0x01] == 'P')&&(header[0x02] == 'N')&&(header[0x03] == 'G') ){			//.png@¦–{“–‚Í8ƒoƒCƒg
+	if( (header[0x00] == 0x89)&&(header[0x01] == 'P')&&(header[0x02] == 'N')&&(header[0x03] == 'G') ){			//.pngã€€â€»æœ¬å½“ã¯8ãƒã‚¤ãƒˆ
 		return 4;
 	}
 
 	return nowformat;
 }
 
-//! @brief ƒeƒNƒXƒ`ƒƒ‚ğ“Ç‚İ‚Ş
-//! @param filename ƒtƒ@ƒCƒ‹–¼
-//! @param texturefont ƒeƒNƒXƒ`ƒƒƒtƒHƒ“ƒgƒtƒ‰ƒO
-//! @param BlackTransparent •‚ğ“§‰ß‚·‚é
-//! @return ¬Œ÷FƒeƒNƒXƒ`ƒƒ”F¯”Ô†i0ˆÈãj@¸”sF-1
+//! @brief ãƒ†ã‚¯ã‚¹ãƒãƒ£ã‚’èª­ã¿è¾¼ã‚€
+//! @param filename ãƒ•ã‚¡ã‚¤ãƒ«å
+//! @param texturefont ãƒ†ã‚¯ã‚¹ãƒãƒ£ãƒ•ã‚©ãƒ³ãƒˆãƒ•ãƒ©ã‚°
+//! @param BlackTransparent é»’ã‚’é€éã™ã‚‹
+//! @return æˆåŠŸï¼šãƒ†ã‚¯ã‚¹ãƒãƒ£èªè­˜ç•ªå·ï¼ˆ0ä»¥ä¸Šï¼‰ã€€å¤±æ•—ï¼š-1
 int D3DGraphics::LoadTexture(char* filename, bool texturefont, bool BlackTransparent)
 {
-	//–¢g—pˆø”‘Îô
+	//æœªä½¿ç”¨å¼•æ•°å¯¾ç­–
 	UNREFERENCED_PARAMETER(texturefont);
 
 	int id = -1;
 	int format = 0;
 
 #ifdef ENABLE_DEBUGLOG
-	//ƒƒO‚Éo—Í
-	OutputLog.WriteLog(LOG_LOAD, "ƒeƒNƒXƒ`ƒƒ", filename);
+	//ãƒ­ã‚°ã«å‡ºåŠ›
+	OutputLog.WriteLog(LOG_LOAD, "ãƒ†ã‚¯ã‚¹ãƒãƒ£", filename);
 #endif
 
-	//‹ó‚¢‚Ä‚¢‚é”F¯”Ô†‚ğ’T‚·
+	//ç©ºã„ã¦ã„ã‚‹èªè­˜ç•ªå·ã‚’æ¢ã™
 	for(int i=0; i<MAX_TEXTURE; i++){
 		if( ptextures[i].useflag == false ){
 			id = i;
@@ -865,13 +865,13 @@ int D3DGraphics::LoadTexture(char* filename, bool texturefont, bool BlackTranspa
 	}
 	if( id == -1 ){ return -1; }
 
-	//‚Ü‚¸Šg’£q‚Åƒtƒ@ƒCƒ‹ƒtƒH[ƒ}ƒbƒg‚ğ”»’è
+	//ã¾ãšæ‹¡å¼µå­ã§ãƒ•ã‚¡ã‚¤ãƒ«ãƒ•ã‚©ãƒ¼ãƒãƒƒãƒˆã‚’åˆ¤å®š
 	format = CheckFileExtension(filename, format);
 
-	//ƒtƒ@ƒCƒ‹ƒwƒbƒ_[‚Ìî•ñ‚Å‚àŠm”F
+	//ãƒ•ã‚¡ã‚¤ãƒ«ãƒ˜ãƒƒãƒ€ãƒ¼ã®æƒ…å ±ã§ã‚‚ç¢ºèª
 	format = CheckFileTypeFlag(filename, format);
 
-	//‘Î‰‚µ‚Ä‚È‚¢ƒtƒH[ƒ}ƒbƒg
+	//å¯¾å¿œã—ã¦ãªã„ãƒ•ã‚©ãƒ¼ãƒãƒƒãƒˆ
 	if( format == 0 ){ return -1; }
 
 	if( format == 1 ){	// .bmp
@@ -896,7 +896,7 @@ int D3DGraphics::LoadTexture(char* filename, bool texturefont, bool BlackTranspa
 	}
 
 
-	//ƒeƒNƒXƒ`ƒƒ—LŒø
+	//ãƒ†ã‚¯ã‚¹ãƒãƒ£æœ‰åŠ¹
 	glEnable(GL_TEXTURE_2D);
 
 	HDC hDC;
@@ -907,24 +907,24 @@ int D3DGraphics::LoadTexture(char* filename, bool texturefont, bool BlackTranspa
 
 	glBindTexture(GL_TEXTURE_2D, textureobjname[id]);
 
-	//OpenGL‚ÉƒZƒbƒg
+	//OpenGLã«ã‚»ãƒƒãƒˆ
 	int width = ptextures[id].width;
 	int height = ptextures[id].height;
 	unsigned char *data = ptextures[id].data;
 	glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, width, height, 0, GL_RGBA, GL_UNSIGNED_BYTE, data);
 
-	//ƒ~ƒbƒvƒ}ƒbƒvİ’è
+	//ãƒŸãƒƒãƒ—ãƒãƒƒãƒ—è¨­å®š
 	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR); 
 	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
 
-	//æZ‡¬
+	//ä¹—ç®—åˆæˆ
 	glTexEnvf(GL_TEXTURE_ENV, GL_TEXTURE_ENV_MODE, GL_MODULATE);
 
-	//ƒeƒNƒXƒ`ƒƒ–³Œø
+	//ãƒ†ã‚¯ã‚¹ãƒãƒ£ç„¡åŠ¹
 	glDisable(GL_TEXTURE_2D);
 
 #ifdef ENABLE_DEBUGLOG
-	//ƒƒO‚Éo—Í
+	//ãƒ­ã‚°ã«å‡ºåŠ›
 	OutputLog.WriteLog(LOG_COMPLETE, "", id);
 #endif
 
@@ -961,12 +961,12 @@ int D3DGraphics::LoadTexture(char* filename, bool texturefont, bool BlackTranspa
 	*/
 }
 
-//! @brief BMPƒtƒ@ƒCƒ‹‚ğ“Ç‚İ‚Ş
-//! @param filename ƒtƒ@ƒCƒ‹–¼
-//! @param BlackTransparent •‚ğ“§‰ß‚·‚é
-//! @param ptexture ó‚¯æ‚éTEXTUREDATA\‘¢‘Ì‚Ìƒ|ƒCƒ“ƒ^
-//! @return ¬Œ÷Ftrue@¸”sFfalse
-//! @attention ’Êí‚Í LoadTexture()ŠÖ” ‚©‚çŒÄ‚Ñ‚¾‚·‚±‚ÆB
+//! @brief BMPãƒ•ã‚¡ã‚¤ãƒ«ã‚’èª­ã¿è¾¼ã‚€
+//! @param filename ãƒ•ã‚¡ã‚¤ãƒ«å
+//! @param BlackTransparent é»’ã‚’é€éã™ã‚‹
+//! @param ptexture å—ã‘å–ã‚‹TEXTUREDATAæ§‹é€ ä½“ã®ãƒã‚¤ãƒ³ã‚¿
+//! @return æˆåŠŸï¼štrueã€€å¤±æ•—ï¼šfalse
+//! @attention é€šå¸¸ã¯ LoadTexture()é–¢æ•° ã‹ã‚‰å‘¼ã³ã ã™ã“ã¨ã€‚
 bool D3DGraphics::LoadBMPTexture(char* filename, bool BlackTransparent, TEXTUREDATA *ptexture)
 {
 	FILE *fp;
@@ -975,32 +975,32 @@ bool D3DGraphics::LoadBMPTexture(char* filename, bool BlackTransparent, TEXTURED
 	unsigned int width, height;
 	unsigned int index;
 
-	//ƒtƒ@ƒCƒ‹‚ğ“Ç‚İ‚Ş
+	//ãƒ•ã‚¡ã‚¤ãƒ«ã‚’èª­ã¿è¾¼ã‚€
 	fp = fopen(filename, "rb");
 	if( fp == NULL ){
-		return false;		//ƒtƒ@ƒCƒ‹‚ª“Ç‚ß‚È‚¢
+		return false;		//ãƒ•ã‚¡ã‚¤ãƒ«ãŒèª­ã‚ãªã„
 	}
 
-	//ƒwƒbƒ_[‚ğ“Ç‚Ş
+	//ãƒ˜ãƒƒãƒ€ãƒ¼ã‚’èª­ã‚€
 	fread(header, 1, 54, fp);
 
 	if( (header[0x00] != 'B')||(header[0x01] != 'M') ){
 		fclose(fp);
-		return false;		//.bmp‚Å‚Í‚È‚¢
+		return false;		//.bmpã§ã¯ãªã„
 	}
 
-	// ƒoƒCƒg”z—ñ‚©‚ç®”‚ğ“Ç‚İ‚Ş
+	// ãƒã‚¤ãƒˆé…åˆ—ã‹ã‚‰æ•´æ•°ã‚’èª­ã¿è¾¼ã‚€
 	dataPos = *(int*)&(header[0x0E]) + 14;
 	width = *(int*)&(header[0x12]);
 	height = *(int*)&(header[0x16]);
 	index = *(int*)&(header[0x1C]);
 
-	//Àƒf[ƒ^‚Ìæ“ª‚Ü‚ÅˆÚ“®
+	//å®Ÿãƒ‡ãƒ¼ã‚¿ã®å…ˆé ­ã¾ã§ç§»å‹•
 	fseek(fp, dataPos, SEEK_SET);
 
 	unsigned char *data = new unsigned char [width*height*4];
 
-	//ŠeƒsƒNƒZƒ‹4ƒrƒbƒg‚È‚çA16FƒpƒŒƒbƒgƒ‚[ƒh
+	//å„ãƒ”ã‚¯ã‚»ãƒ«4ãƒ“ãƒƒãƒˆãªã‚‰ã€16è‰²ãƒ‘ãƒ¬ãƒƒãƒˆãƒ¢ãƒ¼ãƒ‰
 	if( index == 4 ){
 		unsigned char pixel;
 		unsigned char pixelH;
@@ -1025,7 +1025,7 @@ bool D3DGraphics::LoadBMPTexture(char* filename, bool BlackTransparent, TEXTURED
 				data[(h*width+w*2+1)*4 + 3] = 255;
 
 				if( BlackTransparent == true ){
-					//•‚È‚ç‚Î“§‰ß‚·‚é
+					//é»’ãªã‚‰ã°é€éã™ã‚‹
 					if( (data[(h*width+w*2)*4 + 0] == 0)&&(data[(h*width+w*2)*4 + 1] == 0)&&(data[(h*width+w*2)*4 + 2] == 0) ){
 						data[(h*width+w*2)*4 + 3] = 0;
 					}
@@ -1036,7 +1036,7 @@ bool D3DGraphics::LoadBMPTexture(char* filename, bool BlackTransparent, TEXTURED
 			}
 
 			if( (((int)width/2)%4) != 0 ){
-				//4‚Ì”{”‚É‚È‚é‚æ‚¤‚ÉƒpƒfƒBƒ“ƒO
+				//4ã®å€æ•°ã«ãªã‚‹ã‚ˆã†ã«ãƒ‘ãƒ‡ã‚£ãƒ³ã‚°
 				unsigned char dummy[3];
 				fread(&dummy, 1, 4 - (((int)width/2)%4), fp);
 			}
@@ -1045,7 +1045,7 @@ bool D3DGraphics::LoadBMPTexture(char* filename, bool BlackTransparent, TEXTURED
 		delete []pallet;
 	}
 
-	//ŠeƒsƒNƒZƒ‹8ƒrƒbƒg‚È‚çA256FƒpƒŒƒbƒgƒ‚[ƒh
+	//å„ãƒ”ã‚¯ã‚»ãƒ«8ãƒ“ãƒƒãƒˆãªã‚‰ã€256è‰²ãƒ‘ãƒ¬ãƒƒãƒˆãƒ¢ãƒ¼ãƒ‰
 	if( index == 8 ){
 		unsigned char pixel;
 		unsigned char *pallet = new unsigned char [256*4];
@@ -1061,7 +1061,7 @@ bool D3DGraphics::LoadBMPTexture(char* filename, bool BlackTransparent, TEXTURED
 				data[(h*width+w)*4 + 3] = 255;
 
 				if( BlackTransparent == true ){
-					//•‚È‚ç‚Î“§‰ß‚·‚é
+					//é»’ãªã‚‰ã°é€éã™ã‚‹
 					if( (data[(h*width+w)*4 + 0] == 0)&&(data[(h*width+w)*4 + 1] == 0)&&(data[(h*width+w)*4 + 2] == 0) ){
 						data[(h*width+w)*4 + 3] = 0;
 					}
@@ -1069,7 +1069,7 @@ bool D3DGraphics::LoadBMPTexture(char* filename, bool BlackTransparent, TEXTURED
 			}
 
 			if( (width%4) != 0 ){
-				//4‚Ì”{”‚É‚È‚é‚æ‚¤‚ÉƒpƒfƒBƒ“ƒO
+				//4ã®å€æ•°ã«ãªã‚‹ã‚ˆã†ã«ãƒ‘ãƒ‡ã‚£ãƒ³ã‚°
 				unsigned char dummy[3];
 				fread(&dummy, 1, 4 - (width%4), fp);
 			}
@@ -1078,7 +1078,7 @@ bool D3DGraphics::LoadBMPTexture(char* filename, bool BlackTransparent, TEXTURED
 		delete []pallet;
 	}
 
-	//ŠeƒsƒNƒZƒ‹24ƒrƒbƒg‚È‚çAƒtƒ‹ƒJƒ‰[
+	//å„ãƒ”ã‚¯ã‚»ãƒ«24ãƒ“ãƒƒãƒˆãªã‚‰ã€ãƒ•ãƒ«ã‚«ãƒ©ãƒ¼
 	if( index == 24 ){
 		unsigned char pixel[3];
 		for(int h=height-1; h>=0; h--){
@@ -1091,7 +1091,7 @@ bool D3DGraphics::LoadBMPTexture(char* filename, bool BlackTransparent, TEXTURED
 				data[(h*width+w)*4 + 3] = 255;
 
 				if( BlackTransparent == true ){
-					//•‚È‚ç‚Î“§‰ß‚·‚é
+					//é»’ãªã‚‰ã°é€éã™ã‚‹
 					if( (data[(h*width+w)*4 + 0] == 0)&&(data[(h*width+w)*4 + 1] == 0)&&(data[(h*width+w)*4 + 2] == 0) ){
 						data[(h*width+w)*4 + 3] = 0;
 					}
@@ -1099,14 +1099,14 @@ bool D3DGraphics::LoadBMPTexture(char* filename, bool BlackTransparent, TEXTURED
 			}
 
 			if( (width%4) != 0 ){
-				//4‚Ì”{”‚É‚È‚é‚æ‚¤‚ÉƒpƒfƒBƒ“ƒO
+				//4ã®å€æ•°ã«ãªã‚‹ã‚ˆã†ã«ãƒ‘ãƒ‡ã‚£ãƒ³ã‚°
 				unsigned char dummy[3];
 				fread(&dummy, 1, 4 - (width%4), fp);
 			}
 		}
 	}
 
-	//ŠeƒsƒNƒZƒ‹32ƒrƒbƒg‚È‚çAƒtƒ‹ƒJƒ‰[
+	//å„ãƒ”ã‚¯ã‚»ãƒ«32ãƒ“ãƒƒãƒˆãªã‚‰ã€ãƒ•ãƒ«ã‚«ãƒ©ãƒ¼
 	if( index == 32 ){
 		unsigned char pixel[4];
 		for(int h=height-1; h>=0; h--){
@@ -1119,21 +1119,21 @@ bool D3DGraphics::LoadBMPTexture(char* filename, bool BlackTransparent, TEXTURED
 				data[(h*width+w)*4 + 3] = 255;
 
 				if( BlackTransparent == true ){
-					//•‚È‚ç‚Î“§‰ß‚·‚é
+					//é»’ãªã‚‰ã°é€éã™ã‚‹
 					if( (data[(h*width+w)*4 + 0] == 0)&&(data[(h*width+w)*4 + 1] == 0)&&(data[(h*width+w)*4 + 2] == 0) ){
 						data[(h*width+w)*4 + 3] = 0;
 					}
 				}
 			}
 
-			//ƒƒ‚F1ƒsƒNƒZƒ‹4ƒoƒCƒg ‚È‚ç‚ÎAƒpƒfƒBƒ“ƒO•s—vB
+			//ãƒ¡ãƒ¢ï¼š1ãƒ”ã‚¯ã‚»ãƒ«ï¼4ãƒã‚¤ãƒˆ ãªã‚‰ã°ã€ãƒ‘ãƒ‡ã‚£ãƒ³ã‚°ä¸è¦ã€‚
 		}
 	}
 
-	//ƒtƒ@ƒCƒ‹ƒnƒ“ƒhƒ‹‚ğ‰ğ•ú
+	//ãƒ•ã‚¡ã‚¤ãƒ«ãƒãƒ³ãƒ‰ãƒ«ã‚’è§£æ”¾
 	fclose( fp );
 
-	//\‘¢‘Ì‚É‘ã“ü
+	//æ§‹é€ ä½“ã«ä»£å…¥
 	ptexture->data = data;
 	ptexture->width = width;
 	ptexture->height = height;
@@ -1143,12 +1143,12 @@ bool D3DGraphics::LoadBMPTexture(char* filename, bool BlackTransparent, TEXTURED
 	return true;
 }
 
-//! @brief DDSƒtƒ@ƒCƒ‹‚ğ“Ç‚İ‚Ş
-//! @param filename ƒtƒ@ƒCƒ‹–¼
-//! @param BlackTransparent •‚ğ“§‰ß‚·‚é
-//! @param ptexture ó‚¯æ‚éTEXTUREDATA\‘¢‘Ì‚Ìƒ|ƒCƒ“ƒ^
-//! @return ¬Œ÷Ftrue@¸”sFfalse
-//! @attention ’Êí‚Í LoadTexture()ŠÖ” ‚©‚çŒÄ‚Ñ‚¾‚·‚±‚ÆB
+//! @brief DDSãƒ•ã‚¡ã‚¤ãƒ«ã‚’èª­ã¿è¾¼ã‚€
+//! @param filename ãƒ•ã‚¡ã‚¤ãƒ«å
+//! @param BlackTransparent é»’ã‚’é€éã™ã‚‹
+//! @param ptexture å—ã‘å–ã‚‹TEXTUREDATAæ§‹é€ ä½“ã®ãƒã‚¤ãƒ³ã‚¿
+//! @return æˆåŠŸï¼štrueã€€å¤±æ•—ï¼šfalse
+//! @attention é€šå¸¸ã¯ LoadTexture()é–¢æ•° ã‹ã‚‰å‘¼ã³ã ã™ã“ã¨ã€‚
 bool D3DGraphics::LoadDDSTexture(char* filename, bool BlackTransparent, TEXTUREDATA *ptexture)
 {
 	FILE *fp;
@@ -1158,21 +1158,21 @@ bool D3DGraphics::LoadDDSTexture(char* filename, bool BlackTransparent, TEXTURED
 	unsigned int flag;
 	unsigned int Caps;
 
-	//ƒtƒ@ƒCƒ‹‚ğ“Ç‚İ‚Ş
+	//ãƒ•ã‚¡ã‚¤ãƒ«ã‚’èª­ã¿è¾¼ã‚€
 	fp = fopen(filename, "rb");
 	if( fp == NULL ){
-		return false;		//ƒtƒ@ƒCƒ‹‚ª“Ç‚ß‚È‚¢
+		return false;		//ãƒ•ã‚¡ã‚¤ãƒ«ãŒèª­ã‚ãªã„
 	}
 
-	//ƒwƒbƒ_[‚ğ“Ç‚Ş
+	//ãƒ˜ãƒƒãƒ€ãƒ¼ã‚’èª­ã‚€
 	fread(header, 1, 124+4, fp);
 
 	if( (header[0x00] != 'D')||(header[0x01] != 'D')||(header[0x02] != 'S')||(header[0x03] != ' ') ){
 		fclose(fp);
-		return false;		//.dds‚Å‚Í‚È‚¢
+		return false;		//.ddsã§ã¯ãªã„
 	}
 
-	// ƒoƒCƒg”z—ñ‚©‚ç®”‚ğ“Ç‚İ‚Ş
+	// ãƒã‚¤ãƒˆé…åˆ—ã‹ã‚‰æ•´æ•°ã‚’èª­ã¿è¾¼ã‚€
 	width = *(int*)&(header[0x10]);
 	height = *(int*)&(header[0x0C]);
 	index = *(int*)&(header[0x58]);
@@ -1181,11 +1181,11 @@ bool D3DGraphics::LoadDDSTexture(char* filename, bool BlackTransparent, TEXTURED
 
 	if( (index != 16)&&(index != 32) ){
 		fclose(fp);
-		return false;		//‘Î‰‚µ‚Ä‚È‚¢ƒtƒH[ƒ}ƒbƒg
+		return false;		//å¯¾å¿œã—ã¦ãªã„ãƒ•ã‚©ãƒ¼ãƒãƒƒãƒˆ
 	}
 
-	if( (flag & 0x00020000)&&(Caps & 0x00400000) ){		//DDSD_MIPMAPCOUNTEDDSCAPS_MIPMAP
-		//ƒ~ƒbƒvƒ}ƒbƒvî•ñ“Ç‚İ‚İiƒ_ƒ~[j
+	if( (flag & 0x00020000)&&(Caps & 0x00400000) ){		//DDSD_MIPMAPCOUNTãƒ»DDSCAPS_MIPMAP
+		//ãƒŸãƒƒãƒ—ãƒãƒƒãƒ—æƒ…å ±èª­ã¿è¾¼ã¿ï¼ˆãƒ€ãƒŸãƒ¼ï¼‰
 		fread(header, 1, 128, fp);
 	}
 
@@ -1196,13 +1196,13 @@ bool D3DGraphics::LoadDDSTexture(char* filename, bool BlackTransparent, TEXTURED
 			unsigned char pixel[4];
 			fread(&pixel, 1, index/8, fp);
 
-			if( index == 16 ){		//ŠeƒsƒNƒZƒ‹16ƒrƒbƒg
+			if( index == 16 ){		//å„ãƒ”ã‚¯ã‚»ãƒ«16ãƒ“ãƒƒãƒˆ
 				data[(h*width+w)*4 + 0] = (pixel[1]<<4)&0xF0;
 				data[(h*width+w)*4 + 1] = pixel[0]&0xF0;
 				data[(h*width+w)*4 + 2] = (pixel[0]<<4)&0xF0;
 				data[(h*width+w)*4 + 3] = pixel[1]&0xF0;
 			}
-			if( index == 32 ){		//ŠeƒsƒNƒZƒ‹32ƒrƒbƒg
+			if( index == 32 ){		//å„ãƒ”ã‚¯ã‚»ãƒ«32ãƒ“ãƒƒãƒˆ
 				data[(h*width+w)*4 + 0] = pixel[2];
 				data[(h*width+w)*4 + 1] = pixel[1];
 				data[(h*width+w)*4 + 2] = pixel[0];
@@ -1210,7 +1210,7 @@ bool D3DGraphics::LoadDDSTexture(char* filename, bool BlackTransparent, TEXTURED
 			}
 
 			if( BlackTransparent == true ){
-				//•‚È‚ç‚Î“§‰ß‚·‚é
+				//é»’ãªã‚‰ã°é€éã™ã‚‹
 				if( (data[(h*width+w)*4 + 0] == 0)&&(data[(h*width+w)*4 + 1] == 0)&&(data[(h*width+w)*4 + 2] == 0) ){
 					data[(h*width+w)*4 + 3] = 0;
 				}
@@ -1218,10 +1218,10 @@ bool D3DGraphics::LoadDDSTexture(char* filename, bool BlackTransparent, TEXTURED
 		}
 	}
 
-	//ƒtƒ@ƒCƒ‹ƒnƒ“ƒhƒ‹‚ğ‰ğ•ú
+	//ãƒ•ã‚¡ã‚¤ãƒ«ãƒãƒ³ãƒ‰ãƒ«ã‚’è§£æ”¾
 	fclose( fp );
 
-	//\‘¢‘Ì‚É‘ã“ü
+	//æ§‹é€ ä½“ã«ä»£å…¥
 	ptexture->data = data;
 	ptexture->width = width;
 	ptexture->height = height;
@@ -1231,58 +1231,58 @@ bool D3DGraphics::LoadDDSTexture(char* filename, bool BlackTransparent, TEXTURED
 	return true;
 }
 
-//! @brief JPEGƒtƒ@ƒCƒ‹‚ğ“Ç‚İ‚Ş
-//! @param filename ƒtƒ@ƒCƒ‹–¼
-//! @param BlackTransparent •‚ğ“§‰ß‚·‚é
-//! @param ptexture ó‚¯æ‚éTEXTUREDATA\‘¢‘Ì‚Ìƒ|ƒCƒ“ƒ^
-//! @return ¬Œ÷Ftrue@¸”sFfalse
-//! @attention ’Êí‚Í LoadTexture()ŠÖ” ‚©‚çŒÄ‚Ñ‚¾‚·‚±‚ÆB
+//! @brief JPEGãƒ•ã‚¡ã‚¤ãƒ«ã‚’èª­ã¿è¾¼ã‚€
+//! @param filename ãƒ•ã‚¡ã‚¤ãƒ«å
+//! @param BlackTransparent é»’ã‚’é€éã™ã‚‹
+//! @param ptexture å—ã‘å–ã‚‹TEXTUREDATAæ§‹é€ ä½“ã®ãƒã‚¤ãƒ³ã‚¿
+//! @return æˆåŠŸï¼štrueã€€å¤±æ•—ï¼šfalse
+//! @attention é€šå¸¸ã¯ LoadTexture()é–¢æ•° ã‹ã‚‰å‘¼ã³ã ã™ã“ã¨ã€‚
 bool D3DGraphics::LoadJPEGTexture(char* filename, bool BlackTransparent, TEXTUREDATA *ptexture)
 {
 	FILE *fp;
 	JSAMPARRAY img;
 	unsigned int width, height;
 
-	//ƒtƒ@ƒCƒ‹‚ğ“Ç‚İ‚Ş
+	//ãƒ•ã‚¡ã‚¤ãƒ«ã‚’èª­ã¿è¾¼ã‚€
 	fp = fopen(filename, "rb");
 	if( fp == NULL ){
-		return false;		//ƒtƒ@ƒCƒ‹‚ª“Ç‚ß‚È‚¢
+		return false;		//ãƒ•ã‚¡ã‚¤ãƒ«ãŒèª­ã‚ãªã„
 	}
 	jpeg_stdio_src(&cinfo, fp);
 
-	//ƒpƒ‰ƒ[ƒ^‚Ìİ’è
+	//ãƒ‘ãƒ©ãƒ¡ãƒ¼ã‚¿ã®è¨­å®š
 	jpeg_read_header(&cinfo, true);
 
-	//“WŠJŠJn
+	//å±•é–‹é–‹å§‹
 	jpeg_start_decompress(&cinfo);
 
-	//—ÌˆæŠm•Û
+	//é ˜åŸŸç¢ºä¿
 	img = (JSAMPARRAY)new JSAMPROW [cinfo.output_height];
 	for(int i=0; i<(int)cinfo.output_height; i++){
 		img[i] = (JSAMPROW)new JSAMPLE [cinfo.output_width * cinfo.out_color_components];
 	}
 
-	//“WŠJ
+	//å±•é–‹
 	while( cinfo.output_scanline < cinfo.output_height ) {
 		jpeg_read_scanlines(&cinfo, img + cinfo.output_scanline, cinfo.output_height - cinfo.output_scanline);
 	}
 
-	//“WŠJI—¹
+	//å±•é–‹çµ‚äº†
 	jpeg_finish_decompress(&cinfo);
 
 
-	//ƒtƒ@ƒCƒ‹ƒnƒ“ƒhƒ‹‚ğ‰ğ•ú
+	//ãƒ•ã‚¡ã‚¤ãƒ«ãƒãƒ³ãƒ‰ãƒ«ã‚’è§£æ”¾
 	fclose( fp );
 
 
-	// ƒoƒCƒg”z—ñ‚©‚ç®”‚ğ“Ç‚İ‚Ş
+	// ãƒã‚¤ãƒˆé…åˆ—ã‹ã‚‰æ•´æ•°ã‚’èª­ã¿è¾¼ã‚€
 	width = (int)cinfo.output_width;
 	height = (int)cinfo.output_height;
 
 	unsigned char *data = new unsigned char [width*height*4];
 
 	for(int h=0; h<(int)height; h++){
-		//1ƒ‰ƒCƒ“•ªæ“¾
+		//1ãƒ©ã‚¤ãƒ³åˆ†å–å¾—
 		JSAMPROW p = img[h];
 
 		for(int w=0; w<(int)width; w++){
@@ -1292,7 +1292,7 @@ bool D3DGraphics::LoadJPEGTexture(char* filename, bool BlackTransparent, TEXTURE
 			data[(h*width+w)*4 + 3] = 255;
 
 			if( BlackTransparent == true ){
-				//•‚È‚ç‚Î“§‰ß‚·‚é
+				//é»’ãªã‚‰ã°é€éã™ã‚‹
 				if( (data[(h*width+w)*4 + 0] == 0)&&(data[(h*width+w)*4 + 1] == 0)&&(data[(h*width+w)*4 + 2] == 0) ){
 					data[(h*width+w)*4 + 3] = 0;
 				}
@@ -1301,13 +1301,13 @@ bool D3DGraphics::LoadJPEGTexture(char* filename, bool BlackTransparent, TEXTURE
 		}
 	}
 
-	//—Ìˆæ‰ğ•ú
+	//é ˜åŸŸè§£æ”¾
 	for(int i=0; i<(int)cinfo.output_height; i++){
 		delete [] img[i];
 	}
 	delete [] img;
 
-	//\‘¢‘Ì‚É‘ã“ü
+	//æ§‹é€ ä½“ã«ä»£å…¥
 	ptexture->data = data;
 	ptexture->width = width;
 	ptexture->height = height;
@@ -1317,12 +1317,12 @@ bool D3DGraphics::LoadJPEGTexture(char* filename, bool BlackTransparent, TEXTURE
 	return true;
 }
 
-//! @brief PNGƒtƒ@ƒCƒ‹‚ğ“Ç‚İ‚Ş
-//! @param filename ƒtƒ@ƒCƒ‹–¼
-//! @param BlackTransparent •‚ğ“§‰ß‚·‚é
-//! @param ptexture ó‚¯æ‚éTEXTUREDATA\‘¢‘Ì‚Ìƒ|ƒCƒ“ƒ^
-//! @return ¬Œ÷Ftrue@¸”sFfalse
-//! @attention ’Êí‚Í LoadTexture()ŠÖ” ‚©‚çŒÄ‚Ñ‚¾‚·‚±‚ÆB
+//! @brief PNGãƒ•ã‚¡ã‚¤ãƒ«ã‚’èª­ã¿è¾¼ã‚€
+//! @param filename ãƒ•ã‚¡ã‚¤ãƒ«å
+//! @param BlackTransparent é»’ã‚’é€éã™ã‚‹
+//! @param ptexture å—ã‘å–ã‚‹TEXTUREDATAæ§‹é€ ä½“ã®ãƒã‚¤ãƒ³ã‚¿
+//! @return æˆåŠŸï¼štrueã€€å¤±æ•—ï¼šfalse
+//! @attention é€šå¸¸ã¯ LoadTexture()é–¢æ•° ã‹ã‚‰å‘¼ã³ã ã™ã“ã¨ã€‚
 bool D3DGraphics::LoadPNGTexture(char* filename, bool BlackTransparent, TEXTUREDATA *ptexture)
 {
 	FILE *fp;
@@ -1332,54 +1332,54 @@ bool D3DGraphics::LoadPNGTexture(char* filename, bool BlackTransparent, TEXTURED
 	unsigned int width, height;
 	bool pallet;
 
-	//ƒtƒ@ƒCƒ‹‚ğ“Ç‚İ‚Ş
+	//ãƒ•ã‚¡ã‚¤ãƒ«ã‚’èª­ã¿è¾¼ã‚€
 	fp = fopen(filename, "rb");
 	if( fp == NULL ){
-		return false;		//ƒtƒ@ƒCƒ‹‚ª“Ç‚ß‚È‚¢
+		return false;		//ãƒ•ã‚¡ã‚¤ãƒ«ãŒèª­ã‚ãªã„
 	}
 
-	//PNGƒtƒ@ƒCƒ‹‚©”»’è
+	//PNGãƒ•ã‚¡ã‚¤ãƒ«ã‹åˆ¤å®š
 	fread(sig, 4, 1, fp);
 	if( png_sig_cmp(sig, 0, 4) != 0 ){
 		fclose(fp);
-		return false;	//.png‚Å‚Í‚È‚¢
+		return false;	//.pngã§ã¯ãªã„
 	}
 
-	//\‘¢‘Ì‚ğ‰Šú‰»
+	//æ§‹é€ ä½“ã‚’åˆæœŸåŒ–
 	pPng = png_create_read_struct(PNG_LIBPNG_VER_STRING, NULL, NULL, NULL);
     pInfo = png_create_info_struct(pPng);
 
-	//î•ñ‚ğæ“¾
+	//æƒ…å ±ã‚’å–å¾—
 	png_init_io(pPng, fp);
 	png_set_sig_bytes(pPng, 4);
 	png_read_info(pPng, pInfo);
 
-	//ƒeƒNƒXƒ`ƒƒ‚Ì‘å‚«‚³‚ğæ“¾
+	//ãƒ†ã‚¯ã‚¹ãƒãƒ£ã®å¤§ãã•ã‚’å–å¾—
 	width = png_get_image_width(pPng, pInfo);
 	height =  png_get_image_height(pPng, pInfo);
 
-	//ƒCƒ“ƒ^[ƒŒƒX•û®‚©”»’è
+	//ã‚¤ãƒ³ã‚¿ãƒ¼ãƒ¬ã‚¹æ–¹å¼ã‹åˆ¤å®š
 	if( png_get_interlace_type(pPng, pInfo) != PNG_INTERLACE_NONE ){
 		png_destroy_read_struct(&pPng, &pInfo, (png_infopp)NULL);
 		fclose(fp);
-		return false;	//ƒCƒ“ƒ^[ƒŒƒX‚É‚Í‘Î‰‚µ‚È‚¢B
+		return false;	//ã‚¤ãƒ³ã‚¿ãƒ¼ãƒ¬ã‚¹ã«ã¯å¯¾å¿œã—ãªã„ã€‚
 	}
 
-	//ƒrƒbƒg[“x”»’è
+	//ãƒ“ãƒƒãƒˆæ·±åº¦åˆ¤å®š
 	if( png_get_bit_depth(pPng, pInfo) != 8 ){
 		png_destroy_read_struct(&pPng, &pInfo, (png_infopp)NULL);
 		fclose(fp);
-		return false;	//[“x‚ª8ƒrƒbƒgˆÈŠO‚Í‘Î‰‚µ‚Ä‚È‚¢B
+		return false;	//æ·±åº¦ãŒ8ãƒ“ãƒƒãƒˆä»¥å¤–ã¯å¯¾å¿œã—ã¦ãªã„ã€‚
 	}
 
-	//ƒJƒ‰[ƒ^ƒCƒv”»’è
+	//ã‚«ãƒ©ãƒ¼ã‚¿ã‚¤ãƒ—åˆ¤å®š
 	if( (png_get_color_type(pPng, pInfo) == PNG_COLOR_TYPE_GRAY)||(png_get_color_type(pPng, pInfo) == PNG_COLOR_TYPE_GRAY_ALPHA) ){
 		png_destroy_read_struct(&pPng, &pInfo, (png_infopp)NULL);
 		fclose(fp);
-		return false;	//ƒOƒŒ[ƒXƒP[ƒ‹‚É‚Í‘Î‰‚µ‚Ä‚È‚¢EE‚Á‚Æv‚í‚ê‚é‚Ì‚ÅœŠOBi–¢ŒŸØj
+		return false;	//ã‚°ãƒ¬ãƒ¼ã‚¹ã‚±ãƒ¼ãƒ«ã«ã¯å¯¾å¿œã—ã¦ãªã„ãƒ»ãƒ»ã£ã¨æ€ã‚ã‚Œã‚‹ã®ã§é™¤å¤–ã€‚ï¼ˆæœªæ¤œè¨¼ï¼‰
 	}
 
-	//ƒJƒ‰[ƒ^ƒCƒvæ“¾
+	//ã‚«ãƒ©ãƒ¼ã‚¿ã‚¤ãƒ—å–å¾—
 	if( png_get_color_type(pPng, pInfo) == PNG_COLOR_TYPE_PALETTE ){
 		pallet = true;
 	}
@@ -1389,20 +1389,20 @@ bool D3DGraphics::LoadPNGTexture(char* filename, bool BlackTransparent, TEXTURED
 
 	unsigned char *data = new unsigned char [width*height*4];
 
-	//ƒAƒ‹ƒtƒ@ƒ`ƒƒƒ“ƒlƒ‹‚ğ‰Šú‰»
+	//ã‚¢ãƒ«ãƒ•ã‚¡ãƒãƒ£ãƒ³ãƒãƒ«ã‚’åˆæœŸåŒ–
 	png_set_add_alpha(pPng, 0xff, PNG_FILLER_AFTER);
 
 	if( pallet == false ){
-		// tRNSƒ`ƒƒƒ“ƒN‚ª‚ ‚ê‚ÎAƒAƒ‹ƒtƒ@ƒ`ƒƒƒ“ƒlƒ‹‚É•ÏŠ·
+		// tRNSãƒãƒ£ãƒ³ã‚¯ãŒã‚ã‚Œã°ã€ã‚¢ãƒ«ãƒ•ã‚¡ãƒãƒ£ãƒ³ãƒãƒ«ã«å¤‰æ›
 		if( png_get_valid(pPng, pInfo, PNG_INFO_tRNS) ){
 			png_set_tRNS_to_alpha(pPng);
 		}
 
-		//1ƒ‰ƒCƒ“•ª‚Ìì‹Æ—Ìˆæ‚ğŠm•Û
+		//1ãƒ©ã‚¤ãƒ³åˆ†ã®ä½œæ¥­é ˜åŸŸã‚’ç¢ºä¿
 		png_bytep buf = new png_byte[width*4];
 
 		for(int h=0; h<(int)height; h++){
-			//1ƒ‰ƒCƒ“•ªæ“¾
+			//1ãƒ©ã‚¤ãƒ³åˆ†å–å¾—
 			png_read_row(pPng, buf, NULL);
 
 			for(int w=0; w<(int)width; w++){
@@ -1412,7 +1412,7 @@ bool D3DGraphics::LoadPNGTexture(char* filename, bool BlackTransparent, TEXTURED
 				data[(h*width+w)*4 + 3] = buf[w*4 + 3];
 
 				if( BlackTransparent == true ){
-					//•‚È‚ç‚Î“§‰ß‚·‚é
+					//é»’ãªã‚‰ã°é€éã™ã‚‹
 					if( (data[(h*width+w)*4 + 0] == 0)&&(data[(h*width+w)*4 + 1] == 0)&&(data[(h*width+w)*4 + 2] == 0) ){
 						data[(h*width+w)*4 + 3] = 0;
 					}
@@ -1420,21 +1420,21 @@ bool D3DGraphics::LoadPNGTexture(char* filename, bool BlackTransparent, TEXTURED
 			}
 		}
 
-		//1ƒ‰ƒCƒ“•ª‚Ìì‹Æ—Ìˆæ‚ğ‰ğ•ú
+		//1ãƒ©ã‚¤ãƒ³åˆ†ã®ä½œæ¥­é ˜åŸŸã‚’è§£æ”¾
 		delete [] buf;
 	}
 	else{
 		png_colorp palette;
 		int num;
 
-		//ƒpƒŒƒbƒgæ“¾
+		//ãƒ‘ãƒ¬ãƒƒãƒˆå–å¾—
 		png_get_PLTE(pPng, pInfo, &palette, &num);
 
-		//1ƒ‰ƒCƒ“•ª‚Ìì‹Æ—Ìˆæ‚ğŠm•Û
+		//1ãƒ©ã‚¤ãƒ³åˆ†ã®ä½œæ¥­é ˜åŸŸã‚’ç¢ºä¿
 		png_bytep buf = new png_byte[width];
 
 		for(int h=0; h<(int)height; h++){
-			//1ƒ‰ƒCƒ“•ªæ“¾
+			//1ãƒ©ã‚¤ãƒ³åˆ†å–å¾—
 			png_read_row(pPng, buf, NULL);
 
 			for(int w=0; w<(int)width; w++){
@@ -1444,7 +1444,7 @@ bool D3DGraphics::LoadPNGTexture(char* filename, bool BlackTransparent, TEXTURED
 				data[(h*width+w)*4 + 3] = 255;
 
 				if( BlackTransparent == true ){
-					//•‚È‚ç‚Î“§‰ß‚·‚é
+					//é»’ãªã‚‰ã°é€éã™ã‚‹
 					if( (data[(h*width+w)*4 + 0] == 0)&&(data[(h*width+w)*4 + 1] == 0)&&(data[(h*width+w)*4 + 2] == 0) ){
 						data[(h*width+w)*4 + 3] = 0;
 					}
@@ -1452,18 +1452,18 @@ bool D3DGraphics::LoadPNGTexture(char* filename, bool BlackTransparent, TEXTURED
 			}
 		}
 
-		//1ƒ‰ƒCƒ“•ª‚Ìì‹Æ—Ìˆæ‚ğ‰ğ•ú
+		//1ãƒ©ã‚¤ãƒ³åˆ†ã®ä½œæ¥­é ˜åŸŸã‚’è§£æ”¾
 		delete [] buf;
 	}
 
-	//‰ğ•ú
+	//è§£æ”¾
 	png_read_end(pPng, NULL);
 	png_destroy_read_struct(&pPng, &pInfo, (png_infopp)NULL);
 
-	//ƒtƒ@ƒCƒ‹ƒnƒ“ƒhƒ‹‚ğ‰ğ•ú
+	//ãƒ•ã‚¡ã‚¤ãƒ«ãƒãƒ³ãƒ‰ãƒ«ã‚’è§£æ”¾
 	fclose( fp );
 
-	//\‘¢‘Ì‚É‘ã“ü
+	//æ§‹é€ ä½“ã«ä»£å…¥
 	ptexture->data = data;
 	ptexture->width = width;
 	ptexture->height = height;
@@ -1474,9 +1474,9 @@ bool D3DGraphics::LoadPNGTexture(char* filename, bool BlackTransparent, TEXTURED
 }
 
 #ifdef ENABLE_DEBUGCONSOLE
-//! @brief ƒfƒoƒbƒN—pƒtƒHƒ“ƒg‚ğ“Ç‚İ‚Ş
-//! @return ¬Œ÷Ftrue@¸”sFfalse
-//! @attention ‚±‚ÌŠÖ”‚ğŒÄ‚Ño‚·‘O‚ÉAInitDebugFontData()ŠÖ”‚ğÀs‚µ‚Ä‚­‚¾‚³‚¢B
+//! @brief ãƒ‡ãƒãƒƒã‚¯ç”¨ãƒ•ã‚©ãƒ³ãƒˆã‚’èª­ã¿è¾¼ã‚€
+//! @return æˆåŠŸï¼štrueã€€å¤±æ•—ï¼šfalse
+//! @attention ã“ã®é–¢æ•°ã‚’å‘¼ã³å‡ºã™å‰ã«ã€InitDebugFontData()é–¢æ•°ã‚’å®Ÿè¡Œã—ã¦ãã ã•ã„ã€‚
 bool D3DGraphics::LoadDebugFontTexture()
 {
 	int charwidth = 8;
@@ -1488,14 +1488,14 @@ bool D3DGraphics::LoadDebugFontTexture()
 	int id = -1;
 
 #ifdef ENABLE_DEBUGLOG
-	//ƒƒO‚Éo—Í
-	OutputLog.WriteLog(LOG_LOAD, "ƒeƒNƒXƒ`ƒƒ", "DebugFontTexture");
+	//ãƒ­ã‚°ã«å‡ºåŠ›
+	OutputLog.WriteLog(LOG_LOAD, "ãƒ†ã‚¯ã‚¹ãƒãƒ£", "DebugFontTexture");
 #endif
 
-	//Šù‚É“Ç‚İ‚Ü‚ê‚Ä‚¢‚é‚È‚ç¸”s
+	//æ—¢ã«èª­ã¿è¾¼ã¾ã‚Œã¦ã„ã‚‹ãªã‚‰å¤±æ•—
 	if( TextureDebugFont != -1 ){ return false; }
 
-	//‹ó‚¢‚Ä‚¢‚é”F¯”Ô†‚ğ’T‚·
+	//ç©ºã„ã¦ã„ã‚‹èªè­˜ç•ªå·ã‚’æ¢ã™
 	for(int i=0; i<MAX_TEXTURE; i++){
 		if( ptextures[i].useflag == false ){
 			id = i;
@@ -1506,7 +1506,7 @@ bool D3DGraphics::LoadDebugFontTexture()
 
 	unsigned char *data = new unsigned char [width*height*4];
 
-	//§ŒäƒR[ƒh‚ª“ü‚Á‚Ä‚¢‚é2s 32•¶š•ª‚ÍA‹ó—“‚É‚·‚éB
+	//åˆ¶å¾¡ã‚³ãƒ¼ãƒ‰ãŒå…¥ã£ã¦ã„ã‚‹2è¡Œ 32æ–‡å­—åˆ†ã¯ã€ç©ºæ¬„ã«ã™ã‚‹ã€‚
 	for(int cnt_y=0; cnt_y<2; cnt_y++){
 		for(int line_y=0; line_y<charheight; line_y++){
 			for(int cnt_x=0; cnt_x<16; cnt_x++){
@@ -1522,14 +1522,14 @@ bool D3DGraphics::LoadDebugFontTexture()
 		}
 	}
 
-	//6s•ª‚Ìƒf[ƒ^‚ğì¬
+	//6è¡Œåˆ†ã®ãƒ‡ãƒ¼ã‚¿ã‚’ä½œæˆ
 	for(int cnt_y=0; cnt_y<6; cnt_y++){
 		for(int line_y=0; line_y<charheight; line_y++){
 			for(int cnt_x=0; cnt_x<16; cnt_x++){
 				for(int line_x=(charwidth-1); line_x>=0; line_x--){
 					unsigned char mask;
 
-					//ƒrƒbƒg”»’è—pƒ}ƒXƒNì¬
+					//ãƒ“ãƒƒãƒˆåˆ¤å®šç”¨ãƒã‚¹ã‚¯ä½œæˆ
 					switch(line_x){
 						case 0: mask = 0x01; break;
 						case 1: mask = 0x02; break;
@@ -1539,10 +1539,10 @@ bool D3DGraphics::LoadDebugFontTexture()
 						case 5: mask = 0x20; break;
 						case 6: mask = 0x40; break;
 						case 7: mask = 0x80; break;
-						default: mask = 0x00;		//–ÀãƒGƒ‰[
+						default: mask = 0x00;		//äº‹å®Ÿä¸Šã‚¨ãƒ©ãƒ¼
 					}
 
-					//ŠY“–ƒrƒbƒg‚ª1‚È‚ç”’A0‚È‚ç•B
+					//è©²å½“ãƒ“ãƒƒãƒˆãŒ1ãªã‚‰ç™½ã€0ãªã‚‰é»’ã€‚
 					if( (DebugFontData[cnt_y*16 + cnt_x][line_y] & mask) != 0 ){
 						data[datacnt + 0] = 255;
 						data[datacnt + 1] = 255;
@@ -1562,7 +1562,7 @@ bool D3DGraphics::LoadDebugFontTexture()
 		}
 	}
 
-	//ƒeƒNƒXƒ`ƒƒ—LŒø
+	//ãƒ†ã‚¯ã‚¹ãƒãƒ£æœ‰åŠ¹
 	glEnable(GL_TEXTURE_2D);
 
 	HDC hDC;
@@ -1573,21 +1573,21 @@ bool D3DGraphics::LoadDebugFontTexture()
 
 	glBindTexture(GL_TEXTURE_2D, textureobjname[id]);
 
-	//OpenGL‚ÉƒZƒbƒg
+	//OpenGLã«ã‚»ãƒƒãƒˆ
 	glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, width, height, 0, GL_RGBA, GL_UNSIGNED_BYTE, data);
 
-	//ƒ~ƒbƒvƒ}ƒbƒvİ’è
+	//ãƒŸãƒƒãƒ—ãƒãƒƒãƒ—è¨­å®š
 	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR); 
 	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
 
-	//æZ‡¬
+	//ä¹—ç®—åˆæˆ
 	glTexEnvf(GL_TEXTURE_ENV, GL_TEXTURE_ENV_MODE, GL_MODULATE);
 
-	//ƒeƒNƒXƒ`ƒƒ–³Œø
+	//ãƒ†ã‚¯ã‚¹ãƒãƒ£ç„¡åŠ¹
 	glDisable(GL_TEXTURE_2D);
 
 
-	//\‘¢‘Ì‚É‘ã“ü
+	//æ§‹é€ ä½“ã«ä»£å…¥
 	ptextures[id].data = data;
 	ptextures[id].width = width;
 	ptextures[id].height = height;
@@ -1596,25 +1596,25 @@ bool D3DGraphics::LoadDebugFontTexture()
 
 
 #ifdef ENABLE_DEBUGLOG
-	//ƒƒO‚Éo—Í
+	//ãƒ­ã‚°ã«å‡ºåŠ›
 	OutputLog.WriteLog(LOG_COMPLETE, "", id);
 #endif
 
-	//ƒeƒNƒXƒ`ƒƒIDİ’è
+	//ãƒ†ã‚¯ã‚¹ãƒãƒ£IDè¨­å®š
 	TextureDebugFont = id;
 	return true;
 }
 #endif
 
-//! @brief ƒeƒNƒXƒ`ƒƒ‚ÌƒTƒCƒY‚ğæ“¾
-//! @param id ƒeƒNƒXƒ`ƒƒ”F¯”Ô†
-//! @param width •‚ğó‚¯æ‚éƒ|ƒCƒ“ƒ^
-//! @param height ‚‚³‚ğó‚¯æ‚éƒ|ƒCƒ“ƒ^
-//! @return ¬Œ÷F0@¸”sF1
-//! @attention ƒT[ƒtƒFƒCƒX‚ÌƒTƒCƒY‚ğæ“¾‚µ‚Ü‚·BGPU‚Éƒ[ƒh‚³‚ê‚½ƒTƒCƒY‚Å‚ ‚èAƒeƒNƒXƒ`ƒƒiŒ»•¨j‚ÆˆÙ‚È‚éê‡‚ª‚ ‚è‚Ü‚·B
+//! @brief ãƒ†ã‚¯ã‚¹ãƒãƒ£ã®ã‚µã‚¤ã‚ºã‚’å–å¾—
+//! @param id ãƒ†ã‚¯ã‚¹ãƒãƒ£èªè­˜ç•ªå·
+//! @param width å¹…ã‚’å—ã‘å–ã‚‹ãƒã‚¤ãƒ³ã‚¿
+//! @param height é«˜ã•ã‚’å—ã‘å–ã‚‹ãƒã‚¤ãƒ³ã‚¿
+//! @return æˆåŠŸï¼š0ã€€å¤±æ•—ï¼š1
+//! @attention ã‚µãƒ¼ãƒ•ã‚§ã‚¤ã‚¹ã®ã‚µã‚¤ã‚ºã‚’å–å¾—ã—ã¾ã™ã€‚GPUã«ãƒ­ãƒ¼ãƒ‰ã•ã‚ŒãŸã‚µã‚¤ã‚ºã§ã‚ã‚Šã€ãƒ†ã‚¯ã‚¹ãƒãƒ£ï¼ˆç¾ç‰©ï¼‰ã¨ç•°ãªã‚‹å ´åˆãŒã‚ã‚Šã¾ã™ã€‚
 int D3DGraphics::GetTextureSize(int id, int *width, int *height)
 {
-	//–³Œø‚È”F¯”Ô†‚ªw’è‚³‚ê‚Ä‚¢‚½‚çAˆ—‚¹‚¸•Ô‚·B
+	//ç„¡åŠ¹ãªèªè­˜ç•ªå·ãŒæŒ‡å®šã•ã‚Œã¦ã„ãŸã‚‰ã€å‡¦ç†ã›ãšè¿”ã™ã€‚
 	if( id == -1 ){ return 1; }
 	if( ptextures[id].useflag == false ){ return 1; }
 
@@ -1624,22 +1624,22 @@ int D3DGraphics::GetTextureSize(int id, int *width, int *height)
 	return 0;
 }
 
-//! @brief ƒeƒNƒXƒ`ƒƒ‚ğw’è
-//! @param TextureID ƒeƒNƒXƒ`ƒƒ”F¯”Ô†
+//! @brief ãƒ†ã‚¯ã‚¹ãƒãƒ£ã‚’æŒ‡å®š
+//! @param TextureID ãƒ†ã‚¯ã‚¹ãƒãƒ£èªè­˜ç•ªå·
 void D3DGraphics::SetTexture(int TextureID)
 {
 	if( now_textureid == TextureID ){
 		return;
 	}
 
-	//OpenGL‚ÉƒZƒbƒg
+	//OpenGLã«ã‚»ãƒƒãƒˆ
 	glBindTexture(GL_TEXTURE_2D, textureobjname[TextureID]);
 
 	now_textureid = TextureID;
 }
 
-//! @brief ƒeƒNƒXƒ`ƒƒ‚ğ‰ğ•ú
-//! @param id ƒeƒNƒXƒ`ƒƒ”F¯”Ô†
+//! @brief ãƒ†ã‚¯ã‚¹ãƒãƒ£ã‚’è§£æ”¾
+//! @param id ãƒ†ã‚¯ã‚¹ãƒãƒ£èªè­˜ç•ªå·
 void D3DGraphics::CleanupTexture(int id)
 {
 	if( (id < 0)||((MAX_TEXTURE -1) < id) ){ return; }
@@ -1650,18 +1650,18 @@ void D3DGraphics::CleanupTexture(int id)
 	ptextures[id].useflag = false;
 
 #ifdef ENABLE_DEBUGLOG
-	//ƒƒO‚Éo—Í
-	OutputLog.WriteLog(LOG_CLEANUP, "ƒeƒNƒXƒ`ƒƒ", id);
+	//ãƒ­ã‚°ã«å‡ºåŠ›
+	OutputLog.WriteLog(LOG_CLEANUP, "ãƒ†ã‚¯ã‚¹ãƒãƒ£", id);
 #endif
 }
 
-//! @brief “Ç‚İ‚İÏ‚İ‚ÌƒeƒNƒXƒ`ƒƒ”‚ğæ“¾
-//! @return ƒeƒNƒXƒ`ƒƒ”
+//! @brief èª­ã¿è¾¼ã¿æ¸ˆã¿ã®ãƒ†ã‚¯ã‚¹ãƒãƒ£æ•°ã‚’å–å¾—
+//! @return ãƒ†ã‚¯ã‚¹ãƒãƒ£æ•°
 int D3DGraphics::GetTotalTextures()
 {
 	int cnt = 0;
 
-	//g—p’†‚Ì—v‘f‚ğ”‚¦‚é
+	//ä½¿ç”¨ä¸­ã®è¦ç´ ã‚’æ•°ãˆã‚‹
 	for(int i=0; i<MAX_TEXTURE; i++){
 		if( ptextures[i].useflag == true ){ cnt += 1; }
 	}
@@ -1669,42 +1669,42 @@ int D3DGraphics::GetTotalTextures()
 	return cnt;
 }
 
-//! @brief ‘S‚Ä‚Ì•`‰æˆ—‚ğŠJn
-//! @return ¬Œ÷F0@¸”sF1
-//! @attention •`‰æˆ—‚ÌÅ‰‚ÉŒÄ‚Ño‚·•K—v‚ª‚ ‚è‚Ü‚·B
+//! @brief å…¨ã¦ã®æç”»å‡¦ç†ã‚’é–‹å§‹
+//! @return æˆåŠŸï¼š0ã€€å¤±æ•—ï¼š1
+//! @attention æç”»å‡¦ç†ã®æœ€åˆã«å‘¼ã³å‡ºã™å¿…è¦ãŒã‚ã‚Šã¾ã™ã€‚
 int D3DGraphics::StartRender()
 {
 	HDC hDC;
 
 	hDC = BeginPaint(hWnd, &Paint_ps);
 
-	//ƒRƒ“ƒeƒLƒXƒg‚ğw’è
+	//ã‚³ãƒ³ãƒ†ã‚­ã‚¹ãƒˆã‚’æŒ‡å®š
 	wglMakeCurrent(hDC, hGLRC);
 
-	//‰Šú‰»
+	//åˆæœŸåŒ–
 	glClearColor(0.0f, 0.0f, 0.0f, 1.0f);
 	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
 	glEnable(GL_DEPTH_TEST);
 	glEnable(GL_CULL_FACE);
 
-	//¬‡ˆ—i“§‰ß—LŒø‰»j
+	//æ··åˆå‡¦ç†ï¼ˆé€éæœ‰åŠ¹åŒ–ï¼‰
 	glEnable(GL_BLEND);
 	glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 
-	//ƒAƒ‹ƒtƒ@ƒeƒXƒg
+	//ã‚¢ãƒ«ãƒ•ã‚¡ãƒ†ã‚¹ãƒˆ
 	glAlphaFunc(GL_GREATER, 0.0f);
 	glEnable(GL_ALPHA_TEST);
 
-	//2DƒVƒXƒeƒ€ƒtƒHƒ“ƒgZÀ•W‰Šú‰»
+	//2Dã‚·ã‚¹ãƒ†ãƒ ãƒ•ã‚©ãƒ³ãƒˆZåº§æ¨™åˆæœŸåŒ–
 	SystemFont_posz = 1.0f;
 
 	return 0;
 }
 
-//! @brief ‘S‚Ä‚Ì•`‰æˆ—‚ğI—¹
-//! @return ¬Œ÷Ffalse@¸”sFtrue
-//! @attention •`‰æˆ—‚ÌÅŒã‚ÉŒÄ‚Ño‚·•K—v‚ª‚ ‚è‚Ü‚·B
+//! @brief å…¨ã¦ã®æç”»å‡¦ç†ã‚’çµ‚äº†
+//! @return æˆåŠŸï¼šfalseã€€å¤±æ•—ï¼štrue
+//! @attention æç”»å‡¦ç†ã®æœ€å¾Œã«å‘¼ã³å‡ºã™å¿…è¦ãŒã‚ã‚Šã¾ã™ã€‚
 bool D3DGraphics::EndRender()
 {
 	glFlush();
@@ -1716,13 +1716,13 @@ bool D3DGraphics::EndRender()
 	return false;
 }
 
-//! @brief Zƒoƒbƒtƒ@‚ğƒŠƒZƒbƒg
+//! @brief Zãƒãƒƒãƒ•ã‚¡ã‚’ãƒªã‚»ãƒƒãƒˆ
 void D3DGraphics::ResetZbuffer()
 {
 	glClear(GL_DEPTH_BUFFER_BIT);
 }
 
-//! @brief ƒ[ƒ‹ƒh‹óŠÔ‚ğŒ´“_i0,0,0j‚É–ß‚·@‚È‚Ç
+//! @brief ãƒ¯ãƒ¼ãƒ«ãƒ‰ç©ºé–“ã‚’åŸç‚¹ï¼ˆ0,0,0ï¼‰ã«æˆ»ã™ã€€ãªã©
 void D3DGraphics::ResetWorldTransform()
 {
 	float camera_y_flag;
@@ -1743,26 +1743,26 @@ void D3DGraphics::ResetWorldTransform()
 	gluLookAt(camera_x*-1, camera_y, camera_z, camera_x*-1 + cos(camera_rx*-1 + (float)M_PI)*cos(camera_ry), camera_y + sin(camera_ry), camera_z + sin(camera_rx*-1 + (float)M_PI)*cos(camera_ry), 0.0f, camera_y_flag, 0.0f);
 }
 
-//! @brief ƒ[ƒ‹ƒh‹óŠÔ‚ÌÀ•WEŠp“xEŠg‘å—¦‚ğİ’è
-//! @param x XÀ•W
-//! @param y YÀ•W
-//! @param z ZÀ•W
-//! @param rx ‰¡²Šp“x
-//! @param ry c²Šp“x
-//! @param size Šg‘å—¦
+//! @brief ãƒ¯ãƒ¼ãƒ«ãƒ‰ç©ºé–“ã®åº§æ¨™ãƒ»è§’åº¦ãƒ»æ‹¡å¤§ç‡ã‚’è¨­å®š
+//! @param x Xåº§æ¨™
+//! @param y Yåº§æ¨™
+//! @param z Zåº§æ¨™
+//! @param rx æ¨ªè»¸è§’åº¦
+//! @param ry ç¸¦è»¸è§’åº¦
+//! @param size æ‹¡å¤§ç‡
 void D3DGraphics::SetWorldTransform(float x, float y, float z, float rx, float ry, float size)
 {
 	SetWorldTransform(x, y, z, rx, ry, 0.0f, size);
 }
 
-//! @brief ƒ[ƒ‹ƒh‹óŠÔ‚ÌÀ•WEŠp“xEŠg‘å—¦‚ğİ’è
-//! @param x XÀ•W
-//! @param y YÀ•W
-//! @param z ZÀ•W
-//! @param rx ‰¡²Šp“x
-//! @param ry1 c²Šp“x
-//! @param ry2 c²Šp“x
-//! @param size Šg‘å—¦
+//! @brief ãƒ¯ãƒ¼ãƒ«ãƒ‰ç©ºé–“ã®åº§æ¨™ãƒ»è§’åº¦ãƒ»æ‹¡å¤§ç‡ã‚’è¨­å®š
+//! @param x Xåº§æ¨™
+//! @param y Yåº§æ¨™
+//! @param z Zåº§æ¨™
+//! @param rx æ¨ªè»¸è§’åº¦
+//! @param ry1 ç¸¦è»¸è§’åº¦
+//! @param ry2 ç¸¦è»¸è§’åº¦
+//! @param size æ‹¡å¤§ç‡
 void D3DGraphics::SetWorldTransform(float x, float y, float z, float rx, float ry1, float ry2, float size)
 {
 	ResetWorldTransform();
@@ -1776,14 +1776,14 @@ void D3DGraphics::SetWorldTransform(float x, float y, float z, float rx, float r
 	glScalef(size, size, size);
 }
 
-//! @brief ƒ[ƒ‹ƒh‹óŠÔ‚ÌÀ•WEŠp“xEŠg‘å—¦‚ğİ’èiƒGƒtƒFƒNƒg—pj
-//! @param x XÀ•W
-//! @param y YÀ•W
-//! @param z ZÀ•W
-//! @param rx ‰¡²Šp“x
-//! @param ry c²Šp“x
-//! @param rt ‰ñ“]Šp“x
-//! @param size Šg‘å—¦
+//! @brief ãƒ¯ãƒ¼ãƒ«ãƒ‰ç©ºé–“ã®åº§æ¨™ãƒ»è§’åº¦ãƒ»æ‹¡å¤§ç‡ã‚’è¨­å®šï¼ˆã‚¨ãƒ•ã‚§ã‚¯ãƒˆç”¨ï¼‰
+//! @param x Xåº§æ¨™
+//! @param y Yåº§æ¨™
+//! @param z Zåº§æ¨™
+//! @param rx æ¨ªè»¸è§’åº¦
+//! @param ry ç¸¦è»¸è§’åº¦
+//! @param rt å›è»¢è§’åº¦
+//! @param size æ‹¡å¤§ç‡
 void D3DGraphics::SetWorldTransformEffect(float x, float y, float z, float rx, float ry, float rt, float size)
 {
 	ResetWorldTransform();
@@ -1797,16 +1797,16 @@ void D3DGraphics::SetWorldTransformEffect(float x, float y, float z, float rx, f
 	glScalef(size, size, size);
 }
 
-//! @brief ƒ[ƒ‹ƒh‹óŠÔ‚ğl‚ª•Ší‚ğ‚ÂêŠ‚Éİ’è
-//! @param x XÀ•W
-//! @param y YÀ•W
-//! @param z ZÀ•W
-//! @param mx èŒ³‚ğŒ´“_‚É‚µ‚½ ƒ‚ƒfƒ‹‚ÌXÀ•W
-//! @param my èŒ³‚ğŒ´“_‚É‚µ‚½ ƒ‚ƒfƒ‹‚ÌYÀ•W
-//! @param mz èŒ³‚ğŒ´“_‚É‚µ‚½ ƒ‚ƒfƒ‹‚ÌZÀ•W
-//! @param rx ‰¡²Šp“x
-//! @param ry c²Šp“x
-//! @param size Šg‘å—¦
+//! @brief ãƒ¯ãƒ¼ãƒ«ãƒ‰ç©ºé–“ã‚’äººãŒæ­¦å™¨ã‚’æŒã¤å ´æ‰€ã«è¨­å®š
+//! @param x Xåº§æ¨™
+//! @param y Yåº§æ¨™
+//! @param z Zåº§æ¨™
+//! @param mx æ‰‹å…ƒã‚’åŸç‚¹ã«ã—ãŸ ãƒ¢ãƒ‡ãƒ«ã®Xåº§æ¨™
+//! @param my æ‰‹å…ƒã‚’åŸç‚¹ã«ã—ãŸ ãƒ¢ãƒ‡ãƒ«ã®Yåº§æ¨™
+//! @param mz æ‰‹å…ƒã‚’åŸç‚¹ã«ã—ãŸ ãƒ¢ãƒ‡ãƒ«ã®Zåº§æ¨™
+//! @param rx æ¨ªè»¸è§’åº¦
+//! @param ry ç¸¦è»¸è§’åº¦
+//! @param size æ‹¡å¤§ç‡
 void D3DGraphics::SetWorldTransformHumanWeapon(float x, float y, float z, float mx, float my, float mz, float rx, float ry, float size)
 {
 	ResetWorldTransform();
@@ -1820,14 +1820,14 @@ void D3DGraphics::SetWorldTransformHumanWeapon(float x, float y, float z, float 
 	glScalef(size, size, size);
 }
 
-//! @brief ƒ[ƒ‹ƒh‹óŠÔ‚ğŠ‚µ‚Ä‚¢‚é•Ší‚ğ•`‰æ‚·‚éêŠ‚Éİ’è
-//! @param rotation •Ší‚ğ‰ñ“]‚³‚¹‚é
-//! @param camera_rx ƒJƒƒ‰‚Ì‰¡²Šp“x
-//! @param camera_ry ƒJƒƒ‰‚Ìc²Šp“x
-//! @param rx •Ší‚Ì‚Ìc²Šp“x
-//! @param size •`‰æƒTƒCƒY
-//! @note rotationEE@trueFŒ»İ‚Á‚Ä‚¢‚é•Ší‚Å‚·B@falseF—\”õ‚Ì•Ší‚Å‚·Birx ‚Í–³‹‚³‚ê‚Ü‚·j
-//! @todo ˆÊ’u‚âƒTƒCƒY‚Ì”÷’²®
+//! @brief ãƒ¯ãƒ¼ãƒ«ãƒ‰ç©ºé–“ã‚’æ‰€æŒã—ã¦ã„ã‚‹æ­¦å™¨ã‚’æç”»ã™ã‚‹å ´æ‰€ã«è¨­å®š
+//! @param rotation æ­¦å™¨ã‚’å›è»¢ã•ã›ã‚‹
+//! @param camera_rx ã‚«ãƒ¡ãƒ©ã®æ¨ªè»¸è§’åº¦
+//! @param camera_ry ã‚«ãƒ¡ãƒ©ã®ç¸¦è»¸è§’åº¦
+//! @param rx æ­¦å™¨ã®ã®ç¸¦è»¸è§’åº¦
+//! @param size æç”»ã‚µã‚¤ã‚º
+//! @note rotationãƒ»ãƒ»ã€€trueï¼šç¾åœ¨æŒã£ã¦ã„ã‚‹æ­¦å™¨ã§ã™ã€‚ã€€falseï¼šäºˆå‚™ã®æ­¦å™¨ã§ã™ã€‚ï¼ˆrx ã¯ç„¡è¦–ã•ã‚Œã¾ã™ï¼‰
+//! @todo ä½ç½®ã‚„ã‚µã‚¤ã‚ºã®å¾®èª¿æ•´
 void D3DGraphics::SetWorldTransformPlayerWeapon(bool rotation, float camera_rx, float camera_ry, float rx, float size)
 {
 	float screenX, screenY, screenZ;
@@ -1851,18 +1851,18 @@ void D3DGraphics::SetWorldTransformPlayerWeapon(bool rotation, float camera_rx, 
 
 	glMatrixMode(GL_MODELVIEW);
 
-	//ƒ‚ƒfƒ‹ƒrƒ…[s—ñE“§‹“Š‰es—ñEƒrƒ…[ƒ|[ƒg‚ğæ“¾
+	//ãƒ¢ãƒ‡ãƒ«ãƒ“ãƒ¥ãƒ¼è¡Œåˆ—ãƒ»é€è¦–æŠ•å½±è¡Œåˆ—ãƒ»ãƒ“ãƒ¥ãƒ¼ãƒãƒ¼ãƒˆã‚’å–å¾—
 	glGetDoublev(GL_MODELVIEW_MATRIX, modelview);
 	glGetDoublev(GL_PROJECTION_MATRIX, projection);
 	glGetIntegerv(GL_VIEWPORT, viewport);
 
-	//ƒXƒNƒŠ[ƒ“À•W‚©‚çƒIƒuƒWƒFƒNƒgÀ•W‚ğ‹‚ß‚é
+	//ã‚¹ã‚¯ãƒªãƒ¼ãƒ³åº§æ¨™ã‹ã‚‰ã‚ªãƒ–ã‚¸ã‚§ã‚¯ãƒˆåº§æ¨™ã‚’æ±‚ã‚ã‚‹
 	gluUnProject(screenX, screenY, screenZ, modelview, projection, viewport, &objX, &objY, &objZ);
 
 	//size = size * 0.3f;
 	size = size * (0.0004f*SCREEN_HEIGHT*SCREEN_HEIGHT - 0.92f*SCREEN_HEIGHT + 650.0f) / 1000.f;
 
-	//s—ñŒvZ
+	//è¡Œåˆ—è¨ˆç®—
 	glTranslated(objX, objY, objZ);
 	glRotatef(camera_rx*(180.0f/(float)M_PI), 0.0f, 1.0f, 0.0f);
 	glRotatef(camera_ry*-1*(180.0f/(float)M_PI), 0.0f, 0.0f, 1.0f);
@@ -1875,10 +1875,10 @@ void D3DGraphics::SetWorldTransformPlayerWeapon(bool rotation, float camera_rx, 
 	glScalef(size, size, size);
 }
 
-//! @brief ƒ[ƒ‹ƒh‹óŠÔ‚ÌÀ•W‚ğæ“¾
-//! @param *x x²‚ğó‚¯æ‚éƒ|ƒCƒ“ƒ^
-//! @param *y y²‚ğó‚¯æ‚éƒ|ƒCƒ“ƒ^
-//! @param *z z²‚ğó‚¯æ‚éƒ|ƒCƒ“ƒ^
+//! @brief ãƒ¯ãƒ¼ãƒ«ãƒ‰ç©ºé–“ã®åº§æ¨™ã‚’å–å¾—
+//! @param *x xè»¸ã‚’å—ã‘å–ã‚‹ãƒã‚¤ãƒ³ã‚¿
+//! @param *y yè»¸ã‚’å—ã‘å–ã‚‹ãƒã‚¤ãƒ³ã‚¿
+//! @param *z zè»¸ã‚’å—ã‘å–ã‚‹ãƒã‚¤ãƒ³ã‚¿
 void D3DGraphics::GetWorldTransformPos(float *x, float *y, float *z)
 {
 	GLfloat model[16];
@@ -1889,13 +1889,13 @@ void D3DGraphics::GetWorldTransformPos(float *x, float *y, float *z)
 	*z = model[14];
 }
 
-//! @brief ƒtƒHƒO‚ğİ’è
-//! @param skynumber ‹ó‚Ì”Ô†
+//! @brief ãƒ•ã‚©ã‚°ã‚’è¨­å®š
+//! @param skynumber ç©ºã®ç•ªå·
 void D3DGraphics::SetFog(int skynumber)
 {
 	float fogColor[4];
 
-	//‹ó‚Ì”Ô†‚É‚æ‚èF‚ğŒˆ’è
+	//ç©ºã®ç•ªå·ã«ã‚ˆã‚Šè‰²ã‚’æ±ºå®š
 	switch(skynumber){
 		case 1:		fogColor[0] = 0.25f;	fogColor[1] = 0.25f+0.0625;	fogColor[2] = 0.25f;	fogColor[3] = 1.0f;		break;
 		case 2:		fogColor[0] = 0.0625;	fogColor[1] = 0.0625;		fogColor[2] = 0.0625;	fogColor[3] = 1.0f;		break;
@@ -1916,13 +1916,13 @@ void D3DGraphics::SetFog(int skynumber)
 	glEnable(GL_FOG);
 }
 
-//! @brief ƒJƒƒ‰i‹“_j‚ğİ’è
-//! @param in_camera_x ƒJƒƒ‰‚ÌXÀ•W
-//! @param in_camera_y ƒJƒƒ‰‚ÌYÀ•W
-//! @param in_camera_z ƒJƒƒ‰‚ÌZÀ•W
-//! @param in_camera_rx ƒJƒƒ‰‚Ì‰¡²Šp“x
-//! @param in_camera_ry ƒJƒƒ‰‚Ìc²Šp“xi-ƒÎ`ƒÎˆÈ“àj
-//! @param in_viewangle ‹–ìŠp
+//! @brief ã‚«ãƒ¡ãƒ©ï¼ˆè¦–ç‚¹ï¼‰ã‚’è¨­å®š
+//! @param in_camera_x ã‚«ãƒ¡ãƒ©ã®Xåº§æ¨™
+//! @param in_camera_y ã‚«ãƒ¡ãƒ©ã®Yåº§æ¨™
+//! @param in_camera_z ã‚«ãƒ¡ãƒ©ã®Zåº§æ¨™
+//! @param in_camera_rx ã‚«ãƒ¡ãƒ©ã®æ¨ªè»¸è§’åº¦
+//! @param in_camera_ry ã‚«ãƒ¡ãƒ©ã®ç¸¦è»¸è§’åº¦ï¼ˆ-Ï€ï½Ï€ä»¥å†…ï¼‰
+//! @param in_viewangle è¦–é‡è§’
 void D3DGraphics::SetCamera(float in_camera_x, float in_camera_y, float in_camera_z, float in_camera_rx, float in_camera_ry, float in_viewangle)
 {
 	glViewport(0, 0, width, height);
@@ -1937,33 +1937,33 @@ void D3DGraphics::SetCamera(float in_camera_x, float in_camera_y, float in_camer
 	ResetWorldTransform();
 }
 
-//! @brief ƒ}ƒbƒvƒf[ƒ^‚ğæ‚è‚Ş
-//! @param in_blockdata ƒuƒƒbƒNƒf[ƒ^
-//! @param directory ƒuƒƒbƒNƒf[ƒ^‚ª‘¶İ‚·‚éƒfƒBƒŒƒNƒgƒŠ
+//! @brief ãƒãƒƒãƒ—ãƒ‡ãƒ¼ã‚¿ã‚’å–ã‚Šè¾¼ã‚€
+//! @param in_blockdata ãƒ–ãƒ­ãƒƒã‚¯ãƒ‡ãƒ¼ã‚¿
+//! @param directory ãƒ–ãƒ­ãƒƒã‚¯ãƒ‡ãƒ¼ã‚¿ãŒå­˜åœ¨ã™ã‚‹ãƒ‡ã‚£ãƒ¬ã‚¯ãƒˆãƒª
 void D3DGraphics::LoadMapdata(BlockDataInterface* in_blockdata, char *directory)
 {
-	//ƒuƒƒbƒNƒf[ƒ^‚ªw’è‚³‚ê‚Ä‚¢‚È‚¯‚ê‚ÎAˆ—‚µ‚È‚¢B
+	//ãƒ–ãƒ­ãƒƒã‚¯ãƒ‡ãƒ¼ã‚¿ãŒæŒ‡å®šã•ã‚Œã¦ã„ãªã‘ã‚Œã°ã€å‡¦ç†ã—ãªã„ã€‚
 	if( in_blockdata == NULL ){ return; }
 
 	char fname[MAX_PATH];
 	char fnamefull[MAX_PATH];
 
-	//ƒNƒ‰ƒX‚ğİ’è
+	//ã‚¯ãƒ©ã‚¹ã‚’è¨­å®š
 	blockdata = in_blockdata;
 
-	//ƒuƒƒbƒN”‚ğæ“¾
+	//ãƒ–ãƒ­ãƒƒã‚¯æ•°ã‚’å–å¾—
 	bs = blockdata->GetTotaldatas();
 
-	//ƒeƒNƒXƒ`ƒƒ“Ç‚İ‚İ
+	//ãƒ†ã‚¯ã‚¹ãƒãƒ£èª­ã¿è¾¼ã¿
 	for(int i=0; i<TOTAL_BLOCKTEXTURE; i++){
-		//ƒeƒNƒXƒ`ƒƒ–¼‚ğæ“¾
+		//ãƒ†ã‚¯ã‚¹ãƒãƒ£åã‚’å–å¾—
 		blockdata->GetTexture(fname, i);
 
-		if( strcmp(fname, "") == 0 ){	//w’è‚³‚ê‚Ä‚¢‚È‚¯‚ê‚ÎAˆ—‚µ‚È‚¢
+		if( strcmp(fname, "") == 0 ){	//æŒ‡å®šã•ã‚Œã¦ã„ãªã‘ã‚Œã°ã€å‡¦ç†ã—ãªã„
 			mapTextureID[i] = -1;
 		}
 		else{
-			//uƒfƒBƒŒƒNƒgƒŠ{ƒtƒ@ƒCƒ‹–¼v‚ğ¶¬‚µA“Ç‚İ‚Ş
+			//ã€Œãƒ‡ã‚£ãƒ¬ã‚¯ãƒˆãƒªï¼‹ãƒ•ã‚¡ã‚¤ãƒ«åã€ã‚’ç”Ÿæˆã—ã€èª­ã¿è¾¼ã‚€
 			strcpy(fnamefull, directory);
 			strcat(fnamefull, fname);
 			mapTextureID[i] = LoadTexture(fnamefull, false, false);
@@ -1971,11 +1971,11 @@ void D3DGraphics::LoadMapdata(BlockDataInterface* in_blockdata, char *directory)
 	}
 }
 
-//! @brief ƒ}ƒbƒvƒf[ƒ^‚ğ•`‰æ
-//! @param wireframe ƒƒCƒ„[ƒtƒŒ[ƒ€•\¦
+//! @brief ãƒãƒƒãƒ—ãƒ‡ãƒ¼ã‚¿ã‚’æç”»
+//! @param wireframe ãƒ¯ã‚¤ãƒ¤ãƒ¼ãƒ•ãƒ¬ãƒ¼ãƒ è¡¨ç¤º
 void D3DGraphics::RenderMapdata(bool wireframe)
 {
-	//ƒuƒƒbƒNƒf[ƒ^‚ª“Ç‚İ‚Ü‚ê‚Ä‚¢‚È‚¯‚ê‚ÎAˆ—‚µ‚È‚¢B
+	//ãƒ–ãƒ­ãƒƒã‚¯ãƒ‡ãƒ¼ã‚¿ãŒèª­ã¿è¾¼ã¾ã‚Œã¦ã„ãªã‘ã‚Œã°ã€å‡¦ç†ã—ãªã„ã€‚
 	if( blockdata == NULL ){ return; }
 
 	struct blockdata data;
@@ -1987,7 +1987,7 @@ void D3DGraphics::RenderMapdata(bool wireframe)
 	float *TexCoordAry = new float [bs*6 * 6*2];
 
 	if( wireframe == true ){
-		//ƒƒCƒ„[ƒtƒŒ[ƒ€•\¦
+		//ãƒ¯ã‚¤ãƒ¤ãƒ¼ãƒ•ãƒ¬ãƒ¼ãƒ è¡¨ç¤º
 		for(int i=0; i<bs; i++){
 			blockdata->Getdata(&data, i);
 			Renderline(data.x[0], data.y[0], data.z[0], data.x[1], data.y[1], data.z[1], GetColorCode(0.0f,1.0f,0.0f,1.0f));
@@ -2006,7 +2006,7 @@ void D3DGraphics::RenderMapdata(bool wireframe)
 		return;
 	}
 
-	//”z—ñ—LŒø‰»
+	//é…åˆ—æœ‰åŠ¹åŒ–
 	glEnableClientState(GL_VERTEX_ARRAY);
 	glEnableClientState(GL_COLOR_ARRAY);
 	glEnableClientState(GL_TEXTURE_COORD_ARRAY);
@@ -2014,36 +2014,36 @@ void D3DGraphics::RenderMapdata(bool wireframe)
 	for(textureID=0; textureID<TOTAL_BLOCKTEXTURE; textureID++){
 		int cnt = 0;
 
-		//ƒeƒNƒXƒ`ƒƒ‚ª³í‚É“Ç‚İ‚ß‚Ä‚¢‚È‚¯‚ê‚Îİ’è
+		//ãƒ†ã‚¯ã‚¹ãƒãƒ£ãŒæ­£å¸¸ã«èª­ã¿è¾¼ã‚ã¦ã„ãªã‘ã‚Œã°è¨­å®š
 		if( mapTextureID[textureID] == -1 ){
-			//ƒeƒNƒXƒ`ƒƒ–³Œø
+			//ãƒ†ã‚¯ã‚¹ãƒãƒ£ç„¡åŠ¹
 			glDisable(GL_TEXTURE_2D);
 		}
 		else if( ptextures[ mapTextureID[textureID] ].useflag == false ){
-			//ƒeƒNƒXƒ`ƒƒ–³Œø
+			//ãƒ†ã‚¯ã‚¹ãƒãƒ£ç„¡åŠ¹
 			glDisable(GL_TEXTURE_2D);
 		}
 		else{
-			//ƒeƒNƒXƒ`ƒƒ—LŒø
+			//ãƒ†ã‚¯ã‚¹ãƒãƒ£æœ‰åŠ¹
 			glEnable(GL_TEXTURE_2D);
 
-			//ƒeƒNƒXƒ`ƒƒ‚ğƒZƒbƒg
+			//ãƒ†ã‚¯ã‚¹ãƒãƒ£ã‚’ã‚»ãƒƒãƒˆ
 			SetTexture(mapTextureID[textureID]);
 		}
 
 		for(int i=0; i<bs; i++){
-			//ƒf[ƒ^æ“¾
+			//ãƒ‡ãƒ¼ã‚¿å–å¾—
 			blockdata->Getdata(&data, i);
 
 			for(int j=0; j<6; j++){
-				//ƒeƒNƒXƒ`ƒƒ”F¯”Ô†‚ğæ“¾
+				//ãƒ†ã‚¯ã‚¹ãƒãƒ£èªè­˜ç•ªå·ã‚’å–å¾—
 				int ID = data.material[j].textureID;
 
 				if( textureID == ID ){
-					//–Ê‚Ì’¸“_ƒf[ƒ^‚ÌŠÖ˜A•t‚¯‚ğæ“¾
+					//é¢ã®é ‚ç‚¹ãƒ‡ãƒ¼ã‚¿ã®é–¢é€£ä»˜ã‘ã‚’å–å¾—
 					blockdataface(j, &vID[0], &uvID[0]);
 
-					//’¸“_”z—ñ‚ğ—pˆÓ
+					//é ‚ç‚¹é…åˆ—ã‚’ç”¨æ„
 					VertexAry[0 + cnt*18] = data.x[ vID[1] ]*-1;		VertexAry[1 + cnt*18] = data.y[ vID[1] ];	VertexAry[2 + cnt*18] = data.z[ vID[1] ];
 					VertexAry[3 + cnt*18] = data.x[ vID[1] ]*-1;		VertexAry[4 + cnt*18] = data.y[ vID[1] ];	VertexAry[5 + cnt*18] = data.z[ vID[1] ];
 					VertexAry[6 + cnt*18] = data.x[ vID[0] ]*-1;		VertexAry[7 + cnt*18] = data.y[ vID[0] ];	VertexAry[8 + cnt*18] = data.z[ vID[0] ];
@@ -2051,7 +2051,7 @@ void D3DGraphics::RenderMapdata(bool wireframe)
 					VertexAry[12 + cnt*18] = data.x[ vID[3] ]*-1;		VertexAry[13 + cnt*18] = data.y[ vID[3] ];	VertexAry[14 + cnt*18] = data.z[ vID[3] ];
 					VertexAry[15 + cnt*18] = data.x[ vID[3] ]*-1;		VertexAry[16 + cnt*18] = data.y[ vID[3] ];	VertexAry[17 + cnt*18] = data.z[ vID[3] ];
 
-					//Fî•ñ”z—ñ‚ğ—pˆÓ
+					//è‰²æƒ…å ±é…åˆ—ã‚’ç”¨æ„
 					ColorAry[0 + cnt*24] = data.material[j].shadow;
 					ColorAry[1 + cnt*24] = data.material[j].shadow;
 					ColorAry[2 + cnt*24] = data.material[j].shadow;
@@ -2060,7 +2060,7 @@ void D3DGraphics::RenderMapdata(bool wireframe)
 						memcpy(&(ColorAry[k*4 + cnt*24]), &(ColorAry[cnt*24]), sizeof(float)*4);
 					}
 
-					//UVÀ•W”z—ñ‚ğ—pˆÓ
+					//UVåº§æ¨™é…åˆ—ã‚’ç”¨æ„
 					TexCoordAry[0 + cnt*12] = data.material[j].u[ uvID[1] ];	TexCoordAry[1 + cnt*12] = data.material[j].v[ uvID[1] ];
 					TexCoordAry[2 + cnt*12] = data.material[j].u[ uvID[1] ];	TexCoordAry[3 + cnt*12] = data.material[j].v[ uvID[1] ];
 					TexCoordAry[4 + cnt*12] = data.material[j].u[ uvID[0] ];	TexCoordAry[5 + cnt*12] = data.material[j].v[ uvID[0] ];
@@ -2073,14 +2073,14 @@ void D3DGraphics::RenderMapdata(bool wireframe)
 			}
 		}
 
-		//•`‰æ
+		//æç”»
 		glVertexPointer(3, GL_FLOAT, 0, VertexAry);
 		glColorPointer(4, GL_FLOAT, 0, ColorAry);
 		glTexCoordPointer(2, GL_FLOAT, 0, TexCoordAry);
 		glDrawArrays(GL_TRIANGLE_STRIP, 1, 6*cnt-2);
 	}
 
-	//”z—ñ–³Œø‰»
+	//é…åˆ—ç„¡åŠ¹åŒ–
 	glDisableClientState(GL_VERTEX_ARRAY);
 	glDisableClientState(GL_COLOR_ARRAY);
 	glDisableClientState(GL_TEXTURE_COORD_ARRAY);
@@ -2090,19 +2090,19 @@ void D3DGraphics::RenderMapdata(bool wireframe)
 	delete [] TexCoordAry;
 }
 
-//! @brief ƒ}ƒbƒvƒeƒNƒXƒ`ƒƒ‚ğæ“¾
-//! @param id ƒeƒNƒXƒ`ƒƒ”Ô†
-//! @return ƒeƒNƒXƒ`ƒƒ”F¯”Ô†i¸”sF-1j
+//! @brief ãƒãƒƒãƒ—ãƒ†ã‚¯ã‚¹ãƒãƒ£ã‚’å–å¾—
+//! @param id ãƒ†ã‚¯ã‚¹ãƒãƒ£ç•ªå·
+//! @return ãƒ†ã‚¯ã‚¹ãƒãƒ£èªè­˜ç•ªå·ï¼ˆå¤±æ•—ï¼š-1ï¼‰
 int D3DGraphics::GetMapTextureID(int id)
 {
 	if( (id < 0)||((TOTAL_BLOCKTEXTURE -1) < id ) ){ return -1; }
 	return mapTextureID[id];
 }
 
-//! @brief ƒ}ƒbƒvƒf[ƒ^‚ğ‰ğ•ú
+//! @brief ãƒãƒƒãƒ—ãƒ‡ãƒ¼ã‚¿ã‚’è§£æ”¾
 void D3DGraphics::CleanupMapdata()
 {
-	//ƒeƒNƒXƒ`ƒƒ‚ğŠJ•ú
+	//ãƒ†ã‚¯ã‚¹ãƒãƒ£ã‚’é–‹æ”¾
 	for(int i=0; i<TOTAL_BLOCKTEXTURE; i++){
 		CleanupTexture(mapTextureID[i]);
 	}
@@ -2112,30 +2112,30 @@ void D3DGraphics::CleanupMapdata()
 	blockdata = NULL;
 }
 
-//! @brief ƒ‚ƒfƒ‹ƒtƒ@ƒCƒ‹‚ğ•`‰æ
-//! @param id_model ƒ‚ƒfƒ‹”F¯”Ô†
-//! @param id_texture ƒeƒNƒXƒ`ƒƒ”F¯”Ô†
-//! @param darkflag ƒ‚ƒfƒ‹‚ğˆÃ‚­‚·‚é
+//! @brief ãƒ¢ãƒ‡ãƒ«ãƒ•ã‚¡ã‚¤ãƒ«ã‚’æç”»
+//! @param id_model ãƒ¢ãƒ‡ãƒ«èªè­˜ç•ªå·
+//! @param id_texture ãƒ†ã‚¯ã‚¹ãƒãƒ£èªè­˜ç•ªå·
+//! @param darkflag ãƒ¢ãƒ‡ãƒ«ã‚’æš—ãã™ã‚‹
 void D3DGraphics::RenderModel(int id_model, int id_texture, bool darkflag)
 {
-	//–³Œø‚Èˆø”‚ªİ’è‚³‚ê‚Ä‚¢‚ê‚Î¸”s
+	//ç„¡åŠ¹ãªå¼•æ•°ãŒè¨­å®šã•ã‚Œã¦ã„ã‚Œã°å¤±æ•—
 	if( id_model == -1 ){ return; }
 	if( pmodel[id_model].useflag == false ){ return; }
 
-	//ƒeƒNƒXƒ`ƒƒ‚ª³í‚É“Ç‚İ‚ß‚Ä‚¢‚È‚¯‚ê‚Îİ’è
+	//ãƒ†ã‚¯ã‚¹ãƒãƒ£ãŒæ­£å¸¸ã«èª­ã¿è¾¼ã‚ã¦ã„ãªã‘ã‚Œã°è¨­å®š
 	if( id_texture == -1 ){
-		//ƒeƒNƒXƒ`ƒƒ–³Œø
+		//ãƒ†ã‚¯ã‚¹ãƒãƒ£ç„¡åŠ¹
 		glDisable(GL_TEXTURE_2D);
 	}
 	else if( ptextures[id_texture].useflag == false ){
-		//ƒeƒNƒXƒ`ƒƒ–³Œø
+		//ãƒ†ã‚¯ã‚¹ãƒãƒ£ç„¡åŠ¹
 		glDisable(GL_TEXTURE_2D);
 	}
 	else{
-		//ƒeƒNƒXƒ`ƒƒ—LŒø
+		//ãƒ†ã‚¯ã‚¹ãƒãƒ£æœ‰åŠ¹
 		glEnable(GL_TEXTURE_2D);
 
-		//ƒeƒNƒXƒ`ƒƒ‚ğƒZƒbƒg
+		//ãƒ†ã‚¯ã‚¹ãƒãƒ£ã‚’ã‚»ãƒƒãƒˆ
 		SetTexture(id_texture);
 	}
 
@@ -2147,18 +2147,18 @@ void D3DGraphics::RenderModel(int id_model, int id_texture, bool darkflag)
 		ColorAry = pmodel[id_model].ColorGrayAry;
 	}
 
-	//”z—ñ—LŒø‰»
+	//é…åˆ—æœ‰åŠ¹åŒ–
 	glEnableClientState(GL_VERTEX_ARRAY);
 	glEnableClientState(GL_COLOR_ARRAY);
 	glEnableClientState(GL_TEXTURE_COORD_ARRAY);
 
-	//•`‰æ
+	//æç”»
 	glVertexPointer(3, GL_FLOAT, 0, pmodel[id_model].VertexAry);
 	glColorPointer(4, GL_FLOAT, 0, ColorAry);
 	glTexCoordPointer(2, GL_FLOAT, 0, pmodel[id_model].TexCoordAry);
 	glDrawArrays(GL_TRIANGLE_STRIP, 1, pmodel[id_model].polygons*6-2);
 
-	//”z—ñ–³Œø‰»
+	//é…åˆ—ç„¡åŠ¹åŒ–
 	glDisableClientState(GL_VERTEX_ARRAY);
 	glDisableClientState(GL_COLOR_ARRAY);
 	glDisableClientState(GL_TEXTURE_COORD_ARRAY);
@@ -2170,12 +2170,12 @@ void D3DGraphics::RenderModel(int id_model, int id_texture, bool darkflag)
 	*/
 }
 
-//! @brief ”Â‚ğ•`‰æ
-//! @param id_texture ƒeƒNƒXƒ`ƒƒ”F¯”Ô†
-//! @param alpha “§–¾“x@i0.0`1.0@0.0FŠ®‘S“§–¾j
+//! @brief æ¿ã‚’æç”»
+//! @param id_texture ãƒ†ã‚¯ã‚¹ãƒãƒ£èªè­˜ç•ªå·
+//! @param alpha é€æ˜åº¦ã€€ï¼ˆ0.0ï½1.0ã€€0.0ï¼šå®Œå…¨é€æ˜ï¼‰
 void D3DGraphics::RenderBoard(int id_texture, float alpha)
 {
-	//ƒeƒNƒXƒ`ƒƒ‚ªİ’è‚³‚ê‚Ä‚¢‚È‚¯‚ê‚ÎAˆ—‚µ‚È‚¢B
+	//ãƒ†ã‚¯ã‚¹ãƒãƒ£ãŒè¨­å®šã•ã‚Œã¦ã„ãªã‘ã‚Œã°ã€å‡¦ç†ã—ãªã„ã€‚
 	if( id_texture == -1 ){ return; }
 	if( ptextures[id_texture].useflag == false ){ return; }
 
@@ -2183,19 +2183,19 @@ void D3DGraphics::RenderBoard(int id_texture, float alpha)
 	float ColorAry[4*4];
 	float TexCoordAry[4*2];
 
-	//ƒeƒNƒXƒ`ƒƒ—LŒø
+	//ãƒ†ã‚¯ã‚¹ãƒãƒ£æœ‰åŠ¹
 	glEnable(GL_TEXTURE_2D);
 
-	//ƒeƒNƒXƒ`ƒƒ‚ğƒZƒbƒg
+	//ãƒ†ã‚¯ã‚¹ãƒãƒ£ã‚’ã‚»ãƒƒãƒˆ
 	SetTexture(id_texture);
 
-	//’¸“_”z—ñ‚ğ—pˆÓ
+	//é ‚ç‚¹é…åˆ—ã‚’ç”¨æ„
 	VertexAry[0] = 0.0f;	VertexAry[1] = 0.5f;	VertexAry[2] = 0.5f;
 	VertexAry[3] = 0.0f;	VertexAry[4] = -0.5f;	VertexAry[5] = 0.5f;
 	VertexAry[6] = 0.0f;	VertexAry[7] = 0.5f;	VertexAry[8] = -0.5f;
 	VertexAry[9] = 0.0f;	VertexAry[10] = -0.5f;	VertexAry[11] = -0.5f;
 
-	//Fî•ñ”z—ñ‚ğ—pˆÓ
+	//è‰²æƒ…å ±é…åˆ—ã‚’ç”¨æ„
 	ColorAry[0] = 1.0f;
 	ColorAry[1] = 1.0f;
 	ColorAry[2] = 1.0f;
@@ -2204,44 +2204,44 @@ void D3DGraphics::RenderBoard(int id_texture, float alpha)
 		memcpy(&(ColorAry[i*4]), ColorAry, sizeof(float)*4);
 	}
 
-	//UVÀ•W”z—ñ‚ğ—pˆÓ
+	//UVåº§æ¨™é…åˆ—ã‚’ç”¨æ„
 	TexCoordAry[0] = 1.0f;	TexCoordAry[1] = 0.0f;
 	TexCoordAry[2] = 1.0f;	TexCoordAry[3] = 1.0f;
 	TexCoordAry[4] = 0.0f;	TexCoordAry[5] = 0.0f;
 	TexCoordAry[6] = 0.0f;	TexCoordAry[7] = 1.0f;
 
-	//”z—ñ—LŒø‰»
+	//é…åˆ—æœ‰åŠ¹åŒ–
 	glEnableClientState(GL_VERTEX_ARRAY);
 	glEnableClientState(GL_COLOR_ARRAY);
 	glEnableClientState(GL_TEXTURE_COORD_ARRAY);
 
-	//•`‰æ
+	//æç”»
 	glVertexPointer(3, GL_FLOAT, 0, VertexAry);
 	glColorPointer(4, GL_FLOAT, 0, ColorAry);
 	glTexCoordPointer(2, GL_FLOAT, 0, TexCoordAry);
 	glDrawArrays(GL_TRIANGLE_STRIP, 0, 4);
 
-	//”z—ñ–³Œø‰»
+	//é…åˆ—ç„¡åŠ¹åŒ–
 	glDisableClientState(GL_VERTEX_ARRAY);
 	glDisableClientState(GL_COLOR_ARRAY);
 	glDisableClientState(GL_TEXTURE_COORD_ARRAY);
 }
 
-//! @brief ‰æ–Ê‚Ì–¾‚é‚³‚ğİ’è
-//! @param Width •
-//! @param Height ‚‚³
-//! @param Brightness ‰æ–Ê‚Ì–¾‚é‚³@i0 ‚Å•s•ÏA1 ˆÈã‚Å–¾‚é‚³‚Ì“x‡‚¢j
+//! @brief ç”»é¢ã®æ˜ã‚‹ã•ã‚’è¨­å®š
+//! @param Width å¹…
+//! @param Height é«˜ã•
+//! @param Brightness ç”»é¢ã®æ˜ã‚‹ã•ã€€ï¼ˆ0 ã§ä¸å¤‰ã€1 ä»¥ä¸Šã§æ˜ã‚‹ã•ã®åº¦åˆã„ï¼‰
 void D3DGraphics::ScreenBrightness(int Width, int Height, int Brightness)
 {
-	//–¾‚é‚³•s•Ï‚È‚çˆ—‚µ‚È‚¢iŒy—Ê‰»j
+	//æ˜ã‚‹ã•ä¸å¤‰ãªã‚‰å‡¦ç†ã—ãªã„ï¼ˆè»½é‡åŒ–ï¼‰
 	if( Brightness == 0 ){ return; }
 
-	//“§–¾“x‚ğİ’è‚µA•`‰æ
+	//é€æ˜åº¦ã‚’è¨­å®šã—ã€æç”»
 	float alpha = 0.02f * Brightness;
 	Draw2DBox(0, 0, Width, Height, GetColorCode(1.0f,1.0f,1.0f,alpha));
 }
 
-//! @brief yƒfƒoƒbƒN—pz’†Sü•\¦
+//! @brief ã€ãƒ‡ãƒãƒƒã‚¯ç”¨ã€‘ä¸­å¿ƒç·šè¡¨ç¤º
 void D3DGraphics::RenderCenterline()
 {
 	ResetWorldTransform();
@@ -2250,44 +2250,44 @@ void D3DGraphics::RenderCenterline()
 	Renderline(0.0f, 0.0f, 100.0f, 0.0f, 0.0f, -100.0f, GetColorCode(0.0f,0.0f,1.0f,1.0f));
 }
 
-//! @brief yƒfƒoƒbƒN—pzü•\¦
+//! @brief ã€ãƒ‡ãƒãƒƒã‚¯ç”¨ã€‘ç·šè¡¨ç¤º
 void D3DGraphics::Renderline(float x1, float y1, float z1, float x2, float y2, float z2, int color)
 {
 	float VertexAry[2*3];
 	unsigned char ColorAry[2*4];
 
-	//ƒeƒNƒXƒ`ƒƒ–³Œø
+	//ãƒ†ã‚¯ã‚¹ãƒãƒ£ç„¡åŠ¹
 	glDisable(GL_TEXTURE_2D);
 
-	//’¸“_”z—ñ‚ğ—pˆÓ
+	//é ‚ç‚¹é…åˆ—ã‚’ç”¨æ„
 	VertexAry[0] = (float)x1*-1;	VertexAry[1] = (float)y1;	VertexAry[2] = (float)z1;
 	VertexAry[3] = (float)x2*-1;	VertexAry[4] = (float)y2;	VertexAry[5] = (float)z2;
 
-	//Fî•ñ”z—ñ‚ğ—pˆÓ
+	//è‰²æƒ…å ±é…åˆ—ã‚’ç”¨æ„
 	ColorAry[0] = (color>>24)&0xFF;
 	ColorAry[1] = (color>>16)&0xFF;
 	ColorAry[2] = (color>>8)&0xFF;
 	ColorAry[3] = color&0xFF;
 	memcpy(&(ColorAry[4]), ColorAry, sizeof(unsigned char)*4);
 
-	//”z—ñ—LŒø‰»
+	//é…åˆ—æœ‰åŠ¹åŒ–
 	glEnableClientState(GL_VERTEX_ARRAY);
 	glEnableClientState(GL_COLOR_ARRAY);
 
-	//•\¦
+	//è¡¨ç¤º
 	glVertexPointer(3, GL_FLOAT, 0, VertexAry);
 	glColorPointer(4, GL_UNSIGNED_BYTE, 0, ColorAry);
 	glDrawArrays(GL_LINE_STRIP, 0, 2);
 
-	//”z—ñ–³Œø‰»
+	//é…åˆ—ç„¡åŠ¹åŒ–
 	glDisableClientState(GL_VERTEX_ARRAY);
 	glDisableClientState(GL_COLOR_ARRAY);
 }
 
-//! @brief Å‚à’·‚¢s‚Ì•¶š”‚ğæ“¾
-//! @param str •¶š—ñ@i‰üsƒR[ƒhF‰Âj
-//! @return •¶š”
-//! @attention ƒ}ƒ‹ƒ`ƒoƒCƒg•¶š‚Í 1•¶š‚ ‚½‚è 2 ‚Æ‚µ‚ÄƒJƒEƒ“ƒg‚³‚ê‚Ü‚·B
+//! @brief æœ€ã‚‚é•·ã„è¡Œã®æ–‡å­—æ•°ã‚’å–å¾—
+//! @param str æ–‡å­—åˆ—ã€€ï¼ˆæ”¹è¡Œã‚³ãƒ¼ãƒ‰ï¼šå¯ï¼‰
+//! @return æ–‡å­—æ•°
+//! @attention ãƒãƒ«ãƒãƒã‚¤ãƒˆæ–‡å­—ã¯ 1æ–‡å­—ã‚ãŸã‚Š 2 ã¨ã—ã¦ã‚«ã‚¦ãƒ³ãƒˆã•ã‚Œã¾ã™ã€‚
 int D3DGraphics::StrMaxLineLen(char *str)
 {
 	int maxlen = 0;
@@ -2312,16 +2312,16 @@ int D3DGraphics::StrMaxLineLen(char *str)
 	return maxlen;
 }
 
-//! @brief •¶š‚ğ•\¦iƒVƒXƒeƒ€ƒtƒHƒ“ƒgg—pj
-//! @param x xÀ•W
-//! @param y yÀ•W
-//! @param str •¶š—ñ@i‰üsƒR[ƒhF‰Âj
-//! @param color F
-//! @warning –{ŠÖ”‚Í1ƒtƒŒ[ƒ€ŠÔ‚Å100‰ñ‚Ü‚Å‚µ‚©ŒÄ‚Ño‚¹‚Ü‚¹‚ñBiOpenGLƒRƒA‚Ì‚İj
-//! @warning <b>•\¦‚Í”ñí‚É’á‘¬‚Å‚·B</b>‰æ–Ê“à‚Å‰½“x‚àŒÄ‚Ño‚·‚ÆƒpƒtƒH[ƒ}ƒ“ƒX‚É‰e‹¿‚µ‚Ü‚·B
-//! @warningu‰üsƒR[ƒh‚ğŠˆ—p‚µˆê“x‚É•\¦‚·‚évu“ú–{Œê‚ª•K—v‚È‚¢•¶š‚ÍƒeƒNƒXƒ`ƒƒƒtƒHƒ“ƒg‚ğŠˆ—p‚·‚év‚È‚Ç‚Ì‘Î‰‚ğu‚¶‚Ä‚­‚¾‚³‚¢B
-//! @attention ƒtƒHƒ“ƒg‚Ìí—Ş‚âƒTƒCƒY‚ÍŒÅ’è‚Å‚·B@•¶š‚ğ“ñd‚Éd‚Ë‚Ä—§‘ÌŠ´‚ğo‚³‚È‚¢‚ÆŒ©‚É‚­‚­‚È‚è‚Ü‚·B
-//! @todo 1•¶š–Ú‚ªŒ‡‚¯‚éê‡‚ª‚ ‚éB
+//! @brief æ–‡å­—ã‚’è¡¨ç¤ºï¼ˆã‚·ã‚¹ãƒ†ãƒ ãƒ•ã‚©ãƒ³ãƒˆä½¿ç”¨ï¼‰
+//! @param x xåº§æ¨™
+//! @param y yåº§æ¨™
+//! @param str æ–‡å­—åˆ—ã€€ï¼ˆæ”¹è¡Œã‚³ãƒ¼ãƒ‰ï¼šå¯ï¼‰
+//! @param color è‰²
+//! @warning æœ¬é–¢æ•°ã¯1ãƒ•ãƒ¬ãƒ¼ãƒ é–“ã§100å›ã¾ã§ã—ã‹å‘¼ã³å‡ºã›ã¾ã›ã‚“ã€‚ï¼ˆOpenGLã‚³ã‚¢ã®ã¿ï¼‰
+//! @warning <b>è¡¨ç¤ºã¯éå¸¸ã«ä½é€Ÿã§ã™ã€‚</b>ç”»é¢å†…ã§ä½•åº¦ã‚‚å‘¼ã³å‡ºã™ã¨ãƒ‘ãƒ•ã‚©ãƒ¼ãƒãƒ³ã‚¹ã«å½±éŸ¿ã—ã¾ã™ã€‚
+//! @warningã€Œæ”¹è¡Œã‚³ãƒ¼ãƒ‰ã‚’æ´»ç”¨ã—ä¸€åº¦ã«è¡¨ç¤ºã™ã‚‹ã€ã€Œæ—¥æœ¬èªãŒå¿…è¦ãªã„æ–‡å­—ã¯ãƒ†ã‚¯ã‚¹ãƒãƒ£ãƒ•ã‚©ãƒ³ãƒˆã‚’æ´»ç”¨ã™ã‚‹ã€ãªã©ã®å¯¾å¿œã‚’è¬›ã˜ã¦ãã ã•ã„ã€‚
+//! @attention ãƒ•ã‚©ãƒ³ãƒˆã®ç¨®é¡ã‚„ã‚µã‚¤ã‚ºã¯å›ºå®šã§ã™ã€‚ã€€æ–‡å­—ã‚’äºŒé‡ã«é‡ã­ã¦ç«‹ä½“æ„Ÿã‚’å‡ºã•ãªã„ã¨è¦‹ã«ãããªã‚Šã¾ã™ã€‚
+//! @todo 1æ–‡å­—ç›®ãŒæ¬ ã‘ã‚‹å ´åˆãŒã‚ã‚‹ã€‚
 void D3DGraphics::Draw2DMSFontText(int x, int y, char *str, int color)
 {
 	int len = strlen(str);
@@ -2332,86 +2332,86 @@ void D3DGraphics::Draw2DMSFontText(int x, int y, char *str, int color)
 	Start2DRender();
 	glEnable(GL_DEPTH_TEST);
 
-	//ƒeƒNƒXƒ`ƒƒ–³Œø
+	//ãƒ†ã‚¯ã‚¹ãƒãƒ£ç„¡åŠ¹
 	glDisable(GL_TEXTURE_2D);
 
-	//Unicode•¶š—ñ‚Ö•ÏŠ·
+	//Unicodeæ–‡å­—åˆ—ã¸å¤‰æ›
 	ustr = new WCHAR [len+1];
 	MultiByteToWideChar(CP_ACP,	0, str, -1, ustr, len + 1);
 
-	//V‚½‚È•¶š—ñ‚È‚çAƒŠƒ\[ƒX‚ğì‚è’¼‚·
+	//æ–°ãŸãªæ–‡å­—åˆ—ãªã‚‰ã€ãƒªã‚½ãƒ¼ã‚¹ã‚’ä½œã‚Šç›´ã™
 	if( lstrcmpW(ustr, now_SystemFontUStr) != 0 ){
 		GLuint listIdx;
 		HDC hDC;
 
-		//ŒÃ‚¢ƒf[ƒ^‚ğíœ
+		//å¤ã„ãƒ‡ãƒ¼ã‚¿ã‚’å‰Šé™¤
 		glDeleteLists(SystemFontListIdx, SystemFontListIdxSize);
 		delete [] now_SystemFontUStr;
 
-		//ƒfƒoƒCƒXƒRƒ“ƒeƒLƒXƒgİ’è
+		//ãƒ‡ãƒã‚¤ã‚¹ã‚³ãƒ³ãƒ†ã‚­ã‚¹ãƒˆè¨­å®š
 		hDC = GetDC(hWnd);
 		wglMakeCurrent(hDC, hGLRC);
 		SelectObject(hDC, SystemFont);
 
-		//ƒfƒBƒXƒvƒŒƒCƒŠƒXƒg‚ğì¬
+		//ãƒ‡ã‚£ã‚¹ãƒ—ãƒ¬ã‚¤ãƒªã‚¹ãƒˆã‚’ä½œæˆ
 		listIdx = glGenLists(len);
-		wglUseFontBitmapsW(hDC, ustr[0], 1, listIdx);	//ƒ_ƒ~[
+		wglUseFontBitmapsW(hDC, ustr[0], 1, listIdx);	//ãƒ€ãƒŸãƒ¼
 		for(int i=0; i<lstrlenW(ustr); i++){
 			wglUseFontBitmapsW(hDC, ustr[i], 1, listIdx+i);
 		}
 
-		//ƒfƒoƒCƒXƒRƒ“ƒeƒLƒXƒg”pŠü
+		//ãƒ‡ãƒã‚¤ã‚¹ã‚³ãƒ³ãƒ†ã‚­ã‚¹ãƒˆå»ƒæ£„
 		ReleaseDC(hWnd, hDC);
 
-		//İ’è‚ğ‹L˜^
+		//è¨­å®šã‚’è¨˜éŒ²
 		now_SystemFontUStr = new WCHAR [len+1];
 		lstrcpyW(now_SystemFontUStr, ustr);
 		SystemFontListIdx = listIdx;
 		SystemFontListIdxSize = len;
 	}
 
-	//À•W‚ÆF‚ğİ’è
+	//åº§æ¨™ã¨è‰²ã‚’è¨­å®š
 	glBitmap(0, 0, 0, 0, 10, 0, NULL);
 	glRasterPos3f((float)x, (float)y, SystemFont_posz);
 	glColor4ub((color>>24)&0xFF, (color>>16)&0xFF, (color>>8)&0xFF, color&0xFF);
 
 	for(int i=0; i<lstrlenW(ustr); i++){
 		if( ustr[i] == '\n' ){
-			//‰üs‚·‚é
+			//æ”¹è¡Œã™ã‚‹
 			y += 19;
 			glRasterPos3f((float)x, (float)y, SystemFont_posz);
 		}
 		else{
-			//ƒfƒBƒXƒvƒŒƒCƒŠƒXƒg•`‰æ
+			//ãƒ‡ã‚£ã‚¹ãƒ—ãƒ¬ã‚¤ãƒªã‚¹ãƒˆæç”»
 			glCallList(SystemFontListIdx + i);
 		}
 	}
 
 	SystemFont_posz -= 0.01f;
 
-	//Unicode•¶š—ñ‚Ì”pŠü
+	//Unicodeæ–‡å­—åˆ—ã®å»ƒæ£„
 	delete [] ustr;
 
 	//glDisable(GL_DEPTH_TEST);
 	End2DRender();
 }
 
-//! @brief •¶š‚ğ’†‰›‘µ‚¦‚Å•\¦iƒVƒXƒeƒ€ƒtƒHƒ“ƒgg—pj
-//! @param x xÀ•W
-//! @param y yÀ•W
-//! @param w ‰¡‚Ì‘å‚«‚³
-//! @param h c‚Ì‘å‚«‚³
-//! @param str •¶š—ñ@i‰üsƒR[ƒhF‰Âj
-//! @param color F
+//! @brief æ–‡å­—ã‚’ä¸­å¤®æƒãˆã§è¡¨ç¤ºï¼ˆã‚·ã‚¹ãƒ†ãƒ ãƒ•ã‚©ãƒ³ãƒˆä½¿ç”¨ï¼‰
+//! @param x xåº§æ¨™
+//! @param y yåº§æ¨™
+//! @param w æ¨ªã®å¤§ãã•
+//! @param h ç¸¦ã®å¤§ãã•
+//! @param str æ–‡å­—åˆ—ã€€ï¼ˆæ”¹è¡Œã‚³ãƒ¼ãƒ‰ï¼šå¯ï¼‰
+//! @param color è‰²
 void D3DGraphics::Draw2DMSFontTextCenter(int x, int y, int w, int h, char *str, int color)
 {
-	//–¢g—pˆø”‘Îô
+	//æœªä½¿ç”¨å¼•æ•°å¯¾ç­–
 	UNREFERENCED_PARAMETER(h);
 
 	Draw2DMSFontText(x + (w/2 - (StrMaxLineLen(str)*9/2)), y, str, color);
 }
 
-//! @brief 2D•`‰æ—pİ’è
+//! @brief 2Dæç”»ç”¨è¨­å®š
 void D3DGraphics::Start2DRender()
 {
 	glMatrixMode(GL_PROJECTION);
@@ -2427,17 +2427,17 @@ void D3DGraphics::Start2DRender()
 	glDisable(GL_CULL_FACE);
 }
 
-//! @brief •¶š‚ğ•`‰æiƒeƒNƒXƒ`ƒƒƒtƒHƒ“ƒgg—pj
-//! @param x xÀ•W
-//! @param y yÀ•W
-//! @param str •¶š—ñ@i‰üsƒR[ƒhF<b>•s‰Â</b>j
-//! @param color F
-//! @param fontwidth ˆê•¶š‚Ì•
-//! @param fontheight ˆê•¶š‚Ì‚‚³
-//! @attention •¶š‚ğ“ñd‚Éd‚Ë‚Ä—§‘ÌŠ´‚ğo‚³‚È‚¢‚ÆŒ©‚É‚­‚­‚È‚è‚Ü‚·B
+//! @brief æ–‡å­—ã‚’æç”»ï¼ˆãƒ†ã‚¯ã‚¹ãƒãƒ£ãƒ•ã‚©ãƒ³ãƒˆä½¿ç”¨ï¼‰
+//! @param x xåº§æ¨™
+//! @param y yåº§æ¨™
+//! @param str æ–‡å­—åˆ—ã€€ï¼ˆæ”¹è¡Œã‚³ãƒ¼ãƒ‰ï¼š<b>ä¸å¯</b>ï¼‰
+//! @param color è‰²
+//! @param fontwidth ä¸€æ–‡å­—ã®å¹…
+//! @param fontheight ä¸€æ–‡å­—ã®é«˜ã•
+//! @attention æ–‡å­—ã‚’äºŒé‡ã«é‡ã­ã¦ç«‹ä½“æ„Ÿã‚’å‡ºã•ãªã„ã¨è¦‹ã«ãããªã‚Šã¾ã™ã€‚
 void D3DGraphics::Draw2DTextureFontText(int x, int y, char *str, int color, int fontwidth, int fontheight)
 {
-	//ƒeƒNƒXƒ`ƒƒƒtƒHƒ“ƒg‚Ìæ“¾‚É¸”s‚µ‚Ä‚¢‚ê‚ÎAˆ—‚µ‚È‚¢
+	//ãƒ†ã‚¯ã‚¹ãƒãƒ£ãƒ•ã‚©ãƒ³ãƒˆã®å–å¾—ã«å¤±æ•—ã—ã¦ã„ã‚Œã°ã€å‡¦ç†ã—ãªã„
 	if( TextureFont == -1 ){ return; }
 
 	int strlens = (int)strlen(str);
@@ -2446,29 +2446,29 @@ void D3DGraphics::Draw2DTextureFontText(int x, int y, char *str, int color, int 
 	unsigned char *ColorAry = new unsigned char [strlens*6*4];
 	float *TexCoordAry = new float [strlens*6*2];
 
-	//2D•`‰æ—pİ’è‚ğ“K—p
+	//2Dæç”»ç”¨è¨­å®šã‚’é©ç”¨
 	Start2DRender();
 
 	int w;
 	float font_u, font_v;
 	float t_u, t_v;
 
-	//1•¶š‚ÌUVÀ•W‚ğŒvZ
+	//1æ–‡å­—ã®UVåº§æ¨™ã‚’è¨ˆç®—
 	font_u = 1.0f / 16;
 	font_v = 1.0f / 16;
 
-	//ƒeƒNƒXƒ`ƒƒ—LŒø
+	//ãƒ†ã‚¯ã‚¹ãƒãƒ£æœ‰åŠ¹
 	glEnable(GL_TEXTURE_2D);
 
-	//ƒeƒNƒXƒ`ƒƒ‚ğƒZƒbƒg
+	//ãƒ†ã‚¯ã‚¹ãƒãƒ£ã‚’ã‚»ãƒƒãƒˆ
 	SetTexture(TextureFont);
 
-	//”z—ñ—LŒø‰»
+	//é…åˆ—æœ‰åŠ¹åŒ–
 	glEnableClientState(GL_VERTEX_ARRAY);
 	glEnableClientState(GL_COLOR_ARRAY);
 	glEnableClientState(GL_TEXTURE_COORD_ARRAY);
 
-	//Fî•ñ”z—ñ‚ğ—pˆÓ
+	//è‰²æƒ…å ±é…åˆ—ã‚’ç”¨æ„
 	ColorAry[0] = (color>>24)&0xFF;
 	ColorAry[1] = (color>>16)&0xFF;
 	ColorAry[2] = (color>>8)&0xFF;
@@ -2477,9 +2477,9 @@ void D3DGraphics::Draw2DTextureFontText(int x, int y, char *str, int color, int 
 		memcpy(&(ColorAry[i*4]), ColorAry, sizeof(unsigned char)*4);
 	}
 
-	// —^‚¦‚ç‚ê‚½•¶š”•ªƒ‹[ƒv
+	// ä¸ãˆã‚‰ã‚ŒãŸæ–‡å­—æ•°åˆ†ãƒ«ãƒ¼ãƒ—
 	for(int i=0; i<strlens; i++){
-		//UVÀ•W‚ğŒvZ
+		//UVåº§æ¨™ã‚’è¨ˆç®—
 		w = str[i];
 		if( w < 0 ){ w += 256; }
 		t_u = (w % 16) * font_u;
@@ -2499,18 +2499,18 @@ void D3DGraphics::Draw2DTextureFontText(int x, int y, char *str, int color, int 
 		TexCoordAry[10 + i*12] = t_u + font_u;	TexCoordAry[11 + i*12] = t_v + font_v;
 	}
 
-	//•`‰æ
+	//æç”»
 	glVertexPointer(2, GL_FLOAT, 0, VertexAry);
 	glColorPointer(4, GL_UNSIGNED_BYTE, 0, ColorAry);
 	glTexCoordPointer(2, GL_FLOAT, 0, TexCoordAry);
 	glDrawArrays(GL_TRIANGLE_STRIP, 1, strlens*6-2);
 
-	//”z—ñ–³Œø‰»
+	//é…åˆ—ç„¡åŠ¹åŒ–
 	glDisableClientState(GL_VERTEX_ARRAY);
 	glDisableClientState(GL_COLOR_ARRAY);
 	glDisableClientState(GL_TEXTURE_COORD_ARRAY);
 
-	//2D•`‰æ—pİ’è‚ğ‰ğœ
+	//2Dæç”»ç”¨è¨­å®šã‚’è§£é™¤
 	End2DRender();
 
 	delete [] VertexAry;
@@ -2519,19 +2519,19 @@ void D3DGraphics::Draw2DTextureFontText(int x, int y, char *str, int color, int 
 }
 
 #ifdef ENABLE_DEBUGCONSOLE
-//! @brief •¶š‚ğ•\¦iƒfƒoƒbƒN—pƒtƒHƒ“ƒgg—pj
-//! @param x xÀ•W
-//! @param y yÀ•W
-//! @param str •¶š—ñ@i‰üsƒR[ƒhF<b>•s‰Â</b>j
-//! @param color F
-//! @attention ˆê•¶š‚Ì•‚¨‚æ‚Ñ‚‚³‚Í 8x16 ŒÅ’è‚Å‚·B
-//! @attention •¶š‚ğ“ñd‚Éd‚Ë‚Ä—§‘ÌŠ´‚ğo‚³‚È‚¢‚ÆŒ©‚É‚­‚­‚È‚è‚Ü‚·B
+//! @brief æ–‡å­—ã‚’è¡¨ç¤ºï¼ˆãƒ‡ãƒãƒƒã‚¯ç”¨ãƒ•ã‚©ãƒ³ãƒˆä½¿ç”¨ï¼‰
+//! @param x xåº§æ¨™
+//! @param y yåº§æ¨™
+//! @param str æ–‡å­—åˆ—ã€€ï¼ˆæ”¹è¡Œã‚³ãƒ¼ãƒ‰ï¼š<b>ä¸å¯</b>ï¼‰
+//! @param color è‰²
+//! @attention ä¸€æ–‡å­—ã®å¹…ãŠã‚ˆã³é«˜ã•ã¯ 8x16 å›ºå®šã§ã™ã€‚
+//! @attention æ–‡å­—ã‚’äºŒé‡ã«é‡ã­ã¦ç«‹ä½“æ„Ÿã‚’å‡ºã•ãªã„ã¨è¦‹ã«ãããªã‚Šã¾ã™ã€‚
 void D3DGraphics::Draw2DTextureDebugFontText(int x, int y, char *str, int color)
 {
 	int fontwidth = 8;
 	int fontheight = 16;
 
-	//ƒeƒNƒXƒ`ƒƒƒtƒHƒ“ƒg‚Ìæ“¾‚É¸”s‚µ‚Ä‚¢‚ê‚ÎAˆ—‚µ‚È‚¢
+	//ãƒ†ã‚¯ã‚¹ãƒãƒ£ãƒ•ã‚©ãƒ³ãƒˆã®å–å¾—ã«å¤±æ•—ã—ã¦ã„ã‚Œã°ã€å‡¦ç†ã—ãªã„
 	if( TextureDebugFont == -1 ){ return; }
 
 	int strlens = (int)strlen(str);
@@ -2540,29 +2540,29 @@ void D3DGraphics::Draw2DTextureDebugFontText(int x, int y, char *str, int color)
 	unsigned char *ColorAry = new unsigned char [strlens*6*4];
 	float *TexCoordAry = new float [strlens*6*2];
 
-	//2D•`‰æ—pİ’è‚ğ“K—p
+	//2Dæç”»ç”¨è¨­å®šã‚’é©ç”¨
 	Start2DRender();
 
 	int w;
 	float font_u, font_v;
 	float t_u, t_v;
 
-	//1•¶š‚ÌUVÀ•W‚ğŒvZ
+	//1æ–‡å­—ã®UVåº§æ¨™ã‚’è¨ˆç®—
 	font_u = 1.0f / 16;
 	font_v = 1.0f / 8;
 
-	//ƒeƒNƒXƒ`ƒƒ—LŒø
+	//ãƒ†ã‚¯ã‚¹ãƒãƒ£æœ‰åŠ¹
 	glEnable(GL_TEXTURE_2D);
 
-	//ƒeƒNƒXƒ`ƒƒ‚ğƒZƒbƒg
+	//ãƒ†ã‚¯ã‚¹ãƒãƒ£ã‚’ã‚»ãƒƒãƒˆ
 	SetTexture(TextureDebugFont);
 
-	//”z—ñ—LŒø‰»
+	//é…åˆ—æœ‰åŠ¹åŒ–
 	glEnableClientState(GL_VERTEX_ARRAY);
 	glEnableClientState(GL_COLOR_ARRAY);
 	glEnableClientState(GL_TEXTURE_COORD_ARRAY);
 
-	//Fî•ñ”z—ñ‚ğ—pˆÓ
+	//è‰²æƒ…å ±é…åˆ—ã‚’ç”¨æ„
 	ColorAry[0] = (color>>24)&0xFF;
 	ColorAry[1] = (color>>16)&0xFF;
 	ColorAry[2] = (color>>8)&0xFF;
@@ -2571,9 +2571,9 @@ void D3DGraphics::Draw2DTextureDebugFontText(int x, int y, char *str, int color)
 		memcpy(&(ColorAry[i*4]), ColorAry, sizeof(unsigned char)*4);
 	}
 
-	// —^‚¦‚ç‚ê‚½•¶š”•ªƒ‹[ƒv
+	// ä¸ãˆã‚‰ã‚ŒãŸæ–‡å­—æ•°åˆ†ãƒ«ãƒ¼ãƒ—
 	for(int i=0; i<strlens; i++){
-		//UVÀ•W‚ğŒvZ
+		//UVåº§æ¨™ã‚’è¨ˆç®—
 		w = str[i];
 		if( w < 0 ){ w = ' '; }
 		t_u = (w % 16) * font_u;
@@ -2593,18 +2593,18 @@ void D3DGraphics::Draw2DTextureDebugFontText(int x, int y, char *str, int color)
 		TexCoordAry[10 + i*12] = t_u + font_u;	TexCoordAry[11 + i*12] = t_v + font_v;
 	}
 
-	//•`‰æ
+	//æç”»
 	glVertexPointer(2, GL_FLOAT, 0, VertexAry);
 	glColorPointer(4, GL_UNSIGNED_BYTE, 0, ColorAry);
 	glTexCoordPointer(2, GL_FLOAT, 0, TexCoordAry);
 	glDrawArrays(GL_TRIANGLE_STRIP, 1, strlens*6-2);
 
-	//”z—ñ–³Œø‰»
+	//é…åˆ—ç„¡åŠ¹åŒ–
 	glDisableClientState(GL_VERTEX_ARRAY);
 	glDisableClientState(GL_COLOR_ARRAY);
 	glDisableClientState(GL_TEXTURE_COORD_ARRAY);
 
-	//2D•`‰æ—pİ’è‚ğ‰ğœ
+	//2Dæç”»ç”¨è¨­å®šã‚’è§£é™¤
 	End2DRender();
 
 	delete [] VertexAry;
@@ -2613,68 +2613,68 @@ void D3DGraphics::Draw2DTextureDebugFontText(int x, int y, char *str, int color)
 }
 #endif
 
-//! @brief ü‚ğ•`‰æ
-//! @param x1 n“_‚Ì xÀ•W
-//! @param y1 n“_‚Ì yÀ•W
-//! @param x2 I“_‚Ì xÀ•W
-//! @param y2 I“_‚Ì yÀ•W
-//! @param color F
+//! @brief ç·šã‚’æç”»
+//! @param x1 å§‹ç‚¹ã® xåº§æ¨™
+//! @param y1 å§‹ç‚¹ã® yåº§æ¨™
+//! @param x2 çµ‚ç‚¹ã® xåº§æ¨™
+//! @param y2 çµ‚ç‚¹ã® yåº§æ¨™
+//! @param color è‰²
 void D3DGraphics::Draw2DLine(int x1, int y1, int x2, int y2, int color)
 {
 	float VertexAry[2*2];
 	unsigned char ColorAry[2*4];
 
-	//2D•`‰æ—pİ’è‚ğ“K—p
+	//2Dæç”»ç”¨è¨­å®šã‚’é©ç”¨
 	Start2DRender();
 
-	//ƒeƒNƒXƒ`ƒƒ–³Œø
+	//ãƒ†ã‚¯ã‚¹ãƒãƒ£ç„¡åŠ¹
 	glDisable(GL_TEXTURE_2D);
 
-	//’¸“_”z—ñ‚ğ—pˆÓ
+	//é ‚ç‚¹é…åˆ—ã‚’ç”¨æ„
 	VertexAry[0] = (float)x1;	VertexAry[1] = (float)y1;
 	VertexAry[2] = (float)x2;	VertexAry[3] = (float)y2;
 
-	//Fî•ñ”z—ñ‚ğ—pˆÓ
+	//è‰²æƒ…å ±é…åˆ—ã‚’ç”¨æ„
 	ColorAry[0] = (color>>24)&0xFF;
 	ColorAry[1] = (color>>16)&0xFF;
 	ColorAry[2] = (color>>8)&0xFF;
 	ColorAry[3] = color&0xFF;
 	memcpy(&(ColorAry[4]), ColorAry, sizeof(unsigned char)*4);
 
-	//”z—ñ—LŒø‰»
+	//é…åˆ—æœ‰åŠ¹åŒ–
 	glEnableClientState(GL_VERTEX_ARRAY);
 	glEnableClientState(GL_COLOR_ARRAY);
 
-	//•`‰æ
+	//æç”»
 	glVertexPointer(2, GL_FLOAT, 0, VertexAry);
 	glColorPointer(4, GL_UNSIGNED_BYTE, 0, ColorAry);
 	glDrawArrays(GL_LINE_STRIP, 0, 2);
 
-	//”z—ñ–³Œø‰»
+	//é…åˆ—ç„¡åŠ¹åŒ–
 	glDisableClientState(GL_VERTEX_ARRAY);
 	glDisableClientState(GL_COLOR_ARRAY);
 
-	//2D•`‰æ—pİ’è‚ğ‰ğœ
+	//2Dæç”»ç”¨è¨­å®šã‚’è§£é™¤
 	End2DRender();
 }
 
-//! @brief ‰~i16ŠpŒ`j‚ğ•`‰æ
-//! @param x ’†S‚Ì xÀ•W
-//! @param y ’†S‚Ì yÀ•W
-//! @param r ”¼Œa
-//! @param color F
+//! @brief å††ï¼ˆ16è§’å½¢ï¼‰ã‚’æç”»
+//! @param x ä¸­å¿ƒã® xåº§æ¨™
+//! @param y ä¸­å¿ƒã® yåº§æ¨™
+//! @param r åŠå¾„
+//! @param color è‰²
 void D3DGraphics::Draw2DCycle(int x, int y, int r, int color)
 {
 	float VertexAry[(16+1)*2];
 	unsigned char ColorAry[(16+1)*4];
 
-	//2D•`‰æ—pİ’è‚ğ“K—p
+	//2Dæç”»ç”¨è¨­å®šã‚’é©ç”¨
 	Start2DRender();
 
-	//ƒeƒNƒXƒ`ƒƒ–³Œø
+	//ãƒ†ã‚¯ã‚¹ãƒãƒ£ç„¡åŠ¹
 	glDisable(GL_TEXTURE_2D);
 
-	//’¸“_À•W‚ğİ’è
+	//é ‚ç‚¹åº§æ¨™ã‚’è¨­å®š
 	for(int i=0; i<16+1; i++){
 		float x2, y2;
 		x2 = (float)x + cos((float)M_PI*2/16 * i) * r;
@@ -2682,7 +2682,7 @@ void D3DGraphics::Draw2DCycle(int x, int y, int r, int color)
 		VertexAry[i*2] = x2;	VertexAry[i*2+1] = y2;
 	}
 
-	//Fî•ñ”z—ñ‚ğ—pˆÓ
+	//è‰²æƒ…å ±é…åˆ—ã‚’ç”¨æ„
 	ColorAry[0] = (color>>24)&0xFF;
 	ColorAry[1] = (color>>16)&0xFF;
 	ColorAry[2] = (color>>8)&0xFF;
@@ -2691,47 +2691,47 @@ void D3DGraphics::Draw2DCycle(int x, int y, int r, int color)
 		memcpy(&(ColorAry[i*4]), ColorAry, sizeof(unsigned char)*4);
 	}
 
-	//”z—ñ—LŒø‰»
+	//é…åˆ—æœ‰åŠ¹åŒ–
 	glEnableClientState(GL_VERTEX_ARRAY);
 	glEnableClientState(GL_COLOR_ARRAY);
 
-	//•`‰æ
+	//æç”»
 	glVertexPointer(2, GL_FLOAT, 0, VertexAry);
 	glColorPointer(4, GL_UNSIGNED_BYTE, 0, ColorAry);
 	glDrawArrays(GL_LINE_STRIP, 0, 16+1);
 
-	//”z—ñ–³Œø‰»
+	//é…åˆ—ç„¡åŠ¹åŒ–
 	glDisableClientState(GL_VERTEX_ARRAY);
 	glDisableClientState(GL_COLOR_ARRAY);
 
-	//2D•`‰æ—pİ’è‚ğ‰ğœ
+	//2Dæç”»ç”¨è¨­å®šã‚’è§£é™¤
 	End2DRender();
 }
 
-//! @brief lŠpŒ`‚ğ•`‰æ
-//! @param x1 ¶ã‚Ì xÀ•W
-//! @param y1 ¶ã‚Ì yÀ•W
-//! @param x2 ‰E‰º‚Ì xÀ•W
-//! @param y2 ‰E‰º‚Ì yÀ•W
-//! @param color F
+//! @brief å››è§’å½¢ã‚’æç”»
+//! @param x1 å·¦ä¸Šã® xåº§æ¨™
+//! @param y1 å·¦ä¸Šã® yåº§æ¨™
+//! @param x2 å³ä¸‹ã® xåº§æ¨™
+//! @param y2 å³ä¸‹ã® yåº§æ¨™
+//! @param color è‰²
 void D3DGraphics::Draw2DBox(int x1, int y1, int x2, int y2, int color)
 {
 	float VertexAry[4*2];
 	unsigned char ColorAry[4*4];
 
-	//2D•`‰æ—pİ’è‚ğ“K—p
+	//2Dæç”»ç”¨è¨­å®šã‚’é©ç”¨
 	Start2DRender();
 
-	//ƒeƒNƒXƒ`ƒƒ–³Œø
+	//ãƒ†ã‚¯ã‚¹ãƒãƒ£ç„¡åŠ¹
 	glDisable(GL_TEXTURE_2D);
 
-	//’¸“_”z—ñ‚ğ—pˆÓ
+	//é ‚ç‚¹é…åˆ—ã‚’ç”¨æ„
 	VertexAry[0] = (float)x1;	VertexAry[1] = (float)y1;
 	VertexAry[2] = (float)x2;	VertexAry[3] = (float)y1;
 	VertexAry[4] = (float)x1;	VertexAry[5] = (float)y2;
 	VertexAry[6] = (float)x2;	VertexAry[7] = (float)y2;
 
-	//Fî•ñ”z—ñ‚ğ—pˆÓ
+	//è‰²æƒ…å ±é…åˆ—ã‚’ç”¨æ„
 	ColorAry[0] = (color>>24)&0xFF;
 	ColorAry[1] = (color>>16)&0xFF;
 	ColorAry[2] = (color>>8)&0xFF;
@@ -2740,55 +2740,55 @@ void D3DGraphics::Draw2DBox(int x1, int y1, int x2, int y2, int color)
 		memcpy(&(ColorAry[i*4]), ColorAry, sizeof(unsigned char)*4);
 	}
 
-	//”z—ñ—LŒø‰»
+	//é…åˆ—æœ‰åŠ¹åŒ–
 	glEnableClientState(GL_VERTEX_ARRAY);
 	glEnableClientState(GL_COLOR_ARRAY);
 
-	//•`‰æ
+	//æç”»
 	glVertexPointer(2, GL_FLOAT, 0, VertexAry);
 	glColorPointer(4, GL_UNSIGNED_BYTE, 0, ColorAry);
 	glDrawArrays(GL_TRIANGLE_STRIP, 0, 4);
 
-	//”z—ñ–³Œø‰»
+	//é…åˆ—ç„¡åŠ¹åŒ–
 	glDisableClientState(GL_VERTEX_ARRAY);
 	glDisableClientState(GL_COLOR_ARRAY);
 
-	//2D•`‰æ—pİ’è‚ğ‰ğœ
+	//2Dæç”»ç”¨è¨­å®šã‚’è§£é™¤
 	End2DRender();
 }
 
-//! @brief ‰æ‘œ‚ğ•`‰æ
-//! @param x xÀ•W
-//! @param y yÀ•W
-//! @param id ƒeƒNƒXƒ`ƒƒ”F¯”Ô†
-//! @param width •
-//! @param height ‚‚³
-//! @param alpha “§–¾“xi0.0`1.0j
+//! @brief ç”»åƒã‚’æç”»
+//! @param x xåº§æ¨™
+//! @param y yåº§æ¨™
+//! @param id ãƒ†ã‚¯ã‚¹ãƒãƒ£èªè­˜ç•ªå·
+//! @param width å¹…
+//! @param height é«˜ã•
+//! @param alpha é€æ˜åº¦ï¼ˆ0.0ï½1.0ï¼‰
 void D3DGraphics::Draw2DTexture(int x, int y, int id, int width, int height, float alpha)
 {
-	//–³Œø‚ÈƒeƒNƒXƒ`ƒƒ”Ô†‚ğw’è‚³‚ê‚Ä‚¢‚ê‚Îˆ—‚µ‚È‚¢
+	//ç„¡åŠ¹ãªãƒ†ã‚¯ã‚¹ãƒãƒ£ç•ªå·ã‚’æŒ‡å®šã•ã‚Œã¦ã„ã‚Œã°å‡¦ç†ã—ãªã„
 	if( id == -1 ){ return; }
 
 	float VertexAry[4*2];
 	float ColorAry[4*4];
 	float TexCoordAry[4*2];
 
-	//2D•`‰æ—pİ’è‚ğ“K—p
+	//2Dæç”»ç”¨è¨­å®šã‚’é©ç”¨
 	Start2DRender();
 
-	//ƒeƒNƒXƒ`ƒƒ—LŒø
+	//ãƒ†ã‚¯ã‚¹ãƒãƒ£æœ‰åŠ¹
 	glEnable(GL_TEXTURE_2D);
 
-	//ƒeƒNƒXƒ`ƒƒ‚ğƒZƒbƒg
+	//ãƒ†ã‚¯ã‚¹ãƒãƒ£ã‚’ã‚»ãƒƒãƒˆ
 	SetTexture(id);
 
-	//’¸“_”z—ñ‚ğ—pˆÓ
+	//é ‚ç‚¹é…åˆ—ã‚’ç”¨æ„
 	VertexAry[0] = (float)x;		VertexAry[1] = (float)y;
 	VertexAry[2] = (float)x+width;	VertexAry[3] = (float)y;
 	VertexAry[4] = (float)x;		VertexAry[5] = (float)y+height;
 	VertexAry[6] = (float)x+width;	VertexAry[7] = (float)y+height;
 
-	//Fî•ñ”z—ñ‚ğ—pˆÓ
+	//è‰²æƒ…å ±é…åˆ—ã‚’ç”¨æ„
 	ColorAry[0] = 1.0f;
 	ColorAry[1] = 1.0f;
 	ColorAry[2] = 1.0f;
@@ -2797,33 +2797,33 @@ void D3DGraphics::Draw2DTexture(int x, int y, int id, int width, int height, flo
 		memcpy(&(ColorAry[i*4]), ColorAry, sizeof(float)*4);
 	}
 
-	//UVÀ•W”z—ñ‚ğ—pˆÓ
+	//UVåº§æ¨™é…åˆ—ã‚’ç”¨æ„
 	TexCoordAry[0] = 0.0f;	TexCoordAry[1] = 0.0f;
 	TexCoordAry[2] = 1.0f;	TexCoordAry[3] = 0.0f;
 	TexCoordAry[4] = 0.0f;	TexCoordAry[5] = 1.0f;
 	TexCoordAry[6] = 1.0f;	TexCoordAry[7] = 1.0f;
 
-	//”z—ñ—LŒø‰»
+	//é…åˆ—æœ‰åŠ¹åŒ–
 	glEnableClientState(GL_VERTEX_ARRAY);
 	glEnableClientState(GL_COLOR_ARRAY);
 	glEnableClientState(GL_TEXTURE_COORD_ARRAY);
 
-	//•`‰æ
+	//æç”»
 	glVertexPointer(2, GL_FLOAT, 0, VertexAry);
 	glColorPointer(4, GL_FLOAT, 0, ColorAry);
 	glTexCoordPointer(2, GL_FLOAT, 0, TexCoordAry);
 	glDrawArrays(GL_TRIANGLE_STRIP, 0, 4);
 
-	//”z—ñ–³Œø‰»
+	//é…åˆ—ç„¡åŠ¹åŒ–
 	glDisableClientState(GL_VERTEX_ARRAY);
 	glDisableClientState(GL_COLOR_ARRAY);
 	glDisableClientState(GL_TEXTURE_COORD_ARRAY);
 
-	//2D•`‰æ—pİ’è‚ğ‰ğœ
+	//2Dæç”»ç”¨è¨­å®šã‚’è§£é™¤
 	End2DRender();
 }
 
-//! @brief 2D•`‰æ—pİ’è‚ğ‰ğœ
+//! @brief 2Dæç”»ç”¨è¨­å®šã‚’è§£é™¤
 void D3DGraphics::End2DRender()
 {
 	glMatrixMode(GL_PROJECTION);
@@ -2837,9 +2837,9 @@ void D3DGraphics::End2DRender()
 	glEnable(GL_CULL_FACE);
 }
 
-//! @brief ‰æ–Ê‚ÌƒXƒNƒŠ[ƒ“ƒVƒ‡ƒbƒg‚ğ•Û‘¶
-//! @param filename ƒtƒ@ƒCƒ‹–¼
-//! @return ¬Œ÷Ftrue@¸”sFfalse
+//! @brief ç”»é¢ã®ã‚¹ã‚¯ãƒªãƒ¼ãƒ³ã‚·ãƒ§ãƒƒãƒˆã‚’ä¿å­˜
+//! @param filename ãƒ•ã‚¡ã‚¤ãƒ«å
+//! @return æˆåŠŸï¼štrueã€€å¤±æ•—ï¼šfalse
 bool D3DGraphics::SaveScreenShot(char* filename)
 {
 	HDC hDC;
@@ -2849,21 +2849,21 @@ bool D3DGraphics::SaveScreenShot(char* filename)
 
 	unsigned char *dataBuffer = new unsigned char [SCREEN_WIDTH * SCREEN_HEIGHT * 3];
 
-	//ƒfƒoƒCƒXƒRƒ“ƒeƒLƒXƒgİ’è
+	//ãƒ‡ãƒã‚¤ã‚¹ã‚³ãƒ³ãƒ†ã‚­ã‚¹ãƒˆè¨­å®š
 	hDC = GetDC(hWnd);
 	wglMakeCurrent(hDC, hGLRC);
 
-	//ƒoƒbƒtƒ@‚ÉŠi”[
+	//ãƒãƒƒãƒ•ã‚¡ã«æ ¼ç´
 	glReadPixels(0, 0, SCREEN_WIDTH, SCREEN_HEIGHT, GL_RGB, GL_UNSIGNED_BYTE, dataBuffer);
 
-	//ƒtƒ@ƒCƒ‹‚ğ•Û‘¶‚·‚é
+	//ãƒ•ã‚¡ã‚¤ãƒ«ã‚’ä¿å­˜ã™ã‚‹
 	fp = fopen(filename, "wb");
 	if( fp == NULL ){
 		delete [] dataBuffer;
-		return false;		//ƒtƒ@ƒCƒ‹‚ª•Û‘¶‚Å‚«‚È‚¢
+		return false;		//ãƒ•ã‚¡ã‚¤ãƒ«ãŒä¿å­˜ã§ããªã„
 	}
 
-	//ƒwƒbƒ_[‚ğ¶¬
+	//ãƒ˜ãƒƒãƒ€ãƒ¼ã‚’ç”Ÿæˆ
 	for(int i=0; i<54; i++){
 		header[i] = 0x00;
 	}
@@ -2880,7 +2880,7 @@ bool D3DGraphics::SaveScreenShot(char* filename)
 	header[0x19] = (unsigned char)((SCREEN_HEIGHT&0xFF000000) >> 24);
 	header[0x1C] = 24;
 
-	//ƒwƒbƒ_[‚ğ‘‚«‚Ş
+	//ãƒ˜ãƒƒãƒ€ãƒ¼ã‚’æ›¸ãè¾¼ã‚€
 	fwrite(header, 1, 54, fp);
 
 	for(int h=0; h<SCREEN_HEIGHT; h++){
@@ -2893,7 +2893,7 @@ bool D3DGraphics::SaveScreenShot(char* filename)
 		}
 	}
 
-	//ƒtƒ@ƒCƒ‹ƒnƒ“ƒhƒ‹‚ğ‰ğ•ú
+	//ãƒ•ã‚¡ã‚¤ãƒ«ãƒãƒ³ãƒ‰ãƒ«ã‚’è§£æ”¾
 	fclose(fp);
 
 	delete [] dataBuffer;
@@ -2903,12 +2903,12 @@ bool D3DGraphics::SaveScreenShot(char* filename)
 	return true;
 }
 
-//! @brief ƒJƒ‰[ƒR[ƒh‚ğæ“¾
-//! @param red Ôi0.0f`1.0fj
-//! @param green —Îi0.0f`1.0fj
-//! @param blue Âi0.0f`1.0fj
-//! @param alpha “§–¾“xi0.0f`1.0fj
-//! @return ƒJƒ‰[ƒR[ƒh
+//! @brief ã‚«ãƒ©ãƒ¼ã‚³ãƒ¼ãƒ‰ã‚’å–å¾—
+//! @param red èµ¤ï¼ˆ0.0fï½1.0fï¼‰
+//! @param green ç·‘ï¼ˆ0.0fï½1.0fï¼‰
+//! @param blue é’ï¼ˆ0.0fï½1.0fï¼‰
+//! @param alpha é€æ˜åº¦ï¼ˆ0.0fï½1.0fï¼‰
+//! @return ã‚«ãƒ©ãƒ¼ã‚³ãƒ¼ãƒ‰
 int D3DGraphics::GetColorCode(float red, float green, float blue, float alpha)
 {
 	unsigned char red2, green2, blue2, alpha2;

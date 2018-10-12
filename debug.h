@@ -1,5 +1,5 @@
-//! @file debug.h
-//! @brief DebugLogƒNƒ‰ƒX‚ÌéŒ¾
+ï»¿//! @file debug.h
+//! @brief DebugLogã‚¯ãƒ©ã‚¹ã®å®£è¨€
 
 //--------------------------------------------------------------------------------
 // 
@@ -38,13 +38,13 @@
 #include "main.h"
 
 #ifdef ENABLE_DEBUGLOG
-//! @brief ƒfƒoƒbƒNî•ñ‚ğo—Í‚·‚éƒNƒ‰ƒX
-//! @details ƒfƒoƒbƒNî•ñ‚ğƒtƒ@ƒCƒ‹‚Éo—Í‚µ‚Ü‚·B
+//! @brief ãƒ‡ãƒãƒƒã‚¯æƒ…å ±ã‚’å‡ºåŠ›ã™ã‚‹ã‚¯ãƒ©ã‚¹
+//! @details ãƒ‡ãƒãƒƒã‚¯æƒ…å ±ã‚’ãƒ•ã‚¡ã‚¤ãƒ«ã«å‡ºåŠ›ã—ã¾ã™ã€‚
 class DebugLog
 {
-	bool OutputFlag;		//!< o—Í—LŒø
-	char fname[MAX_PATH];	//!< ƒtƒ@ƒCƒ‹–¼
-	bool error;				//!< ƒGƒ‰[ƒtƒ‰ƒOiŸ‰ñƒGƒ‰[‚ğ‹L˜^‚·‚éj
+	bool OutputFlag;		//!< å‡ºåŠ›æœ‰åŠ¹
+	char fname[MAX_PATH];	//!< ãƒ•ã‚¡ã‚¤ãƒ«å
+	bool error;				//!< ã‚¨ãƒ©ãƒ¼ãƒ•ãƒ©ã‚°ï¼ˆæ¬¡å›ã‚¨ãƒ©ãƒ¼ã‚’è¨˜éŒ²ã™ã‚‹ï¼‰
 
 public:
 	DebugLog();
@@ -55,7 +55,7 @@ public:
 	bool WriteLog(int tag, char* title, char* text);
 };
 
-//! ƒƒO‚Ìo—Íƒ‚[ƒh‚ğ•\‚·’è”
+//! ãƒ­ã‚°ã®å‡ºåŠ›ãƒ¢ãƒ¼ãƒ‰ã‚’è¡¨ã™å®šæ•°
 enum LogTag {
 	LOG_CHECK,
 	LOG_INIT,

@@ -1,5 +1,5 @@
-//! @file datafile.h
-//! @brief ƒf[ƒ^ŠÇ—ƒNƒ‰ƒX‚ÌéŒ¾
+ï»¿//! @file datafile.h
+//! @brief ãƒ‡ãƒ¼ã‚¿ç®¡ç†ã‚¯ãƒ©ã‚¹ã®å®£è¨€
 
 //--------------------------------------------------------------------------------
 // 
@@ -32,16 +32,16 @@
 #ifndef DATAFILE_H
 #define DATAFILE_H
 
-#define MAX_BLOCKS 160			//!< Å‘åƒuƒƒbƒN”
-#define TOTAL_BLOCKTEXTURE 10	//!< ‡ŒvƒeƒNƒXƒ`ƒƒ”
+#define MAX_BLOCKS 160			//!< æœ€å¤§ãƒ–ãƒ­ãƒƒã‚¯æ•°
+#define TOTAL_BLOCKTEXTURE 10	//!< åˆè¨ˆãƒ†ã‚¯ã‚¹ãƒãƒ£æ•°
 
-#define MAX_POINTS 200			//!< Å‘åƒ|ƒCƒ“ƒg”
+#define MAX_POINTS 200			//!< æœ€å¤§ãƒã‚¤ãƒ³ãƒˆæ•°
 
-#define MAX_POINTMESSAGES 16	//!< .msgƒtƒ@ƒCƒ‹‚ÌÅ‘åƒƒbƒZ[ƒW”
-#define MAX_POINTMESSAGEBYTE (71+2)	//!< .msgƒtƒ@ƒCƒ‹ 1s‚ ‚½‚è‚ÌÅ‘åƒoƒCƒg”
+#define MAX_POINTMESSAGES 16	//!< .msgãƒ•ã‚¡ã‚¤ãƒ«ã®æœ€å¤§ãƒ¡ãƒƒã‚»ãƒ¼ã‚¸æ•°
+#define MAX_POINTMESSAGEBYTE (71+2)	//!< .msgãƒ•ã‚¡ã‚¤ãƒ« 1è¡Œã‚ãŸã‚Šã®æœ€å¤§ãƒã‚¤ãƒˆæ•°
 
-#define LIGHT_RX DegreeToRadian(190)	//!< ƒ‰ƒCƒg‚Ì‰¡²Šp“xiƒuƒƒbƒN‚Ì‰A‰eŒvZ—pj
-#define LIGHT_RY DegreeToRadian(120)	//!< ƒ‰ƒCƒg‚Ìc²Šp“xiƒuƒƒbƒN‚Ì‰A‰eŒvZ—pj
+#define LIGHT_RX DegreeToRadian(190)	//!< ãƒ©ã‚¤ãƒˆã®æ¨ªè»¸è§’åº¦ï¼ˆãƒ–ãƒ­ãƒƒã‚¯ã®é™°å½±è¨ˆç®—ç”¨ï¼‰
+#define LIGHT_RY DegreeToRadian(120)	//!< ãƒ©ã‚¤ãƒˆã®ç¸¦è»¸è§’åº¦ï¼ˆãƒ–ãƒ­ãƒƒã‚¯ã®é™°å½±è¨ˆç®—ç”¨ï¼‰
 
 #ifndef H_LAYERLEVEL
  #define H_LAYERLEVEL 1		//!< Select include file.
@@ -50,7 +50,7 @@
 
 #include <ctype.h>
 
-//! ƒuƒƒbƒNƒf[ƒ^—p\‘¢‘Ì@iblockdata\‘¢‘Ì‚Åg—pj
+//! ãƒ–ãƒ­ãƒƒã‚¯ãƒ‡ãƒ¼ã‚¿ç”¨æ§‹é€ ä½“ã€€ï¼ˆblockdataæ§‹é€ ä½“ã§ä½¿ç”¨ï¼‰
 struct b_material{
 	int textureID;				//!< textureID
 	float u[4];					//!< textureUV-U
@@ -63,7 +63,7 @@ struct b_material{
 	float vz;					//!< normal vector 
 	float shadow;				//!< shadow 
 };
-//! ƒuƒƒbƒNƒf[ƒ^—p\‘¢‘Ì
+//! ãƒ–ãƒ­ãƒƒã‚¯ãƒ‡ãƒ¼ã‚¿ç”¨æ§‹é€ ä½“
 struct blockdata{
 	int id;						//!< DataID
 	float x[8];					//!< Position
@@ -72,7 +72,7 @@ struct blockdata{
 	b_material material[6];		//!< Material data
 };
 
-//! ƒ|ƒCƒ“ƒgƒf[ƒ^—p\‘¢‘Ì
+//! ãƒã‚¤ãƒ³ãƒˆãƒ‡ãƒ¼ã‚¿ç”¨æ§‹é€ ä½“
 struct pointdata{
 	int id;						//!< DataID
 	float x;					//!< Position
@@ -85,12 +85,12 @@ struct pointdata{
 	signed char p4;				//!< Param
 };
 
-//! @brief ƒf[ƒ^‚ğŠÇ—‚·‚éƒNƒ‰ƒXiŠî’êƒNƒ‰ƒXj
-//! @details ƒQ[ƒ€‚Ìƒf[ƒ^‚ğAƒtƒ@ƒCƒ‹‚©‚ç“Ç‚İ‚İˆ—‚·‚éƒNƒ‰ƒXŒQ‚ÌŠî’êƒNƒ‰ƒX‚Å‚·B
+//! @brief ãƒ‡ãƒ¼ã‚¿ã‚’ç®¡ç†ã™ã‚‹ã‚¯ãƒ©ã‚¹ï¼ˆåŸºåº•ã‚¯ãƒ©ã‚¹ï¼‰
+//! @details ã‚²ãƒ¼ãƒ ã®ãƒ‡ãƒ¼ã‚¿ã‚’ã€ãƒ•ã‚¡ã‚¤ãƒ«ã‹ã‚‰èª­ã¿è¾¼ã¿å‡¦ç†ã™ã‚‹ã‚¯ãƒ©ã‚¹ç¾¤ã®åŸºåº•ã‚¯ãƒ©ã‚¹ã§ã™ã€‚
 class DataInterface
 {
 protected:
-	int datas;		//!< ƒf[ƒ^”
+	int datas;		//!< ãƒ‡ãƒ¼ã‚¿æ•°
 
 public:
 	DataInterface();
@@ -100,13 +100,13 @@ public:
 	virtual int Getdata(void *out_data, int id);
 };
 
-//! @brief ƒuƒƒbƒNƒf[ƒ^‚ğŠÇ—‚·‚éƒNƒ‰ƒX
-//! @details ƒ}ƒbƒvƒf[ƒ^‚Æ‚µ‚Äg‚¤AƒuƒƒbƒNƒf[ƒ^ƒtƒ@ƒCƒ‹‚ğŠÇ—‚µ‚Ü‚·B
-//! @details ƒtƒ@ƒCƒ‹‚Ì“Ç‚İ‚İ‚Ì‚Ù‚©Aƒ}ƒbƒv‚Ö‚Ì‰eiŠe–Ê‚Ì–¾‚é‚³•\Œ»j‚àŒvZ‚µ‚Ü‚·B
+//! @brief ãƒ–ãƒ­ãƒƒã‚¯ãƒ‡ãƒ¼ã‚¿ã‚’ç®¡ç†ã™ã‚‹ã‚¯ãƒ©ã‚¹
+//! @details ãƒãƒƒãƒ—ãƒ‡ãƒ¼ã‚¿ã¨ã—ã¦ä½¿ã†ã€ãƒ–ãƒ­ãƒƒã‚¯ãƒ‡ãƒ¼ã‚¿ãƒ•ã‚¡ã‚¤ãƒ«ã‚’ç®¡ç†ã—ã¾ã™ã€‚
+//! @details ãƒ•ã‚¡ã‚¤ãƒ«ã®èª­ã¿è¾¼ã¿ã®ã»ã‹ã€ãƒãƒƒãƒ—ã¸ã®å½±ï¼ˆå„é¢ã®æ˜ã‚‹ã•è¡¨ç¾ï¼‰ã‚‚è¨ˆç®—ã—ã¾ã™ã€‚
 class BlockDataInterface : public DataInterface
 {
-	blockdata *data;								//!< ƒuƒƒbƒNƒf[ƒ^‚ğ•\‚·\‘¢‘Ì
-	char texture[TOTAL_BLOCKTEXTURE][_MAX_PATH];		//!< ƒeƒNƒXƒ`ƒƒ–¼
+	blockdata *data;								//!< ãƒ–ãƒ­ãƒƒã‚¯ãƒ‡ãƒ¼ã‚¿ã‚’è¡¨ã™æ§‹é€ ä½“
+	char texture[TOTAL_BLOCKTEXTURE][_MAX_PATH];		//!< ãƒ†ã‚¯ã‚¹ãƒãƒ£å
 
 public:
 	BlockDataInterface();
@@ -119,13 +119,13 @@ public:
 
 bool blockdataface(int faceID, int* vID, int* uvID);
 
-//! @brief ƒ|ƒCƒ“ƒgƒf[ƒ^‚ğŠÇ—‚·‚éƒNƒ‰ƒX
-//! @details ƒ~ƒbƒVƒ‡ƒ“ƒf[ƒ^‚Æ‚µ‚Äg‚¤Aƒ|ƒCƒ“ƒgƒf[ƒ^ƒtƒ@ƒCƒ‹‚ğŠÇ—‚µ‚Ü‚·B
-//! @details ƒtƒ@ƒCƒ‹‚Ì“Ç‚İ‚İ‚Ì‚Ù‚©Aƒ|ƒCƒ“ƒg‚ÌŒŸõ‹@”\‚à‚ ‚è‚Ü‚·B
+//! @brief ãƒã‚¤ãƒ³ãƒˆãƒ‡ãƒ¼ã‚¿ã‚’ç®¡ç†ã™ã‚‹ã‚¯ãƒ©ã‚¹
+//! @details ãƒŸãƒƒã‚·ãƒ§ãƒ³ãƒ‡ãƒ¼ã‚¿ã¨ã—ã¦ä½¿ã†ã€ãƒã‚¤ãƒ³ãƒˆãƒ‡ãƒ¼ã‚¿ãƒ•ã‚¡ã‚¤ãƒ«ã‚’ç®¡ç†ã—ã¾ã™ã€‚
+//! @details ãƒ•ã‚¡ã‚¤ãƒ«ã®èª­ã¿è¾¼ã¿ã®ã»ã‹ã€ãƒã‚¤ãƒ³ãƒˆã®æ¤œç´¢æ©Ÿèƒ½ã‚‚ã‚ã‚Šã¾ã™ã€‚
 class PointDataInterface : public DataInterface
 {
-	pointdata *data;							//!< ƒuƒƒbƒNƒf[ƒ^‚ğ•\‚·\‘¢‘Ì
-	char *text[MAX_POINTMESSAGES];				//!< ƒCƒxƒ“ƒgƒƒbƒZ[ƒW
+	pointdata *data;							//!< ãƒ–ãƒ­ãƒƒã‚¯ãƒ‡ãƒ¼ã‚¿ã‚’è¡¨ã™æ§‹é€ ä½“
+	char *text[MAX_POINTMESSAGES];				//!< ã‚¤ãƒ™ãƒ³ãƒˆãƒ¡ãƒƒã‚»ãƒ¼ã‚¸
 
 	int LoadMSGFiledata(char *fname);
 
@@ -140,29 +140,29 @@ public:
 	int SearchPointdata(pointdata *out_data, unsigned char pmask, signed char p1, signed char p2, signed char p3, signed char p4, int offset = 0);
 };
 
-//! @brief MIF‚ğŠÇ—‚·‚éƒNƒ‰ƒX
-//! @details MIFiMISSION INFORMATION FILEj‚ğŠÇ—‚µ‚Ü‚·B
-//! @details •W€ƒ~ƒbƒVƒ‡ƒ“‚ÌƒuƒŠ[ƒtƒBƒ“ƒOƒtƒ@ƒCƒ‹i.txtj‚É‚à‘Î‰‚µ‚Ä‚¢‚Ü‚·B
+//! @brief MIFã‚’ç®¡ç†ã™ã‚‹ã‚¯ãƒ©ã‚¹
+//! @details MIFï¼ˆMISSION INFORMATION FILEï¼‰ã‚’ç®¡ç†ã—ã¾ã™ã€‚
+//! @details æ¨™æº–ãƒŸãƒƒã‚·ãƒ§ãƒ³ã®ãƒ–ãƒªãƒ¼ãƒ•ã‚£ãƒ³ã‚°ãƒ•ã‚¡ã‚¤ãƒ«ï¼ˆ.txtï¼‰ã«ã‚‚å¯¾å¿œã—ã¦ã„ã¾ã™ã€‚
 class MIFInterface : public DataInterface
 {
-	bool mif;								//!< ƒtƒ@ƒCƒ‹Œ`®‚ª .mif
-	char mission_name[24];					//!< ƒ~ƒbƒVƒ‡ƒ“¯•Ê–¼
-	char mission_fullname[64];				//!< ƒ~ƒbƒVƒ‡ƒ“³®–¼Ì
-	char blockfile_path[_MAX_PATH];			//!< ƒuƒƒbƒNƒf[ƒ^ƒtƒ@ƒCƒ‹
-	char pointfile_path[_MAX_PATH];			//!< ƒ|ƒCƒ“ƒgƒf[ƒ^ƒtƒ@ƒCƒ‹
-	int skynumber;							//!< ”wŒi‹ó‚ÌID@i‚È‚µF0j
-	char picturefileA_path[_MAX_PATH];		//!< ƒuƒŠ[ƒtƒBƒ“ƒO‰æ‘œA
-	char picturefileB_path[_MAX_PATH];		//!< ƒuƒŠ[ƒtƒBƒ“ƒO‰æ‘œBi’Ç‰Á•ªj
-	char addsmallobject_path[_MAX_PATH];	//!< ’Ç‰Á¬•¨î•ñƒtƒ@ƒCƒ‹‚Ö‚ÌƒpƒX
-	char briefingtext[816];					//!< ƒuƒŠ[ƒtƒBƒ“ƒO•¶ÍE–{•¶
-	bool collision;					//!< “–‚½‚è”»’è‚ğ‘½‚ß‚És‚¤
-	bool screen;					//!< ‰æ–Ê‚ğˆÃ‚ß‚É‚·‚é
-	char addsmallobject_modelpath[_MAX_PATH];	//!< ’Ç‰Á¬•¨‚Ìƒ‚ƒfƒ‹ƒf[ƒ^ƒpƒX
-	char addsmallobject_texturepath[_MAX_PATH];	//!< ’Ç‰Á¬•¨‚ÌƒeƒNƒXƒ`ƒƒƒpƒX
-	int addsmallobject_decide;					//!< ’Ç‰Á¬•¨‚Ì“–‚½‚è”»’è‚Ì‘å‚«‚³
-	int addsmallobject_hp;						//!< ’Ç‰Á¬•¨‚Ì‘Ï‹v—Í
-	char addsmallobject_soundpath[_MAX_PATH];	//!< ’Ç‰Á¬•¨‚ÌƒTƒEƒ“ƒhƒf[ƒ^ƒpƒX
-	int addsmallobject_jump;					//!< ’Ç‰Á¬•¨‚Ì”ò‚Ñ‹ï‡
+	bool mif;								//!< ãƒ•ã‚¡ã‚¤ãƒ«å½¢å¼ãŒ .mif
+	char mission_name[24];					//!< ãƒŸãƒƒã‚·ãƒ§ãƒ³è­˜åˆ¥å
+	char mission_fullname[64];				//!< ãƒŸãƒƒã‚·ãƒ§ãƒ³æ­£å¼åç§°
+	char blockfile_path[_MAX_PATH];			//!< ãƒ–ãƒ­ãƒƒã‚¯ãƒ‡ãƒ¼ã‚¿ãƒ•ã‚¡ã‚¤ãƒ«
+	char pointfile_path[_MAX_PATH];			//!< ãƒã‚¤ãƒ³ãƒˆãƒ‡ãƒ¼ã‚¿ãƒ•ã‚¡ã‚¤ãƒ«
+	int skynumber;							//!< èƒŒæ™¯ç©ºã®IDã€€ï¼ˆãªã—ï¼š0ï¼‰
+	char picturefileA_path[_MAX_PATH];		//!< ãƒ–ãƒªãƒ¼ãƒ•ã‚£ãƒ³ã‚°ç”»åƒA
+	char picturefileB_path[_MAX_PATH];		//!< ãƒ–ãƒªãƒ¼ãƒ•ã‚£ãƒ³ã‚°ç”»åƒBï¼ˆè¿½åŠ åˆ†ï¼‰
+	char addsmallobject_path[_MAX_PATH];	//!< è¿½åŠ å°ç‰©æƒ…å ±ãƒ•ã‚¡ã‚¤ãƒ«ã¸ã®ãƒ‘ã‚¹
+	char briefingtext[816];					//!< ãƒ–ãƒªãƒ¼ãƒ•ã‚£ãƒ³ã‚°æ–‡ç« ãƒ»æœ¬æ–‡
+	bool collision;					//!< å½“ãŸã‚Šåˆ¤å®šã‚’å¤šã‚ã«è¡Œã†
+	bool screen;					//!< ç”»é¢ã‚’æš—ã‚ã«ã™ã‚‹
+	char addsmallobject_modelpath[_MAX_PATH];	//!< è¿½åŠ å°ç‰©ã®ãƒ¢ãƒ‡ãƒ«ãƒ‡ãƒ¼ã‚¿ãƒ‘ã‚¹
+	char addsmallobject_texturepath[_MAX_PATH];	//!< è¿½åŠ å°ç‰©ã®ãƒ†ã‚¯ã‚¹ãƒãƒ£ãƒ‘ã‚¹
+	int addsmallobject_decide;					//!< è¿½åŠ å°ç‰©ã®å½“ãŸã‚Šåˆ¤å®šã®å¤§ãã•
+	int addsmallobject_hp;						//!< è¿½åŠ å°ç‰©ã®è€ä¹…åŠ›
+	char addsmallobject_soundpath[_MAX_PATH];	//!< è¿½åŠ å°ç‰©ã®ã‚µã‚¦ãƒ³ãƒ‰ãƒ‡ãƒ¼ã‚¿ãƒ‘ã‚¹
+	int addsmallobject_jump;					//!< è¿½åŠ å°ç‰©ã®é£›ã³å…·åˆ
 
 	int LoadDefaultTextFiledata(char *fname);
 	int LoadMissionInfoFiledata(char *fname);
@@ -190,12 +190,12 @@ public:
 	int GetAddSmallobjectJump();
 };
 
-//! @brief ADDONƒŠƒXƒg‚ğŠÇ—‚·‚éƒNƒ‰ƒX
-//! @details “Á’è‚ÌƒfƒBƒŒƒNƒgƒŠ‚É“ü‚Á‚½.mif‚ğADDONƒŠƒXƒg‚Æ‚µ‚ÄŠÇ—‚µ‚Ü‚·B
+//! @brief ADDONãƒªã‚¹ãƒˆã‚’ç®¡ç†ã™ã‚‹ã‚¯ãƒ©ã‚¹
+//! @details ç‰¹å®šã®ãƒ‡ã‚£ãƒ¬ã‚¯ãƒˆãƒªã«å…¥ã£ãŸ.mifã‚’ADDONãƒªã‚¹ãƒˆã¨ã—ã¦ç®¡ç†ã—ã¾ã™ã€‚
 class AddonList : public DataInterface
 {
-	char filename[MAX_ADDONLIST][_MAX_PATH];	//!< .mifƒtƒ@ƒCƒ‹–¼
-	char mission_name[MAX_ADDONLIST][24];		//!< ƒ~ƒbƒVƒ‡ƒ“¯•Ê–¼
+	char filename[MAX_ADDONLIST][_MAX_PATH];	//!< .mifãƒ•ã‚¡ã‚¤ãƒ«å
+	char mission_name[MAX_ADDONLIST][24];		//!< ãƒŸãƒƒã‚·ãƒ§ãƒ³è­˜åˆ¥å
 
 	void GetMIFlist(char *dir);
 	void GetMissionName(char *dir);

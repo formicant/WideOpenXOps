@@ -1,5 +1,5 @@
-//! @file soundmanager.cpp
-//! @brief SoundManagerƒNƒ‰ƒX‚Ì’è‹`
+ï»¿//! @file soundmanager.cpp
+//! @brief SoundManagerã‚¯ãƒ©ã‚¹ã®å®šç¾©
 
 //--------------------------------------------------------------------------------
 // 
@@ -31,7 +31,7 @@
 
 #include "soundmanager.h"
 
-//! @brief ƒRƒ“ƒXƒgƒ‰ƒNƒ^
+//! @brief ã‚³ãƒ³ã‚¹ãƒˆãƒ©ã‚¯ã‚¿
 SoundManager::SoundManager(SoundControl *in_SoundCtrl, ResourceManager *in_Resource, ParameterInfo *in_Param)
 {
 	SoundCtrl = in_SoundCtrl;
@@ -44,18 +44,18 @@ SoundManager::SoundManager(SoundControl *in_SoundCtrl, ResourceManager *in_Resou
 	listBdatas = 0;
 }
 
-//! @brief ƒfƒBƒXƒgƒ‰ƒNƒ^
+//! @brief ãƒ‡ã‚£ã‚¹ãƒˆãƒ©ã‚¯ã‚¿
 SoundManager::~SoundManager()
 {
 	if( soundlistA != NULL ){ delete [] soundlistA; }
 	if( soundlistB != NULL ){ delete [] soundlistB; }
 }
 
-//! @brief g—p‚·‚éƒNƒ‰ƒX‚ğİ’è
-//! @param in_SoundCtrl ƒTƒEƒ“ƒhƒRƒ“ƒgƒ[ƒ‹ƒNƒ‰ƒX
-//! @param in_Resource ƒŠƒ\[ƒXŠÇ—ƒNƒ‰ƒX
-//! @param in_Param İ’è’lŠÇ—ƒNƒ‰ƒX
-//! @attention ‚±‚ÌŠÖ”‚Åİ’è‚ğs‚í‚È‚¢‚ÆAƒNƒ‰ƒX©‘Ì‚ª³‚µ‚­‹@”\‚µ‚Ü‚¹‚ñB
+//! @brief ä½¿ç”¨ã™ã‚‹ã‚¯ãƒ©ã‚¹ã‚’è¨­å®š
+//! @param in_SoundCtrl ã‚µã‚¦ãƒ³ãƒ‰ã‚³ãƒ³ãƒˆãƒ­ãƒ¼ãƒ«ã‚¯ãƒ©ã‚¹
+//! @param in_Resource ãƒªã‚½ãƒ¼ã‚¹ç®¡ç†ã‚¯ãƒ©ã‚¹
+//! @param in_Param è¨­å®šå€¤ç®¡ç†ã‚¯ãƒ©ã‚¹
+//! @attention ã“ã®é–¢æ•°ã§è¨­å®šã‚’è¡Œã‚ãªã„ã¨ã€ã‚¯ãƒ©ã‚¹è‡ªä½“ãŒæ­£ã—ãæ©Ÿèƒ½ã—ã¾ã›ã‚“ã€‚
 void SoundManager::SetClass(SoundControl *in_SoundCtrl, ResourceManager *in_Resource, ParameterInfo *in_Param)
 {
 	SoundCtrl = in_SoundCtrl;
@@ -63,7 +63,7 @@ void SoundManager::SetClass(SoundControl *in_SoundCtrl, ResourceManager *in_Reso
 	Param = in_Param;
 }
 
-//! @brief ‹óŠÔ‚Ì‰¹Œ¹‚ğ‰Šú‰»
+//! @brief ç©ºé–“ã®éŸ³æºã‚’åˆæœŸåŒ–
 void SoundManager::InitWorldSound()
 {
 	changeAB = false;
@@ -71,14 +71,14 @@ void SoundManager::InitWorldSound()
 	listBdatas = 0;
 }
 
-//! @brief ‹óŠÔ‚É”­–C‰¹‚ğ’Ç‰Á
-//! @param x ‰¹Œ¹‚ÌXÀ•W
-//! @param y ‰¹Œ¹‚ÌYÀ•W
-//! @param z ‰¹Œ¹‚ÌZÀ•W
-//! @param id •Ší‚Ìí—Ş”Ô†
-//! @param teamID ƒ`[ƒ€”Ô†
-//! @param player ƒvƒŒƒCƒ„[‚É‚æ‚é”­–C‚©‚Ç‚¤‚©itrue‚ÅƒvƒŒƒCƒ„[j
-//! @return ¬Œ÷Ftrue@¸”sFfalse
+//! @brief ç©ºé–“ã«ç™ºç ²éŸ³ã‚’è¿½åŠ 
+//! @param x éŸ³æºã®Xåº§æ¨™
+//! @param y éŸ³æºã®Yåº§æ¨™
+//! @param z éŸ³æºã®Zåº§æ¨™
+//! @param id æ­¦å™¨ã®ç¨®é¡ç•ªå·
+//! @param teamID ãƒãƒ¼ãƒ ç•ªå·
+//! @param player ãƒ—ãƒ¬ã‚¤ãƒ¤ãƒ¼ã«ã‚ˆã‚‹ç™ºç ²ã‹ã©ã†ã‹ï¼ˆtrueã§ãƒ—ãƒ¬ã‚¤ãƒ¤ãƒ¼ï¼‰
+//! @return æˆåŠŸï¼štrueã€€å¤±æ•—ï¼šfalse
 bool SoundManager::ShotWeapon(float x, float y, float z, int id, int teamID, bool player)
 {
 	soundlist *plist = NULL;
@@ -99,12 +99,12 @@ bool SoundManager::ShotWeapon(float x, float y, float z, int id, int teamID, boo
 	return true;
 }
 
-//! @brief ‹óŠÔ‚Éƒ}ƒbƒv’…’e‰¹‚ğ’Ç‰Á
-//! @param x ‰¹Œ¹‚ÌXÀ•W
-//! @param y ‰¹Œ¹‚ÌYÀ•W
-//! @param z ‰¹Œ¹‚ÌZÀ•W
-//! @param teamID ƒ`[ƒ€”Ô†
-//! @return ¬Œ÷Ftrue@¸”sFfalse
+//! @brief ç©ºé–“ã«ãƒãƒƒãƒ—ç€å¼¾éŸ³ã‚’è¿½åŠ 
+//! @param x éŸ³æºã®Xåº§æ¨™
+//! @param y éŸ³æºã®Yåº§æ¨™
+//! @param z éŸ³æºã®Zåº§æ¨™
+//! @param teamID ãƒãƒ¼ãƒ ç•ªå·
+//! @return æˆåŠŸï¼štrueã€€å¤±æ•—ï¼šfalse
 bool SoundManager::HitMap(float x, float y, float z, int teamID)
 {
 	soundlist *plist = NULL;
@@ -119,12 +119,12 @@ bool SoundManager::HitMap(float x, float y, float z, int teamID)
 	return true;
 }
 
-//! @brief ‹óŠÔ‚É”í’e‰¹‚ğ’Ç‰Á
-//! @param x ‰¹Œ¹‚ÌXÀ•W
-//! @param y ‰¹Œ¹‚ÌYÀ•W
-//! @param z ‰¹Œ¹‚ÌZÀ•W
-//! @param teamID ƒ`[ƒ€”Ô†
-//! @return ¬Œ÷Ftrue@¸”sFfalse
+//! @brief ç©ºé–“ã«è¢«å¼¾éŸ³ã‚’è¿½åŠ 
+//! @param x éŸ³æºã®Xåº§æ¨™
+//! @param y éŸ³æºã®Yåº§æ¨™
+//! @param z éŸ³æºã®Zåº§æ¨™
+//! @param teamID ãƒãƒ¼ãƒ ç•ªå·
+//! @return æˆåŠŸï¼štrueã€€å¤±æ•—ï¼šfalse
 bool SoundManager::HitHuman(float x, float y, float z, int teamID)
 {
 	soundlist *plist = NULL;
@@ -139,13 +139,13 @@ bool SoundManager::HitHuman(float x, float y, float z, int teamID)
 	return true;
 }
 
-//! @brief ‹óŠÔ‚É¬•¨’…’e‰¹‚ğ’Ç‰Á
-//! @param x ‰¹Œ¹‚ÌXÀ•W
-//! @param y ‰¹Œ¹‚ÌYÀ•W
-//! @param z ‰¹Œ¹‚ÌZÀ•W
-//! @param id ¬•¨‚Ìí—Ş”Ô†
-//! @param teamID ƒ`[ƒ€”Ô†
-//! @return ¬Œ÷Ftrue@¸”sFfalse
+//! @brief ç©ºé–“ã«å°ç‰©ç€å¼¾éŸ³ã‚’è¿½åŠ 
+//! @param x éŸ³æºã®Xåº§æ¨™
+//! @param y éŸ³æºã®Yåº§æ¨™
+//! @param z éŸ³æºã®Zåº§æ¨™
+//! @param id å°ç‰©ã®ç¨®é¡ç•ªå·
+//! @param teamID ãƒãƒ¼ãƒ ç•ªå·
+//! @return æˆåŠŸï¼štrueã€€å¤±æ•—ï¼šfalse
 bool SoundManager::HitSmallObject(float x, float y, float z, int id, int teamID)
 {
 	soundlist *plist = NULL;
@@ -161,16 +161,16 @@ bool SoundManager::HitSmallObject(float x, float y, float z, int id, int teamID)
 	return true;
 }
 
-//! @brief ’e‚Ì’Ê‰ßE‰¡Ø‚é‰¹‚ğ’Ç‰Á
-//! @param x ‰¹Œ¹‚ÌXÀ•W
-//! @param y ‰¹Œ¹‚ÌYÀ•W
-//! @param z ‰¹Œ¹‚ÌZÀ•W
-//! @param move_x ‰¹Œ¹‚ÌX²ˆÚ“®—Ê
-//! @param move_y ‰¹Œ¹‚ÌY²ˆÚ“®—Ê
-//! @param move_z ‰¹Œ¹‚ÌZ²ˆÚ“®—Ê
-//! @param teamID ƒ`[ƒ€”Ô†
-//! @return ¬Œ÷Ftrue@¸”sFfalse
-//! @attention move_xEmove_yEmove_z‚ÌˆÚ“®—Ê‚ÍA1ƒtƒŒ[ƒ€•ª‚ğw’è‚µ‚Ä‚­‚¾‚³‚¢BÀÛ‚ÉÀ•W‚ªˆÚ“®‚·‚é‚í‚¯‚Å‚Í‚ ‚è‚Ü‚¹‚ñB
+//! @brief å¼¾ã®é€šéãƒ»æ¨ªåˆ‡ã‚‹éŸ³ã‚’è¿½åŠ 
+//! @param x éŸ³æºã®Xåº§æ¨™
+//! @param y éŸ³æºã®Yåº§æ¨™
+//! @param z éŸ³æºã®Zåº§æ¨™
+//! @param move_x éŸ³æºã®Xè»¸ç§»å‹•é‡
+//! @param move_y éŸ³æºã®Yè»¸ç§»å‹•é‡
+//! @param move_z éŸ³æºã®Zè»¸ç§»å‹•é‡
+//! @param teamID ãƒãƒ¼ãƒ ç•ªå·
+//! @return æˆåŠŸï¼štrueã€€å¤±æ•—ï¼šfalse
+//! @attention move_xãƒ»move_yãƒ»move_zã®ç§»å‹•é‡ã¯ã€1ãƒ•ãƒ¬ãƒ¼ãƒ åˆ†ã‚’æŒ‡å®šã—ã¦ãã ã•ã„ã€‚å®Ÿéš›ã«åº§æ¨™ãŒç§»å‹•ã™ã‚‹ã‚ã‘ã§ã¯ã‚ã‚Šã¾ã›ã‚“ã€‚
 bool SoundManager::PassingBullet(float x, float y, float z, float move_x, float move_y, float move_z, int teamID)
 {
 	soundlist *plist = NULL;
@@ -188,12 +188,12 @@ bool SoundManager::PassingBullet(float x, float y, float z, float move_x, float 
 	return true;
 }
 
-//! @brief ‹óŠÔ‚ÉèÖ’eƒoƒEƒ“ƒhE’µ‚Ë•Ô‚è‰¹‚ğ’Ç‰Á
-//! @param x ‰¹Œ¹‚ÌXÀ•W
-//! @param y ‰¹Œ¹‚ÌYÀ•W
-//! @param z ‰¹Œ¹‚ÌZÀ•W
-//! @param teamID ƒ`[ƒ€”Ô†
-//! @return ¬Œ÷Ftrue@¸”sFfalse
+//! @brief ç©ºé–“ã«æ‰‹æ¦´å¼¾ãƒã‚¦ãƒ³ãƒ‰ãƒ»è·³ã­è¿”ã‚ŠéŸ³ã‚’è¿½åŠ 
+//! @param x éŸ³æºã®Xåº§æ¨™
+//! @param y éŸ³æºã®Yåº§æ¨™
+//! @param z éŸ³æºã®Zåº§æ¨™
+//! @param teamID ãƒãƒ¼ãƒ ç•ªå·
+//! @return æˆåŠŸï¼štrueã€€å¤±æ•—ï¼šfalse
 bool SoundManager::GrenadeBound(float x, float y, float z, int teamID)
 {
 	soundlist *plist = NULL;
@@ -208,12 +208,12 @@ bool SoundManager::GrenadeBound(float x, float y, float z, int teamID)
 	return true;
 }
 
-//! @brief ‹óŠÔ‚ÉèÖ’e”š”­‰¹‚ğ’Ç‰Á
-//! @param x ‰¹Œ¹‚ÌXÀ•W
-//! @param y ‰¹Œ¹‚ÌYÀ•W
-//! @param z ‰¹Œ¹‚ÌZÀ•W
-//! @param teamID ƒ`[ƒ€”Ô†
-//! @return ¬Œ÷Ftrue@¸”sFfalse
+//! @brief ç©ºé–“ã«æ‰‹æ¦´å¼¾çˆ†ç™ºéŸ³ã‚’è¿½åŠ 
+//! @param x éŸ³æºã®Xåº§æ¨™
+//! @param y éŸ³æºã®Yåº§æ¨™
+//! @param z éŸ³æºã®Zåº§æ¨™
+//! @param teamID ãƒãƒ¼ãƒ ç•ªå·
+//! @return æˆåŠŸï¼štrueã€€å¤±æ•—ï¼šfalse
 bool SoundManager::GrenadeExplosion(float x, float y, float z, int teamID)
 {
 	soundlist *plist = NULL;
@@ -228,12 +228,12 @@ bool SoundManager::GrenadeExplosion(float x, float y, float z, int teamID)
 	return true;
 }
 
-//! @brief ‹óŠÔ‚É‘«‰¹‚ğ’Ç‰Á
-//! @param x ‰¹Œ¹‚ÌXÀ•W
-//! @param y ‰¹Œ¹‚ÌYÀ•W
-//! @param z ‰¹Œ¹‚ÌZÀ•W
-//! @param teamID ƒ`[ƒ€”Ô†
-//! @return ¬Œ÷Ftrue@¸”sFfalse
+//! @brief ç©ºé–“ã«è¶³éŸ³ã‚’è¿½åŠ 
+//! @param x éŸ³æºã®Xåº§æ¨™
+//! @param y éŸ³æºã®Yåº§æ¨™
+//! @param z éŸ³æºã®Zåº§æ¨™
+//! @param teamID ãƒãƒ¼ãƒ ç•ªå·
+//! @return æˆåŠŸï¼štrueã€€å¤±æ•—ï¼šfalse
 bool SoundManager::SetFootsteps(float x, float y, float z, int teamID)
 {
 	soundlist *plist = NULL;
@@ -248,12 +248,12 @@ bool SoundManager::SetFootsteps(float x, float y, float z, int teamID)
 	return true;
 }
 
-//! @brief ‹óŠÔ‚É•ŠíƒŠƒ[ƒh‰¹‚ğ’Ç‰Á
-//! @param x ‰¹Œ¹‚ÌXÀ•W
-//! @param y ‰¹Œ¹‚ÌYÀ•W
-//! @param z ‰¹Œ¹‚ÌZÀ•W
-//! @param teamID ƒ`[ƒ€”Ô†
-//! @return ¬Œ÷Ftrue@¸”sFfalse
+//! @brief ç©ºé–“ã«æ­¦å™¨ãƒªãƒ­ãƒ¼ãƒ‰éŸ³ã‚’è¿½åŠ 
+//! @param x éŸ³æºã®Xåº§æ¨™
+//! @param y éŸ³æºã®Yåº§æ¨™
+//! @param z éŸ³æºã®Zåº§æ¨™
+//! @param teamID ãƒãƒ¼ãƒ ç•ªå·
+//! @return æˆåŠŸï¼štrueã€€å¤±æ•—ï¼šfalse
 bool SoundManager::ReloadWeapon(float x, float y, float z, int teamID)
 {
 	soundlist *plist = NULL;
@@ -268,8 +268,8 @@ bool SoundManager::ReloadWeapon(float x, float y, float z, int teamID)
 	return true;
 }
 
-//! @brief ‹óŠÔiƒTƒEƒ“ƒhƒŠƒXƒgjã‚Å—LŒø‚È‰¹Œ¹”‚ğæ“¾
-//! @return —LŒø‚È‰¹Œ¹”
+//! @brief ç©ºé–“ï¼ˆã‚µã‚¦ãƒ³ãƒ‰ãƒªã‚¹ãƒˆï¼‰ä¸Šã§æœ‰åŠ¹ãªéŸ³æºæ•°ã‚’å–å¾—
+//! @return æœ‰åŠ¹ãªéŸ³æºæ•°
 int SoundManager::GetTotalSoundList()
 {
 	if( changeAB == false ){
@@ -280,13 +280,13 @@ int SoundManager::GetTotalSoundList()
 	//}
 }
 
-//! @brief w’è‚µ‚½ˆÊ’u‚Ìü•Ó‚É‚ ‚é‰¹Œ¹‚ğæ“¾
-//! @param pos_x ‰¹Œ¹‚ÌXÀ•W
-//! @param pos_y ‰¹Œ¹‚ÌYÀ•W
-//! @param pos_z ‰¹Œ¹‚ÌZÀ•W
-//! @param teamID ƒ`[ƒ€”Ô†
-//! @param psoundlist ƒTƒEƒ“ƒhƒŠƒXƒg‚ğó‚¯æ‚éƒ|ƒCƒ“ƒ^
-//! @return •Ô‚·iƒTƒEƒ“ƒhƒŠƒXƒg‚Ìj‰¹Œ¹‚Ì”
+//! @brief æŒ‡å®šã—ãŸä½ç½®ã®å‘¨è¾ºã«ã‚ã‚‹éŸ³æºã‚’å–å¾—
+//! @param pos_x éŸ³æºã®Xåº§æ¨™
+//! @param pos_y éŸ³æºã®Yåº§æ¨™
+//! @param pos_z éŸ³æºã®Zåº§æ¨™
+//! @param teamID ãƒãƒ¼ãƒ ç•ªå·
+//! @param psoundlist ã‚µã‚¦ãƒ³ãƒ‰ãƒªã‚¹ãƒˆã‚’å—ã‘å–ã‚‹ãƒã‚¤ãƒ³ã‚¿
+//! @return è¿”ã™ï¼ˆã‚µã‚¦ãƒ³ãƒ‰ãƒªã‚¹ãƒˆã®ï¼‰éŸ³æºã®æ•°
 int SoundManager::GetWorldSound(float pos_x, float pos_y, float pos_z, int teamID, soundlist *psoundlist)
 {
 	int lists;
@@ -294,14 +294,14 @@ int SoundManager::GetWorldSound(float pos_x, float pos_y, float pos_z, int teamI
 	int newlists = 0;
 	WeaponParameter WParam;
 
-	//ˆ—‚·‚éƒŠƒXƒg‚ğŒˆ’è
+	//å‡¦ç†ã™ã‚‹ãƒªã‚¹ãƒˆã‚’æ±ºå®š
 	lists = GetTargetList(&getlist);
 
 	for(int i=0; i<lists; i++){
 		float x, y, z;
-		float maxdist = 20.0f;	//”»’è‹——£‚Ì•W€’l
+		float maxdist = 20.0f;	//åˆ¤å®šè·é›¢ã®æ¨™æº–å€¤
 
-		//‰¹Œ¹‚Ìí—Ş‚É‚æ‚è”»’è‹——£‚ğ•Ï‚¦‚é
+		//éŸ³æºã®ç¨®é¡ã«ã‚ˆã‚Šåˆ¤å®šè·é›¢ã‚’å¤‰ãˆã‚‹
 		if( (getlist[i].paramid == SHOT_WEAPON)||(getlist[i].paramid == SHOT_WEAPON_PLAYER) ){
 			Param->GetWeapon(getlist[i].dataid, &WParam);
 
@@ -321,7 +321,7 @@ int SoundManager::GetWorldSound(float pos_x, float pos_y, float pos_z, int teamI
 		}
 
 #ifdef ENABLE_BUG_TEAMID
-		//ƒ`[ƒ€”Ô†‚ª•‰”A‚©‚Â‰¹Œ¹‚Ìƒ`[ƒ€”Ô†‚ª‘å‚«‚¢‚È‚çA‰¹Œ¹‚ğ–³‹
+		//ãƒãƒ¼ãƒ ç•ªå·ãŒè² æ•°ã€ã‹ã¤éŸ³æºã®ãƒãƒ¼ãƒ ç•ªå·ãŒå¤§ãã„ãªã‚‰ã€éŸ³æºã‚’ç„¡è¦–
 		if( (teamID < 0)&&(getlist[i].teamid < 0) ){
 			if( teamID < getlist[i].teamid ){
 				continue;
@@ -329,19 +329,19 @@ int SoundManager::GetWorldSound(float pos_x, float pos_y, float pos_z, int teamI
 		}
 #endif
 
-		//e’e‚È‚ç‚Î
+		//éŠƒå¼¾ãªã‚‰ã°
 		if( getlist[i].paramid == BULLET ){
 			float min_x, min_y, min_z;
 
-			//e’e‚ªÅ‚à‹ß‚Ã‚­À•W‚ğZo
+			//éŠƒå¼¾ãŒæœ€ã‚‚è¿‘ã¥ãåº§æ¨™ã‚’ç®—å‡º
 			if( CheckApproach(&(getlist[i]), pos_x, pos_y, pos_z, &min_x, &min_y, &min_z) == false ){ continue; }
 
-			//‰¹Œ¹‚Æ‚Ì‹——£‚ª”ÍˆÍ“à‚È‚ç‚Î`
+			//éŸ³æºã¨ã®è·é›¢ãŒç¯„å›²å†…ãªã‚‰ã°ï½
 			x = min_x - pos_x;
 			y = min_y - pos_y;
 			z = min_z - pos_z;
 			if( x*x + y*y + z*z < maxdist*maxdist ){
-				//o—Íæ‚ÌƒŠƒXƒg‚É’Ç‰Á
+				//å‡ºåŠ›å…ˆã®ãƒªã‚¹ãƒˆã«è¿½åŠ 
 				psoundlist[newlists].paramid = getlist[i].paramid;
 				psoundlist[newlists].dataid = getlist[i].dataid;
 				psoundlist[newlists].x = min_x;
@@ -351,12 +351,12 @@ int SoundManager::GetWorldSound(float pos_x, float pos_y, float pos_z, int teamI
 			}
 		}
 		else{
-			//‰¹Œ¹‚Æ‚Ì‹——£‚ª”ÍˆÍ“à‚È‚ç‚Î`
+			//éŸ³æºã¨ã®è·é›¢ãŒç¯„å›²å†…ãªã‚‰ã°ï½
 			x = getlist[i].x - pos_x;
 			y = getlist[i].y - pos_y;
 			z = getlist[i].z - pos_z;
 			if( x*x + y*y + z*z < maxdist*maxdist ){
-				//o—Íæ‚ÌƒŠƒXƒg‚É’Ç‰Á
+				//å‡ºåŠ›å…ˆã®ãƒªã‚¹ãƒˆã«è¿½åŠ 
 				psoundlist[newlists].paramid = getlist[i].paramid;
 				psoundlist[newlists].dataid = getlist[i].dataid;
 				psoundlist[newlists].x = getlist[i].x;
@@ -370,19 +370,19 @@ int SoundManager::GetWorldSound(float pos_x, float pos_y, float pos_z, int teamI
 	return newlists;
 }
 
-//! @brief ‹óŠÔã‚ÌƒTƒEƒ“ƒh‚ğÄ¶
-//! @param camera_x ƒJƒƒ‰‚ÌXÀ•W
-//! @param camera_y ƒJƒƒ‰‚ÌYÀ•W
-//! @param camera_z ƒJƒƒ‰‚ÌZÀ•W
-//! @param camera_rx ƒJƒƒ‰‚ÌX²Šp“x@i—\–ñj
-//! @param teamID ƒ`[ƒ€”Ô†
-//! @warning –ˆƒtƒŒ[ƒ€ŒÄ‚Ño‚µ‚Ä‚­‚¾‚³‚¢B
+//! @brief ç©ºé–“ä¸Šã®ã‚µã‚¦ãƒ³ãƒ‰ã‚’å†ç”Ÿ
+//! @param camera_x ã‚«ãƒ¡ãƒ©ã®Xåº§æ¨™
+//! @param camera_y ã‚«ãƒ¡ãƒ©ã®Yåº§æ¨™
+//! @param camera_z ã‚«ãƒ¡ãƒ©ã®Zåº§æ¨™
+//! @param camera_rx ã‚«ãƒ¡ãƒ©ã®Xè»¸è§’åº¦ã€€ï¼ˆäºˆç´„ï¼‰
+//! @param teamID ãƒãƒ¼ãƒ ç•ªå·
+//! @warning æ¯ãƒ•ãƒ¬ãƒ¼ãƒ å‘¼ã³å‡ºã—ã¦ãã ã•ã„ã€‚
 void SoundManager::PlayWorldSound(float camera_x, float camera_y, float camera_z, float camera_rx, int teamID)
 {
 	int lists;
 	soundlist *getlist = NULL;
 
-	//ƒtƒ‰ƒO‚ğØ‚è‘Ö‚¦‚é
+	//ãƒ•ãƒ©ã‚°ã‚’åˆ‡ã‚Šæ›¿ãˆã‚‹
 	if( changeAB == false ){
 		listBdatas = 0;
 		changeAB = true;
@@ -392,10 +392,10 @@ void SoundManager::PlayWorldSound(float camera_x, float camera_y, float camera_z
 		changeAB = false;
 	}
 
-	//ƒJƒƒ‰À•W‚ğİ’è
+	//ã‚«ãƒ¡ãƒ©åº§æ¨™ã‚’è¨­å®š
 	SoundCtrl->SetCamera(camera_x, camera_y, camera_z, camera_rx);
 
-	//ˆ—‚·‚éƒŠƒXƒg‚ğŒˆ’è
+	//å‡¦ç†ã™ã‚‹ãƒªã‚¹ãƒˆã‚’æ±ºå®š
 	lists = GetTargetList(&getlist);
 
 	for(int i=0; i<lists; i++){
@@ -403,16 +403,16 @@ void SoundManager::PlayWorldSound(float camera_x, float camera_y, float camera_z
 		float y = getlist[i].y - camera_y;
 		float z = getlist[i].z - camera_z;
 
-		//”ÍˆÍ“à‚Ì‰¹Œ¹‚È‚ç‚ÎÄ¶‚ğ‚İ‚é
+		//ç¯„å›²å†…ã®éŸ³æºãªã‚‰ã°å†ç”Ÿã‚’è©¦ã¿ã‚‹
 		if( x*x + y*y + z*z < MAX_SOUNDDIST*MAX_SOUNDDIST ){
 			PlaySound( &(getlist[i]), camera_x, camera_y, camera_z, teamID );
 		}
 	}
 }
 
-//! @brief V‚µ‚¢ƒTƒEƒ“ƒhƒŠƒXƒgi’Pˆêj‚ğæ“¾
-//! @param plist V‚µ‚¢ƒTƒEƒ“ƒhƒŠƒXƒgi’Pˆêj‚Ì“ñdƒ|ƒCƒ“ƒ^
-//! @return ¬Œ÷Ftrue@¸”sFfalse
+//! @brief æ–°ã—ã„ã‚µã‚¦ãƒ³ãƒ‰ãƒªã‚¹ãƒˆï¼ˆå˜ä¸€ï¼‰ã‚’å–å¾—
+//! @param plist æ–°ã—ã„ã‚µã‚¦ãƒ³ãƒ‰ãƒªã‚¹ãƒˆï¼ˆå˜ä¸€ï¼‰ã®äºŒé‡ãƒã‚¤ãƒ³ã‚¿
+//! @return æˆåŠŸï¼štrueã€€å¤±æ•—ï¼šfalse
 bool SoundManager::GetNewList(soundlist **plist)
 {
 	if( changeAB == false ){
@@ -433,9 +433,9 @@ bool SoundManager::GetNewList(soundlist **plist)
 	return true;
 }
 
-//! @brief ˆ—‘ÎÛ‚ÌƒTƒEƒ“ƒhƒŠƒXƒg‚ğæ“¾
-//! @param plist ˆ—‘ÎÛ‚ÌƒTƒEƒ“ƒhƒŠƒXƒg‚Ì“ñdƒ|ƒCƒ“ƒ^
-//! @return æ“¾‚µ‚½ƒTƒEƒ“ƒhƒŠƒXƒg‚ÉŠÜ‚Ü‚ê‚é‰¹Œ¹‚Ì”
+//! @brief å‡¦ç†å¯¾è±¡ã®ã‚µã‚¦ãƒ³ãƒ‰ãƒªã‚¹ãƒˆã‚’å–å¾—
+//! @param plist å‡¦ç†å¯¾è±¡ã®ã‚µã‚¦ãƒ³ãƒ‰ãƒªã‚¹ãƒˆã®äºŒé‡ãƒã‚¤ãƒ³ã‚¿
+//! @return å–å¾—ã—ãŸã‚µã‚¦ãƒ³ãƒ‰ãƒªã‚¹ãƒˆã«å«ã¾ã‚Œã‚‹éŸ³æºã®æ•°
 int SoundManager::GetTargetList(soundlist **plist)
 {
 	if( changeAB == false ){
@@ -448,50 +448,50 @@ int SoundManager::GetTargetList(soundlist **plist)
 	//}
 }
 
-//! @brief ‰¹Œ¹‚ªƒJƒƒ‰i‹“_j‚ÉÅ‚à‹ß‚Ã‚­‚©Šm”F
-//! @param plist ˆ—‘ÎÛ‚ÌƒTƒEƒ“ƒhƒŠƒXƒgi’Pˆêj‚Ìƒ|ƒCƒ“ƒ^
-//! @param camera_x ƒJƒƒ‰‚ÌXÀ•W
-//! @param camera_y ƒJƒƒ‰‚ÌYÀ•W
-//! @param camera_z ƒJƒƒ‰‚ÌZÀ•W
-//! @param min_x Å’Z‹——£‚ÌXÀ•W‚ğó‚¯æ‚éƒ|ƒCƒ“ƒ^
-//! @param min_y Å’Z‹——£‚ÌYÀ•W‚ğó‚¯æ‚éƒ|ƒCƒ“ƒ^
-//! @param min_z Å’Z‹——£‚ÌZÀ•W‚ğó‚¯æ‚éƒ|ƒCƒ“ƒ^
-//! @return ’Ê‚è‰ß‚¬‚½Ftrue@’Ê‚è‰ß‚¬‚Ä‚¢‚È‚¢Ffalse
+//! @brief éŸ³æºãŒã‚«ãƒ¡ãƒ©ï¼ˆè¦–ç‚¹ï¼‰ã«æœ€ã‚‚è¿‘ã¥ãã‹ç¢ºèª
+//! @param plist å‡¦ç†å¯¾è±¡ã®ã‚µã‚¦ãƒ³ãƒ‰ãƒªã‚¹ãƒˆï¼ˆå˜ä¸€ï¼‰ã®ãƒã‚¤ãƒ³ã‚¿
+//! @param camera_x ã‚«ãƒ¡ãƒ©ã®Xåº§æ¨™
+//! @param camera_y ã‚«ãƒ¡ãƒ©ã®Yåº§æ¨™
+//! @param camera_z ã‚«ãƒ¡ãƒ©ã®Zåº§æ¨™
+//! @param min_x æœ€çŸ­è·é›¢ã®Xåº§æ¨™ã‚’å—ã‘å–ã‚‹ãƒã‚¤ãƒ³ã‚¿
+//! @param min_y æœ€çŸ­è·é›¢ã®Yåº§æ¨™ã‚’å—ã‘å–ã‚‹ãƒã‚¤ãƒ³ã‚¿
+//! @param min_z æœ€çŸ­è·é›¢ã®Zåº§æ¨™ã‚’å—ã‘å–ã‚‹ãƒã‚¤ãƒ³ã‚¿
+//! @return é€šã‚ŠéããŸï¼štrueã€€é€šã‚Šéãã¦ã„ãªã„ï¼šfalse
 bool SoundManager::CheckApproach(soundlist *plist, float camera_x, float camera_y, float camera_z, float *min_x, float *min_y, float *min_z)
 {
 	float x, y, z;
 	float dist1, dist2, dist3;
 
-	//1ƒtƒŒ[ƒ€‘O‚Ì‹——£
+	//1ãƒ•ãƒ¬ãƒ¼ãƒ å‰ã®è·é›¢
 	x = camera_x - (plist->x - plist->move_x);
 	y = camera_y - (plist->y - plist->move_y);
 	z = camera_z - (plist->z - plist->move_z);
 	dist1 = x*x + y*y + z*z;
 
-	//Œ»İˆÊ’u‚Ì‹——£
+	//ç¾åœ¨ä½ç½®ã®è·é›¢
 	x = camera_x - plist->x;
 	y = camera_y - plist->y;
 	z = camera_z - plist->z;
 	dist2 = x*x + y*y + z*z;
 
-	//1ƒtƒŒ[ƒ€Œã‚Ì‹——£
+	//1ãƒ•ãƒ¬ãƒ¼ãƒ å¾Œã®è·é›¢
 	x = camera_x - (plist->x + plist->move_x);
 	y = camera_y - (plist->y + plist->move_y);
 	z = camera_z - (plist->z + plist->move_z);
 	dist3 = x*x + y*y + z*z;
 
-	//Œ»İˆÊ’u‚Ì‹——£‚ªÅ‚à‹ß‚¯‚ê‚Î`
+	//ç¾åœ¨ä½ç½®ã®è·é›¢ãŒæœ€ã‚‚è¿‘ã‘ã‚Œã°ï½
 	if( (dist1 > dist2)&&(dist2 < dist3) ){
 		float speed;
 		float min_dist, dist;
 
-		//ˆÚ“®‘¬“x‚ğ‹‚ß‚é
+		//ç§»å‹•é€Ÿåº¦ã‚’æ±‚ã‚ã‚‹
 		speed = (float)sqrt(plist->move_x*plist->move_x + plist->move_y*plist->move_y + plist->move_z*plist->move_z);
 
-		//Å’Z‹——£‚ÌÀ•W‚ğ‹‚ß‚é
+		//æœ€çŸ­è·é›¢ã®åº§æ¨™ã‚’æ±‚ã‚ã‚‹
 		min_dist = DistancePosRay(camera_x, camera_y, camera_z, plist->x, plist->y, plist->z, plist->move_x/speed, plist->move_y/speed, plist->move_z/speed);
 
-		//Å’Z‹——£‚ÌÀ•W‚ğ‹‚ß‚é
+		//æœ€çŸ­è·é›¢æ™‚ã®åº§æ¨™ã‚’æ±‚ã‚ã‚‹
 		dist = (float)sqrt(dist2 - min_dist*min_dist);
 		*min_x = plist->x + plist->move_x/speed * dist;
 		*min_y = plist->y + plist->move_y/speed * dist;
@@ -503,12 +503,12 @@ bool SoundManager::CheckApproach(soundlist *plist, float camera_x, float camera_
 	return false;
 }
 
-//! @brief w’è‚µ‚½ƒTƒEƒ“ƒhƒŠƒXƒgi1‰¹Œ¹j‚ğÄ¶
-//! @param plist Ä¶‚·‚éƒTƒEƒ“ƒhƒŠƒXƒgi’Pˆêj‚Ìƒ|ƒCƒ“ƒ^
-//! @param camera_x ƒJƒƒ‰‚ÌXÀ•W
-//! @param camera_y ƒJƒƒ‰‚ÌYÀ•W
-//! @param camera_z ƒJƒƒ‰‚ÌZÀ•W
-//! @param teamID ƒ`[ƒ€”Ô†
+//! @brief æŒ‡å®šã—ãŸã‚µã‚¦ãƒ³ãƒ‰ãƒªã‚¹ãƒˆï¼ˆ1éŸ³æºï¼‰ã‚’å†ç”Ÿ
+//! @param plist å†ç”Ÿã™ã‚‹ã‚µã‚¦ãƒ³ãƒ‰ãƒªã‚¹ãƒˆï¼ˆå˜ä¸€ï¼‰ã®ãƒã‚¤ãƒ³ã‚¿
+//! @param camera_x ã‚«ãƒ¡ãƒ©ã®Xåº§æ¨™
+//! @param camera_y ã‚«ãƒ¡ãƒ©ã®Yåº§æ¨™
+//! @param camera_z ã‚«ãƒ¡ãƒ©ã®Zåº§æ¨™
+//! @param teamID ãƒãƒ¼ãƒ ç•ªå·
 void SoundManager::PlaySound(soundlist *plist, float camera_x, float camera_y, float camera_z, int teamID)
 {
 	WeaponParameter WParam;
@@ -520,9 +520,9 @@ void SoundManager::PlaySound(soundlist *plist, float camera_x, float camera_y, f
 	int id = -1;
 	int volume = 0;
 
-	//Ä¶ğŒ‚ğİ’è
+	//å†ç”Ÿæ¡ä»¶ã‚’è¨­å®š
 	switch(plist->paramid){
-		case SHOT_WEAPON:		//”­–C‰¹
+		case SHOT_WEAPON:		//ç™ºç ²éŸ³
 			Param->GetWeapon(plist->dataid, &WParam);
 			if( WParam.soundvolume == 0 ){ return; }
 
@@ -530,15 +530,15 @@ void SoundManager::PlaySound(soundlist *plist, float camera_x, float camera_y, f
 			volume = WParam.soundvolume;
 			break;
 
-		case SHOT_WEAPON_PLAYER:	//ƒvƒŒƒCƒ„[©g‚Ì”­–C‰¹
+		case SHOT_WEAPON_PLAYER:	//ãƒ—ãƒ¬ã‚¤ãƒ¤ãƒ¼è‡ªèº«ã®ç™ºç ²éŸ³
 			Param->GetWeapon(plist->dataid, &WParam);
 			if( WParam.soundvolume == 0 ){ return; }
 
-			//3D‰¹Œ¹‚Æ‚¹‚¸‚É‚»‚Ì‚Ü‚ÜÄ¶‚µ‚ÄI—¹
+			//3DéŸ³æºã¨ã›ãšã«ãã®ã¾ã¾å†ç”Ÿã—ã¦çµ‚äº†
 			SoundCtrl->PlaySound(Resource->GetWeaponSound(plist->dataid), WParam.soundvolume, 0);
 			return;
 
-		case HIT_MAP:			//ƒ}ƒbƒv’…’e‰¹
+		case HIT_MAP:			//ãƒãƒƒãƒ—ç€å¼¾éŸ³
 			Resource->GetBulletSound(&hitsoundA, &hitsoundB, NULL, NULL, NULL, NULL);
 			if( GetRand(2) ){
 				id = hitsoundA;
@@ -549,50 +549,50 @@ void SoundManager::PlaySound(soundlist *plist, float camera_x, float camera_y, f
 			volume = MAX_SOUNDHITMAP;
 			break;
 
-		case HIT_HUMAN:			//”í’e‰¹
+		case HIT_HUMAN:			//è¢«å¼¾éŸ³
 			Resource->GetBulletSound(NULL, NULL, &hitsound, NULL, NULL, NULL);
 			id = hitsound;
 			volume = MAX_SOUNDHITHUMAN;
 			break;
 
-		case HIT_SMALLOBJECT:	//¬•¨”j‰ó‰¹
+		case HIT_SMALLOBJECT:	//å°ç‰©ç ´å£ŠéŸ³
 			id = Resource->GetSmallObjectSound(plist->dataid);
 			volume = MAX_SOUNDHITSMALLOBJ;
 			break;
 
-		case BULLET:			//e’e‚Ì‰¹E‰¡Ø‚é‰¹
+		case BULLET:			//éŠƒå¼¾ã®éŸ³ãƒ»æ¨ªåˆ‡ã‚‹éŸ³
 			float new_x, new_y, new_z;
 			int passingsound;
 
 			if( CheckApproach(plist, camera_x, camera_y, camera_z, &new_x, &new_y, &new_z) == false ){ return; }
 
-			//–¡•û‚Ì’e‚È‚ç‰½‚à‚¹‚¸I—¹
+			//å‘³æ–¹ã®å¼¾ãªã‚‰ä½•ã‚‚ã›ãšçµ‚äº†
 			if( plist->teamid == teamID ){ return; }
 
-			//‚»‚Ì‚Ü‚ÜÄ¶‚µ‚ÄI—¹
+			//ãã®ã¾ã¾å†ç”Ÿã—ã¦çµ‚äº†
 			Resource->GetBulletSound(NULL, NULL, NULL, &passingsound, NULL, NULL);
 			SoundCtrl->Play3DSound(passingsound, new_x, new_y, new_z, MAX_SOUNDPASSING);
 			return;
 
-		case GRE_BOUND:			//èÖ’e ƒoƒEƒ“ƒh‰¹
+		case GRE_BOUND:			//æ‰‹æ¦´å¼¾ ãƒã‚¦ãƒ³ãƒ‰éŸ³
 			Resource->GetBulletSound(NULL, NULL, NULL, NULL, NULL, &ccosound);
 			id = ccosound;
 			volume = MAX_SOUNDCCOGRENADE;
 			break;
 
-		case GRE_EXPLOSION:		//èÖ’e ”š”­‰¹
+		case GRE_EXPLOSION:		//æ‰‹æ¦´å¼¾ çˆ†ç™ºéŸ³
 			Resource->GetBulletSound(NULL, NULL, NULL, NULL, &bangsound, NULL);
 			id = bangsound;
 			volume = MAX_SOUNDHITGRENADE;
 			break;
 
-		case FOOTSTEPS:			//‘«‰¹E‘–‚é‰¹
-			//‘«‰¹‚ğÄ¶‚·‚éˆ—‚ğ‘‚­
+		case FOOTSTEPS:			//è¶³éŸ³ãƒ»èµ°ã‚‹éŸ³
+			//è¶³éŸ³ã‚’å†ç”Ÿã™ã‚‹å‡¦ç†ã‚’æ›¸ã
 			//break;
 
-			return;	//‰½‚àÄ¶‚¹‚¸‚É•Ô‚·
+			return;	//ä½•ã‚‚å†ç”Ÿã›ãšã«è¿”ã™
 
-		case WEAPON_RELOAD:			//ƒŠƒ[ƒh‰¹
+		case WEAPON_RELOAD:			//ãƒªãƒ­ãƒ¼ãƒ‰éŸ³
 			id = Resource->GetWeaponSound(-1);
 			volume = 100;
 			break;
@@ -601,6 +601,6 @@ void SoundManager::PlaySound(soundlist *plist, float camera_x, float camera_y, f
 			return;
 	}
 
-	//Ä¶
+	//å†ç”Ÿ
 	SoundCtrl->Play3DSound(id, plist->x, plist->y, plist->z, volume);
 }

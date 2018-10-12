@@ -1,5 +1,5 @@
-//! @file config.cpp
-//! @brief configƒNƒ‰ƒX‚Ì’è‹` 
+ï»¿//! @file config.cpp
+//! @brief configã‚¯ãƒ©ã‚¹ã®å®šç¾© 
 
 //--------------------------------------------------------------------------------
 // 
@@ -31,10 +31,10 @@
 
 #include "config.h"
 
-//! @brief ƒRƒ“ƒXƒgƒ‰ƒNƒ^
+//! @brief ã‚³ãƒ³ã‚¹ãƒˆãƒ©ã‚¯ã‚¿
 Config::Config()
 {
-	//ŠeŽíƒƒ“ƒo[•Ï”‰Šú‰»
+	//å„ç¨®ãƒ¡ãƒ³ãƒãƒ¼å¤‰æ•°åˆæœŸåŒ–
 	for(int i=0; i<TOTAL_ControlKey; i++){
 		Keycode[i] = 0;
 	}
@@ -49,94 +49,94 @@ Config::Config()
 	strcpy(PlayerName, "");
 }
 
-//! @brief ƒfƒBƒXƒgƒ‰ƒNƒ^
+//! @brief ãƒ‡ã‚£ã‚¹ãƒˆãƒ©ã‚¯ã‚¿
 Config::~Config()
 {}
 
-//! @brief Ý’èƒtƒ@ƒCƒ‹‚ð“Ç‚Ýž‚Þ
-//! @param fname ƒtƒ@ƒCƒ‹–¼
-//! @return ¬Œ÷F0@Ž¸”sF1
+//! @brief è¨­å®šãƒ•ã‚¡ã‚¤ãƒ«ã‚’èª­ã¿è¾¼ã‚€
+//! @param fname ãƒ•ã‚¡ã‚¤ãƒ«å
+//! @return æˆåŠŸï¼š0ã€€å¤±æ•—ï¼š1
 int Config::LoadFile(char *fname)
 {
 	FILE *fp;
 	char buf;
 
 #ifdef ENABLE_DEBUGLOG
-	//ƒƒO‚Éo—Í
-	OutputLog.WriteLog(LOG_LOAD, "Ý’èƒtƒ@ƒCƒ‹", fname);
+	//ãƒ­ã‚°ã«å‡ºåŠ›
+	OutputLog.WriteLog(LOG_LOAD, "è¨­å®šãƒ•ã‚¡ã‚¤ãƒ«", fname);
 #endif
 
 #ifdef ENABLE_PATH_DELIMITER_SLASH
-	//ƒpƒX‹æØ‚è•¶Žš‚ð•ÏŠ·
+	//ãƒ‘ã‚¹åŒºåˆ‡ã‚Šæ–‡å­—ã‚’å¤‰æ›
 	fname = ChangePathDelimiter(fname);
 #endif
 
-	//ƒtƒ@ƒCƒ‹‚ðŠJ‚­
+	//ãƒ•ã‚¡ã‚¤ãƒ«ã‚’é–‹ã
 	fp = fopen(fname, "rb");
 	if( fp == NULL ){
 		return 1;
 	}
 
-	//ƒL[ƒR[ƒh‚ðŽæ“¾
+	//ã‚­ãƒ¼ã‚³ãƒ¼ãƒ‰ã‚’å–å¾—
 	for(int i=0; i<TOTAL_ControlKey; i++){
 		fread(&buf, 1, 1, fp);
 		Keycode[i] = buf;
 	}
 
-	//ƒ}ƒEƒXŠ´“x
+	//ãƒžã‚¦ã‚¹æ„Ÿåº¦
 	fread(&buf, 1, 1, fp);
 	MouseSensitivity = buf;
 
-	//ƒtƒ‹ƒXƒNƒŠ[ƒ“—LŒø
+	//ãƒ•ãƒ«ã‚¹ã‚¯ãƒªãƒ¼ãƒ³æœ‰åŠ¹
 	fread(&buf, 1, 1, fp);
 	if( buf == 0x00 ){ FullscreenFlag = false; }
 	else{ FullscreenFlag = true; }
 
-	//Œø‰Ê‰¹—LŒø
+	//åŠ¹æžœéŸ³æœ‰åŠ¹
 	fread(&buf, 1, 1, fp);
 	if( buf == 0x00 ){ SoundFlag = false; }
 	else{ SoundFlag = true; }
 
-	//oŒŒ—LŒø
+	//å‡ºè¡€æœ‰åŠ¹
 	fread(&buf, 1, 1, fp);
 	if( buf == 0x00 ){ BloodFlag = false; }
 	else{ BloodFlag = true; }
 
-	//‰æ–Ê‚Ì–¾‚é‚³
+	//ç”»é¢ã®æ˜Žã‚‹ã•
 	fread(&buf, 1, 1, fp);
 	Brightness = buf;
 
-	//ƒ}ƒEƒX”½“]
+	//ãƒžã‚¦ã‚¹åè»¢
 	fread(&buf, 1, 1, fp);
 	if( buf == 0x00 ){ InvertMouseFlag = false; }
 	else{ InvertMouseFlag = true; }
 
-	//ƒtƒŒ[ƒ€ƒXƒLƒbƒv
+	//ãƒ•ãƒ¬ãƒ¼ãƒ ã‚¹ã‚­ãƒƒãƒ—
 	fread(&buf, 1, 1, fp);
 	if( buf == 0x00 ){ FrameskipFlag = false; }
 	else{ FrameskipFlag = true; }
 
-	//•Ê‚ÌÆ€‚ðŽg—p
+	//åˆ¥ã®ç…§æº–ã‚’ä½¿ç”¨
 	fread(&buf, 1, 1, fp);
 	if( buf == 0x00 ){ AnotherGunsightFlag = false; }
 	else{ AnotherGunsightFlag = true; }
 
-	//ƒvƒŒƒCƒ„[–¼
+	//ãƒ—ãƒ¬ã‚¤ãƒ¤ãƒ¼å
 	fread(PlayerName, 1, MAX_PLAYERNAME, fp);
 
-	//ƒtƒ@ƒCƒ‹ƒnƒ“ƒhƒ‹‚ð•Â‚¶‚é
+	//ãƒ•ã‚¡ã‚¤ãƒ«ãƒãƒ³ãƒ‰ãƒ«ã‚’é–‰ã˜ã‚‹
 	fclose(fp);
 
 #ifdef ENABLE_DEBUGLOG
-	//ƒƒO‚Éo—Í
+	//ãƒ­ã‚°ã«å‡ºåŠ›
 	OutputLog.WriteLog(LOG_COMPLETE, "", "");
 #endif
 	return 0;
 }
 
-//! @brief ƒIƒŠƒWƒiƒ‹ƒL[ƒR[ƒh‚ðŽæ“¾
-//! @param id ’è”
-//! @return ƒIƒŠƒWƒiƒ‹ƒL[ƒR[ƒh
+//! @brief ã‚ªãƒªã‚¸ãƒŠãƒ«ã‚­ãƒ¼ã‚³ãƒ¼ãƒ‰ã‚’å–å¾—
+//! @param id å®šæ•°
+//! @return ã‚ªãƒªã‚¸ãƒŠãƒ«ã‚­ãƒ¼ã‚³ãƒ¼ãƒ‰
 int Config::GetKeycode(int id)
 {
 	if( (id < 0)||((TOTAL_ControlKey -1) < id) ){ return 0; }
@@ -144,72 +144,72 @@ int Config::GetKeycode(int id)
 	return Keycode[id];
 }
 
-//! @brief ƒ}ƒEƒXŠ´“xŽæ“¾
-//! @return ¶‚Ì’l
+//! @brief ãƒžã‚¦ã‚¹æ„Ÿåº¦å–å¾—
+//! @return ç”Ÿã®å€¤
 int Config::GetMouseSensitivity()
 {
 	return MouseSensitivity;
 }
 
-//! @brief ‰æ–Ê•\Ž¦ƒ‚[ƒhŽæ“¾
-//! @return ƒEƒBƒ“ƒhƒEFfalse@ƒtƒ‹ƒXƒNƒŠ[ƒ“Ftrue
+//! @brief ç”»é¢è¡¨ç¤ºãƒ¢ãƒ¼ãƒ‰å–å¾—
+//! @return ã‚¦ã‚£ãƒ³ãƒ‰ã‚¦ï¼šfalseã€€ãƒ•ãƒ«ã‚¹ã‚¯ãƒªãƒ¼ãƒ³ï¼štrue
 bool Config::GetFullscreenFlag()
 {
 	return FullscreenFlag;
 }
 
-//! @brief Œø‰Ê‰¹Ý’èŽæ“¾
-//! @return –³ŒøFfalse@—LŒøFtrue
+//! @brief åŠ¹æžœéŸ³è¨­å®šå–å¾—
+//! @return ç„¡åŠ¹ï¼šfalseã€€æœ‰åŠ¹ï¼štrue
 bool Config::GetSoundFlag()
 {
 	return SoundFlag;
 }
 
-//! @brief oŒŒÝ’èŽæ“¾
-//! @return –³ŒøFfalse@—LŒøFtrue
+//! @brief å‡ºè¡€è¨­å®šå–å¾—
+//! @return ç„¡åŠ¹ï¼šfalseã€€æœ‰åŠ¹ï¼štrue
 bool Config::GetBloodFlag()
 {
 	return BloodFlag;
 }
 
-//! @brief ‰æ–Ê‚Ì–¾‚é‚³Ý’èŽæ“¾
-//! @return ¶‚Ì’l
+//! @brief ç”»é¢ã®æ˜Žã‚‹ã•è¨­å®šå–å¾—
+//! @return ç”Ÿã®å€¤
 int Config::GetBrightness()
 {
 	return Brightness;
 }
 
-//! @brief ƒ}ƒEƒX”½“]Ý’èŽæ“¾
-//! @return –³ŒøFfalse@—LŒøFtrue
+//! @brief ãƒžã‚¦ã‚¹åè»¢è¨­å®šå–å¾—
+//! @return ç„¡åŠ¹ï¼šfalseã€€æœ‰åŠ¹ï¼štrue
 bool Config::GetInvertMouseFlag()
 {
 	return InvertMouseFlag;
 }
 
-//! @brief ƒtƒŒ[ƒ€ƒXƒLƒbƒvÝ’èŽæ“¾
-//! @return –³ŒøFfalse@—LŒøFtrue
+//! @brief ãƒ•ãƒ¬ãƒ¼ãƒ ã‚¹ã‚­ãƒƒãƒ—è¨­å®šå–å¾—
+//! @return ç„¡åŠ¹ï¼šfalseã€€æœ‰åŠ¹ï¼štrue
 bool Config::GetFrameskipFlag()
 {
 	return FrameskipFlag;
 }
 
-//! @brief •Ê‚ÌÆ€‚ðŽg—pÝ’èŽæ“¾
-//! @return –³ŒøFfalse@—LŒøFtrue
+//! @brief åˆ¥ã®ç…§æº–ã‚’ä½¿ç”¨è¨­å®šå–å¾—
+//! @return ç„¡åŠ¹ï¼šfalseã€€æœ‰åŠ¹ï¼štrue
 bool Config::GetAnotherGunsightFlag()
 {
 	return AnotherGunsightFlag;
 }
 
-//! @brief ƒvƒŒƒCƒ„[–¼Žæ“¾
-//! @param out_str Žó‚¯Žæ‚é•¶Žš—ñŒ^ƒ|ƒCƒ“ƒ^
-//! @return ƒvƒŒƒCƒ„[–¼•¶Žš”
+//! @brief ãƒ—ãƒ¬ã‚¤ãƒ¤ãƒ¼åå–å¾—
+//! @param out_str å—ã‘å–ã‚‹æ–‡å­—åˆ—åž‹ãƒã‚¤ãƒ³ã‚¿
+//! @return ãƒ—ãƒ¬ã‚¤ãƒ¤ãƒ¼åæ–‡å­—æ•°
 int Config::GetPlayerName(char *out_str)
 {
 	if( out_str == NULL ){ return 0; }
 
-	//ƒ|ƒCƒ“ƒ^‚ÉƒRƒs[‚·‚é
+	//ãƒã‚¤ãƒ³ã‚¿ã«ã‚³ãƒ”ãƒ¼ã™ã‚‹
 	strcpy(out_str, PlayerName);
 
-	//•¶Žš”‚ð•Ô‚·
+	//æ–‡å­—æ•°ã‚’è¿”ã™
 	return strlen(PlayerName);
 }

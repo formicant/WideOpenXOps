@@ -1,5 +1,5 @@
-//! @file sound.h
-//! @brief SoundControlƒNƒ‰ƒX‚ÌéŒ¾
+ï»¿//! @file sound.h
+//! @brief SoundControlã‚¯ãƒ©ã‚¹ã®å®£è¨€
 
 //--------------------------------------------------------------------------------
 // 
@@ -32,9 +32,9 @@
 #ifndef SOUND2_H
 #define SOUND2_H
 
-#define MAX_LOADSOUND 24		//!< ƒTƒEƒ“ƒh‚ğ“Ç‚İ‚ß‚éÅ‘å”
-#define MAX_SOUNDLISTS 100		//!< ƒTƒEƒ“ƒh‚ğÄ¶‚·‚éÅ‘å”iDirectSoundj
-#define MAX_SOUNDDIST 335		//!< ƒTƒEƒ“ƒh‚ğÄ¶‚·‚éÅ‘å‹——£
+#define MAX_LOADSOUND 24		//!< ã‚µã‚¦ãƒ³ãƒ‰ã‚’èª­ã¿è¾¼ã‚ã‚‹æœ€å¤§æ•°
+#define MAX_SOUNDLISTS 100		//!< ã‚µã‚¦ãƒ³ãƒ‰ã‚’å†ç”Ÿã™ã‚‹æœ€å¤§æ•°ï¼ˆDirectSoundï¼‰
+#define MAX_SOUNDDIST 335		//!< ã‚µã‚¦ãƒ³ãƒ‰ã‚’å†ç”Ÿã™ã‚‹æœ€å¤§è·é›¢
 
 #ifndef H_LAYERLEVEL
  #define H_LAYERLEVEL 1		//!< Select include file.
@@ -42,7 +42,7 @@
 #include "main.h"
 #include <windows.h>
 
-//#define SOUND_DIRECTSOUND	//!< @brief ƒTƒEƒ“ƒh‚ÌÄ¶ƒ‰ƒCƒuƒ‰ƒŠ‚ğ‘I‘ğ @details ’è”éŒ¾—LŒøFDirectSound@’è”éŒ¾–³ŒøiƒRƒƒ“ƒg‰»jFezds.dll
+//#define SOUND_DIRECTSOUND	//!< @brief ã‚µã‚¦ãƒ³ãƒ‰ã®å†ç”Ÿãƒ©ã‚¤ãƒ–ãƒ©ãƒªã‚’é¸æŠ @details å®šæ•°å®£è¨€æœ‰åŠ¹ï¼šDirectSoundã€€å®šæ•°å®£è¨€ç„¡åŠ¹ï¼ˆã‚³ãƒ¡ãƒ³ãƒˆåŒ–ï¼‰ï¼šezds.dll
 
 #ifdef SOUND_DIRECTSOUND
  #include <dsound.h>
@@ -51,26 +51,26 @@
  #pragma comment(lib, "dxguid.lib")
  #pragma comment(lib, "winmm.lib")
 
- #define SOUND_CORE "DirectSound"		//!< ƒo[ƒWƒ‡ƒ“•\¦—pî•ñ
+ #define SOUND_CORE "DirectSound"		//!< ãƒãƒ¼ã‚¸ãƒ§ãƒ³è¡¨ç¤ºç”¨æƒ…å ±
 #else	//#ifdef SOUND_DIRECTSOUND
  typedef int (*FARPROCH)(HWND);			//!< DLL Parameter
  typedef int (*FARPROCCI)(char*, int);	//!< DLL Parameter
  typedef int (*FARPROCIII)(int, int, int);		//!< DLL Parameter
  typedef int (*FARPROCI)(int);			//!< DLL Parameter
 
- #define SOUND_CORE "ezds"				//!< ƒo[ƒWƒ‡ƒ“•\¦—pî•ñ
+ #define SOUND_CORE "ezds"				//!< ãƒãƒ¼ã‚¸ãƒ§ãƒ³è¡¨ç¤ºç”¨æƒ…å ±
 #endif	//#ifdef SOUND_DIRECTSOUND
 
-//! @brief ƒTƒEƒ“ƒh‚ğÄ¶‚·‚éƒNƒ‰ƒX
-//! @details ƒTƒEƒ“ƒh‚Ì“Ç‚İ‚İ‚©‚çÄ¶‚Ü‚Å‚ğŠÇ—‚µ‚Ü‚·B
-//! @details “à•”‚Å‚Í ezds.dll ‚ğŒÄ‚Ño‚µ‚Äg—p‚µ‚Ä‚¢‚Ü‚·B
-//! @details Ql‘—¿Fu‚İ‚©‚ñ” vhttp://mikan.the-ninja.jp/@Ë@‹Zp‘—¿@Ë@ezds.dllƒtƒ@ƒCƒ‹‰ğÍ‘—¿
+//! @brief ã‚µã‚¦ãƒ³ãƒ‰ã‚’å†ç”Ÿã™ã‚‹ã‚¯ãƒ©ã‚¹
+//! @details ã‚µã‚¦ãƒ³ãƒ‰ã®èª­ã¿è¾¼ã¿ã‹ã‚‰å†ç”Ÿã¾ã§ã‚’ç®¡ç†ã—ã¾ã™ã€‚
+//! @details å†…éƒ¨ã§ã¯ ezds.dll ã‚’å‘¼ã³å‡ºã—ã¦ä½¿ç”¨ã—ã¦ã„ã¾ã™ã€‚
+//! @details å‚è€ƒè³‡æ–™ï¼šã€Œã¿ã‹ã‚“ç®±ã€http://mikan.the-ninja.jp/ã€€â‡’ã€€æŠ€è¡“è³‡æ–™ã€€â‡’ã€€ezds.dllãƒ•ã‚¡ã‚¤ãƒ«è§£æè³‡æ–™
 class SoundControl
 {
 #ifdef SOUND_DIRECTSOUND
-	LPDIRECTSOUND8 pDSound;					//!< DIRECTSOUND8‚Ìƒ|ƒCƒ“ƒ^
-	LPDIRECTSOUNDBUFFER pDSBuffer[MAX_LOADSOUND][MAX_SOUNDLISTS];	//!< ƒZƒJƒ“ƒ_ƒŠ[ƒoƒbƒtƒ@[
-	LPDIRECTSOUND3DLISTENER8 p3DListener;	//!< ƒŠƒXƒi[
+	LPDIRECTSOUND8 pDSound;					//!< DIRECTSOUND8ã®ãƒã‚¤ãƒ³ã‚¿
+	LPDIRECTSOUNDBUFFER pDSBuffer[MAX_LOADSOUND][MAX_SOUNDLISTS];	//!< ã‚»ã‚«ãƒ³ãƒ€ãƒªãƒ¼ãƒãƒƒãƒ•ã‚¡ãƒ¼
+	LPDIRECTSOUND3DLISTENER8 p3DListener;	//!< ãƒªã‚¹ãƒŠãƒ¼
 
 	bool CheckSoundFile(char* filename, int *filesize, int *fileoffset, WAVEFORMATEX** pwfex);
 	int GetDSVolume(int volume);
@@ -88,20 +88,20 @@ public:
 	void CleanupSound(int id);
 	int GetTotalSounds();
 #else	//#ifdef SOUND_DIRECTSOUND
-	HINSTANCE lib;		//!< DLLƒtƒ@ƒCƒ‹‚ÌƒCƒ“ƒXƒ^ƒ“ƒX
+	HINSTANCE lib;		//!< DLLãƒ•ã‚¡ã‚¤ãƒ«ã®ã‚¤ãƒ³ã‚¹ã‚¿ãƒ³ã‚¹
 	FARPROC DSver;		//!< DSver()
 	FARPROCH DSinit;	//!< DSinit()
 	FARPROC DSend;		//!< DSend()
 	FARPROCCI DSload;	//!< DSload()
 	FARPROCIII DSplay;	//!< DSplay()
 	FARPROCI DSrelease;	//!< DSrelease()
-	bool useflag[MAX_LOADSOUND];	//!< g—p’†‚ÌƒTƒEƒ“ƒh”Ô†‚ğŠÇ—‚·‚é”z—ñ
+	bool useflag[MAX_LOADSOUND];	//!< ä½¿ç”¨ä¸­ã®ã‚µã‚¦ãƒ³ãƒ‰ç•ªå·ã‚’ç®¡ç†ã™ã‚‹é…åˆ—
 
-	float camera_x;			//!< ƒJƒƒ‰À•W
-	float camera_y;			//!< ƒJƒƒ‰À•W
-	float camera_z;			//!< ƒJƒƒ‰À•W
-	float camera_rx;		//!< ƒJƒƒ‰X²Šp“x
-	float mastervolume;		//!< ‰¹—Ê
+	float camera_x;			//!< ã‚«ãƒ¡ãƒ©åº§æ¨™
+	float camera_y;			//!< ã‚«ãƒ¡ãƒ©åº§æ¨™
+	float camera_z;			//!< ã‚«ãƒ¡ãƒ©åº§æ¨™
+	float camera_rx;		//!< ã‚«ãƒ¡ãƒ©Xè»¸è§’åº¦
+	float mastervolume;		//!< éŸ³é‡
 
 
 	bool CheckSourceDist(float x, float y, float z, bool near, float *out_dist);

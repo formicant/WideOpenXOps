@@ -1,5 +1,5 @@
-//! @file main.cpp
-//! @brief WinMain()ŠÖ”‚Ì’è‹`‚¨‚æ‚ÑƒeƒXƒgƒvƒƒOƒ‰ƒ€ 
+ï»¿//! @file main.cpp
+//! @brief WinMain()é–¢æ•°ã®å®šç¾©ãŠã‚ˆã³ãƒ†ã‚¹ãƒˆãƒ—ãƒ­ã‚°ãƒ©ãƒ  
 
 //--------------------------------------------------------------------------------
 // 
@@ -29,7 +29,7 @@
 // SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 //--------------------------------------------------------------------------------
 
-//Doxygenİ’èƒtƒ@ƒCƒ‹
+//Doxygenè¨­å®šãƒ•ã‚¡ã‚¤ãƒ«
 #include "doxygen.h"
 
 #include "main.h"
@@ -40,34 +40,34 @@
 #endif
 
 #ifdef ENABLE_DEBUGLOG
- //! ƒƒOo—Í
+ //! ãƒ­ã‚°å‡ºåŠ›
  DebugLog OutputLog;
 #endif
 
-//! ƒXƒe[ƒgƒ}ƒVƒ“
+//! ã‚¹ãƒ†ãƒ¼ãƒˆãƒã‚·ãƒ³
 StateMachine GameState;
 
-//! ƒQ[ƒ€İ’èƒf[ƒ^
+//! ã‚²ãƒ¼ãƒ è¨­å®šãƒ‡ãƒ¼ã‚¿
 Config GameConfig;
 
-//! ƒƒCƒ“ƒEƒBƒ“ƒhƒE
+//! ãƒ¡ã‚¤ãƒ³ã‚¦ã‚£ãƒ³ãƒ‰ã‚¦
 WindowControl MainWindow;
 
-//! @brief WinMain()ŠÖ”
+//! @brief WinMain()é–¢æ•°
 int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine, int nCmdShow)
 {
-	//–¢g—pˆø”‘Îô
+	//æœªä½¿ç”¨å¼•æ•°å¯¾ç­–
 	UNREFERENCED_PARAMETER(hInstance);
 	UNREFERENCED_PARAMETER(lpCmdLine);
 
-	//—”‰Šú‰»
+	//ä¹±æ•°åˆæœŸåŒ–
 	InitRand();
 
 #ifdef _DEBUG
-	//ƒƒ‚ƒŠƒŠ[ƒN‚ÌŒŸo
+	//ãƒ¡ãƒ¢ãƒªãƒªãƒ¼ã‚¯ã®æ¤œå‡º
 	_CrtSetDbgFlag(_CRTDBG_ALLOC_MEM_DF | _CRTDBG_LEAK_CHECK_DF);
 
-	//Àsƒtƒ@ƒCƒ‹‚Ì‚ ‚éêŠ‚ğAƒJƒŒƒ“ƒgƒfƒBƒŒƒNƒgƒŠ‚É‚·‚éB
+	//å®Ÿè¡Œãƒ•ã‚¡ã‚¤ãƒ«ã®ã‚ã‚‹å ´æ‰€ã‚’ã€ã‚«ãƒ¬ãƒ³ãƒˆãƒ‡ã‚£ãƒ¬ã‚¯ãƒˆãƒªã«ã™ã‚‹ã€‚
 	char path[MAX_PATH];
 	GetModuleFileName(NULL, path, MAX_PATH);
 	PathRemoveFileSpec(path);
@@ -75,74 +75,74 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine
 
 	//char str[24];
 	//GameConfig.GetPlayerName(str);
-	//MessageBox(NULL, str, "ƒvƒŒƒCƒ„[–¼", MB_OK);
+	//MessageBox(NULL, str, "ãƒ—ãƒ¬ã‚¤ãƒ¤ãƒ¼å", MB_OK);
 	char str[255];
 	strcpy(str, "[Information]\nThe compiler is the Debug mode.\nIf release the software, Switch compiler to Release mode.");
 	MessageBox(NULL, str, GAMENAME, MB_OK);
 #endif
 
 #ifdef ENABLE_DEBUGLOG
-	//ƒƒ‚FWindowsŠÂ‹«‚È‚çAlpCmdLineˆø”‚Æ‚©GetCommandLine()ŠÖ”‚Å‚àæ‚ê‚Ü‚·‚¯‚Ç‚ËEEB
+	//ãƒ¡ãƒ¢ï¼šWindowsç’°å¢ƒãªã‚‰ã€lpCmdLineå¼•æ•°ã¨ã‹GetCommandLine()é–¢æ•°ã§ã‚‚å–ã‚Œã¾ã™ã‘ã©ã­ãƒ»ãƒ»ã€‚
 
-	//ˆø”‚ğ•ª‰ğ
+	//å¼•æ•°ã‚’åˆ†è§£
 	for(int i=0; i<__argc; i++){
 
-		//"log"‚ª—^‚¦‚ç‚ê‚Ä‚¢‚½‚çAƒƒOo—Í‚ğ—LŒø‰»
+		//"log"ãŒä¸ãˆã‚‰ã‚Œã¦ã„ãŸã‚‰ã€ãƒ­ã‚°å‡ºåŠ›ã‚’æœ‰åŠ¹åŒ–
 		if( strcmp(__argv[i], "log") == 0 ){
-			//ƒtƒ@ƒCƒ‹ì¬
+			//ãƒ•ã‚¡ã‚¤ãƒ«ä½œæˆ
 			OutputLog.MakeLog();
 
 			MainWindow.ErrorInfo("Enable Debug Log...");
 		}
 	}
 
-	//ƒ†[ƒU[ŠÂ‹«‚ğo—Í
+	//ãƒ¦ãƒ¼ã‚¶ãƒ¼ç’°å¢ƒã‚’å‡ºåŠ›
 	GetOperatingEnvironment();
 
 	char infostr[64];
 
 	/*
-	//ƒƒO‚Éo—Í
-	sprintf(infostr, "%dŒÂ", __argc);
-	OutputLog.WriteLog(LOG_CHECK, "ˆø”", infostr);
+	//ãƒ­ã‚°ã«å‡ºåŠ›
+	sprintf(infostr, "%då€‹", __argc);
+	OutputLog.WriteLog(LOG_CHECK, "å¼•æ•°", infostr);
 	for(int i=0; i<__argc; i++){
-		sprintf(infostr, "ˆø”[%d]", i);
+		sprintf(infostr, "å¼•æ•°[%d]", i);
 		OutputLog.WriteLog(LOG_CHECK, infostr, __argv[i]);
 	}
 	*/
 
-	//ƒƒO‚Éo—Í
-	OutputLog.WriteLog(LOG_CHECK, "‹N“®", "ƒGƒ“ƒgƒŠ[ƒ|ƒCƒ“ƒgŠJn");
+	//ãƒ­ã‚°ã«å‡ºåŠ›
+	OutputLog.WriteLog(LOG_CHECK, "èµ·å‹•", "ã‚¨ãƒ³ãƒˆãƒªãƒ¼ãƒã‚¤ãƒ³ãƒˆé–‹å§‹");
 #endif
 
 #ifdef _DEBUG
-	//ƒƒO‚Éo—Í
-	OutputLog.WriteLog(LOG_CHECK, "‹N“®", "Visual C++ ƒfƒoƒbƒOƒ‚[ƒh");
+	//ãƒ­ã‚°ã«å‡ºåŠ›
+	OutputLog.WriteLog(LOG_CHECK, "èµ·å‹•", "Visual C++ ãƒ‡ãƒãƒƒã‚°ãƒ¢ãƒ¼ãƒ‰");
 #endif
 
-	//İ’èƒtƒ@ƒCƒ‹“Ç‚İ‚İ
+	//è¨­å®šãƒ•ã‚¡ã‚¤ãƒ«èª­ã¿è¾¼ã¿
 	if( GameConfig.LoadFile("config.dat") == 1 ){
 		MainWindow.ErrorInfo("config data open failed");
 		return 1;
 	}
 
 #ifdef ENABLE_DEBUGLOG
-	//ƒƒO‚Éo—Í
-	sprintf(infostr, "‰ğ‘œ“xF%d x %d", SCREEN_WIDTH, SCREEN_HEIGHT);
-	OutputLog.WriteLog(LOG_CHECK, "ŠÂ‹«", infostr);
+	//ãƒ­ã‚°ã«å‡ºåŠ›
+	sprintf(infostr, "è§£åƒåº¦ï¼š%d x %d", SCREEN_WIDTH, SCREEN_HEIGHT);
+	OutputLog.WriteLog(LOG_CHECK, "ç’°å¢ƒ", infostr);
 	if( GameConfig.GetFullscreenFlag() == false ){
-		OutputLog.WriteLog(LOG_CHECK, "ŠÂ‹«", "ƒEƒBƒ“ƒhƒEƒ‚[ƒhFƒEƒBƒ“ƒhƒE");
+		OutputLog.WriteLog(LOG_CHECK, "ç’°å¢ƒ", "ã‚¦ã‚£ãƒ³ãƒ‰ã‚¦ãƒ¢ãƒ¼ãƒ‰ï¼šã‚¦ã‚£ãƒ³ãƒ‰ã‚¦");
 	}
 	else{
-		OutputLog.WriteLog(LOG_CHECK, "ŠÂ‹«", "ƒEƒBƒ“ƒhƒEƒ‚[ƒhFƒtƒ‹ƒXƒNƒŠ[ƒ“");
+		OutputLog.WriteLog(LOG_CHECK, "ç’°å¢ƒ", "ã‚¦ã‚£ãƒ³ãƒ‰ã‚¦ãƒ¢ãƒ¼ãƒ‰ï¼šãƒ•ãƒ«ã‚¹ã‚¯ãƒªãƒ¼ãƒ³");
 	}
 #endif
 
-	//ƒEƒBƒ“ƒhƒE‰Šú‰»
+	//ã‚¦ã‚£ãƒ³ãƒ‰ã‚¦åˆæœŸåŒ–
 	MainWindow.SetParam(hPrevInstance, nCmdShow);
 	MainWindow.InitWindow(GAMENAME, SCREEN_WIDTH, SCREEN_HEIGHT, GameConfig.GetFullscreenFlag());
 
-	//Šî–{“I‚È‰Šú‰»ˆ—
+	//åŸºæœ¬çš„ãªåˆæœŸåŒ–å‡¦ç†
 	if( InitGame(&MainWindow) ){
 		return 1;
 	}
@@ -156,18 +156,18 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine
 
 
 #ifdef ENABLE_DEBUGLOG
-	//ƒƒO‚Éo—Í
-	OutputLog.WriteLog(LOG_CHECK, "‹N“®", "ƒƒCƒ“ƒ‹[ƒv“Ë“ü");
+	//ãƒ­ã‚°ã«å‡ºåŠ›
+	OutputLog.WriteLog(LOG_CHECK, "èµ·å‹•", "ãƒ¡ã‚¤ãƒ³ãƒ«ãƒ¼ãƒ—çªå…¥");
 #endif
 
 	unsigned int framecnt = 0;
 
 	for(int flag = 0; flag != -1; flag = MainWindow.CheckMainLoop()){
 		if( flag == 1 ){
-			//ƒƒCƒ“ˆ—
+			//ãƒ¡ã‚¤ãƒ³å‡¦ç†
 			ProcessScreen(&MainWindow, &Opening, &MainMenu, &Briefing, &MainGame, &Result, framecnt);
 
-			//FPS’²®
+			//FPSèª¿æ•´
 			ControlFps();
 
 			framecnt++;
@@ -175,17 +175,17 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine
 	}
 
 #ifdef ENABLE_DEBUGLOG
-	//ƒƒO‚Éo—Í
-	OutputLog.WriteLog(LOG_CHECK, "I—¹", "ƒƒCƒ“ƒ‹[ƒv’Eo");
+	//ãƒ­ã‚°ã«å‡ºåŠ›
+	OutputLog.WriteLog(LOG_CHECK, "çµ‚äº†", "ãƒ¡ã‚¤ãƒ³ãƒ«ãƒ¼ãƒ—è„±å‡º");
 #endif
 
 
-	//Šî–{“I‚È‰ğ•úˆ—
+	//åŸºæœ¬çš„ãªè§£æ”¾å‡¦ç†
 	CleanupGame();
 
 #ifdef ENABLE_DEBUGLOG
-	//ƒƒO‚Éo—Í
-	OutputLog.WriteLog(LOG_CHECK, "I—¹", "ƒGƒ“ƒgƒŠ[ƒ|ƒCƒ“ƒgI—¹");
+	//ãƒ­ã‚°ã«å‡ºåŠ›
+	OutputLog.WriteLog(LOG_CHECK, "çµ‚äº†", "ã‚¨ãƒ³ãƒˆãƒªãƒ¼ãƒã‚¤ãƒ³ãƒˆçµ‚äº†");
 #endif
 	return 0;
 }
